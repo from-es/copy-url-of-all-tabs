@@ -1,0 +1,188 @@
+@charset "utf-8";
+
+/* -------------------------------------------------------------------------------------------------- */
+/*                                                                                                    */
+/*                                     タグへのスタイルシート指定                                     */
+/*                                                                                                    */
+/* -------------------------------------------------------------------------------------------------- */
+
+/*
+	■ CSS覚え書き
+	
+	・フォントサイズ指定について@20160111
+		｢rm指定からrem指定への移行 & フォントサイズ切り替え追加｣によるスタイル変更に付き、font-sizeの指定を以下の様に変更する。倍率指定はCSS3に準ずる。
+			font-size: xx-large; > font-size: 2.00rem;
+			font-size: x-large;  > font-size: 1.50rem;
+			font-size: large;    > font-size: 1.20rem;
+			font-size: medium;   > font-size: 1.00rem;
+			font-size: small;    > font-size: 0.89rem;
+			font-size: x-small;  > font-size: 0.75rem;
+			font-size: xx-small; > font-size: 0.60rem;
+*/
+
+*          { line-height: 1.2; }
+*:not(img) { box-sizing: border-box; } /* 画像(img)要素は対象外とする@2016/01/06 */
+
+html, body { height: 100%; }
+
+html {
+	margin: 0; padding: 0;
+	font-size: 16px; /* font-size 1rem = 16px > rem : ルート要素(html or :root)の文字サイズを基準にして文字サイズを指定する単位 > IE9以降対応 */
+	font-family: "ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","メイリオ",Meiryo,Osaka,"ＭＳ Ｐゴシック","MS PGothic",sans-serif;
+	/*
+		文章主体ならこちら
+		font-family: dcsymbols, 游明朝, YuMincho, "ヒラギノ明朝 Pr6N", "Hiragino Mincho Pr6N", "ヒラギノ明朝 ProN", "Hiragino Mincho ProN", "ヒラギノ明朝 StdN", "Hiragino Mincho StdN", HiraMinProN-W3, HGS明朝B, HG明朝B, dcsymbols, "Helvetica Neue", Helvetica, Arial, "ヒラギノ角ゴ Pr6N", "Hiragino Kaku Gothic Pr6N", "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ StdN", "Hiragino Kaku Gothic StdN", "Segoe UI", Verdana, メイリオ, Meiryo, sans-serif;
+	*/
+}
+
+body {
+	margin: 0; padding: 0 1rem;
+	min-width: calc(2rem + 840px);
+}
+
+a         { font-style: normal; font-weight: normal; text-decoration: none; }
+a:link    { color: #0068ff; }
+a:visited { color: #ff8c00; }
+a:hover   { color: #8000ff; text-decoration: underline; }
+a:active  { color: #ff8c00; }
+a:focus   { outline: dotted 1px; }
+
+a[href^="http"]:empty::before { content: attr(href); } /* リンクにテキストが無い時はURLを表示 > http://coliss.com/articles/build-websites/operation/css/css-protips-v2.html#h212 */
+
+a       > img { border: solid 3px transparent; }
+a:hover > img { border: solid 3px #909090; }
+
+pre, code, kbd, samp, var {
+    font-family: "Monaco", "Consolas", "Courier New", Courier, monospace, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 1.5rem 0;
+	padding-top: 0.50rem; padding-bottom: 0.25rem;
+	color: #333;
+}
+h1 {
+	padding-top: 0.25rem; padding-bottom: 0.25rem;
+}
+h2 {
+	padding-left: 0.5rem;
+	border: solid 1px #ccc;
+	border-radius: 0.5rem;
+	border-left: solid 0.5rem darkorange;
+}
+h3 {
+	padding-left: 1rem;
+	border-top:    double 3px #888;
+	border-bottom: double 3px #888;
+}
+h4, h5, h6 {
+	padding-left: 1rem;
+	border-bottom: dotted 2px #888;
+}
+
+h1 {
+	font-size: 2.00rem;	/* font-size: xx-large; */
+}
+h2 {
+	font-size: 1.50rem;	/* font-size: x-large; */
+}
+h3 {
+	font-size: 1.20rem;	/* font-size: large; */
+}
+h4, h5, h6 {
+	font-size: 1.00rem;	/* font-size: medium; */
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+	font-style: normal; font-weight: bold; text-decoration: none;
+	color: #333;
+}
+
+.entry > h1 a, .entry > h2 a, .entry > h3 a, .entry > h4 a, .entry > h5 a, .entry > h6 a { display: block; }
+
+h1 a:focus,   h2 a:focus,   h3 a:focus,   h4 a:focus,   h5 a:focus,   h6 a:focus   { outline: dotted 1px; }
+h1 a:link,    h2 a:link,    h3 a:link,    h4 a:link,    h5 a:link,    h6 a:link    { color: #333; }
+h1 a:visited, h2 a:visited, h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited { color: #333; }
+h1 a:hover,   h2 a:hover,   h3 a:hover,   h4 a:hover,   h5 a:hover,   h6 a:hover   { color: #8000ff; text-decoration: none; }
+h1 a:active,  h2 a:active,  h3 a:active,  h4 a:active,  h5 a:active,  h6 a:active  { color: #333; }
+
+/* 見出しホバー時に判りやすく */
+h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
+	border-radius: 0.5rem;
+	background-color: #fda;
+}
+
+/* http://www.coolwebwindow.com/csstips/csstechnic/textlyout/000300.php */
+hr {
+   margin: 1rem 0;
+   border: solid #888;
+   border-width: 1px 0 1px 0;
+   height: 1px;	/* for IE6 */
+   clear: both;	/* for IE6 */
+}
+
+img {
+	background-color: #f0f0f0;
+}
+
+p { }
+p > a {
+	margin-left: 0.05rem; margin-right: 0.05rem;
+}
+
+
+
+
+
+/* -------------------------------------------------------------------------------------------------- */
+/*                                                                                                    */
+/*                                           レイアウト指定                                           */
+/*                                                                                                    */
+/* -------------------------------------------------------------------------------------------------- */
+
+#header, #navigation, #contents, #advertisement, #footer {
+	box-sizing: border-box;
+	margin: 1rem auto; padding: 0; min-width: 840px; max-width: 1280px;
+	border-radius: 0.5rem;
+}
+
+
+
+/* 差分適応 */
+#header        { margin-top: 0; padding: 0.5rem 0; background-color: #0080ee; }
+#navigation    { }
+#contents      { }
+#advertisement { }
+#footer        { margin-bottom: 0; padding: 0.5rem; }
+
+
+
+
+
+/* -------------------------------------------------------------------------------------------------- */
+/*                                                                                                    */
+/*                                          パーツ指定 その1                                          */
+/*                                                                                                    */
+/* -------------------------------------------------------------------------------------------------- */
+
+/* 記事の指定 */
+.entry {
+	margin-bottom: 1rem; padding: 1rem;
+	border: solid 1px #333;
+	border-radius: 0.5rem;
+	font-style:normal; text-decoration:none; font-weight:normal; color:#303030;
+}
+.entry > *:first-child {
+	margin-top: 0;
+}
+
+/* 指定class内にある最後の要素に掛かっている不要なマージンを無くす@20180728(https://prasm.blog/15303) */
+.entry > *:last-child,
+.entry > *:last-child > *:last-child,
+.entry > *:last-child > *:last-child > *:last-child {
+	margin-bottom: 0;
+}
+
+.entry ul > li {
+	font-size: 1rem !important;
+}

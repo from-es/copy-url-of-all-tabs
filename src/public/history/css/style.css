@@ -1,0 +1,32 @@
+@charset "utf-8";
+
+@import url("./normalize.css?20210307");
+@import url("./common.css?20240919");
+
+
+/* 差分適応 */
+* {
+	line-height: 1.6;
+}
+
+#contents {
+	padding-top   : 1rem !important;
+	padding-bottom: 2rem !important;
+}
+
+details > summary {
+	font-size: 1rem !important;
+
+	user-select: none;
+}
+
+.entry {
+	padding-bottom: 2rem !important;
+}
+
+code {
+	padding: 0.25rem 0.5rem;
+	color: #fff;
+	background-color: #333;
+	border-radius: 0.25rem;
+}
