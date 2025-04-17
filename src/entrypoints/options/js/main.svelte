@@ -486,13 +486,13 @@
 			</dl>
 
 			<dl>
-				<dt>Code</dt>
-				<dd id="code"><a href="{ status.define.Information.github.url }" title="{ status.define.Information.github.title }" target="_blank" rel="noopener noreferrer">{ status.define.Information.github.title }</a></dd>
+				<dt>Source Code</dt>
+				<dd id="sourcecode "><a href="{ status.define.Information.github.url }" title="{ status.define.Information.github.title }" target="_blank" rel="noopener noreferrer">{ status.define.Information.github.title }</a></dd>
 			</dl>
 
 			<h2>Support</h2>
 
-			<p>Please note that as this is a free extension we are unable to provide personalised support.</p>
+			<p>Please note that as this is a free extension we are unable to provide personalized support.</p>
 
 			<p>If you have issue or feature requests, please report them at issues (https://github.com/from-es/copy-url-of-all-tabs/issues).</p>
 
