@@ -9,16 +9,19 @@ window.addEventListener("load", main);
 
 
 async function main() {
-	const markdown = await getMarkdown();
-	const html     = marked.parse(markdown);
+	const file = "./log.md";
 
-	setHTMLtoLatest(html)
+	const markdown     = await getMarkdown(file);
+	const markedCustom = openExternalLinkInNewTab(marked);
+	const html         = markedCustom.parse(markdown);
+
+	setHTMLtoLatest(html);
 
 	setHTMLtoPast(html);
 }
 
-async function getMarkdown() {
-	const url = "./log.md";
+async function getMarkdown(path) {
+	const url = path;
 
 	const response = await fetch(url, { cache: "no-store"});
 	const result   = (response.ok) ? await response.text() : undefined;
@@ -30,6 +33,46 @@ async function getMarkdown() {
 	}
 
 	return result;
+}
+
+
+/**
+ * Overwrite renderer.link, Open external link in new tab
+ * modified https://github.com/markedjs/marked/issues/655#issuecomment-712380889
+ */
+function openExternalLinkInNewTab(marked) {
+	const renderer = {
+		link({ href, title, text }) {
+			/**
+			 * @param   {string} href
+			 * @param   {string} title
+			 * @param   {string} text
+			 * @returns {string} - Anchor HTML text
+			 */
+			const buildAnchorText = (href, title, text) => {
+				const localLink = href.startsWith(`${location.protocol}//${location.hostname}`);
+
+				// to avoid title=null or title=undefined
+				if (title) {
+					return localLink
+						? `<a href="${href}" title="${title}">${text}</a>`
+						: `<a href="${href}" title="${title}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+				} else {
+					return localLink
+						? `<a href="${href}" title="${href}">${text}</a>`
+						: `<a href="${href}" title="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+				}
+			};
+
+			const anchorText = buildAnchorText(href, title, text);
+
+			return anchorText;
+		},
+	};
+
+	marked.use({ renderer });
+
+	return marked;
 }
 
 /**
