@@ -1,4 +1,11 @@
 
+#### [0.8.1] - 2025/04/17
+
+- fix
+	- Open external links in the page of "Update History" in a new tab
+- update
+	- Update Marked v14.1.2 to v15.0.8
+
 #### [0.8.0] - 2025/04/14
 
 - change
