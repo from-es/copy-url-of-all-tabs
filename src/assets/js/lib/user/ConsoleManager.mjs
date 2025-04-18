@@ -153,7 +153,7 @@ class ConsoleManager {
 		const methods        = _methods;
 		const nooutput       = () => {};
 
-		for (let key in methods) {
+		for (const key in methods) {
 			// window.console(or self.console) メソッドを上書き
 			Object.defineProperty(
 				console,
@@ -234,7 +234,7 @@ class ConsoleManager {
 		const consoleObject  = Object.create(console);
 
 		// メソッド名一覧の取得
-		for (let method in consoleObject) {
+		for (const method in consoleObject) {
 			methodNameList.push(method);
 		}
 

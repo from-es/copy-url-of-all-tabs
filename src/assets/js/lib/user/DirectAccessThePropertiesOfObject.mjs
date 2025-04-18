@@ -115,8 +115,8 @@ export class DirectAccessThePropertiesOfObject {
 	 * @returns {*}
 	 */
 	_getObject(obj, key, callback, readonly) {
-		let keys = key.split(".");
-		let k = keys.pop();
+		const keys = key.split(".");
+		const k    = keys.pop();
 
 		if (obj === undefined || obj === null) {
 			obj = [];
