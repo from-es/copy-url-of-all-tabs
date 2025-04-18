@@ -215,7 +215,7 @@
 				messagetype: "warning"
 			};
 
-			PopoverMessage.create(msg)
+			PopoverMessage.create(msg);
 		}
 
 		status.config.OptionsPage.fontsize = num;
@@ -246,7 +246,7 @@
 				messagetype: "warning"
 			};
 
-			PopoverMessage.create(msg)
+			PopoverMessage.create(msg);
 		}
 
 		status.config.PopupMenu.ClearMessage.timeout = num;
@@ -273,7 +273,7 @@
 				messagetype: "warning"
 			};
 
-			PopoverMessage.create(msg)
+			PopoverMessage.create(msg);
 		}
 
 		status.config.PopupMenu.OnClickClose.timeout = num;
@@ -300,7 +300,7 @@
 				messagetype: "warning"
 			};
 
-			PopoverMessage.create(msg)
+			PopoverMessage.create(msg);
 		}
 
 		status.config.PopupMenu.fontsize = num;

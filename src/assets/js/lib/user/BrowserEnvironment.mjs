@@ -62,7 +62,7 @@ export class BrowserEnvironment {
 		const result = parser.getResult();
 
 		result.checker = "navigator.userAgent";
-		result.message = "This Browser can get User-Agent. 'navigator.userAgent' is supported."
+		result.message = "This Browser can get User-Agent. 'navigator.userAgent' is supported.";
 
 		return result;
 	}

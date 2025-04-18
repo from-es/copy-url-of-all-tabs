@@ -91,7 +91,7 @@ function generateID(digit = 8, character = { number: true, alphabet: { uppercase
 		let str = "";
 
 		if ( chr?.number ) {
-			str += stringType.number
+			str += stringType.number;
 		}
 		if ( chr?.alphabet?.uppercase ) {
 			str += stringType.alphabet.uppercase;
@@ -104,7 +104,7 @@ function generateID(digit = 8, character = { number: true, alphabet: { uppercase
 		}
 
 		return str;
-	}
+	};
 
 	const typedArray  = new Uint32Array(digit);
 	const cryptoArray = crypto.getRandomValues(typedArray);
@@ -192,7 +192,7 @@ function escapeHTML(target) {
 			'"' : "&quot;",
 			"<" : "&lt;",
 			">" : "&gt;"
-		}[match]
+		}[match];
 	});
 }
 
@@ -251,11 +251,11 @@ function getCallerFunctionName() {
 	JavaScriptで半角を0.5、全角を1で文字数を計算する方法(https://zenn.dev/koojy/articles/javascript-2byte-length)
 */
 function getWidthOfStringLength(str) {
-	let   count = 0
+	let   count = 0;
 	const loop  = str.length;
 
 	for (let i = 0; i < loop; i++) {
-		const char = str.charCodeAt(i)
+		const char = str.charCodeAt(i);
 
 		if (!str[i].match(/\r?\n/g)) { // 改行コード判定
 			if (char >= 0x0 && char <= 0x7f) { // 全角半角判定

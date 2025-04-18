@@ -14,7 +14,7 @@ class FormatManager {
 				break;
 			default:
 				// debug
-				const msg = "Error, No match switch case. class FormatManager(tabs, format, template) >> format"
+				const msg = "Error, No match switch case. class FormatManager(tabs, format, template) >> format";
 				console.error(msg, { tabs, format, template });
 
 				throw new Error(msg);
@@ -96,7 +96,7 @@ class FormatManager {
 				'"' : "&quot;",
 				"<" : "&lt;",
 				">" : "&gt;"
-			}[match]
+			}[match];
 		});
 	}
 }

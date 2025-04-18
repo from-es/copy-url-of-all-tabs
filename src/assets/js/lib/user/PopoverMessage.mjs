@@ -188,7 +188,7 @@ export class PopoverMessage {
 
 		// ポップオーバーの表示時と非表示時に並び替える
 		popover.addEventListener("toggle", (event) => {
-			const isOpen = (event.newState === "open")
+			const isOpen = (event.newState === "open");
 
 			this.#alignPopoverMessage(isOpen);
 		});
@@ -292,7 +292,7 @@ export class PopoverMessage {
 			popoverMessage.message = [ warning ];
 		}
 
-		return popoverMessage
+		return popoverMessage;
 	}
 
 	static #checkArgument(argument) {
@@ -450,7 +450,7 @@ export class PopoverMessage {
 				'"' : "&quot;",
 				"<" : "&lt;",
 				">" : "&gt;"
-			}[match]
+			}[match];
 		});
 	}
 }
