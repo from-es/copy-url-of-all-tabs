@@ -80,7 +80,7 @@ export class FlashMessage {
 	}
 
 	static _checkArgument(argument) {
-		const template = "Error, The Argument passed to _checkAgument() in class FlashMessage() is invalid.";
+		const template = "Error, The Argument passed to _checkArgument() in class FlashMessage() is invalid.";
 
 		if ( typeof argument !== "object" ) {
 			// debug
@@ -145,7 +145,7 @@ export class FlashMessage {
 		(shadow).appendChild(style);
 
 		// Create Inner Component
-		const inner = this._getInneerComponent(flashMessage.message);
+		const inner = this._getInnerComponent(flashMessage.message);
 
 		// Attach the created elements to the shadow dom
 		(shadow).appendChild(inner);
@@ -153,7 +153,7 @@ export class FlashMessage {
 		// Add event, on double click close
 		component.addEventListener("dblclick", () => { component.remove(); });
 
-		// Add "Custom Modal Dialg" to document
+		// Add "Custom Modal Dialog" to document
 		(document.body).appendChild(component);
 
 		// Remove the "component-flashmessage" of Custom Element
@@ -247,19 +247,19 @@ export class FlashMessage {
 		return style;
 	};
 
-	static _getInneerComponent(message) {
+	static _getInnerComponent(message) {
 		const msg = this._createMessage(message);
 
 		// Create Element
-		const boxs = document.createElement("div");
+		const boxes = document.createElement("div");
 
 		// Set Attribute
-		(boxs).setAttribute("class", "flash-message");
+		(boxes).setAttribute("class", "flash-message");
 
 		// Add Element
-		boxs.appendChild(msg);
+		boxes.appendChild(msg);
 
-		return boxs;
+		return boxes;
 	}
 
 	static _createMessage(message) {
