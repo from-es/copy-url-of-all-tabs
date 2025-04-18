@@ -5,10 +5,10 @@ export class StorageManager {
 
 	static view(key) {
 		const keyname = (key === undefined ||  key === null || typeof key !== "string" || key === "") ? {} : key;
-		
+
 		chrome.storage.local.get(keyname, (items) => {
 			// console.log(`View Local Storage, keyname is "${keyname}".`, items);
-			
+
 			return { key: key, items: items };
 		});
 	}
@@ -17,18 +17,18 @@ export class StorageManager {
 		return new Promise(
 			(resolve, reject) => {
 				let config = null;
-				
+
 				if ((typeof key === "string" && key !== "") && (typeof data === "object" && data !== null)) {
 					config = { [key] : data };
 				} else {
 					console.error("Failed, Could not Save to Local Storage. Invalid argument, class StorageManager() >> save()", key, data);
-					
+
 					return reject(false);
 				}
-				
+
 				chrome.storage.local.set(config, () => {
 					// console.log(`Save to Local Storage. keyname is "${key}".`, config);
-					
+
 					return resolve(true);
 				});
 			}
@@ -40,9 +40,9 @@ export class StorageManager {
 			(resolve) => {
 				chrome.storage.local.get(key, (item) => {
 					const result = key ? item[key] : item;
-					
+
 					// console.log(`Load from Local Storage. keyname is "${key}".`, item)
-					
+
 					return resolve(result);
 				});
 			}
