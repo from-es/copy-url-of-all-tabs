@@ -636,15 +636,11 @@ export const define = {
 
 	// OptionsPage
 	OptionsPageFontSizeValueMin : 8,   // px
-	OptionsPageFontSizeValueMin : 8,   // px
-	OptionsPageFontSizeValueMax : 32,  // px
 	OptionsPageFontSizeValueMax : 32,  // px
 	OptionsPageFontSizeValueStep: 1,
 
 	// PopupMenu
 	PopupMenuFontSizeValueMin : 8,   // px
-	PopupMenuFontSizeValueMin : 8,   // px
-	PopupMenuFontSizeValueMax : 32,  // px
 	PopupMenuFontSizeValueMax : 32,  // px
 	PopupMenuFontSizeValueStep: 1,
 
@@ -658,8 +654,6 @@ export const define = {
 
 	// Tab
 	TabOpenDelayValueMin : 0,      // millisecond
-	TabOpenDelayValueMin : 0, 	    // millisecond
-	TabOpenDelayValueMax : 10000,  // millisecond
 	TabOpenDelayValueMax : 10000,  // millisecond
 	TabOpenDelayValueStep: 1
 };
