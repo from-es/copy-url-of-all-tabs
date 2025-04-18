@@ -6,17 +6,17 @@ class ClipboardManager {
 		let state = null;
 
 		await navigator.clipboard.readText()
-		.then(
-			// Success
-			(text) => {
-				state = text;
-			},
+			.then(
+				// Success
+				(text) => {
+					state = text;
+				},
 
-			// Failure
-			(err) => {
-				state = false;
-			}
-		);
+				// Failure
+				(err) => {
+					state = false;
+				}
+			);
 
 		return state;
 	}

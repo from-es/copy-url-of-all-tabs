@@ -73,8 +73,7 @@ export class PopoverMessage {
 		}
 	};
 
-	static #baseStylesheet =
-`
+	static #baseStylesheet = `
 /*
 	CSS Nesting, Google Chrome 112 or later
 */
