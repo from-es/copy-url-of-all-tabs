@@ -334,7 +334,6 @@
 				console.error("Error, Invalid argument passed to eventFilteringEnable() >> action >>", action);
 
 				return;
-				break;
 		}
 
 		status.config.Filtering[key].enable = !(status.config.Filtering[key].enable);
