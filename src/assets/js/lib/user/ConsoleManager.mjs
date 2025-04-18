@@ -95,17 +95,17 @@ class ConsoleManager {
 			}
 
 			// obj.logging
-			if ( !obj.hasOwnProperty("logging") || typeof obj.logging !== "boolean" ) {
+			if ( !Object.hasOwn(obj, "logging") || typeof obj.logging !== "boolean" ) {
 				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.logging`;
 			}
 
 			// obj.timestamp
-			if ( !obj.hasOwnProperty("timestamp") || typeof obj.timestamp !== "boolean" ) {
+			if ( !Object.hasOwn(obj, "timestamp") || typeof obj.timestamp !== "boolean" ) {
 				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timestamp`;
 			}
 
 			// obj.timecoordinate
-			if ( !obj.hasOwnProperty("timecoordinate") || typeof obj.timecoordinate !== "string" ) {
+			if ( !Object.hasOwn(obj, "timecoordinate") || typeof obj.timecoordinate !== "string" ) {
 				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timecoordinate`;
 			}
 			if ( (obj.timecoordinate).toUpperCase() !== "UTC" && (obj.timecoordinate).toUpperCase() !== "GMT" ) {
@@ -153,7 +153,7 @@ class ConsoleManager {
 		const methods        = _methods;
 		const nooutput       = () => {};
 
-		for (let key in methods) {
+		for (const key in methods) {
 			// window.console(or self.console) メソッドを上書き
 			Object.defineProperty(
 				console,
@@ -234,7 +234,7 @@ class ConsoleManager {
 		const consoleObject  = Object.create(console);
 
 		// メソッド名一覧の取得
-		for (let method in consoleObject) {
+		for (const method in consoleObject) {
 			methodNameList.push(method);
 		}
 

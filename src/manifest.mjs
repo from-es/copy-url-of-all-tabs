@@ -46,4 +46,4 @@ export const manifest =
 		"open_in_tab": true,
 		"page"       : "/options.html"
 	}
-}
+};

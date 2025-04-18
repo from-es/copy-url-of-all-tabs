@@ -76,7 +76,7 @@ export class FlashMessage {
 			flashMessage.message = [ warning ];
 		}
 
-		return flashMessage
+		return flashMessage;
 	}
 
 	static _checkArgument(argument) {
@@ -303,7 +303,7 @@ export class FlashMessage {
 				'"' : "&quot;",
 				"<" : "&lt;",
 				">" : "&gt;"
-			}[match]
+			}[match];
 		});
 	}
 	// -----------------------------------------------------------------------------------------

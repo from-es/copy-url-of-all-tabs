@@ -12,12 +12,13 @@ class FormatManager {
 			case "custom":
 				result = this.#custom(tabs, template, sanitize);
 				break;
-			default:
+			default: {
 				// debug
-				const msg = "Error, No match switch case. class FormatManager(tabs, format, template) >> format"
+				const msg = "Error, No match switch case. class FormatManager(tabs, format, template) >> format";
 				console.error(msg, { tabs, format, template });
 
 				throw new Error(msg);
+			}
 		}
 
 		return result;
@@ -54,7 +55,7 @@ class FormatManager {
 	}
 
 	static #custom(tabs, template, sanitize) {
-		if ( !template ){
+		if ( !template ) {
 			return 'Error, Row template is empty ! (see options page)';
 		}
 
@@ -96,7 +97,7 @@ class FormatManager {
 				'"' : "&quot;",
 				"<" : "&lt;",
 				">" : "&gt;"
-			}[match]
+			}[match];
 		});
 	}
 }

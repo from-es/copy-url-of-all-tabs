@@ -161,7 +161,7 @@ export class PageInformation {
 		try {
 			const doc              = win.document;
 			const elm              = doc.activeElement; // Frame or iFrame 内の要素にフォーカスがある場合、document.activeElement は、その Frame or iFrame 要素を返す
-			const hasContentWindow = elm.contentWindow; // elm 要素が、Frame or iFrame 要素であるなら、contentWindow　or contentDocument プロパティを持つ
+			const hasContentWindow = elm.contentWindow; // elm 要素が、Frame or iFrame 要素であるなら、contentWindow or contentDocument プロパティを持つ
 
 			// activeElement で取得した要素に contentDocument があれば再帰処理
 			result = (hasContentWindow) ? this.#findActiveElement(elm.contentWindow) : { window: win, document: doc, element: elm };
