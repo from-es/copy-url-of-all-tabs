@@ -9,7 +9,7 @@ import { ConsoleManager } from "./lib/user/ConsoleManager.mjs";
  * @param {object} define
  */
 function logging(config, define) {
-	const validConfig = ( config && typeof config === "object" && (config).hasOwnProperty("Debug") );
+	const validConfig = ( config && typeof config === "object" && Object.hasOwn(config, "Debug") );
 	const logging     = validConfig ? config.Debug : define.Config.Debug;
 
 	// config
@@ -165,7 +165,7 @@ function hasParentNode(elm) {
 	const parent = elm.parentNode;
 	const obj    = {
 		elm  : parent,
-		hasP : (parent).hasOwnProperty("nodeName"),
+		hasP : Object.hasOwn(parent, "nodeName"),
 		name : (parent.nodeName).toLowerCase(),
 		isA  : (parent.nodeName).toLowerCase() === "a",
 		href : parent.href
