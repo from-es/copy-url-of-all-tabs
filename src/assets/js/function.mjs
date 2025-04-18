@@ -200,7 +200,7 @@ function escapeHTML(target) {
 	指定セレクタのCSSルールを取得する(https://qiita.com/life5618/items/950558e4b72c038333f8)
 	呼び出し例 getRuleBySelector(".inner1")  selector に CSSセレクタ
 */
-function getRuleBySelector(selector){
+function getRuleBySelector(selector) {
 	let rule = null;
 
 	// stylesheetのリストを取得
