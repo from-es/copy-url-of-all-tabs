@@ -28,7 +28,7 @@ class ClipboardManager {
 	 */
 	static async write(data, minetype) {
 		const blob  = new Blob([ data ], { type : minetype });
-		const item  = [new ClipboardItem({ [ blob.type ] : blob })];
+		const item  = [ new ClipboardItem({ [ blob.type ] : blob }) ];
 		let   state = null;
 
 		await navigator.clipboard.write(item)

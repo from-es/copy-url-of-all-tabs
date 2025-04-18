@@ -121,16 +121,16 @@ export class DirectAccessThePropertiesOfObject {
 		if (obj === undefined || obj === null) {
 			obj = [];
 		} else if (!(obj instanceof Array)) {
-			obj = [obj];
+			obj = [ obj ];
 		}
 
 		obj = keys.reduce(function (obj, key) {
 			return obj.reduce(function (ary, obj) {
-				if (obj[key] !== undefined) {
-					ary = ary.concat(obj[key]);
+				if (obj[ key ] !== undefined) {
+					ary = ary.concat(obj[ key ]);
 				} else if (!readonly) {
-					obj[key] = {};
-					ary.push(obj[key]);
+					obj[ key ] = {};
+					ary.push(obj[ key ]);
 				}
 				return ary;
 			}, []);

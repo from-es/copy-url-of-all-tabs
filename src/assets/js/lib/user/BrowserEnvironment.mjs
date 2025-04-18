@@ -74,7 +74,7 @@ export class BrowserEnvironment {
 			const mobileness = agent.mobile; // true or false
 		*/
 
-		const args   = ["brands", "platform", "platformVersion", "mobile", "architecture", "bitness", "model", "uaFullVersion"];
+		const args   = [ "brands", "platform", "platformVersion", "mobile", "architecture", "bitness", "model", "uaFullVersion" ];
 		const detail = await agent.getHighEntropyValues(args);
 		/*
 			getHighEntropyValues(https://wicg.github.io/ua-client-hints/#browser-os-experiments-use-case)
