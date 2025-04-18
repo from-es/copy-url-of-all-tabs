@@ -6,17 +6,17 @@ class ClipboardManager {
 		let state = null;
 
 		await navigator.clipboard.readText()
-		.then(
-			// Success
-			(text) => {
-				state = text;
-			},
+			.then(
+				// Success
+				(text) => {
+					state = text;
+				},
 
-			// Failure
-			(err) => {
-				state = false;
-			}
-		);
+				// Failure
+				(err) => {
+					state = false;
+				}
+			);
 
 		return state;
 	}
@@ -28,7 +28,7 @@ class ClipboardManager {
 	 */
 	static async write(data, minetype) {
 		const blob  = new Blob([ data ], { type : minetype });
-		const item  = [new ClipboardItem({ [ blob.type ] : blob })];
+		const item  = [ new ClipboardItem({ [ blob.type ] : blob }) ];
 		let   state = null;
 
 		await navigator.clipboard.write(item)

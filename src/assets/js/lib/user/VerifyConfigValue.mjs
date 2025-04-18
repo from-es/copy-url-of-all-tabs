@@ -30,11 +30,11 @@ export class VerifyConfigValue {
 
 		(test).forEach(
 			(elm) => {
-				let property = elm['property'];
-				let rule     = elm['rule'];
-				let fail     = elm['fail'];
-				let has      = dapo.hasValue(conf, property);
-				let value    = dapo.getValue(conf, property);
+				const property = elm['property'];
+				const rule     = elm['rule'];
+				const fail     = elm['fail'];
+				const has      = dapo.hasValue(conf, property);
+				const value    = dapo.getValue(conf, property);
 
 				/* debug
 				console.log(

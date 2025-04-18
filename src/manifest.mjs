@@ -4,7 +4,7 @@ export const manifest =
 	"author"          : "From E",
 	"name"            : "Copy URL of All Tabs",
 	"description"     : "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
-	"version"         : "0.8.1.1",
+	"version"         : "0.8.1.2",
 
 	/**
 		CSS
@@ -46,4 +46,4 @@ export const manifest =
 		"open_in_tab": true,
 		"page"       : "/options.html"
 	}
-}
+};

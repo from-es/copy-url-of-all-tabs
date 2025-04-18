@@ -16,7 +16,7 @@ export function selectTab() {
 			}
 		);
 	};
-	const addEvntAnchor = () => {
+	const addEventAnchor = () => {
 		const anchor = document.querySelectorAll(constant.Navigation);
 
 		(anchor).forEach(
@@ -46,7 +46,7 @@ export function selectTab() {
 	const activeArticle = () => {
 		const anchor = document.querySelectorAll(constant.Navigation);
 
-		for (let elm of anchor) {
+		for (const elm of anchor) {
 			if ( elm.hash === constant.Active ) {
 				elm.click();
 				break;
@@ -55,6 +55,6 @@ export function selectTab() {
 	};
 
 	hideArticle();
-	addEvntAnchor();
+	addEventAnchor();
 	activeArticle();
 }

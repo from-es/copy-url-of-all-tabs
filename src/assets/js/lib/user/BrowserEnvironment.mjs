@@ -62,7 +62,7 @@ export class BrowserEnvironment {
 		const result = parser.getResult();
 
 		result.checker = "navigator.userAgent";
-		result.message = "This Browser can get User-Agent. 'navigator.userAgent' is supported."
+		result.message = "This Browser can get User-Agent. 'navigator.userAgent' is supported.";
 
 		return result;
 	}
@@ -74,7 +74,7 @@ export class BrowserEnvironment {
 			const mobileness = agent.mobile; // true or false
 		*/
 
-		const args   = ["brands", "platform", "platformVersion", "mobile", "architecture", "bitness", "model", "uaFullVersion"];
+		const args   = [ "brands", "platform", "platformVersion", "mobile", "architecture", "bitness", "model", "uaFullVersion" ];
 		const detail = await agent.getHighEntropyValues(args);
 		/*
 			getHighEntropyValues(https://wicg.github.io/ua-client-hints/#browser-os-experiments-use-case)
@@ -130,9 +130,9 @@ export class BrowserEnvironment {
 				name    : detail.platform,
 				version : detail.platformVersion
 			},
-			ua : ("userAgent" in globalThis?.navigator) ? globalThis.navigator.userAgent : undefined,
+			ua : ("userAgent" in globalThis.navigator) ? globalThis.navigator.userAgent : undefined,
 
-			language : ("language" in globalThis?.navigator) ? globalThis.navigator.language : undefined
+			language : ("language" in globalThis.navigator) ? globalThis.navigator.language : undefined
 		};
 
 		return result;

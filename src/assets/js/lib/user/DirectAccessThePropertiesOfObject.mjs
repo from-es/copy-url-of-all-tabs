@@ -115,22 +115,22 @@ export class DirectAccessThePropertiesOfObject {
 	 * @returns {*}
 	 */
 	_getObject(obj, key, callback, readonly) {
-		let keys = key.split(".");
-		let k = keys.pop();
+		const keys = key.split(".");
+		const k    = keys.pop();
 
 		if (obj === undefined || obj === null) {
 			obj = [];
 		} else if (!(obj instanceof Array)) {
-			obj = [obj];
+			obj = [ obj ];
 		}
 
 		obj = keys.reduce(function (obj, key) {
 			return obj.reduce(function (ary, obj) {
-				if (obj[key] !== undefined) {
-					ary = ary.concat(obj[key]);
+				if (obj[ key ] !== undefined) {
+					ary = ary.concat(obj[ key ]);
 				} else if (!readonly) {
-					obj[key] = {};
-					ary.push(obj[key]);
+					obj[ key ] = {};
+					ary.push(obj[ key ]);
 				}
 				return ary;
 			}, []);

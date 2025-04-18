@@ -1,4 +1,15 @@
 
+#### [0.8.1.2] - 2025/04/18
+
+- fix
+	- Fixed items found in ESLint
+	- Fixed typo in source code
+
+#### [0.8.1.1] - 2025/04/17
+
+- add
+	- Install ESLint for Svelte. eslint-plugin-svelte (https://sveltejs.github.io/eslint-plugin-svelte/)
+
 #### [0.8.1] - 2025/04/17
 
 - fix
@@ -13,7 +24,7 @@
 		- Change the path from ``project/src/src`` to ``project/src/assets``
 	- Change import path specification to using aliases (https://wxt.dev/api/reference/wxt/interfaces/InlineConfig.html#alias).
 - upgrade
-	- Upgrading WXT v0.19.0 to v0.20.0
+	- Upgrade WXT v0.19.0 to v0.20.0
 
 #### [0.7.0] - 2025/01/29
 
@@ -24,7 +35,7 @@
 
 #### [0.6.1.1] - 2025/01/20
 
-- update
+- upgrade
 	- Migrated the UI framework used in the options from Svelte 4 to 5.
 
 #### [0.6.1] - 2024/12/12

@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+
 // Import NPM Package
 import v8n from 'v8n';
 
@@ -76,7 +78,7 @@ export const define = {
 		},
 		Filtering : {
 			// Ver 0.6.1.1 まで使用 >> Paste でのみ使用
-			//enable  : true,
+			// enable  : true,
 
 			// Ver 0.7.0 以降対応
 			Copy :  {
@@ -134,7 +136,7 @@ export const define = {
 	},
 
 	Verification : [
-				// Information
+		// Information
 		{
 			property: 'Information.name',
 			fail    : () => { return manifest.name; },
@@ -181,7 +183,7 @@ export const define = {
 						}
 		},
 
-				// OptionsPage
+		// OptionsPage
 		{
 			property: 'OptionsPage.fontsize',
 			fail    : () => { return define.Config.OptionsPage.fontsize; },
@@ -195,7 +197,7 @@ export const define = {
 						}
 		},
 
-				// PopupMenu
+		// PopupMenu
 		{
 			property: 'PopupMenu.fontsize',
 			fail    : () => { return define.Config.PopupMenu.fontsize; },
@@ -558,7 +560,7 @@ export const define = {
 	},
 
 	Message : {
-				// Flash Message : options.html >> main.svelte
+		// Flash Message : options.html >> main.svelte
 		Setting_OnClick_SaveButton_Success : {
 			message : [ "Save Extension Settings." ],
 			timeout : 5000,
@@ -604,7 +606,7 @@ export const define = {
 				background: "#0066ff"
 			}
 		}
-				// ---------------------------------------------------------------------------------------------------------------------------
+		// ---------------------------------------------------------------------------------------------------------------------------
 	},
 
 	/*
@@ -634,15 +636,11 @@ export const define = {
 
 	// OptionsPage
 	OptionsPageFontSizeValueMin : 8,   // px
-	OptionsPageFontSizeValueMin : 8,   // px
-	OptionsPageFontSizeValueMax : 32,  // px
 	OptionsPageFontSizeValueMax : 32,  // px
 	OptionsPageFontSizeValueStep: 1,
 
 	// PopupMenu
 	PopupMenuFontSizeValueMin : 8,   // px
-	PopupMenuFontSizeValueMin : 8,   // px
-	PopupMenuFontSizeValueMax : 32,  // px
 	PopupMenuFontSizeValueMax : 32,  // px
 	PopupMenuFontSizeValueStep: 1,
 
@@ -656,8 +654,6 @@ export const define = {
 
 	// Tab
 	TabOpenDelayValueMin : 0,      // millisecond
-	TabOpenDelayValueMin : 0, 	    // millisecond
-	TabOpenDelayValueMax : 10000,  // millisecond
 	TabOpenDelayValueMax : 10000,  // millisecond
 	TabOpenDelayValueStep: 1
 };

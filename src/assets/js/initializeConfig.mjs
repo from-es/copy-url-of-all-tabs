@@ -42,12 +42,12 @@ function migrateConfig(_config) {
 	// Patch, from "0.6.1" or "0.6.1.1" to "0.7.z.a" or later
 	if ( Object.hasOwn(config.Filtering, "enable") ) {
 		config.Filtering = {
-				Copy :  {
-					enable : true
-				},
-				Paste : {
-					enable : config.Filtering.enable
-				}
+			Copy :  {
+				enable : true
+			},
+			Paste : {
+				enable : config.Filtering.enable
+			}
 		};
 
 		delete config.Filtering.enable;

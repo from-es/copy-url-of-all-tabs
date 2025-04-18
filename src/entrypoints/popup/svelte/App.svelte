@@ -47,10 +47,10 @@
 				result = await eventGetURLforAllTabs(action, config);
 				break;
 			case "paste":
-				result = await eventSetURLforTab(action, config)
+				result = await eventSetURLforTab(action, config);
 				break;
 			case "options":
-				eventOpenOptionsPage()
+				eventOpenOptionsPage();
 				break;
 			default:
 				eventDoNotMatch(action);
@@ -132,7 +132,7 @@
 	 * @returns {object}
 	 */
 	async function eventSetURLforTab(action, config) {
-		const regSearch = config.Search.regex
+		const regSearch = config.Search.regex;
 
 		const status    = await ClipboardManager.readText();
 		const text      = status ? status : "";
@@ -185,7 +185,7 @@
 	 *  @returns {string[]}
 	 */
 	function getUrlList(text, regSearch) {
-		const array = regSearch ? (text).match(/(https?):\/\/[a-z0-9\/:%_+.,#?!@&=-]+/gi) : text.split("\n");
+		const array = regSearch ? (text).match(/(https?):\/\/[a-z0-9/:%_+.,#?!@&=-]+/gi) : text.split("\n");
 
 		if ( !array || !Array.isArray(array)) {
 			return [];
@@ -254,7 +254,7 @@
 			}
 
 			// Filtering : protocol
-			const protocol = (new URL(url)).protocol
+			const protocol = (new URL(url)).protocol;
 			const isMatch  = (regex).test(protocol);
 			if ( !isMatch ) {
 				// debug

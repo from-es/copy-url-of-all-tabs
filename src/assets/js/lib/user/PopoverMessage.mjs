@@ -73,8 +73,7 @@ export class PopoverMessage {
 		}
 	};
 
-	static #baseStylesheet =
-`
+	static #baseStylesheet = `
 /*
 	CSS Nesting, Google Chrome 112 or later
 */
@@ -188,7 +187,7 @@ export class PopoverMessage {
 
 		// ポップオーバーの表示時と非表示時に並び替える
 		popover.addEventListener("toggle", (event) => {
-			const isOpen = (event.newState === "open")
+			const isOpen = (event.newState === "open");
 
 			this.#alignPopoverMessage(isOpen);
 		});
@@ -234,7 +233,7 @@ export class PopoverMessage {
 				: this.#default.style.close;
 
 			const margin = this.#default.style.margin;
-			//const moveHeight = popover.clientHeight * index;
+			// const moveHeight = popover.clientHeight * index;
 			let sum  = 0;
 			for (let i = 0; i < index; i++) {
 				sum += (array[i].clientHeight) + margin;
@@ -292,7 +291,7 @@ export class PopoverMessage {
 			popoverMessage.message = [ warning ];
 		}
 
-		return popoverMessage
+		return popoverMessage;
 	}
 
 	static #checkArgument(argument) {
@@ -450,7 +449,7 @@ export class PopoverMessage {
 				'"' : "&quot;",
 				"<" : "&lt;",
 				">" : "&gt;"
-			}[match]
+			}[match];
 		});
 	}
 }
