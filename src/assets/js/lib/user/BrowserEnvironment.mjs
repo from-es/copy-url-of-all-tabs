@@ -130,9 +130,9 @@ export class BrowserEnvironment {
 				name    : detail.platform,
 				version : detail.platformVersion
 			},
-			ua : ("userAgent" in globalThis?.navigator) ? globalThis.navigator.userAgent : undefined,
+			ua : ("userAgent" in globalThis.navigator) ? globalThis.navigator.userAgent : undefined,
 
-			language : ("language" in globalThis?.navigator) ? globalThis.navigator.language : undefined
+			language : ("language" in globalThis.navigator) ? globalThis.navigator.language : undefined
 		};
 
 		return result;

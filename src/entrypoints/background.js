@@ -23,7 +23,7 @@ function main() {
  * @returns {Promise}
  */
 function eventOnMessage(message, sender, sendResponse) {
-	const { config, define } = message?.status;
+	const { config, define } = message.status;
 
 	// Set logging console
 	logging(config, define);
