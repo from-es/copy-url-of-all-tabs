@@ -22,7 +22,7 @@ async function boot() {
 }
 
 function main(config, define) {
-	//console.clear();
+	console.clear();
 
 	// Set logging console
 	logging(config, define);

@@ -148,7 +148,7 @@ function isChromeVersion92orLater(define) {
 	const isVersion92orLater = (version >= 92);
 	const result             = (isChromium && isVersion92orLater);
 
-	//console.log({version, isChromium, BrowserName: define.Environment.Browser});
+	// console.log({version, isChromium, BrowserName: define.Environment.Browser});
 
 	return result;
 }

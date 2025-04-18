@@ -233,7 +233,7 @@ export class PopoverMessage {
 				: this.#default.style.close;
 
 			const margin = this.#default.style.margin;
-			//const moveHeight = popover.clientHeight * index;
+			// const moveHeight = popover.clientHeight * index;
 			let sum  = 0;
 			for (let i = 0; i < index; i++) {
 				sum += (array[i].clientHeight) + margin;

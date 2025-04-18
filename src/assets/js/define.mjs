@@ -78,7 +78,7 @@ export const define = {
 		},
 		Filtering : {
 			// Ver 0.6.1.1 まで使用 >> Paste でのみ使用
-			//enable  : true,
+			// enable  : true,
 
 			// Ver 0.7.0 以降対応
 			Copy :  {

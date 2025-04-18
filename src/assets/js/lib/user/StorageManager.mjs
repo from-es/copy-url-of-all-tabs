@@ -7,7 +7,7 @@ export class StorageManager {
 		const keyname = (key === undefined ||  key === null || typeof key !== "string" || key === "") ? {} : key;
 		
 		chrome.storage.local.get(keyname, (items) => {
-			//console.log(`View Local Storage, keyname is "${keyname}".`, items);
+			// console.log(`View Local Storage, keyname is "${keyname}".`, items);
 			
 			return { key: key, items: items };
 		});
@@ -27,7 +27,7 @@ export class StorageManager {
 				}
 				
 				chrome.storage.local.set(config, () => {
-					//console.log(`Save to Local Storage. keyname is "${key}".`, config);
+					// console.log(`Save to Local Storage. keyname is "${key}".`, config);
 					
 					return resolve(true);
 				});
@@ -41,7 +41,7 @@ export class StorageManager {
 				chrome.storage.local.get(key, (item) => {
 					const result = key ? item[key] : item;
 					
-					//console.log(`Load from Local Storage. keyname is "${key}".`, item)
+					// console.log(`Load from Local Storage. keyname is "${key}".`, item)
 					
 					return resolve(result);
 				});
