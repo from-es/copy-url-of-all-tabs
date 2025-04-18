@@ -85,7 +85,7 @@ function generateID(digit = 8, character = { number: true, alphabet: { uppercase
 			uppercase : "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 			lowercase : "abcdefghijklmnopqrstuvwxyz"
 		},
-		symbol : "`~!@#$%^&*()_+-={}[]\|:;\"'<>,.?/"
+		symbol : "`~!@#$%^&*()_+-={}[]|:;\"'<>,.?/"
 	};
 	const getCharacter = (chr) => {
 		let str = "";

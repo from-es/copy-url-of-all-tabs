@@ -185,7 +185,7 @@
 	 *  @returns {string[]}
 	 */
 	function getUrlList(text, regSearch) {
-		const array = regSearch ? (text).match(/(https?):\/\/[a-z0-9\/:%_+.,#?!@&=-]+/gi) : text.split("\n");
+		const array = regSearch ? (text).match(/(https?):\/\/[a-z0-9/:%_+.,#?!@&=-]+/gi) : text.split("\n");
 
 		if ( !array || !Array.isArray(array)) {
 			return [];
