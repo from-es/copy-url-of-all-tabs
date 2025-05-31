@@ -107,7 +107,7 @@ export const define = {
 
 				about: false, // "about:"
 
-				chrome  : false , // "chrome:"
+				chrome  : false, // "chrome:"
 				/*
 				edge    : false// "edge:"
 				vivaldi : false// "vivaldi:"
