@@ -236,7 +236,7 @@ function getCallerFunctionName() {
 		const st         = e.stack;
 		let   m;
 
-		while((m = reg.exec(st))) {
+		while ((m = reg.exec(st))) {
 			callerName = (m !== null) ? m[1] || m[2] : 'None';
 		}
 	}
