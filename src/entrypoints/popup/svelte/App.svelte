@@ -261,20 +261,35 @@
 			// Passed all checks
 			return true;
 		};
+		const getArrayDiff = (original, target) => {
+			const diff = [];
+
+			(original).forEach(
+				(elm) => {
+					const exist = (target).includes(elm);
+
+					if (!exist) {
+						diff.push(elm);
+					}
+				}
+			);
+
+			return diff;
+		};
 
 		const regex    = getRegexProtocol(config, define);
 		const list     = structuredClone(urlList);
 		const filtered = (list).filter(filteringURL);
 		const result   = (filtered).map((url) => { return url.trim(); });
-		const diff     = (list).filter(elm => { return ((result).indexOf(elm) === -1); });
+		const diff     = getArrayDiff(urlList, result); // 配列 urlList と result の差分取得 >> デバック用
 
 		// debug
 		console.log(`Debug, Action ${action}. Filtering >>`,
 			{
 				list: {
-					before : urlList, // 全タブのURL
-					after  : result,	// フィルタリング済みURL
-					diff   : diff     // 差分 >> フィルタリング対象URL
+					before : urlList, // 全タブのURLの配列
+					after  : result,  // フィルタリング済みURLの配列
+					diff   : diff     // 配列差分 >> 全タブのURLとフィルタリング済みURLとの比較
 				},
 				action    : action,
 				filtering : filtering,
