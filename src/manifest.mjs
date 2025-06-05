@@ -4,13 +4,14 @@ export const manifest =
 	"author"          : "From E",
 	"name"            : "Copy URL of All Tabs",
 	"description"     : "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
-	"version"         : "0.8.1.3",
+	"version"         : "0.8.1.4",
 
 	/**
 		CSS
-			:has() >> Google Chrome 105 & later(https://developer.mozilla.org/ja/docs/Web/CSS/:has)
+			:has() >> Google Chrome 105 & later(https://developer.mozilla.org/en-US/docs/Web/CSS/:has)
 		JavaScript
-			Error: cause >> Google Chrome 125 & later(https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
+			URL.canParse() >> Google Chrome 120 & later(https://developer.mozilla.org/en-US/docs/Web/API/URL/canParse_static)
+			Error: cause   >> Google Chrome 125 & later(https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
 	*/
 	"minimum_chrome_version": "125.0",
 	"icons" : {
