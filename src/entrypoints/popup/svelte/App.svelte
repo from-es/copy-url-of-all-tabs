@@ -94,15 +94,10 @@
 		const getFilteredTabs = (tabs, config, action) => {
 			const urlList      = (tabs).map((tab) => { return tab.url; });
 			const filtering    = config.Filtering.Copy.enable;
-			const allowUrlList = filteringList(urlList, filtering, action);
+			const allowUrlList = new Set(filteringList(urlList, filtering, action));
+			const filtered     = (tabs).filter((tab) => allowUrlList.has(tab.url));  // 全タブから allowUrlList に登録済みの URL を持つタブだけを取得
 
-			// 要、リファクタリング@2025/01/29
-			return (tabs).filter(
-				(tab) => {
-					// Array.prototype.find() >> テスト関数を満たす配列内の最初の要素を返す。テスト関数を満たす値が無い場合は undefined を返す。
-					return (allowUrlList).find((url) => { return (url === tab.url); });
-				}
-			);
+			return filtered;
 		};
 		const filteredTabs = getFilteredTabs(tabs, config, action);
 
@@ -266,20 +261,35 @@
 			// Passed all checks
 			return true;
 		};
+		const getArrayDiff = (original, target) => {
+			const diff = [];
+
+			(original).forEach(
+				(elm) => {
+					const exist = (target).includes(elm);
+
+					if (!exist) {
+						diff.push(elm);
+					}
+				}
+			);
+
+			return diff;
+		};
 
 		const regex    = getRegexProtocol(config, define);
 		const list     = structuredClone(urlList);
 		const filtered = (list).filter(filteringURL);
 		const result   = (filtered).map((url) => { return url.trim(); });
-		const diff     = (list).filter(elm => { return ((result).indexOf(elm) === -1); });
+		const diff     = getArrayDiff(urlList, result); // 配列 urlList と result の差分取得 >> デバック用
 
 		// debug
 		console.log(`Debug, Action ${action}. Filtering >>`,
 			{
 				list: {
-					before : urlList, // 全タブのURL
-					after  : result,	// フィルタリング済みURL
-					diff   : diff     // 差分 >> フィルタリング対象URL
+					before : urlList, // 全タブのURLの配列
+					after  : result,  // フィルタリング済みURLの配列
+					diff   : diff     // 配列差分 >> 全タブのURLとフィルタリング済みURLとの比較
 				},
 				action    : action,
 				filtering : filtering,
