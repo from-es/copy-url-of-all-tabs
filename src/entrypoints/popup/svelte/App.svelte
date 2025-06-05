@@ -94,15 +94,10 @@
 		const getFilteredTabs = (tabs, config, action) => {
 			const urlList      = (tabs).map((tab) => { return tab.url; });
 			const filtering    = config.Filtering.Copy.enable;
-			const allowUrlList = filteringList(urlList, filtering, action);
+			const allowUrlList = new Set(filteringList(urlList, filtering, action));
+			const filtered     = (tabs).filter((tab) => allowUrlList.has(tab.url));  // 全タブから allowUrlList に登録済みの URL を持つタブだけを取得
 
-			// 要、リファクタリング@2025/01/29
-			return (tabs).filter(
-				(tab) => {
-					// Array.prototype.find() >> テスト関数を満たす配列内の最初の要素を返す。テスト関数を満たす値が無い場合は undefined を返す。
-					return (allowUrlList).find((url) => { return (url === tab.url); });
-				}
-			);
+			return filtered;
 		};
 		const filteredTabs = getFilteredTabs(tabs, config, action);
 
