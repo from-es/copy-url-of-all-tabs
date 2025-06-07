@@ -49,9 +49,7 @@ class FormatManager {
 			return 'Error, Row template is empty ! (see options page)';
 		}
 
-		const array = [];
-
-		(tabs).forEach(
+		const array = (tabs).map(
 			(tab) => {
 				const url     = tab.url;
 				const title   = sanitize ? this.#escapeHTML(tab.title) : tab.title;
@@ -59,10 +57,9 @@ class FormatManager {
 										.replace(/\$url/gi, url)
 										.replace(/\$title/gi, title);
 
-				(array).push(current);
+				return current;
 			}
 		);
-
 		const result = (array).join("\n");
 
 		// debug
