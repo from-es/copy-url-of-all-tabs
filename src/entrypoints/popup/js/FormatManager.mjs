@@ -35,15 +35,11 @@ class FormatManager {
 	}
 
 	static #json(tabs) {
-		const array = [];
-
-		(tabs).forEach(
-			(tab) => {
-				(array).push({ title: tab.title, url: tab.url });
-			}
-		);
-
+		const array  = (tabs).map((tab) => { return { title: tab.title, url: tab.url }; });
 		const result = JSON.stringify(array, null, "\t");
+
+		// debug
+		console.log("Debug, #json >>", result);
 
 		return result;
 	}
