@@ -25,43 +25,31 @@ class FormatManager {
 	}
 
 	static #text(tabs) {
-		const array = [];
-
-		(tabs).forEach(
-			(tab) => {
-				(array).push(tab.url);
-			}
-		);
-
+		const array  = (tabs).map((tab) => { return tab.url; });
 		const result = (array).join("\n");
 
+		// debug
 		console.log("Debug, #text >>", result);
 
 		return result;
 	}
 
 	static #json(tabs) {
-		const array = [];
-
-		(tabs).forEach(
-			(tab) => {
-				(array).push({ title: tab.title, url: tab.url });
-			}
-		);
-
+		const array  = (tabs).map((tab) => { return { title: tab.title, url: tab.url }; });
 		const result = JSON.stringify(array, null, "\t");
+
+		// debug
+		console.log("Debug, #json >>", result);
 
 		return result;
 	}
 
 	static #custom(tabs, template, sanitize) {
 		if ( !template ) {
-			return 'Error, Row template is empty ! (see options page)';
+			return "Error, Row template is empty ! (see options page)";
 		}
 
-		const array = [];
-
-		(tabs).forEach(
+		const array = (tabs).map(
 			(tab) => {
 				const url     = tab.url;
 				const title   = sanitize ? this.#escapeHTML(tab.title) : tab.title;
@@ -69,10 +57,9 @@ class FormatManager {
 										.replace(/\$url/gi, url)
 										.replace(/\$title/gi, title);
 
-				(array).push(current);
+				return current;
 			}
 		);
-
 		const result = (array).join("\n");
 
 		// debug
