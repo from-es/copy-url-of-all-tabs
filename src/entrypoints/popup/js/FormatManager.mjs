@@ -46,7 +46,7 @@ class FormatManager {
 
 	static #custom(tabs, template, sanitize) {
 		if ( !template ) {
-			return 'Error, Row template is empty ! (see options page)';
+			return "Error, Row template is empty ! (see options page)";
 		}
 
 		const array = (tabs).map(
