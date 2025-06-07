@@ -25,16 +25,10 @@ class FormatManager {
 	}
 
 	static #text(tabs) {
-		const array = [];
-
-		(tabs).forEach(
-			(tab) => {
-				(array).push(tab.url);
-			}
-		);
-
+		const array  = (tabs).map((tab) => { return tab.url; });
 		const result = (array).join("\n");
 
+		// debug
 		console.log("Debug, #text >>", result);
 
 		return result;
