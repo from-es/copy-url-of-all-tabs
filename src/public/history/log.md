@@ -1,9 +1,31 @@
 
-#### [0.8.1.2] - 2025/04/18
+#### [0.8.1.5] - 2025/06/07
+
+- clean
+	- Optimizing array operations (https://github.com/from-es/copy-url-of-all-tabs/commit/c44c3bcb7145e1668c4650b1134ad19220bb25a2)
+	- Optimizing array operations (https://github.com/from-es/copy-url-of-all-tabs/commit/db3c365f9e033fa6980fe389e0cea97359b5d56b)
+	- Optimizing array operations (https://github.com/from-es/copy-url-of-all-tabs/commit/fccf39819b48924df631765eac0d4e6636738858)
+- fix
+	- Fixed "quotes" of items found in ESLint ``FormatManager.mjs``
+
+#### [0.8.1.4] - 2025/06/05
+
+- clean
+	- Optimizing the filtering process (https://github.com/from-es/copy-url-of-all-tabs/commit/08f3a6259a4f84fc45a2c56649a6ee1956398910)
+	- Optimizing array difference calculations (https://github.com/from-es/copy-url-of-all-tabs/commit/cc37ff3e34ea9b3252426819f92cf3bc0ebd7412)
+
+#### [0.8.1.3] - 2025/05/31
 
 - fix
 	- Fixed items found in ESLint
+- update
+	- Update **Marked** v15.0.8 to v15.0.12
+
+#### [0.8.1.2] - 2025/04/18
+
+- fix
 	- Fixed typo in source code
+	- Fixed items found in ESLint
 
 #### [0.8.1.1] - 2025/04/17
 
@@ -15,7 +37,7 @@
 - fix
 	- Open external links in the page of "Update History" in a new tab
 - update
-	- Update Marked v14.1.2 to v15.0.8
+	- Update **Marked** v14.1.2 to v15.0.8
 
 #### [0.8.0] - 2025/04/14
 
