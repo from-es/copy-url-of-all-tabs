@@ -4,7 +4,7 @@ class PopoverMessageElement extends HTMLDivElement {
 		super();
 	}
 }
-customElements.define('component-popover-message', PopoverMessageElement, { extends: "div" });
+customElements.define("component-popover-message", PopoverMessageElement, { extends: "div" });
 
 
 
@@ -204,7 +204,7 @@ export class PopoverMessage {
 		popover.popover = "manual";
 
 		// スタイルシートの挿入
-		const shadow    = (popover).attachShadow({ mode: 'open' });
+		const shadow    = (popover).attachShadow({ mode: "open" });
 		const baseStyle = document.createElement("style");
 		baseStyle.textContent = this.#baseStylesheet;
 		(shadow).appendChild(baseStyle);
@@ -351,7 +351,7 @@ export class PopoverMessage {
 	}
 
 	static #getStylesheet(popoverMessage) {
-		const style = document.createElement('style');
+		const style = document.createElement("style");
 		const getStyleValue = (obj) => {
 			const style = {
 				// Default Color Setting

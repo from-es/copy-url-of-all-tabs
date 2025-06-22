@@ -1,6 +1,6 @@
 <script>
 	// Import Svelte
-	import { onMount } from 'svelte';
+	import { onMount } from "svelte";
 
 	// Import NPM Package
 	import { cloneDeep } from "lodash-es";
@@ -50,9 +50,9 @@
 	}
 
 	function getCopyright(data) {
-		const fromYear = (data.publish && typeof data.publish === 'number') ? data.publish : null;
+		const fromYear = (data.publish && typeof data.publish === "number") ? data.publish : null;
 		const thisYear = (new Date()).getFullYear();
-		const lastYear = (fromYear && fromYear !== thisYear && thisYear > fromYear) ? (`-${thisYear}`) : '';
+		const lastYear = (fromYear && fromYear !== thisYear && thisYear > fromYear) ? (`-${thisYear}`) : "";
 		const result   = `&copy; ${fromYear}${lastYear} <strong>${data.author}</strong>.`;
 
 		return result;
@@ -93,7 +93,7 @@
 		config.Information = getInformationOfConfig();
 
 		// Save to Local Storage
-		StorageManager.save('config', config);
+		StorageManager.save("config", config);
 
 		// Reinitialize, List of User Script
 		await reInitialize();
@@ -102,7 +102,7 @@
 		PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
 
 		// debug
-		console.log('Save to Storage.', config);
+		console.log("Save to Storage.", config);
 	}
 
 	async function eventSettingReset() {
@@ -115,15 +115,15 @@
 		PopoverMessage.create(status.define.Message.Setting_OnClick_ResetButton);
 
 		// debug
-		console.log('Reset Config Data.', status.config);
+		console.log("Reset Config Data.", status.config);
 	}
 
 	async function importConfig(filetype) {
 		const showOpenFileDialog = () => {
 			return new Promise(resolve => {
-				const input = document.createElement('input');
+				const input = document.createElement("input");
 
-				input.type     = 'file';
+				input.type     = "file";
 				input.accept   = filetype;
 				input.onchange = (event) => { resolve(event.target.files[0]); };
 
@@ -163,7 +163,7 @@
 			PopoverMessage.create(status.define.Message.Setting_ImportConfig_Success);
 
 			// debug
-			console.log('main.svelte > importConfig() > config', status.config);
+			console.log("main.svelte > importConfig() > config", status.config);
 		} catch (error) {
 			// Flash Message
 			PopoverMessage.create(status.define.Message.Setting_ImportConfig_Error);
@@ -174,15 +174,15 @@
 	}
 
 	function exportConfig(setting, filename, filetype) {
-		const config = JSON.stringify(setting, null , '\t');
+		const config = JSON.stringify(setting, null , "\t");
 		const file   = { minetype : filetype, name : filename};
 		const blob   = new Blob([ config ], { type: file.minetype });
 		const url    = URL.createObjectURL(blob);
-		const ank    = document.createElement('a');
+		const ank    = document.createElement("a");
 
 		ank.download            = file.name;
 		ank.href                = url;
-		ank.dataset.downloadurl = [ file.minetype, ank.download, ank.href ].join(':');
+		ank.dataset.downloadurl = [ file.minetype, ank.download, ank.href ].join(":");
 		ank.click();
 
 		// 削除
@@ -409,16 +409,16 @@
 
 	// --------------------------------------------------------------------------------------------
 	function eventImportConfig() {
-		const filetype = 'application/json';
+		const filetype = "application/json";
 
 		importConfig(filetype);
 	}
 
 	function eventExportConfig() {
 		(async () => {
-			const setting  = await StorageManager.load('config');
-			const datestr  = dayjs().format('YYYY-MM-DD_HH-mm-ss'); // 要、Day.js Library(https://day.js.org/)
-			const filetype = 'application/json';
+			const setting  = await StorageManager.load("config");
+			const datestr  = dayjs().format("YYYY-MM-DD_HH-mm-ss"); // 要、Day.js Library(https://day.js.org/)
+			const filetype = "application/json";
 			const name     = status.define.Information.name;
 			const version  = status.define.Information.version;
 			const filename = `${name}_v${version}_${datestr}.json`;
@@ -518,15 +518,15 @@
 							<legend>Format type</legend>
 							<form id="Format-type">
 								<label data-description="URL">
-									<input type="radio" name="Format-type" value="text" checked={ status.config.Format.type === 'text' ? true : false } onchange={ eventFormatType }>
+									<input type="radio" name="Format-type" value="text" checked={ status.config.Format.type === "text" ? true : false } onchange={ eventFormatType }>
 									text
 								</label>
 								<label data-description="JSON format Text with title & url as object key names">
-									<input type="radio" name="Format-type" value="json" checked={ status.config.Format.type === 'json' ? true : false } onchange={ eventFormatType }>
+									<input type="radio" name="Format-type" value="json" checked={ status.config.Format.type === "json" ? true : false } onchange={ eventFormatType }>
 									json
 								</label>
 								<label data-description="You can specify a template in your own format">
-									<input type="radio" name="Format-type" value="custom" checked={ status.config.Format.type === 'custom' ? true : false } onchange={ eventFormatType }>
+									<input type="radio" name="Format-type" value="custom" checked={ status.config.Format.type === "custom" ? true : false } onchange={ eventFormatType }>
 									custom
 								</label>
 							</form>
@@ -841,11 +841,11 @@
 
 							<form id="Debug-timecoordinate">
 								<label for="Debug-timecoordinate-UTC">
-									<input id="Debug-timecoordinate-UTC" type="radio" name="timecoordinate" value="UTC" checked={ status.config.Debug.timecoordinate === 'UTC' ? true : false } onchange={eventDebugTimecoordinate}>
+									<input id="Debug-timecoordinate-UTC" type="radio" name="timecoordinate" value="UTC" checked={ status.config.Debug.timecoordinate === "UTC" ? true : false } onchange={eventDebugTimecoordinate}>
 									UTC
 								</label>
 								<label for="Debug-timecoordinate-GMT">
-									<input id="Debug-timecoordinate-GMT" type="radio" name="timecoordinate" value="GMT" checked={ status.config.Debug.timecoordinate === 'GMT' ? true : false } onchange={eventDebugTimecoordinate}>
+									<input id="Debug-timecoordinate-GMT" type="radio" name="timecoordinate" value="GMT" checked={ status.config.Debug.timecoordinate === "GMT" ? true : false } onchange={eventDebugTimecoordinate}>
 									GMT
 								</label>
 							</form>

@@ -138,7 +138,7 @@ export class FlashMessage {
 	static _render(flashMessage) {
 		// Attach the Autonomous Custom Element
 		const component = document.createElement(this.CustomElement.name);
-		const shadow    = (component).attachShadow({ mode: 'open' });
+		const shadow    = (component).attachShadow({ mode: "open" });
 
 		// Create & Attach CSS
 		const style = this._getStylesheet(flashMessage);
@@ -168,7 +168,7 @@ export class FlashMessage {
 	}
 
 	static _getStylesheet(flashMessage) {
-		const style = document.createElement('style');
+		const style = document.createElement("style");
 		const getStyleValue = (obj) => {
 			const style = {
 				// Default Color Setting
