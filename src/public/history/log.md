@@ -1,4 +1,11 @@
 
+#### [0.8.1.6] - 2025/06/22
+
+- fix
+	- Fixed "quotes" of items found in ESLint
+	- Fixed "space-infix-ops" of items found in ESLint
+	- Fixed "comma-spacing" of items found in ESLint
+
 #### [0.8.1.5] - 2025/06/07
 
 - clean
