@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 
 // Import NPM Package
-import v8n from 'v8n';
+import v8n from "v8n";
 
 const manifest = chrome.runtime.getManifest();
 
@@ -57,7 +57,7 @@ export const define = {
 		Debug : {
 			logging       : false, // true >> console 出力を有効にする
 			timestamp     : true,  // true >> console 出力にタイムスタンプを付加する
-			timecoordinate: 'UTC'   // 'UTC' or 'GMT'
+			timecoordinate: "UTC"   // 'UTC' or 'GMT'
 		},
 		OptionsPage : {
 			fontsize: 16
@@ -138,7 +138,7 @@ export const define = {
 	Verification : [
 		// Information
 		{
-			property: 'Information.name',
+			property: "Information.name",
 			fail    : () => { return manifest.name; },
 			rule    : (value) => {
 								return v8n()
@@ -149,7 +149,7 @@ export const define = {
 						}
 		},
 		{
-			property: 'Information.version',
+			property: "Information.version",
 			fail    : () => { return manifest.version; },
 			rule    : (value) => {
 								return v8n()
@@ -161,7 +161,7 @@ export const define = {
 						}
 		},
 		{
-			property: 'Information.date.unixtime',
+			property: "Information.date.unixtime",
 			fail    : () => { return Date.now(); },
 			rule    : (value) => {
 								return v8n()
@@ -172,7 +172,7 @@ export const define = {
 						}
 		},
 		{
-			property: 'Information.date.iso8601',
+			property: "Information.date.iso8601",
 			fail    : () => { return new Date().toISOString(); },
 			rule    : (value) => {
 								return v8n()
@@ -185,7 +185,7 @@ export const define = {
 
 		// OptionsPage
 		{
-			property: 'OptionsPage.fontsize',
+			property: "OptionsPage.fontsize",
 			fail    : () => { return define.Config.OptionsPage.fontsize; },
 			rule    : (value) => {
 								return v8n()
@@ -199,7 +199,7 @@ export const define = {
 
 		// PopupMenu
 		{
-			property: 'PopupMenu.fontsize',
+			property: "PopupMenu.fontsize",
 			fail    : () => { return define.Config.PopupMenu.fontsize; },
 			rule    : (value) => {
 								return v8n()
@@ -211,7 +211,7 @@ export const define = {
 						}
 		},
 		{
-			property: 'PopupMenu.ClearMessage.enable',
+			property: "PopupMenu.ClearMessage.enable",
 			fail    : () => { return define.Config.PopupMenu.ClearMessage.enable; },
 			rule    : (value) => {
 								return v8n()
@@ -222,7 +222,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'PopupMenu.ClearMessage.timeout',
+			property: "PopupMenu.ClearMessage.timeout",
 			fail    : () => { return define.Config.PopupMenu.ClearMessage.timeout; },
 			rule    : (value) => {
 								return v8n()
@@ -234,7 +234,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'PopupMenu.OnClickClose.enable',
+			property: "PopupMenu.OnClickClose.enable",
 			fail    : () => { return define.Config.PopupMenu.OnClickClose.enable; },
 			rule    : (value) => {
 								return v8n()
@@ -245,7 +245,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'PopupMenu.OnClickClose.timeout',
+			property: "PopupMenu.OnClickClose.timeout",
 			fail    : () => { return define.Config.PopupMenu.OnClickClose.timeout; },
 			rule    : (value) => {
 								return v8n()
@@ -259,7 +259,7 @@ export const define = {
 
 		// Search
 		{
-			property: 'Search.regex',
+			property: "Search.regex",
 			fail    : () => { return define.Config.Search.regex; },
 			rule    : (value) => {
 								return v8n()
@@ -272,7 +272,7 @@ export const define = {
 
 		// Filtering
 		{
-			property: 'Filtering.Copy.enable',
+			property: "Filtering.Copy.enable",
 			fail    : () => { return define.Config.Filtering.Copy.enable; },
 			rule    : (value) => {
 								return v8n()
@@ -283,7 +283,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Paste.enable',
+			property: "Filtering.Paste.enable",
 			fail    : () => { return define.Config.Filtering.Paste.enable; },
 			rule    : (value) => {
 								return v8n()
@@ -308,7 +308,7 @@ export const define = {
 		*/
 
 		{
-			property: 'Filtering.Protocol',
+			property: "Filtering.Protocol",
 			fail    : () => { return define.Config.Filtering.Protocol; },
 			rule    : (value) => {
 								return v8n()
@@ -319,7 +319,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.http',
+			property: "Filtering.Protocol.http",
 			fail    : () => { return define.Config.Filtering.Protocol.http; },
 			rule    : (value) => {
 								return v8n()
@@ -330,7 +330,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.https',
+			property: "Filtering.Protocol.https",
 			fail    : () => { return define.Config.Filtering.Protocol.https; },
 			rule    : (value) => {
 								return v8n()
@@ -341,7 +341,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.file',
+			property: "Filtering.Protocol.file",
 			fail    : () => { return define.Config.Filtering.Protocol.file; },
 			rule    : (value) => {
 								return v8n()
@@ -352,7 +352,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.ftp',
+			property: "Filtering.Protocol.ftp",
 			fail    : () => { return define.Config.Filtering.Protocol.ftp; },
 			rule    : (value) => {
 								return v8n()
@@ -363,7 +363,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.data',
+			property: "Filtering.Protocol.data",
 			fail    : () => { return define.Config.Filtering.Protocol.data; },
 			rule    : (value) => {
 								return v8n()
@@ -374,7 +374,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.blob',
+			property: "Filtering.Protocol.blob",
 			fail    : () => { return define.Config.Filtering.Protocol.blob; },
 			rule    : (value) => {
 								return v8n()
@@ -385,7 +385,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.mailto',
+			property: "Filtering.Protocol.mailto",
 			fail    : () => { return define.Config.Filtering.Protocol.mailto; },
 			rule    : (value) => {
 								return v8n()
@@ -396,7 +396,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.javascript',
+			property: "Filtering.Protocol.javascript",
 			fail    : () => { return define.Config.Filtering.Protocol.javascript; },
 			rule    : (value) => {
 								return v8n()
@@ -407,7 +407,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.about',
+			property: "Filtering.Protocol.about",
 			fail    : () => { return define.Config.Filtering.Protocol.about; },
 			rule    : (value) => {
 								return v8n()
@@ -418,7 +418,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Filtering.Protocol.chrome',
+			property: "Filtering.Protocol.chrome",
 			fail    : () => { return define.Config.Filtering.Protocol.chrome; },
 			rule    : (value) => {
 								return v8n()
@@ -431,7 +431,7 @@ export const define = {
 
 		// Format
 		{
-			property: 'Format.type',
+			property: "Format.type",
 			fail    : () => { return define.Config.Format.type; },
 			rule    : (value) => {
 								return v8n()
@@ -443,7 +443,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Format.template',
+			property: "Format.template",
 			fail    : () => { return define.Config.Format.template; },
 			rule    : (value) => {
 								return v8n()
@@ -454,7 +454,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Format.minetype',
+			property: "Format.minetype",
 			fail    : () => { return define.Config.Format.minetype; },
 			rule    : (value) => {
 								return v8n()
@@ -468,7 +468,7 @@ export const define = {
 
 		// Tab
 		{
-			property: 'Tab.reverse',
+			property: "Tab.reverse",
 			fail    : () => { return define.Config.Tab.reverse; },
 			rule    : (value) => {
 								return v8n()
@@ -479,7 +479,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Tab.active',
+			property: "Tab.active",
 			fail    : () => { return define.Config.Tab.active; },
 			rule    : (value) => {
 								return v8n()
@@ -490,7 +490,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Tab.delay',
+			property: "Tab.delay",
 			fail    : () => { return define.Config.Tab.delay; },
 			rule    : (value) => {
 								return v8n()
@@ -502,7 +502,7 @@ export const define = {
 							}
 		},
 		{
-			property: 'Tab.position',
+			property: "Tab.position",
 			fail    : () => { return define.Config.Tab.position; },
 			rule    : (value) => {
 								return v8n()
@@ -516,7 +516,7 @@ export const define = {
 
 		// Debug
 		{
-			property: 'Debug.logging',
+			property: "Debug.logging",
 			fail    : () => { return define.Config.Debug.logging; },
 			rule    : (value) => {
 								return v8n()
@@ -527,7 +527,7 @@ export const define = {
 						}
 		},
 		{
-			property: 'Debug.timestamp',
+			property: "Debug.timestamp",
 			fail    : () => { return define.Config.Debug.timestamp; },
 			rule    : (value) => {
 								return v8n()
@@ -538,7 +538,7 @@ export const define = {
 						}
 		},
 		{
-			property: 'Debug.timecoordinate',
+			property: "Debug.timecoordinate",
 			fail    : () => { return define.Config.Debug.timecoordinate; },
 			rule    : (value) => {
 								return v8n()

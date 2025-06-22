@@ -50,7 +50,7 @@ export class PageInformation {
 		const win          = active?.window;
 		const doc          = active?.document;
 		const isSameOrigin = this.#checkForSameOrigin(window, win);
-		const isSelection  = isSameOrigin ? (win.getSelection().toString() ? true: false) : false;
+		const isSelection  = isSameOrigin ? (win.getSelection().toString() ? true : false) : false;
 
 		const information = {
 			title    : document.title,

@@ -111,7 +111,7 @@ function generateID(digit = 8, character = { number: true, alphabet: { uppercase
 	const char        = getCharacter(character);
 	const rand        = Array.from(cryptoArray)
 								.map((number) => char[number % char.length])
-								.join('');
+								.join("");
 
 	return rand;
 }
@@ -231,13 +231,13 @@ function getCallerFunctionName() {
 	try {
 		throw new Error();
 	} catch (e) {
-		let   callerName = 'None';
+		let   callerName = "None";
 		const reg        = /(\w+)@|at (\w+) \(/g;
 		const st         = e.stack;
 		let   m;
 
 		while ((m = reg.exec(st))) {
-			callerName = (m !== null) ? m[1] || m[2] : 'None';
+			callerName = (m !== null) ? m[1] || m[2] : "None";
 		}
 	}
 

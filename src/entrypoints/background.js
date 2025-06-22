@@ -4,7 +4,7 @@ import { logging } from "@/assets/js/function.mjs";
 export default defineBackground({
 	// Set manifest options
 	persistent: false,
-	type      : 'module',
+	type      : "module",
 
 	// Executed when background is loaded
 	main
@@ -107,7 +107,7 @@ async function openURLs(urlList, option) {
  * @returns {number}
  */
 async function getCurrentWindowID() {
-	const window   = await chrome.windows.getCurrent({ windowTypes: [ 'normal' ] });
+	const window   = await chrome.windows.getCurrent({ windowTypes: [ "normal" ] });
 	const windowId = window.id;
 
 	return windowId;
