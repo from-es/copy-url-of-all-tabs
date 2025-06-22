@@ -1,5 +1,5 @@
 // Import NPM Package
-import { UAParser } from 'ua-parser-js';
+import { UAParser } from "ua-parser-js";
 
 /**
  * @lastupdate 2025/01/20

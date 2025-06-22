@@ -14,8 +14,8 @@ export class VerifyConfigValue {
 	}
 
 	#verify(config, define) {
-		if ( !config || typeof config !== 'object' || Object.keys(config).length === 0 ) {
-			console.log('Error : class VerifyConfigValue() >> #verify(), config', { type: typeof config, value: config });
+		if ( !config || typeof config !== "object" || Object.keys(config).length === 0 ) {
+			console.log("Error : class VerifyConfigValue() >> #verify(), config", { type: typeof config, value: config });
 
 			return define.Config;
 		}
@@ -30,9 +30,9 @@ export class VerifyConfigValue {
 
 		(test).forEach(
 			(elm) => {
-				const property = elm['property'];
-				const rule     = elm['rule'];
-				const fail     = elm['fail'];
+				const property = elm["property"];
+				const rule     = elm["rule"];
+				const fail     = elm["fail"];
 				const has      = dapo.hasValue(conf, property);
 				const value    = dapo.getValue(conf, property);
 
