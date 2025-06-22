@@ -174,7 +174,7 @@
 	}
 
 	function exportConfig(setting, filename, filetype) {
-		const config = JSON.stringify(setting, null , "\t");
+		const config = JSON.stringify(setting, null, "\t");
 		const file   = { minetype : filetype, name : filename};
 		const blob   = new Blob([ config ], { type: file.minetype });
 		const url    = URL.createObjectURL(blob);
