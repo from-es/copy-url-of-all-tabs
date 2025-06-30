@@ -1,4 +1,19 @@
 
+#### [0.8.1.7] - 2025/06/30
+
+- clean
+	- Refactor to centralize console output logic (``project/src/entrypoints/popup/js/FormatManager.mjs``)
+	- Refactoring App.svelte (``project/src/entrypoints/popup/svelte/App.svelte``)
+		- Migrate state management logic to store
+		- UI display logic managed in derived store
+			- Display loading status
+			- Disable buttons during processing
+		- Improved error handling
+- fix
+	- Fixed typos in messages (``project/src/entrypoints/popup/js/FormatManager.mjs``)
+- ESLint
+	- Disabled the "svelte/no-at-html-tags" error found in ESLint
+
 #### [0.8.1.6] - 2025/06/22
 
 - fix
