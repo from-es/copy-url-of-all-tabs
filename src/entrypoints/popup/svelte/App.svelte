@@ -464,6 +464,7 @@
 
 	<section id="message">
 		{#if $shouldShowMessage}
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html $appState.message}
 		{/if}
 	</section>
