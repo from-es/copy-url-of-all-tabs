@@ -21,15 +21,15 @@ class FormatManager {
 			}
 		}
 
+		// debug
+		console.log(`Debug, ${format} >>`, result);
+
 		return result;
 	}
 
 	static #text(tabs) {
 		const array  = (tabs).map((tab) => { return tab.url; });
 		const result = (array).join("\n");
-
-		// debug
-		console.log("Debug, #text >>", result);
 
 		return result;
 	}
@@ -38,15 +38,12 @@ class FormatManager {
 		const array  = (tabs).map((tab) => { return { title: tab.title, url: tab.url }; });
 		const result = JSON.stringify(array, null, "\t");
 
-		// debug
-		console.log("Debug, #json >>", result);
-
 		return result;
 	}
 
 	static #custom(tabs, template, sanitize) {
 		if ( !template ) {
-			return "Error, Row template is empty ! (see options page)";
+			return "Error, Row template is empty! (see options page)";
 		}
 
 		const array = (tabs).map(
@@ -61,9 +58,6 @@ class FormatManager {
 			}
 		);
 		const result = (array).join("\n");
-
-		// debug
-		console.log("Debug, #custom >>", result);
 
 		return result;
 	}

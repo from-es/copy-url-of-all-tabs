@@ -3,11 +3,12 @@
 	import { onMount } from "svelte";
 
 	// Import from Script
-	import { initializeConfig } from "@/assets/js/initializeConfig.mjs";
-	import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager.mjs";
-	import { FormatManager }    from "../js/FormatManager.mjs";
+	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState.js";
+	import { initializeConfig }                                             from "@/assets/js/initializeConfig.mjs";
+	import { ClipboardManager }                                             from "@/assets/js/lib/user/ClipboardManager.mjs";
+	import { FormatManager }                                                from "../js/FormatManager.mjs";
 
-	let { status } = $props();
+	const { status } = $props();
 
 	onMount(() => {
 		console.info("The Component status, On mount");
@@ -29,52 +30,77 @@
 
 	async function eventOnClick() {
 		const config = await initializeConfig(status.define);  // 「ポップアップメニュー呼び出した状態でオプション変更 → 再度、ポップアップメニューから呼び出し」時の対策@2024/10/18
-		const action = (this).getAttribute("data-action");    // action : true >> 成功 or false >> 失敗
-		let   result = {
-			action    : null,
-			status    : null,    // クリップボードへのアクセス成否
-			message   : null,
-			judgment  : false,   // 結果の総合判断 >> メッセージ表示用
-			urlList   : [],
-			clipboard : {
-				direction : null, // "From Tabs to Clipboard" or "From Clipboard to Tabs"
-				text      : null  // クリップボードの中身
+		const action = (this).getAttribute("data-action");     // 実行するアクション >> "copy" or "paste" or "options"
+
+		// 状態管理を appState に委譲
+		actionStore.startAction(action);
+
+		let result = null;
+
+		try {
+			switch (action) {
+				case "copy":
+					result = await eventGetURLforAllTabs(action, config);
+					break;
+				case "paste":
+					result = await eventSetURLforTab(action, config);
+					break;
+				case "options":
+					await eventOpenOptionsPage();
+					break;
+				default:
+					eventDoNotMatch(action);
+					break;
 			}
-		};
 
-		switch (action) {
-			case "copy":
-				result = await eventGetURLforAllTabs(action, config);
-				break;
-			case "paste":
-				result = await eventSetURLforTab(action, config);
-				break;
-			case "options":
-				eventOpenOptionsPage();
-				break;
-			default:
-				eventDoNotMatch(action);
-				break;
+			// "paste" アクションの後処理
+			if (action === "paste" && result.judgment && result.urlList?.length > 0) {
+				openURLs(result.urlList, config.Tab, status);
+			}
+		} catch (error) {
+			let message = "An error occurred during the operation.";
+			if ( error instanceof Error && error?.message ) {
+				message += ` ${error.message}`;
+			}
+
+			result = {
+				action,
+				status   : false,
+				message  : message,
+				judgment : false,
+				urlList  : [],
+				clipboard: { direction: null, text: null }
+			};
+
+			// debug
+			console.error("Error, Action execution failed. { error } >>", { error });
+		} finally {
+			// アクション完了を通知
+			actionStore.completeAction(result);
+
+			// debug
+			console.log("Debug, { action, result } >>", { action, result });
 		}
 
-		// debug
-		console.log("Debug, { action, result } >>", { action, result });
-
-		// Action Paste, Open URLs
-		if ( action === "paste" ) {
-			const urlList = result.urlList;
-			const option  = config.Tab;
-
-			openURLs(urlList, option, status);
-		}
-
+		// メッセージ表示
 		const message = createMessage(action, result);
-		const option  = config.PopupMenu.ClearMessage;
 		if ( message ) {
-			showMessage(message, option);
+			actionStore.setMessage(message);
+
+			handleMessageDisplay(config.PopupMenu.ClearMessage);
 		}
 
+		// ポップアップ制御
 		closePopupMenu(config.PopupMenu.OnClickClose);
+	}
+
+	// メッセージ表示(Action, Copy or Paste)
+	function handleMessageDisplay(option) {
+		if ( !$shouldShowMessage ) {
+			return;
+		}
+
+		showMessage($appState.message, option);
 	}
 
 	/**
@@ -99,11 +125,11 @@
 
 			return filtered;
 		};
-		const filteredTabs = getFilteredTabs(tabs, config, action);
 
-		const text     = FormatManager.format(filteredTabs, type, template, sanitize);
-		const num      = filteredTabs?.length ? filteredTabs.length : false;
-		const status   = await ClipboardManager.write(text, minetype);
+		const filteredTabs = getFilteredTabs(tabs, config, action);
+		const text         = FormatManager.format(filteredTabs, type, template, sanitize);
+		const num          = filteredTabs?.length ? filteredTabs.length : false;
+		const status       = await ClipboardManager.write(text, minetype);
 
 		const result = {
 			action     : action,
@@ -333,9 +359,9 @@
 	 * @returns {string}
 	 */
 	function createMessage(action, result) {
-		if ( !result.message ) {
+		if ( !result || !result?.message ) {
 			// Debug
-			console.log('Debug, result.message is "null or undefined or empty"! >>', result);
+			console.log('Debug, "result or result.message" is "null or undefined or empty"! >>', { action, result });
 
 			return null;
 		}
@@ -420,10 +446,10 @@
 	<section id="action">
 		<ul>
 			<li id="copy" class="menu">
-				<button class="text" data-action="copy" onclick={ eventOnClick }>Copy</button>
+				<button class="text" data-action="copy" disabled={ $isActionInProgress } onclick={ eventOnClick }>{ ($isActionInProgress && $appState.currentAction === "copy") ? "Copying..." : "Copy"} </button>
 			</li>
 			<li id="paste" class="menu">
-				<button class="text" data-action="paste" onclick={ eventOnClick }>Paste</button>
+				<button class="text" data-action="paste" disabled={ $isActionInProgress } onclick={ eventOnClick }>{ ($isActionInProgress && $appState.currentAction === "paste") ? "Pasting..." : "Paste" } </button>
 			</li>
 		</ul>
 	</section>
@@ -436,7 +462,12 @@
 		</ul>
 	</section>
 
-	<section id="message"></section>
+	<section id="message">
+		{#if $shouldShowMessage}
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+			{@html $appState.message}
+		{/if}
+	</section>
 </main>
 
 
