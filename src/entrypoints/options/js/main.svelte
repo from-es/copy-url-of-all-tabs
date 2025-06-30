@@ -495,6 +495,7 @@
 
 			<p>If you have issue or feature requests, please report them at issues (https://github.com/from-es/copy-url-of-all-tabs/issues).</p>
 
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			<p id="copyright">{@html getCopyright(status.define.Information)}</p>
 		</article>
 		<!-- close id="about" -->
@@ -667,6 +668,7 @@
 								<input id="Filtering-Paste-enable-input" data-action="paste" type="checkbox" checked={ status.config.Filtering.Paste.enable } onchange={ eventFilteringEnable }>
 								<label for="Filtering-Paste-enable-input">Filter URLs when pasting</label>
 
+								<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 								{@html showNoticeMessageForPaste(status.config.Search.regex) }
 							</form>
 						</fieldset>
@@ -717,6 +719,7 @@
 								</form>
 								<form id="Filtering-Protocol-chrome">
 									<input id="Filtering-Protocol-chrome-input" type="checkbox" checked={ status.config.Filtering.Protocol.chrome } data-type="chrome" onchange={eventFilteringProtocol}>
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 									<label for="Filtering-Protocol-chrome-input">chrome ({@html getChromiumBasedBrowserList()})</label>
 								</form>
 							</div>
