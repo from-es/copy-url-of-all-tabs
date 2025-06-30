@@ -21,6 +21,9 @@ class FormatManager {
 			}
 		}
 
+		// debug
+		console.log(`Debug, ${format} >>`, result);
+
 		return result;
 	}
 
@@ -28,18 +31,12 @@ class FormatManager {
 		const array  = (tabs).map((tab) => { return tab.url; });
 		const result = (array).join("\n");
 
-		// debug
-		console.log("Debug, #text >>", result);
-
 		return result;
 	}
 
 	static #json(tabs) {
 		const array  = (tabs).map((tab) => { return { title: tab.title, url: tab.url }; });
 		const result = JSON.stringify(array, null, "\t");
-
-		// debug
-		console.log("Debug, #json >>", result);
 
 		return result;
 	}
@@ -61,9 +58,6 @@ class FormatManager {
 			}
 		);
 		const result = (array).join("\n");
-
-		// debug
-		console.log("Debug, #custom >>", result);
 
 		return result;
 	}
