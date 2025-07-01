@@ -442,14 +442,27 @@
 
 
 
+{#snippet button(action, disabled, text)}
+	<button
+		class       = "text"
+		data-action = { action }
+		disabled    = { disabled }
+		onclick     = { eventOnClick }
+	>
+		{ text }
+	</button>
+{/snippet}
+
+
+
 <main>
 	<section id="action">
 		<ul>
 			<li id="copy" class="menu">
-				<button class="text" data-action="copy" disabled={ $isActionInProgress } onclick={ eventOnClick }>{ ($isActionInProgress && $appState.currentAction === "copy") ? "Copying..." : "Copy"} </button>
+				{@render button("copy", $isActionInProgress, ($isActionInProgress && $appState.currentAction === "copy") ? "Copying..." : "Copy")}
 			</li>
 			<li id="paste" class="menu">
-				<button class="text" data-action="paste" disabled={ $isActionInProgress } onclick={ eventOnClick }>{ ($isActionInProgress && $appState.currentAction === "paste") ? "Pasting..." : "Paste" } </button>
+				{@render button("paste", $isActionInProgress, ($isActionInProgress && $appState.currentAction === "paste") ? "Pasting..." : "Paste")}
 			</li>
 		</ul>
 	</section>
@@ -457,7 +470,7 @@
 	<section id="toolbar" class="separator">
 		<ul>
 			<li id="option" class="menu">
-				<button class="text" data-action="options" onclick={ eventOnClick }>Options</button>
+				{@render button("options", $isActionInProgress, "Options")}
 			</li>
 		</ul>
 	</section>
