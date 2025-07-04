@@ -4,7 +4,7 @@ export const manifest =
 	"author"          : "From E",
 	"name"            : "Copy URL of All Tabs",
 	"description"     : "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
-	"version"         : "0.8.1.7",
+	"version"         : "0.8.1.8",
 
 	/**
 		CSS
