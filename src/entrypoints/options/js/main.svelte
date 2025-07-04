@@ -526,7 +526,7 @@
 									<input type="radio" name="Format-type" value="json" checked={ status.config.Format.type === "json" ? true : false } onchange={ eventFormatType }>
 									json
 								</label>
-								<label data-description="You can specify a template in your own format">
+								<label data-description="You can specify a template with your own format">
 									<input type="radio" name="Format-type" value="custom" checked={ status.config.Format.type === "custom" ? true : false } onchange={ eventFormatType }>
 									custom
 								</label>
@@ -536,12 +536,12 @@
 						<fieldset>
 							<legend>Custom Template</legend>
 							<!-- イベント経由で変更を即反映 -->
-							<p>You can specify a template in your own format. Use <b>$title</b> &amp; <b>$url</b> variables.</p>
+							<p>You can specify a template with your own format. Use <b>$title</b> &amp; <b>$url</b> variables.</p>
 							<textarea id="Format-template" spellcheck="false" value={ status.config.Format.template } oninput={ eventFormatCustomTemplate }></textarea>
 						</fieldset>
 
 						<fieldset>
-							<legend>MINE Type</legend>
+							<legend>MIME Type</legend>
 
 							<p>Specifies the MIME type when copying data to the clipboard. This only affects <b>custom</b> formats.</p>
 
@@ -566,10 +566,10 @@
 
 					<div class="flex-main">
 						<fieldset>
-							<legend>Search URL of the text in the clipboard</legend>
+							<legend>Search for URLs in the clipboard text</legend>
 							<form id="Search-regex">
 								<input id="Search-regex" type="checkbox" checked={ status.config.Search.regex } onchange={ eventSearchRegex }>
-								<label for="Search-regex">Search URL of the text in the clipboard using a regular expression. Only "<b>http://</b> & <b>https://</b>".</label>
+								<label for="Search-regex">Search for URLs in the clipboard text using a regular expression. This option only applies to "<b>http://</b> & <b>https://</b>".</label>
 							</form>
 						</fieldset>
 					</div>
@@ -631,7 +631,7 @@
 									value={ status.config.Tab.delay }
 									onchange={ eventTabDelay }
 								>
-								<label for="Tab-delay-number">wait time for next tab opening ({ status.define.TabOpenDelayValueMin } ~ { status.define.TabOpenDelayValueMax } millisecond)</label>
+								<label for="Tab-delay-number">wait time before opening the next tab ({ status.define.TabOpenDelayValueMin } ~ { status.define.TabOpenDelayValueMax } milliseconds)</label>
 							</form>
 						</fieldset>
 					</div>
@@ -675,7 +675,7 @@
 
 						<!-- Protocol -->
 						<fieldset>
-							<legend>Allow, Protocol (Select all that apply)</legend>
+							<legend>Allowed Protocols (Select all that apply)</legend>
 
 							<div id="Filtering-Protocol">
 								<form id="Filtering-Protocol-http">

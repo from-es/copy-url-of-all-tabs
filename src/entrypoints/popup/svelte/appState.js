@@ -37,9 +37,7 @@ function createResultTemplate() {
 	};
 };
 
-
-
-// アクション(Copy, Paste, Options)の状態管理用
+// PopupMenu の状態管理用メソッド
 const actionStore = {
 	// アクション開始
 	startAction: (action) => {
