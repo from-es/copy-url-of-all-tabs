@@ -51,13 +51,13 @@ export const define = {
 			version: null, // manifest.version
 			date   : {
 				unixtime: null, // new Date()
-				iso8601 : null   // new Date().toISOString()
+				iso8601 : null  // new Date().toISOString()
 			}
 		},
 		Debug : {
 			logging       : false, // true >> console 出力を有効にする
 			timestamp     : true,  // true >> console 出力にタイムスタンプを付加する
-			timecoordinate: "UTC"   // 'UTC' or 'GMT'
+			timecoordinate: "UTC"  // 'UTC' or 'GMT'
 		},
 		OptionsPage : {
 			fontsize: 16
@@ -78,7 +78,7 @@ export const define = {
 		},
 		Filtering : {
 			// Ver 0.6.1.1 まで使用 >> Paste でのみ使用
-			// enable  : true,
+			// enable : true,
 
 			// Ver 0.7.0 以降対応
 			Copy :  {
@@ -90,9 +90,9 @@ export const define = {
 
 			Protocol : { // URI schemes(https://developer.mozilla.org/en-US/docs/Web/URI/Schemes)
 				/*
-					           Chrome : FTP Protocol support ends Google Chrome 95 and later
-					           Firefox: セキュリティの仕様から 特権URL は開けない(https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
-					privileged URLs   : "about:*****"  (e.x. about:config, about:addons, about:debugging)。ただし非特権URL (about:blank) は使用可
+					Chrome          : FTP Protocol support ends Google Chrome 95 and later
+					Firefox         : セキュリティの仕様から 特権URL は開けない(https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
+					privileged URLs : "about:*****"  (e.x. about:config, about:addons, about:debugging)。ただし非特権URL (about:blank) は使用可
 				*/
 				http : true,  // "http:"
 				https: true,  // "https:"
