@@ -1,4 +1,14 @@
 
+#### [0.8.1.8] - 2025/06/30
+
+- clean
+	- Change button elements to display using snippet (``project/src/entrypoints/popup/svelte/App.svelte``)
+	- Refactoring, Split App.svelte  (``project/src/entrypoints/popup/svelte/App.svelte``)
+		- Create a store for state management
+		- Separate business logic from the component
+- update
+	- update documentation in options page (typo & improve wording)
+
 #### [0.8.1.7] - 2025/06/30
 
 - clean
