@@ -1,5 +1,5 @@
 
-#### [0.8.1.8] - 2025/06/30
+#### [0.8.1.8] - 2025/07/04
 
 - clean
 	- Change button elements to display using snippet (``project/src/entrypoints/popup/svelte/App.svelte``)
