@@ -1,0 +1,15 @@
+# Source code
+src/**/*.js     text eol=lf
+src/**/*.mjs    text eol=lf
+src/**/*.json   text eol=lf
+src/**/*.ts     text eol=lf
+src/**/*.svelte text eol=lf
+
+# Documentation
+src/**/*.txt    text eol=lf
+src/**/*.md     text eol=lf
+src/**/*.html   text eol=lf
+src/**/*.css    text eol=lf
+
+# Image
+src/**/*.svg    text eol=lf

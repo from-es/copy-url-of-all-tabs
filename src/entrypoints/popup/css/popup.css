@@ -1,0 +1,157 @@
+:root {
+	--base-font-size  : 16px;
+	--base-font-family: system-ui, sans-serif;
+}
+
+*:not(img) {
+	box-sizing: border-box;
+}
+
+html {
+	margin : 0;
+	padding: 0;
+
+	font-size: var(--base-font-size);
+}
+
+body {
+	font-family: var(--base-font-family);
+	font-size: 1rem;
+
+	margin : 0;
+	padding: 0;
+
+	color: #000;
+	background-color: #fff;
+}
+
+main {
+	margin: 0.5rem 0.75rem;
+
+	width: 16rem;
+}
+
+ul {
+	margin : 0;
+	padding: 0;
+
+	width: 100%;
+}
+
+li {
+	margin:  0;
+	padding: 0;
+
+	list-style: none;
+
+	width: 100%;
+}
+
+/*
+	疑似要素で表示した画像のサイズを調整する方法(https://webcreatetips.com/coding/3855/)
+*/
+li:not(:has(.separator))::before {
+	text-align    : center;
+	vertical-align: middle;
+
+	margin-left : 0.5rem;
+	margin-right: 0.5rem;
+
+	width:  1rem;
+	height: 1rem;
+
+	content: '';
+	display: inline-block;
+	background-size: contain;
+}
+li:has(button[data-action="copy"]):not(:has(.separator))::before {
+	background-image: url("/src/img/copy.svg");
+}
+li:has(button[data-action="paste"]):not(:has(.separator))::before {
+	background-image: url("/src/img/paste.svg");
+}
+li:has(button[data-action="options"]):not(:has(.separator))::before {
+	background-image: url("/src/img/gear.svg");
+}
+li:has(button[data-action]):has(button[disabled]):not(:has(.separator))::before {
+	filter: grayscale(1);
+}
+
+
+button {
+	cursor: pointer;
+
+	margin : 0;
+	padding: 0 0 0 1rem;
+
+	display: inline-block;
+
+	width : calc(100% - 1rem - 0.5rem * 2 - 0.25rem); /* 100% - (li::before の画像幅) - (li::before の左右マージン) - (安全用の予備マージン) */
+	height: 2rem;
+
+	border: solid 1px transparent;
+	border-radius: 0.33rem;
+
+	color: #3d5d6a;
+	background-color: transparent;
+
+	font-size: 1rem;
+	text-align: left;
+}
+button:hover {
+	background: linear-gradient(
+		180deg,
+		rgb(255, 255, 255)  0%,
+		hsl(215, 67%, 97%) 40%,
+		hsl(213, 48%, 95%) 41%
+	);
+
+	border: solid 1px #c5cdd3;
+	border-radius: 0.33rem;
+}
+
+.menu {
+	line-height: 2rem;
+}
+
+.text {
+	user-select: none;
+}
+
+.separator {
+	margin-top : 0.5rem;
+	padding-top: 0.5rem;
+
+	border-top: 1px solid #ddd;
+}
+
+
+
+#message {
+	margin : 0.5rem 0;
+	padding: 0.5rem 0.75rem;
+
+	border: solid 1px #c5cdd3;
+	border-radius: 0.33rem;
+}
+#message:empty {
+	display: none;
+}
+#message > p:empty {
+	display: none;
+}
+#message > p:first-child {
+	margin-top  : 0;
+}
+#message > p:last-child {
+	margin-bottom : 0;
+}
+#message > p > span {
+	text-transform: capitalize;
+}
+#message > p.success {
+	color: #009933;
+}
+#message > p.error {
+	color: #cc0000;
+}
