@@ -1,0 +1,66 @@
+{
+  "name": "copy-url-of-all-tabs",
+  "description": "Chrome extension",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/from-es/copy-url-of-all-tabs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/from-es/copy-url-of-all-tabs/issues"
+  },
+  "homepage": "https://github.com/from-es/copy-url-of-all-tabs",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:sourcemap": "wxt build --mode sourcemap",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "postinstall": "wxt prepare",
+    "eslint": "eslint src",
+    "prepare": "husky",
+    "vitest": "vitest",
+    "vitest:run": "vitest run",
+    "vitest:ui": "vitest --ui",
+    "vitest:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@sveltejs/vite-plugin-svelte": "^6.1.2",
+    "@testing-library/svelte": "^5.2.8",
+    "@tsconfig/svelte": "^5.0.4",
+    "@types/chrome": "^0.1.4",
+    "@types/lodash-es": "^4.17.12",
+    "@types/sortablejs": "^1.15.8",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "@wxt-dev/module-svelte": "^2.0.3",
+    "eslint": "^9.33.0",
+    "eslint-plugin-svelte": "^3.11.0",
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
+    "svelte": "^5.38.1",
+    "svelte-check": "^4.3.1",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.1",
+    "vitest": "^3.2.4",
+    "wxt": "^0.20.8"
+  },
+  "dependencies": {
+    "bowser": "^2.12.0",
+    "dayjs": "^1.11.13",
+    "lodash-es": "^4.17.21",
+    "marked": "^16.1.2",
+    "modern-normalize": "^3.0.1",
+    "sortablejs": "^1.15.6",
+    "v8n": "^1.5.1"
+  }
+}

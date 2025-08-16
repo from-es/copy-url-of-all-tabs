@@ -1,0 +1,1 @@
+export { type Config, type Define } from "@/assets/js/define";

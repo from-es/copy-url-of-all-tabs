@@ -1,0 +1,43 @@
+@charset "utf-8";
+
+@import "modern-normalize/modern-normalize.css"; /* modern-normalize(https://www.npmjs.com/package/modern-normalize) */
+@import url("./common.css");
+
+
+
+/* 差分適応 */
+* {
+	line-height: 1.6;
+}
+
+#contents {
+	padding-top   : 1rem !important;
+	padding-bottom: 2rem !important;
+}
+
+details > summary {
+	font-size: 1rem !important;
+
+	user-select: none;
+}
+
+.entry {
+	padding-bottom: 2rem !important;
+}
+
+code {
+	padding: 0.25rem 0.5rem;
+	color: #fff;
+	background-color: #333;
+	border-radius: 0.25rem;
+}
+
+/* common.css >> 上書き */
+h2 {
+	border-radius: 0.25rem;
+}
+
+/* DOMの構造化の為の入れ物として使用 */
+#latest, #past {
+	display: contents;
+}
