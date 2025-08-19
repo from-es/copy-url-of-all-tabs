@@ -1,10 +1,14 @@
 
+#### [1.0.1] - 2025/08/19
+
+- fix
+	- Fixed an issue where the extension incorrectly overrode the default Chrome history page (`chrome://history`)
+
 #### [1.0.0] - 2025/08/16
 
 - release
 	- All initially planned core features have been implemented
 	- Future releases will follow [Semantic Versioning](https://semver.org/)
-
 
 #### [0.9.0] - 2025/08/05
 
