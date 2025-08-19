@@ -223,7 +223,7 @@ const define: Define = {
 		},
 		updatehistory : {
 			title: `Update History for ${ manifest.name }`,
-			url  : "/history.html"
+			url  : "/changelog.html"
 		},
 
 		extension : {
