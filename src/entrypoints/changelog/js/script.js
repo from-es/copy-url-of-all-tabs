@@ -9,8 +9,8 @@ window.addEventListener("load", main);
 
 
 async function main() {
-	// 履歴ファイル(log.md)は、静的ファイルを置くディレクトリィ内("src/public/history/log.md")に置いてある為、コード or 設置場所変更時は注意
-	const filePath = "/history/log.md";
+	// 履歴ファイル(log.md)は、静的ファイルを置くディレクトリィ内("src/public/src/text/changelog.md")に置いてある為、コード or 設置場所変更時は注意
+	const filePath = "src/text/changelog.md";
 
 	const markdown     = await getMarkdown(filePath);
 	const markedCustom = openExternalLinkInNewTab(marked);
