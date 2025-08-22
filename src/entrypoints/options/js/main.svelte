@@ -218,119 +218,91 @@
 	}
 	// ---------------------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 	// Options Page
 
-	function eventOptionsPageFontSize() {
-		const max = status.define.OptionsPageFontSizeValueMax;
-		const min = status.define.OptionsPageFontSizeValueMin;
-		let   num = parseFloat(this.value);
+	/**
+	 * 指定された範囲内で数値入力を検証します。
+	 * @param {string} currentValue - 入力イベントからの現在の値
+	 * @param {number} min          - 許容される最小値
+	 * @param {number} max          - 許容される最大値
+	 * @param {number} defaultValue - 範囲外の場合に設定するデフォルト値
+	 * @returns {number}            - 検証された数値
+	 */
+	function validateNumericInput(currentValue: string, min: number, max: number, defaultValue: number): number {
+		let num = parseFloat(currentValue);
 
-		if ( !num || typeof num !== "number" || isNaN(num) ) {
-			num        = status.define.Config.OptionsPage.fontsize;
-			this.value = status.define.Config.OptionsPage.fontsize;
-		}
-		if ( (num > max) || (min > num) ) {
-			// デフォルト値で上書き
-			num        = status.define.Config.OptionsPage.fontsize;
-			this.value = status.define.Config.OptionsPage.fontsize;
-
+		if (isNaN(num) || num < min || num > max) {
 			const msg = {
-				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
-				timeout    : 5000,
-				fontsize   : "16px",
+				message: [`A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.`],
+				timeout: 5000,
+				fontsize: "16px",
 				messagetype: "warning"
 			};
-
 			UnifiedMessage.create(msg);
+			return defaultValue;
 		}
-
-		status.config.OptionsPage.fontsize = num;
+		return num;
 	}
-	// --------------------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------------------
+	function eventOptionsPageFontSize(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const validatedValue = validateNumericInput(
+			input.value,
+			status.define.OptionsPageFontSizeValueMin,
+			status.define.OptionsPageFontSizeValueMax,
+			status.define.Config.OptionsPage.fontsize
+		);
+		input.value = validatedValue.toString();
+		status.config.OptionsPage.fontsize = validatedValue;
+	}
+	// ---------------------------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------------------------
 	// Popup Menu
 
 	function eventPopupMenuClearMessageEnable() {
 		status.config.PopupMenu.ClearMessage.enable = !(status.config.PopupMenu.ClearMessage.enable);
 	}
 
-	function eventPopupMenuClearMessageTimeout() {
-		const max = status.define.PopupMenuClearMessageTimeoutValueMax;
-		const min = status.define.PopupMenuClearMessageTimeoutValueMin;
-		let   num = parseFloat(this.value);
-
-		if ( (num > max) || (min > num) ) {
-			// デフォルト値で上書き
-			num        = status.define.Config.PopupMenu.ClearMessage.timeout;
-			this.value = status.define.Config.PopupMenu.ClearMessage.timeout;
-
-			const msg = {
-				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
-				timeout    : 5000,
-				fontsize   : "16px",
-				messagetype: "warning"
-			};
-
-			UnifiedMessage.create(msg);
-		}
-
-		status.config.PopupMenu.ClearMessage.timeout = num;
+	function eventPopupMenuClearMessageTimeout(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const validatedValue = validateNumericInput(
+			input.value,
+			status.define.PopupMenuClearMessageTimeoutValueMin,
+			status.define.PopupMenuClearMessageTimeoutValueMax,
+			status.define.Config.PopupMenu.ClearMessage.timeout
+		);
+		input.value = validatedValue.toString();
+		status.config.PopupMenu.ClearMessage.timeout = validatedValue;
 	}
 
 	function eventPopupOnClickCloseEnable() {
 		status.config.PopupMenu.OnClickClose.enable = !(status.config.PopupMenu.OnClickClose.enable);
 	}
 
-	function eventPopupOnClickCloseTimeout() {
-		const max = status.define.PopupMenuOnClickCloseTimeoutValueMax;
-		const min = status.define.PopupMenuOnClickCloseTimeoutValueMin;
-		let   num = parseFloat(this.value);
-
-		if ( (num > max) || (min > num) ) {
-			// デフォルト値で上書き
-			num        = status.define.Config.PopupMenu.OnClickClose.timeout;
-			this.value = status.define.Config.PopupMenu.OnClickClose.timeout;
-
-			const msg = {
-				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
-				timeout    : 5000,
-				fontsize   : "16px",
-				messagetype: "warning"
-			};
-
-			UnifiedMessage.create(msg);
-		}
-
-		status.config.PopupMenu.OnClickClose.timeout = num;
+	function eventPopupOnClickCloseTimeout(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const validatedValue = validateNumericInput(
+			input.value,
+			status.define.PopupMenuOnClickCloseTimeoutValueMin,
+			status.define.PopupMenuOnClickCloseTimeoutValueMax,
+			status.define.Config.PopupMenu.OnClickClose.timeout
+		);
+		input.value = validatedValue.toString();
+		status.config.PopupMenu.OnClickClose.timeout = validatedValue;
 	}
 
-	function eventPopupMenuFontSize() {
-		const max = status.define.PopupMenuFontSizeValueMax;
-		const min = status.define.PopupMenuFontSizeValueMin;
-		let   num = parseFloat(this.value);
-
-		if ( !num || typeof num !== "number" || isNaN(num) ) {
-			num        = status.define.Config.PopupMenu.fontsize;
-			this.value = status.define.Config.PopupMenu.fontsize;
-		}
-		if ( (num > max) || (min > num) ) {
-			// デフォルト値で上書き
-			num        = status.define.Config.PopupMenu.fontsize;
-			this.value = status.define.Config.PopupMenu.fontsize;
-
-			const msg = {
-				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
-				timeout    : 5000,
-				fontsize   : "16px",
-				messagetype: "warning"
-			};
-
-			UnifiedMessage.create(msg);
-		}
-
-		status.config.PopupMenu.fontsize = num;
+	function eventPopupMenuFontSize(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const validatedValue = validateNumericInput(
+			input.value,
+			status.define.PopupMenuFontSizeValueMin,
+			status.define.PopupMenuFontSizeValueMax,
+			status.define.Config.PopupMenu.fontsize
+		);
+		input.value = validatedValue.toString();
+		status.config.PopupMenu.fontsize = validatedValue;
 	}
 	// --------------------------------------------------------------------------------------------
 
@@ -412,8 +384,16 @@
 	function eventTabPosition() {
 		status.config.Tab.position = this.value;
 	}
-	function eventTabDelay() {
-		status.config.Tab.delay = parseFloat(this.value);
+	function eventTabDelay(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const validatedValue = validateNumericInput(
+			input.value,
+			status.define.TabOpenDelayValueMin,
+			status.define.TabOpenDelayValueMax,
+			status.define.Config.Tab.delay
+		);
+		input.value = validatedValue.toString();
+		status.config.Tab.delay = validatedValue;
 	}
 	// --------------------------------------------------------------------------------------------
 
@@ -667,7 +647,7 @@
 									max={ status.define.TabOpenDelayValueMax }
 									step={ status.define.TabOpenDelayValueStep }
 									value={ status.config.Tab.delay }
-									onchange={ eventTabDelay }
+									oninput={ eventTabDelay }
 								>
 								<label for="Tab-delay-number">wait time before opening the next tab ({ status.define.TabOpenDelayValueMin } ~ { status.define.TabOpenDelayValueMax } milliseconds)</label>
 							</form>
