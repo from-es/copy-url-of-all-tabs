@@ -63,13 +63,22 @@ class ConfigInitializer {
 async function initializeConfig(config: Config | null): Promise<{ config: Config; define: Define; }> {
 	const keyname = define.Storage.keyname;
 	const _define = cloneObject(define);
-	let   _config = config ? cloneObject(config) : (await StorageManager.load(keyname) as Config); // config !== null の時は取り敢えず config オブジェクトして扱う、config === null の時はストレージから取得
+	let   _config: Config | undefined;
+
+	// config !== null の場合は config オブジェクトして扱う、config === null の時はストレージから取得
+	if ( config ) {
+		_config = cloneObject(config);
+	} else {
+		const localStorageData = await StorageManager.load<{[key: string]: Config}>(keyname);
+		_config = localStorageData?.[keyname];
+	}
 
 	// Check Variable of Config >> 初回起動用チェック
 	if ( _config === undefined || _config === null || typeof _config !== "object" || Object.keys(_config).length === 0 ) {
 		_config = _define.Config;
 
-		await StorageManager.save(keyname, _config);
+		const item = { [keyname]: _config };
+		await StorageManager.save(item);
 	}
 
 	const initializer = new ConfigInitializer();

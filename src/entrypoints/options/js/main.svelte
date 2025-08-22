@@ -1,4 +1,7 @@
 <script lang="ts">
+	// Import Types
+	import { type Config } from "@/assets/js/types/";
+
 	// Import Svelte
 	import { onMount } from "svelte";
 
@@ -113,7 +116,9 @@
 		config.Information = getInformationOfConfig();
 
 		// Save to Local Storage
-		StorageManager.save("config", config);
+		const keyname = status.define.Storage.keyname;
+		const item    = { [keyname]: config };
+		StorageManager.save(item);
 
 		// Reinitialize, List of User Script
 		await reInitialize();
@@ -439,7 +444,10 @@
 
 	function eventExportConfig() {
 		(async () => {
-			const setting  = await StorageManager.load("config");
+			const keyname          = status.define.Storage.keyname;
+			const localStorageData = await StorageManager.load<{[key: string]: Config}>(keyname);
+			const setting          = localStorageData?.[keyname];
+
 			const datestr  = dayjs().format("YYYY-MM-DD_HH-mm-ss"); // 要、Day.js Library(https://day.js.org/)
 			const filetype = "application/json";
 			const name     = status.define.Information.name;
