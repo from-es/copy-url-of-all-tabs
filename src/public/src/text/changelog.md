@@ -1,4 +1,11 @@
 
+#### [1.0.2] - 2025/08/23
+
+- improve
+	- Improved the validation message display when entering numbers on the options page.
+- clean
+	- Improved internal processing for better performance and stability.
+
 #### [1.0.1] - 2025/08/19
 
 - fix
