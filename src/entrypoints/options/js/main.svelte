@@ -6,7 +6,8 @@
 	import { onMount } from "svelte";
 
 	// Import NPM Package
-	import dayjs from "dayjs";
+	import dayjs        from "dayjs";
+	import { debounce } from "lodash-es";
 
 	// Import from Script
 	import { initializeConfig }  from "@/assets/js/initializeConfig";
@@ -103,6 +104,46 @@
 		element.setAttribute("disabled", "true");
 		setTimeout((elm) => { elm.removeAttribute("disabled"); }, duration, element);
 	}
+
+	/**
+	 * 指定された範囲内であるか数値入力を検証
+	 * @param   {string} currentValue - 入力イベントからの現在の値
+	 * @param   {number} min          - 許容される最小値
+	 * @param   {number} max          - 許容される最大値
+	 * @param   {number} defaultValue - 範囲外の場合に設定するデフォルト値
+	 * @returns {number}              - 検証された数値
+	 */
+	function validateNumericInput(currentValue: string, min: number, max: number, defaultValue: number): number {
+		const num = parseFloat(currentValue);
+
+		if (isNaN(num) || num < min || num > max) {
+			const msg = {
+				message    : [`A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.`],
+				timeout    : 5000,
+				fontsize   : "16px",
+				messagetype: "warning"
+			};
+			UnifiedMessage.create(msg);
+			return defaultValue;
+		}
+		return num;
+	}
+
+	/**
+	 * デバウンスされたバリデーション関数を格納する変数
+	 */
+	const debouncedValidation = debounce(
+		(input: HTMLInputElement, min: number, max: number, defaultValue: number, updateFn: (value: number) => void) => {
+			const validatedValue = validateNumericInput(input.value, min, max, defaultValue);
+
+			if (input.value !== validatedValue.toString()) {
+				input.value = validatedValue.toString();
+			}
+
+			updateFn(validatedValue);
+		},
+		status.define.OptionsPageInputDebounceTime
+	);
 	// --------------------------------------------------------------------------------------------
 
 
@@ -221,40 +262,16 @@
 	// ---------------------------------------------------------------------------------------------
 	// Options Page
 
-	/**
-	 * 指定された範囲内で数値入力を検証します。
-	 * @param {string} currentValue - 入力イベントからの現在の値
-	 * @param {number} min          - 許容される最小値
-	 * @param {number} max          - 許容される最大値
-	 * @param {number} defaultValue - 範囲外の場合に設定するデフォルト値
-	 * @returns {number}            - 検証された数値
-	 */
-	function validateNumericInput(currentValue: string, min: number, max: number, defaultValue: number): number {
-		let num = parseFloat(currentValue);
-
-		if (isNaN(num) || num < min || num > max) {
-			const msg = {
-				message: [`A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.`],
-				timeout: 5000,
-				fontsize: "16px",
-				messagetype: "warning"
-			};
-			UnifiedMessage.create(msg);
-			return defaultValue;
-		}
-		return num;
-	}
-
 	function eventOptionsPageFontSize(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
-		const validatedValue = validateNumericInput(
-			input.value,
+
+		debouncedValidation(
+			input,
 			status.define.OptionsPageFontSizeValueMin,
 			status.define.OptionsPageFontSizeValueMax,
-			status.define.Config.OptionsPage.fontsize
+			status.define.Config.OptionsPage.fontsize,
+			(value) => { status.config.OptionsPage.fontsize = value; }
 		);
-		input.value = validatedValue.toString();
-		status.config.OptionsPage.fontsize = validatedValue;
 	}
 	// ---------------------------------------------------------------------------------------------
 
@@ -267,14 +284,14 @@
 
 	function eventPopupMenuClearMessageTimeout(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
-		const validatedValue = validateNumericInput(
-			input.value,
+
+		debouncedValidation(
+			input,
 			status.define.PopupMenuClearMessageTimeoutValueMin,
 			status.define.PopupMenuClearMessageTimeoutValueMax,
-			status.define.Config.PopupMenu.ClearMessage.timeout
+			status.define.Config.PopupMenu.ClearMessage.timeout,
+			(value) => { status.config.PopupMenu.ClearMessage.timeout = value; }
 		);
-		input.value = validatedValue.toString();
-		status.config.PopupMenu.ClearMessage.timeout = validatedValue;
 	}
 
 	function eventPopupOnClickCloseEnable() {
@@ -283,26 +300,26 @@
 
 	function eventPopupOnClickCloseTimeout(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
-		const validatedValue = validateNumericInput(
-			input.value,
+
+		debouncedValidation(
+			input,
 			status.define.PopupMenuOnClickCloseTimeoutValueMin,
 			status.define.PopupMenuOnClickCloseTimeoutValueMax,
-			status.define.Config.PopupMenu.OnClickClose.timeout
+			status.define.Config.PopupMenu.OnClickClose.timeout,
+			(value) => { status.config.PopupMenu.OnClickClose.timeout = value; }
 		);
-		input.value = validatedValue.toString();
-		status.config.PopupMenu.OnClickClose.timeout = validatedValue;
 	}
 
 	function eventPopupMenuFontSize(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
-		const validatedValue = validateNumericInput(
-			input.value,
+
+		debouncedValidation(
+			input,
 			status.define.PopupMenuFontSizeValueMin,
 			status.define.PopupMenuFontSizeValueMax,
-			status.define.Config.PopupMenu.fontsize
+			status.define.Config.PopupMenu.fontsize,
+			(value) => { status.config.PopupMenu.fontsize = value; }
 		);
-		input.value = validatedValue.toString();
-		status.config.PopupMenu.fontsize = validatedValue;
 	}
 	// --------------------------------------------------------------------------------------------
 
@@ -386,14 +403,13 @@
 	}
 	function eventTabDelay(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
-		const validatedValue = validateNumericInput(
-			input.value,
+		debouncedValidation(
+			input,
 			status.define.TabOpenDelayValueMin,
 			status.define.TabOpenDelayValueMax,
-			status.define.Config.Tab.delay
+			status.define.Config.Tab.delay,
+			(value) => { status.config.Tab.delay = value; }
 		);
-		input.value = validatedValue.toString();
-		status.config.Tab.delay = validatedValue;
 	}
 	// --------------------------------------------------------------------------------------------
 
