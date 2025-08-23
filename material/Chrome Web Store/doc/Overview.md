@@ -13,15 +13,15 @@ The following functions can be selected from the pop-up menu.
 
 ## How to use
 
-1. Click on the icon of "**Copy URL of All Tabs**" on the right side of the address bar.
+1. Click on the icon of "Copy URL of All Tabs" on the right side of the address bar.
 2. Action
 	- To "Copy all tab URLs"
-		- Click **Copy** in the Popup Menu. The URLs of all open tabs are copied to the clipboard.
+		- Click "Copy" in the Popup Menu. The URLs of all open tabs are copied to the clipboard.
 	- To "Open the URL in the clipboard in a new tab"
-		- Click **Paste** in the Popup Menu. The URLs in the clipboard are opened at once.
+		- Click "Paste" in the Popup Menu. The URLs in the clipboard are opened at once.
 	- To "Open the Settings"
-		- Click **Options** in the Popup Menu.
-		- Alternatively, right-click on the "Copy URL of All Tabs" extension icon displayed to the right of the address bar and select **Options** from the menu.
+		- Click "Options" in the Popup Menu.
+		- Alternatively, right-click on the "Copy URL of All Tabs" extension icon displayed to the right of the address bar and select "Options" from the menu.
 
 For more detailed instructions, please refer to one of the following:
 - [User Guide](https://github.com/from-es/copy-url-of-all-tabs/blob/main/docs/UserGuide/README.md)
@@ -36,7 +36,7 @@ For more detailed instructions, please refer to one of the following:
 
 ### Tab position setting is ignored when pasting URLs in Vivaldi Browser
 
-Vivaldi prioritizes browser-side settings (**Settings >> Tabs >> New Tab Position**) over extension settings.
+Vivaldi prioritizes browser-side settings (Settings >> Tabs >> New Tab Position) over extension settings.
 
 ### Links to pages opened with "Copy URL to all tabs" do not marked as "Visited"
 
