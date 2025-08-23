@@ -925,8 +925,11 @@ const define: Define = {
 	TabOpenDelayValueStep  : 1,
 	TabOpenCustomDelayValue: 1000,  // millisecond
 
-	// ボタン要素の連打対策用
-	DisabledTimeoutValue: 1000
+	// Options >> Reset Button: ボタン要素の連打対策用
+	DisabledTimeoutValue: 1000, // millisecond
+
+	// Options >> Input Tag: オプションページの入力フィールドにおけるデバウンス処理用
+	OptionsPageInputDebounceTime: 500 // millisecond
 };
 
 
