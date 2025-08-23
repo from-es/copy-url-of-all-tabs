@@ -22,12 +22,13 @@ function main() {
 
 
 /**
- * @param   {object}                       message
- * @param   {chrome.runtime.MessageSender} sender
- * @param   {Function}                     sendResponse
- * @returns {Promise}
+ * `chrome.runtime.onMessage` に登録されたイベントハンドラ。
+ * Promise を返すことで、非同期に応答を処理します。
+ * @param   {object}                       message - ポップアップなどから受信したメッセージ
+ * @param   {chrome.runtime.MessageSender} sender  - メッセージの送信者情報
+ * @returns {Promise<any>}                         - 応答内容、または応答がないことを示す Promise
  */
-function eventOnMessage(message: { status: { config: any; define: any; }; action: any; }, sender: any, sendResponse: any) {
+async function eventOnMessage(message: { status: { config: any; define: any; }; action: any; argument: any; }, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void): Promise<any> {
 	const { config, define } = message.status;
 
 	// Set logging console
@@ -38,22 +39,18 @@ function eventOnMessage(message: { status: { config: any; define: any; }; action
 
 	switch (message.action) {
 		case define.Messaging.OpenURLs:
-			handleOpenURLs(message);
-			break;
+			await handleOpenURLs(message); // handleOpenURLs 内で発生するエラーを捕捉、Promise.reject させるために await を付加
+			return;
 		default:
-			handleDoNotMatchAnySwitchStatement(message, sender, sendResponse);
-			break;
+			return handleDoNotMatchAnySwitchStatement(message, sender);
 	}
-
-	// 非同期の場合は一旦 true を返す。その後、 sendResponse() を使用し「chrome.runtime.onMessage.addListener() の呼び出し先」に値を返す
-	return true;
 }
 
 /**
- * @param   {object} message
- * @returns {void}
+ * @param   {object}        message
+ * @returns {Promise<void>}
  */
-async function handleOpenURLs(message: { argument: { urlList: any; option: any; }; }) {
+async function handleOpenURLs(message: { argument: { urlList: any; option: any; }; }): Promise<void> {
 	const { urlList, option } = message.argument;
 
 	openURLs(urlList, option);
@@ -62,20 +59,16 @@ async function handleOpenURLs(message: { argument: { urlList: any; option: any; 
 /**
  * @param   {object}                       message
  * @param   {chrome.runtime.MessageSender} sender
- * @param   {Function}                     sendResponse
- * @returns {void}
+ * @returns {Promise<object>}
 */
-async function handleDoNotMatchAnySwitchStatement(message: any, sender: any, sendResponse: (arg0: { message: string; arguments: { message: any; sender: any; sendResponse: any; }; }) => void) {
-	console.warn("Warning, Received a message with No Option >> ", { message, sender, sendResponse });
+async function handleDoNotMatchAnySwitchStatement(message: any, sender: chrome.runtime.MessageSender): Promise<object> {
+	const warningMessage = "Warning, Received a message with No Option";
+	console.warn(warningMessage, { message, sender });
 
-	const msg = {
-		message  : "Warning, Received a message with No Option",
-		arguments: { message, sender, sendResponse }
+	return {
+		message  : warningMessage,
+		arguments: { message, sender }
 	};
-
-	if ( sendResponse ) {
-	  sendResponse(msg);
-	}
 }
 
 
