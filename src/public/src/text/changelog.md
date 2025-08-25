@@ -1,3 +1,7 @@
+#### [1.0.3] - 2025/08/26
+
+- fix
+	- Fixed various code style issues identified by ESLint.
 
 #### [1.0.2] - 2025/08/23
 
