@@ -10,7 +10,7 @@ export default defineConfig({
 	// これにより、Vitestが内部的に利用するViteのモジュール解決全体で、`package.json`の`browser`フィールドが優先的に参照されるようになります。
 	// Svelteコンポーネントのテスト時に`onMount`などのライフサイクル関数がサーバーサイドと誤認されてエラーになることを防ぎます。
 	resolve: {
-		conditions: ["browser"],
+		conditions: [ "browser" ],
 	},
 	test: {
 		// `describe`, `it`, `expect` などを各テストファイルでimportせずにグローバルに利用可能にします。
