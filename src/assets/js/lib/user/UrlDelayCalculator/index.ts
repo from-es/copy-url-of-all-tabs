@@ -41,7 +41,7 @@ export interface UrlDelayCalculationResult {
 		*/
 		cumulative: number;
 		/**
-		　* この特定のURLを処理する前の個別の遅延（ミリ秒）。非同期処理の次のステップへの待ち時間などに使用
+		 * この特定のURLを処理する前の個別の遅延（ミリ秒）。非同期処理の次のステップへの待ち時間などに使用
 		*/
 		individual: number;
 	};
