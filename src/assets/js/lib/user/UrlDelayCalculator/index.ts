@@ -20,7 +20,7 @@ export interface UrlDelayRule {
 	 * 'exact': 完全一致 (例: "https://example.com/page" に完全に一致)
 	 * RegExpオブジェクトの場合はこのプロパティは無視されます。
 	 */
-	matchType?: 'prefix' | 'substring' | 'exact';
+	matchType?: "prefix" | "substring" | "exact";
 	/**
 	 * パターンがマッチした場合に適用する遅延（ミリ秒）。
 	 */
@@ -41,7 +41,7 @@ export interface UrlDelayCalculationResult {
 		*/
 		cumulative: number;
 		/**
-		　* この特定のURLを処理する前の個別の遅延（ミリ秒）。非同期処理の次のステップへの待ち時間などに使用
+		 * この特定のURLを処理する前の個別の遅延（ミリ秒）。非同期処理の次のステップへの待ち時間などに使用
 		*/
 		individual: number;
 	};
@@ -89,7 +89,7 @@ export class UrlDelayCalculator {
 					return { ...rule, compiledPattern: rule.pattern };
 				}
 
-				if (typeof rule.pattern !== 'string' || rule.pattern.length === 0) {
+				if (typeof rule.pattern !== "string" || rule.pattern.length === 0) {
 					console.log("UrlDelayCalculator: An invalid or empty string pattern was detected in a custom delay rule. This rule will be ignored. Rule:", rule);
 
 					return { ...rule, compiledPattern: /(?!)/ };  // 無効な文字列パターンの場合は、どのURLにもマッチしない正規表現を返す
@@ -99,16 +99,16 @@ export class UrlDelayCalculator {
 				let   regex: RegExp;
 
 				switch (rule.matchType) {
-					case 'substring':
-						regex = new RegExp(escapedPattern, 'i');
+					case "substring":
+						regex = new RegExp(escapedPattern, "i");
 						break;
-					case 'exact':
-						regex = new RegExp(`^${escapedPattern}$`, 'i');
+					case "exact":
+						regex = new RegExp(`^${escapedPattern}$`, "i");
 						break;
-					case 'prefix':
+					case "prefix":
 						// 'prefix' は 'default' と同じ処理の為、フォールスルーする
 					default:
-						regex = new RegExp(`^${escapedPattern}`, 'i');
+						regex = new RegExp(`^${escapedPattern}`, "i");
 						break;
 				}
 

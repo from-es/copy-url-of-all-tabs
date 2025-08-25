@@ -95,7 +95,7 @@ Closes #42
 From simple fixes to fixes that close issues.
 
 ```
-fix: Fix profile image display corruption
+fix: fix profile image display corruption
 
 Fixed an issue where image corners were not rounded under certain conditions,
 causing them to appear square.
@@ -153,25 +153,25 @@ fix: Fix profile image
 
 #### Documentation Update (docs)
 ```
-docs(readme): Update setup instructions
+docs(readme): update setup instructions
 ```
 
 #### Refactoring (refactor)
 Used when improving code structure, not adding features or fixing bugs.
 ```
-refactor(auth): Improve authentication logic to a more efficient method
+refactor(auth): improve authentication logic to a more efficient method
 ```
 
 #### Style Fix (style)
 Fixes to formatting or indentation that do not affect code behavior.
 ```
-style(all): Standardize formatting across the project
+style(all): standardize formatting across the project
 ```
 
 #### Typo or Minor Fix (fix)
 `fix` can also be used for correcting typos in text or other minor corrections that are not functional bugs.
 ```
-fix(settings): Fix typo in settings screen label
+fix(settings): fix typo in settings screen label
 ```
 
 ## How to Commit with Sourcetree
@@ -219,13 +219,13 @@ Adding an image directly to the application's UI (e.g., an options screen) is co
 
 **Bad Example:**
 ```
-docs(options): Add explanatory image to options screen
+docs(options): add explanatory image to options screen
 ```
 > This could be misinterpreted as a change to a documentation file named `options`.
 
 **Good Example:**
 ```
-feat(options): Add explanatory image to options screen
+feat(options): add explanatory image to options screen
 ```
 > This clearly communicates that a new feature (`feat`) was added to the options screen (`options`).
 

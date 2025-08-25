@@ -46,7 +46,7 @@
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
-    "svelte": "^5.38.2",
+    "svelte": "^5.38.3",
     "svelte-check": "^4.3.1",
     "tslib": "^2.8.1",
     "typescript": "^5.9.2",
@@ -55,7 +55,7 @@
     "wxt": "^0.20.8"
   },
   "dependencies": {
-    "bowser": "^2.12.0",
+    "bowser": "^2.12.1",
     "dayjs": "^1.11.13",
     "lodash-es": "^4.17.21",
     "marked": "^16.2.0",
