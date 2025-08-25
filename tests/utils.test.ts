@@ -1,8 +1,8 @@
-import { add } from './utils';
-import { describe, it, expect } from 'vitest';
+import { add } from "./utils";
+import { describe, it, expect } from "vitest";
 
-describe('add function', () => {
-  it('should return the sum of two numbers', () => {
+describe("add function", () => {
+  it("should return the sum of two numbers", () => {
     // 準備
     const a = 1;
     const b = 2;
@@ -14,7 +14,7 @@ describe('add function', () => {
     expect(result).toBe(3);
   });
 
-  it('should handle negative numbers', () => {
+  it("should handle negative numbers", () => {
     expect(add(-1, -1)).toBe(-2);
   });
 });
