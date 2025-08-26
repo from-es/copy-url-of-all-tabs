@@ -1,3 +1,9 @@
+#### [1.0.4] - 2025/08/26
+
+- fix
+	- Fixed various code style issues identified by ESLint.
+	- Corrected the tooltip text for the support link on the options page.
+
 #### [1.0.3] - 2025/08/26
 
 - fix
