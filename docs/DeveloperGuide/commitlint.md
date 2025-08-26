@@ -1,6 +1,6 @@
 # commitlint: Commit Message Guidelines
 
-**Last Updated:** August 11, 2025
+**Last Updated:** August 26, 2025
 
 To ensure that our commit history is readable, consistent, and easy to navigate, we adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
@@ -66,9 +66,9 @@ Below are examples of commonly used scopes. Please use appropriate ones accordin
   - `config`, `ci`, `build`, `deps`
 
 **Examples:**
-- `feat(login): Add password reset functionality`
-- `fix(api): Enhance null checks on user retrieval endpoint`
-- `docs(readme): Update setup instructions`
+- `feat(login): add password reset functionality`
+- `fix(api): enhance null checks on user retrieval endpoint`
+- `docs(readme): update setup instructions`
 
 ## Commit Message Examples
 
@@ -83,7 +83,7 @@ patterns, providing more granular control over tab opening behavior.
 ```
 
 ```
-feat(auth): Add biometric authentication to login feature
+feat(auth): add biometric authentication to login feature
 
 Allows users to log in with fingerprints or facial recognition instead of passwords.
 This improves security and convenience.
@@ -146,7 +146,7 @@ Correct the message according to the error content and commit again.
 To fix the error, add a `type` and format the message according to the convention.
 
 ```
-fix: Fix profile image
+fix: fix profile image
 ```
 
 ### Other Commit Examples
