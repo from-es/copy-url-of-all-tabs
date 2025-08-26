@@ -13,5 +13,5 @@
 
 ## JavaScript
 
-- select-tab.mjs
+- select-tab.ts
 	- [クリックで切り替わるシンプルなタブメニュー - 25egg(Wayback Machine)](http://web.archive.org/web/20220812231056/https://blog.25egg.com/?p=203 "クリックで切り替わるシンプルなタブメニュー - 25egg")
