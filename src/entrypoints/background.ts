@@ -26,21 +26,20 @@ function main() {
  * Promise を返すことで、非同期に応答を処理します。
  * @param   {object}                       message - ポップアップなどから受信したメッセージ
  * @param   {chrome.runtime.MessageSender} sender  - メッセージの送信者情報
- * @returns {Promise<any>}                         - 応答内容、または応答がないことを示す Promise
+ * @returns {Promise<void | object>}               - 応答内容、または応答がないことを示す Promise
  */
-async function eventOnMessage(message: { status: { config: any; define: any; }; action: any; argument: any; }, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void): Promise<any> {
+async function eventOnMessage(message: { status: { config: any; define: any; }; action: any; argument: any; }, sender: chrome.runtime.MessageSender): Promise<void | object> {
 	const { config, define } = message.status;
 
 	// Set logging console
 	logging(config, define);
 
 	// debug
-	console.log("background.js received message >>", { message, sender, sendResponse });
+	console.log("background.js received message >>", { message, sender });
 
 	switch (message.action) {
 		case define.Messaging.OpenURLs:
-			await handleOpenURLs(message); // handleOpenURLs 内で発生するエラーを捕捉、Promise.reject させるために await を付加
-			return;
+			return handleOpenURLs(message);
 		default:
 			return handleDoNotMatchAnySwitchStatement(message, sender);
 	}
