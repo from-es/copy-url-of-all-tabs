@@ -1,10 +1,14 @@
 // Import Types
-import { type Define }                                       from "@/assets/js/types/";
+import { type Define, type ExtensionMessage }                from "@/assets/js/types/";
 import { type UrlDelayRule, type UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
 // Import from Script
 import { logging }            from "@/assets/js/function.mjs";
 import { UrlDelayCalculator } from "@/assets/js/lib/user/UrlDelayCalculator";
+
+// Types defined only in "background.ts"
+type TabPosition      = "default" | "first" | "left" | "right" | "last";
+type CreateTabOptions = Define["Config"]["Tab"] & { windowId: number | undefined };
 
 export default defineBackground({
 	// Set manifest options
@@ -28,7 +32,7 @@ function main() {
  * @param   {chrome.runtime.MessageSender} sender  - メッセージの送信者情報
  * @returns {Promise<void | object>}               - 応答内容、または応答がないことを示す Promise
  */
-async function eventOnMessage(message: { status: { config: any; define: any; }; action: any; argument: any; }, sender: chrome.runtime.MessageSender): Promise<void | object> {
+async function eventOnMessage(message: ExtensionMessage, sender: chrome.runtime.MessageSender): Promise<void | object> {
 	const { config, define } = message.status;
 
 	// Set logging console
@@ -46,21 +50,27 @@ async function eventOnMessage(message: { status: { config: any; define: any; }; 
 }
 
 /**
- * @param   {object}        message
+ * @param   {ExtensionMessage} message
  * @returns {Promise<void>}
  */
-async function handleOpenURLs(message: { argument: { urlList: any; option: any; }; }): Promise<void> {
-	const { urlList, option } = message.argument;
+async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
+	const { argument } = message;
+	const urlList      = argument?.urlList;
+	const option       = argument?.option;
 
-	openURLs(urlList, option);
+	if (urlList && option) {
+		openURLs(urlList, option);
+	} else {
+		console.error("Error: Cannot open URL List! urlList or option are missing in the message argument.", { argument });
+	}
 }
 
 /**
- * @param   {object}                       message
+ * @param   {ExtensionMessage}             message
  * @param   {chrome.runtime.MessageSender} sender
  * @returns {Promise<object>}
 */
-async function handleDoNotMatchAnySwitchStatement(message: any, sender: chrome.runtime.MessageSender): Promise<object> {
+async function handleDoNotMatchAnySwitchStatement(message: ExtensionMessage, sender: chrome.runtime.MessageSender): Promise<object> {
 	const warningMessage = "Warning, Received a message with No Option";
 	console.warn(warningMessage, { message, sender });
 
@@ -132,9 +142,9 @@ async function openURLs(urlList: string[], option: Define["Config"]["Tab"]): Pro
 }
 
 /**
- * @returns {number}
+ * @returns {Promise<number | undefined>}
  */
-async function getCurrentWindowID() {
+async function getCurrentWindowID(): Promise<number | undefined> {
 	const window   = await chrome.windows.getCurrent({ windowTypes: [ "normal" ] });
 	const windowId = window.id;
 
@@ -143,10 +153,10 @@ async function getCurrentWindowID() {
 
 /**
  * @param   {string} url
- * @param   {object} option - { active, position }
+ * @param   {CreateTabOptions} option
  * @returns {void}
  */
-async function createTab(url: string, option: { windowId: any; reverse?: boolean; active: any; delay?: number; customDelay?: { enable: boolean; list: { id: string; pattern: string; delay: number; }[]; }; position: any; }) {
+async function createTab(url: string, option: CreateTabOptions) {
 	const { active, position, windowId } = option;
 
 	const tabs       = await chrome.tabs.query({ currentWindow : true });
@@ -163,13 +173,13 @@ async function createTab(url: string, option: { windowId: any; reverse?: boolean
 }
 
 /**
- * @param   {string}            position
- * @param   {chrome.tabs.Tab[]} tabs
- * @param   {chrome.tabs.Tab}   currentTab
- * @returns {number}
+ * @param   {TabPosition}               position
+ * @param   {chrome.tabs.Tab[]}         tabs
+ * @param   {chrome.tabs.Tab|undefined} currentTab
+ * @returns {number | null}
  */
-function createTabPosition(position: string, tabs: chrome.tabs.Tab[], currentTab: chrome.tabs.Tab): number {
-	let number = null;
+function createTabPosition(position: TabPosition, tabs: chrome.tabs.Tab[], currentTab: chrome.tabs.Tab | undefined): number | null {
+	let number: number | null = null;
 
 	switch (position) {
 		case "default":
@@ -179,18 +189,22 @@ function createTabPosition(position: string, tabs: chrome.tabs.Tab[], currentTab
 			number = 0;
 			break;
 		case "left":
-			number = currentTab.index;
+			number = currentTab ? currentTab.index : null;
 			break;
 		case "right":
-			number = currentTab.index + 1;
+			number = currentTab ? currentTab.index + 1 : null;
 			break;
 		case "last":
 			number = tabs.length + 1;
 			break;
 		default:
+			/*
+			  position が "未指定 or undefined or null" の場合のタブの位置は、chrome.tabs.create(options) における index のデフォルトの挙動に準ずる
+			  index のデフォルトの挙動: 新規タブは、指定されたウィンドウの一番右端（末尾）に作成される
+			*/
+
 			// debug
 			console.error("Error, Invalid argument passed to createTabPosition(position, tabs, currentTab) >> position >>", position);
-
 			break;
 	}
 
