@@ -1,6 +1,6 @@
 # Vitest: A Fast and Modern Unit Testing Framework
 
-**Last Updated:** August 15, 2025
+**Last Updated:** August 29, 2025
 
 This document provides guidelines for writing unit and integration tests using [Vitest](https://vitest.dev/), the designated testing framework for this project.
 
@@ -41,19 +41,19 @@ First, install `vitest` as a development dependency.
 npm install --save-dev vitest
 ```
 
-Next, create the function to be tested, `add`, in the `tests/utils.ts` file.
+Next, create the function to be tested, `add`, in the `tests/_vitest-check/utils/helpers.ts` file.
 
-**`tests/utils.ts`**
+**`tests/_vitest-check/utils/helpers.ts`**
 ```typescript
 export function add(a: number, b: number): number {
   return a + b;
 }
 ```
 
-Then, create the test code for this function in the `tests/utils.test.ts` file.
+Then, create the test code for this function in the `tests/_vitest-check/utils/helpers.test.ts` file.
 
 ```typescript
-import { add } from './utils';
+import { add } from './helpers';
 import { describe, it, expect } from 'vitest';
 
 describe('add function', () => {
@@ -118,7 +118,7 @@ Next, create a `vitest.config.ts` file in the project's root directory with the 
 
 **`vitest.config.ts`**
 ```typescript
-import { defineConfig } from 'vitest/config';
+import { defineConfig, configDefaults } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
@@ -140,17 +140,13 @@ export default defineConfig({
     // enabling tests for components that run in a browser.
     environment: 'jsdom',
 
-    // Specifies the file patterns to be included for testing.
-    // Targets files ending in '.test.js' or '.test.ts' within the 'src' or 'tests' directories.
-    include: [
-      'src/**/*.test.{js,ts}',
-      'tests/**/*.test.{js,ts}'
-    ],
-
     // Specifies patterns for files or directories to be excluded from testing.
-    // If the exclude option is enabled, Vitest's default exclusion patterns are overridden.
-    // Therefore, all necessary exclusion patterns must be explicitly specified.
-    //exclude: [],
+    // By default, smoke tests for environment verification are excluded.
+    exclude: [
+      // It's recommended to inherit the default exclusions to avoid accidentally including files from node_modules.
+      ...configDefaults.exclude,
+      '_vitest-check/**',
+    ],
   },
 });
 ```
@@ -159,7 +155,7 @@ export default defineConfig({
 
 Next, create a simple counter component to be tested (`Counter.svelte`).
 
-**`tests/components/Counter.svelte`**
+**`tests/_vitest-check/components/Counter.svelte`**
 ```html
 <script lang="ts">
   import { onMount } from "svelte";
@@ -185,7 +181,7 @@ Next, create a simple counter component to be tested (`Counter.svelte`).
 
 And then, write the test for this component (`Counter.test.ts`).
 
-**`tests/components/Counter.test.ts`**
+**`tests/_vitest-check/components/Counter.test.ts`**
 ```typescript
 import { render, fireEvent, screen, cleanup } from '@testing-library/svelte';
 import { describe, it, expect, afterEach } from 'vitest';
@@ -225,14 +221,15 @@ describe('Counter.svelte', () => {
 
 ## How to Run Tests
 
-Define the following test scripts in your `package.json`. It is recommended to prepare multiple execution methods for different purposes.
+Define the following test scripts in your `package.json`. For efficiency, it is recommended to separate the commands for running main project tests and environment smoke tests.
 
 **`package.json`**
 ```json
 {
   "scripts": {
+    "test": "vitest run",
+    "test:smoke": "vitest run _vitest-check/",
     "vitest": "vitest",
-    "vitest:run": "vitest run",
     "vitest:ui": "vitest --ui",
     "vitest:coverage": "vitest run --coverage"
   }
@@ -243,31 +240,41 @@ This allows you to run tests for various purposes with the following commands.
 
 ---
 
+### `npm run test`
+
+**Purpose:** Run all main project tests.
+
+**Behavior:** Executes all tests for the application, excluding the smoke tests in the `_vitest-check/` directory. This is the primary command to use during regular development to verify the application's functionality.
+
+```bash
+npm run test
+```
+
+### `npm run test:smoke`
+
+**Purpose:** Verify the test environment.
+
+**Behavior:** Runs only the tests within the `_vitest-check/` directory. This is useful after installing or updating test-related packages to ensure that the Vitest environment is correctly configured.
+
+```bash
+npm run test:smoke
+```
+
 ### `npm run vitest`
 
-**Purpose:** Continuous test execution during development.
+**Purpose:** Continuous test execution during development (watch mode).
 
-**Behavior:** Starts Vitest in **watch mode**. After running all tests initially, it watches for changes in source code or test files and automatically re-runs only the relevant tests. This provides rapid feedback while coding and improves development efficiency.
+**Behavior:** Starts Vitest in **watch mode**. It watches for file changes and automatically re-runs relevant tests, providing rapid feedback.
 
 ```bash
 npm run vitest
-```
-
-### `npm run vitest:run`
-
-**Purpose:** Run all tests once. Ideal for validation steps in a CI/CD pipeline.
-
-**Behavior:** Runs all tests in the project once, outputs the results to the console, and then exits the process. It does not watch for file changes.
-
-```bash
-npm run vitest:run
 ```
 
 ### `npm run vitest:ui`
 
 **Purpose:** Interactive analysis of test results.
 
-**Behavior:** Launches a graphical UI that runs in the browser. It allows for visual filtering of test suites, detailed inspection of results, and code previews. (Requires `@vitest/ui` to be installed).
+**Behavior:** Launches a graphical UI in the browser to visually inspect test results. (Requires `@vitest/ui`).
 
 ```bash
 npm run vitest:ui
@@ -277,7 +284,7 @@ npm run vitest:ui
 
 **Purpose:** Generate a test coverage report.
 
-**Behavior:** Runs all tests once and measures which parts of the code are covered by the tests. After execution, the results are displayed in the console, and a `coverage/` directory is created at the project root containing a detailed HTML report. (Requires `@vitest/coverage-v8` to be installed).
+**Behavior:** Runs tests and measures code coverage, generating a detailed report in the `coverage/` directory. (Requires `@vitest/coverage-v8`).
 
 ```bash
 npm run vitest:coverage

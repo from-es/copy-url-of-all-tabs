@@ -1,10 +1,12 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig, configDefaults } from "vitest/config";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
 	plugins: [
 		// Vitest実行中はSvelteのホットモジュールリプレースメント(HMR)を無効化し、テストの安定性を確保します。
 		svelte({ hot: !process.env.VITEST }),
+		tsconfigPaths(),
 	],
 	// `resolve.conditions` をトップレベルに設定します。
 	// これにより、Vitestが内部的に利用するViteのモジュール解決全体で、`package.json`の`browser`フィールドが優先的に参照されるようになります。
@@ -30,6 +32,11 @@ export default defineConfig({
 		// テスト対象から除外するファイルやディレクトリのパターンを指定します。
 		// excludeオプションを有効にする場合、Vitestのデフォルトの除外パターンは上書きされます。
 		// そのため、必要な除外パターンを全て明示的に指定する必要があります。
-		// exclude: [],
+		exclude: [
+			// デフォルトの除外設定に加えて、動作確認用のテストを除外
+			...configDefaults.exclude,
+			"_vitest-check/**"
+		],
+		// exclude: [ "_vitest-check/**" ]
 	},
 });

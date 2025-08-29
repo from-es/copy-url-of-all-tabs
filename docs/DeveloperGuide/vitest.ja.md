@@ -1,6 +1,6 @@
 # Vitest: 高速でモダンな単体テストフレームワーク
 
-**最終更新日:** 2025年8月15日
+**最終更新日:** 2025年8月29日
 
 このドキュメントは、このプロジェクトで指定されたテストフレームワークである [Vitest](https://vitest.dev/) を使用した単体テストおよび結合テストの記述に関するガイドラインを提供します。
 
@@ -41,19 +41,19 @@ Vitestは、デフォルトでプロジェクト内のすべてのディレク�
 npm install --save-dev vitest
 ```
 
-次に、テスト対象となる`add`関数を`test/utils.ts`ファイルに作成します。
+次に、テスト対象となる`add`関数を`tests/_vitest-check/utils/helpers.ts`ファイルに作成します。
 
-**`tests/utils.ts`**
+**`tests/_vitest-check/utils/helpers.ts`**
 ```typescript
 export function add(a: number, b: number): number {
   return a + b;
 }
 ```
 
-そして、この関数に対するテストコードを`test/utils.test.ts`ファイルに作成します
+そして、この関数に対するテストコードを`tests/_vitest-check/utils/helpers.test.ts`ファイルに作成します
 
 ```typescript
-import { add } from './utils';
+import { add } from './helpers';
 import { describe, it, expect } from 'vitest';
 
 describe('add function', () => {
@@ -118,7 +118,7 @@ npm install --save-dev vitest jsdom @vitest/ui @sveltejs/vite-plugin-svelte @tes
 
 **`vitest.config.ts`**
 ```typescript
-import { defineConfig } from 'vitest/config';
+import { defineConfig, configDefaults } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
@@ -140,17 +140,13 @@ export default defineConfig({
     // ブラウザで動作するコンポーネントのテストが可能になります。
     environment: 'jsdom',
 
-    // テスト対象のファイルパターンを指定します。
-    // 'src'ディレクトリ or 'tests'ディレクトリ以下の'.test.js'または'.test.ts'ファイルを対象とします。
-    include: [
-      'src/**/*.test.{js,ts}',
-      'tests/**/*.test.{js,ts}'
-    ],
-
     // テスト対象から除外するファイルやディレクトリのパターンを指定します。
-    // excludeオプションを有効にする場合、Vitestのデフォルトの除外パターンは上書きされます。
-    // そのため、必要な除外パターンを全て明示的に指定する必要があります。
-    //exclude: [],
+    // デフォルトでは、環境検証用のスモークテストが除外されます。
+    exclude: [
+      // node_modulesなどを誤って含めないよう、デフォルトの除外設定を継承することを推奨します。
+      ...configDefaults.exclude,
+      '_vitest-check/**',
+    ],
   },
 });
 ```
@@ -159,7 +155,7 @@ export default defineConfig({
 
 次に、テスト対象の簡単なカウンターコンポーネント (`Counter.svelte`) を作成します。
 
-**`tests/components/Counter.svelte`**
+**`tests/_vitest-check/components/Counter.svelte`**
 ```html
 <script lang="ts">
   import { onMount } from "svelte";
@@ -185,7 +181,7 @@ export default defineConfig({
 
 そして、このコンポーネントに対するテスト (`Counter.test.ts`) を記述します。
 
-**`tests/components/Counter.test.ts`**
+**`tests/_vitest-check/components/Counter.test.ts`**
 ```typescript
 import { render, fireEvent, screen, cleanup } from '@testing-library/svelte';
 import { describe, it, expect, afterEach } from 'vitest';
@@ -226,14 +222,15 @@ describe('Counter.svelte', () => {
 
 ## テストの実行方法
 
-`package.json` に、以下のようにテストスクリプトを定義します。用途に応じて複数の実行方法を準備しておくことを推奨します。
+`package.json` に、以下のようにテストスクリプトを定義します。効率化のため、プロジェクト本体のテストと、環境確認用のスモークテストを実行するコマンドを分離することを推奨します。
 
 **`package.json`**
 ```json
 {
   "scripts": {
+    "test": "vitest run",
+    "test:smoke": "vitest run _vitest-check/",
     "vitest": "vitest",
-    "vitest:run": "vitest run",
     "vitest:ui": "vitest --ui",
     "vitest:coverage": "vitest run --coverage"
   }
@@ -244,31 +241,41 @@ describe('Counter.svelte', () => {
 
 ---
 
+### `npm run test`
+
+**用途:** プロジェクト本体の全テストを実行。
+
+**動作:** アプリケーションの全てのテストを実行します。`_vitest-check/` ディレクトリのスモークテストは除外されます。これは、通常の開発中にアプリケーションの機能性を検証するために使用する主要なコマンドです。
+
+```bash
+npm run test
+```
+
+### `npm run test:smoke`
+
+**用途:** テスト環境の検証。
+
+**動作:** `_vitest-check/` ディレクトリ内のテストのみを実行します。これは、テスト関連のパッケージをインストールまたは更新した後に、Vitest環境が正しく設定されていることを確認するために使用します。
+
+```bash
+npm run test:smoke
+```
+
 ### `npm run vitest`
 
-**用途:** 開発中の継続的なテスト実行。
+**用途:** 開発中の継続的なテスト実行（監視モード）。
 
-**動作:** Vitestを **監視（watch）モード** で起動します。最初に全テストを実行した後、ソースコードやテストファイルの変更を検知して、関連するテストだけを自動で再実行します。これにより、コーディングしながら迅速なフィードバックを得ることができ、開発効率が向上します。
+**動作:** Vitestを **監視（watch）モード** で起動します。ファイルの変更を検知して、関連するテストだけを自動で再実行するため、迅速なフィードバックが得られます。
 
 ```bash
 npm run vitest
-```
-
-### `npm run vitest:run`
-
-**用途:** 全てのテストを一度だけ実行。CI/CDパイプラインでの検証ステップに最適です。
-
-**動作:** プロジェクト内の全テストを一度だけ実行し、結果をコンソールに出力してプロセスを終了します。ファイルの変更を監視しません。
-
-```bash
-npm run vitest:run
 ```
 
 ### `npm run vitest:ui`
 
 **用途:** テスト結果のインタラクティブな分析。
 
-**動作:** ブラウザ上で動作するグラフィカルなUIを起動します。テストスイートのフィルタリング、結果の詳細な確認、コードのプレビューなどが視覚的に行えます。（`@vitest/ui` のインストールが必要です）
+**動作:** ブラウザ上で動作するグラフィカルなUIを起動し、テスト結果を視覚的に確認します。（`@vitest/ui` のインストールが必要です）
 
 ```bash
 npm run vitest:ui
@@ -278,7 +285,7 @@ npm run vitest:ui
 
 **用途:** テストカバレッジレポートの生成。
 
-**動作:** 全てのテストを一度だけ実行し、コードのどの部分がテストによってカバーされているかを測定します。実行後、結果がコンソールに表示されると共に、プロジェクトルートに `coverage/` ディレクトリが作成され、詳細なHTMLレポートが格納されます。（`@vitest/coverage-v8` のインストールが必要です）
+**動作:** テストを実行し、コードカバレッジを測定します。`coverage/` ディレクトリに詳細なレポートが生成されます。（`@vitest/coverage-v8` のインストールが必要です）
 
 ```bash
 npm run vitest:coverage
