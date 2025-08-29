@@ -24,6 +24,8 @@
     "postinstall": "wxt prepare",
     "eslint": "eslint src",
     "prepare": "husky",
+    "test": "vitest run",
+    "test:smoke": "vitest run _vitest-check/",
     "vitest": "vitest",
     "vitest:run": "vitest run",
     "vitest:ui": "vitest --ui",

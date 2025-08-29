@@ -1,16 +1,16 @@
-import { add } from "./utils";
+import { add } from "./helpers";
 import { describe, it, expect } from "vitest";
 
 describe("add function", () => {
 	it("should return the sum of two numbers", () => {
-		// 準備
+		// Arrange
 		const a = 1;
 		const b = 2;
 
-		// 実行
+		// Act
 		const result = add(a, b);
 
-		// 検証
+		// Assert
 		expect(result).toBe(3);
 	});
 

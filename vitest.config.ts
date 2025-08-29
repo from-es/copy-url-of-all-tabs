@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig, configDefaults } from "vitest/config";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -32,6 +32,11 @@ export default defineConfig({
 		// テスト対象から除外するファイルやディレクトリのパターンを指定します。
 		// excludeオプションを有効にする場合、Vitestのデフォルトの除外パターンは上書きされます。
 		// そのため、必要な除外パターンを全て明示的に指定する必要があります。
-		// exclude: [],
+		exclude: [
+			// デフォルトの除外設定に加えて、動作確認用のテストを除外
+			...configDefaults.exclude,
+			"_vitest-check/**"
+		],
+		// exclude: [ "_vitest-check/**" ]
 	},
 });
