@@ -1,3 +1,8 @@
+#### [1.0.5] - 2025/08/30
+
+- clean
+	- Improved and refactored internal code for better stability and maintenance.
+
 #### [1.0.4] - 2025/08/26
 
 - fix
