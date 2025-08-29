@@ -1,6 +1,6 @@
 # Vitest: A Fast and Modern Unit Testing Framework
 
-**Last Updated:** August 15, 2025
+**Last Updated:** August 29, 2025
 
 This document provides guidelines for writing unit and integration tests using [Vitest](https://vitest.dev/), the designated testing framework for this project.
 
