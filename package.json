@@ -48,7 +48,7 @@
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
-    "svelte": "^5.38.3",
+    "svelte": "^5.38.6",
     "svelte-check": "^4.3.1",
     "tslib": "^2.8.1",
     "typescript": "^5.9.2",
@@ -59,9 +59,9 @@
   },
   "dependencies": {
     "bowser": "^2.12.1",
-    "dayjs": "^1.11.13",
+    "dayjs": "^1.11.16",
     "lodash-es": "^4.17.21",
-    "marked": "^16.2.0",
+    "marked": "^16.2.1",
     "modern-normalize": "^3.0.1",
     "sortablejs": "^1.15.6",
     "v8n": "^1.5.1"
