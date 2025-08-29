@@ -1,10 +1,12 @@
 import { defineConfig } from "vitest/config";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
 	plugins: [
 		// Vitest実行中はSvelteのホットモジュールリプレースメント(HMR)を無効化し、テストの安定性を確保します。
 		svelte({ hot: !process.env.VITEST }),
+		tsconfigPaths(),
 	],
 	// `resolve.conditions` をトップレベルに設定します。
 	// これにより、Vitestが内部的に利用するViteのモジュール解決全体で、`package.json`の`browser`フィールドが優先的に参照されるようになります。
