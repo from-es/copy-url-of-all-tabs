@@ -6,6 +6,18 @@
 
 
 /* 差分適応 */
+:root {
+	--base-font-size: 16px;
+}
+
+html {
+	font-size: var(--base-font-size);
+}
+
+body {
+	font-size: 1rem;
+}
+
 * {
 	line-height: 1.6;
 }

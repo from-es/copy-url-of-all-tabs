@@ -1,3 +1,11 @@
+#### [1.1.0] - 2025/09/04
+
+- feat
+	- The font size setting from the options page is now applied to the `changelog page`.
+- clean
+	- Refactored the `changelog script` for better performance, including improved error handling and more efficient DOM manipulation.
+	- Refactored `StorageManager` to unify error handling, improving code stability and maintenance.
+
 #### [1.0.5] - 2025/08/30
 
 - clean
