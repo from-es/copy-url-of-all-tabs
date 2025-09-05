@@ -91,25 +91,25 @@ class ConsoleManager {
 		try {
 			// obj
 			if ( !obj || typeof obj !== "object" ) {
-				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". Arguments is not Object!`;
+				throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". Arguments is not Object!`);
 			}
 
 			// obj.logging
 			if ( !Object.hasOwn(obj, "logging") || typeof obj.logging !== "boolean" ) {
-				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.logging`;
+				throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.logging`);
 			}
 
 			// obj.timestamp
 			if ( !Object.hasOwn(obj, "timestamp") || typeof obj.timestamp !== "boolean" ) {
-				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timestamp`;
+				throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timestamp`);
 			}
 
 			// obj.timecoordinate
 			if ( !Object.hasOwn(obj, "timecoordinate") || typeof obj.timecoordinate !== "string" ) {
-				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timecoordinate`;
+				throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timecoordinate`);
 			}
 			if ( (obj.timecoordinate).toUpperCase() !== "UTC" && (obj.timecoordinate).toUpperCase() !== "GMT" ) {
-				throw `Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timecoordinate`;
+				throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timecoordinate`);
 			}
 		} catch (e) {
 			const message = {
@@ -120,7 +120,7 @@ class ConsoleManager {
 			// debug
 			console.log("Error, class ConsoleManager() >>", message);
 
-			throw "ConsoleManager.option(), forced termination.";
+			throw new Error("ConsoleManager.option(), forced termination.");
 		}
 
 		const result = {
