@@ -110,8 +110,8 @@ export function generateID(digit = 8, character = { number: true, alphabet: { up
 	const cryptoArray = crypto.getRandomValues(typedArray);
 	const char        = getCharacter(character);
 	const rand        = Array.from(cryptoArray)
-								.map((number) => char[number % char.length])
-								.join("");
+		.map((number) => char[number % char.length])
+		.join("");
 
 	return rand;
 }
