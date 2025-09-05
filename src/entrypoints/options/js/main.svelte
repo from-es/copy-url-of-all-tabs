@@ -118,7 +118,7 @@
 
 		if (isNaN(num) || num < min || num > max) {
 			const msg = {
-				message    : [`A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.`],
+				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
 				timeout    : 5000,
 				fontsize   : "16px",
 				messagetype: "warning"
