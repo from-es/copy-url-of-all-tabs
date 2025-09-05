@@ -229,9 +229,10 @@ export function getCallerFunctionName() {
 	try {
 		throw new Error();
 	} catch (e) {
-		let   callerName = "None";
-		const reg        = /(\w+)@|at (\w+) \(/g;
-		const st         = e.stack;
+		callerName = "None";
+
+		const reg = /(\w+)@|at (\w+) \(/g;
+		const st  = e.stack;
 		let   m;
 
 		while ((m = reg.exec(st))) {

@@ -15,6 +15,8 @@ class ClipboardManager {
 				// Failure
 				(err) => {
 					state = false;
+
+					console.error("Error, ClipboardManager.readText() >>", { err });
 				}
 			);
 
