@@ -171,7 +171,11 @@
 		console.log("Save to Storage.", config);
 	}
 
-	async function eventSettingReset() {
+	async function eventSettingReset(event: MouseEvent) {
+		// ボタンの連打防止対策
+		const element = event.currentTarget as HTMLElement;
+		disableElementTemporarily(element, status.define.DisabledTimeoutValue);
+
 		status.config = cloneObject(status.define.Config);
 
 		// Reinitialize, List of User Script
@@ -182,10 +186,6 @@
 
 		// debug
 		console.log("Reset Config Data.", status.config);
-
-		// ボタンの連打防止対策
-		const element = this;
-		disableElementTemporarily(element, status.define.DisabledTimeoutValue);
 	}
 
 	async function importConfig(filetype) {
