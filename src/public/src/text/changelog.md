@@ -1,3 +1,10 @@
+#### [1.1.1] - 2025/09/06
+
+- fix
+	- Fixed various code style issues identified by ESLint.
+- clean
+	- Improved and refactored internal code for better stability and maintenance.
+
 #### [1.1.0] - 2025/09/04
 
 - feat
