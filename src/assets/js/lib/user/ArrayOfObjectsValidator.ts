@@ -100,7 +100,7 @@ class ArrayOfObjectsValidator {
 		const stringified = {};
 
 		for (const key in schemaRules) {
-			if (Object.hasOwnProperty.call(schemaRules, key)) { // 要確認 >> Object.hasOwn()
+			if (Object.hasOwn(schemaRules, key)) {
 				stringified[key] = ArrayOfObjectsValidator.#stringifySingleV8nRule(schemaRules[key]);
 			}
 		}
@@ -323,7 +323,7 @@ class ArrayOfObjectsValidator {
 			{
 				console.groupCollapsed("Applied Validation Rules (Stringified)");
 				for (const key in stringifiedRules) {
-					if (Object.hasOwnProperty.call(stringifiedRules, key)) {
+					if (Object.hasOwn(stringifiedRules, key)) {
 						console.log(`${key}: ${stringifiedRules[key]}`);
 					}
 				}
