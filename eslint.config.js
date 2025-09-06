@@ -31,9 +31,10 @@ const customRules = [
 			"no-unreachable": "error",   // return, throw, continue, break ステートメントの後に到達不能なコードは不許可
 
 			// Best Practices
-			"eqeqeq": "error", // タイプセーフでない比較演算子の使用を禁止
-			"curly": "error",  // ブロック ステートメントの中括弧は省略禁止
-			"yoda": "error",   // 条件比較時、条件のリテラル値が最初に、変数が2番目に来る
+			"eqeqeq": "error",           // タイプセーフでない比較演算子の使用を禁止
+			"curly": "error",            // ブロック ステートメントの中括弧は省略禁止
+			"yoda": "error",             // 条件比較時、条件のリテラル値が最初に、変数が2番目に来る
+			"no-throw-literal": "error", // 例外をスローする際、リテラルやその他表現のスローは不許可
 
 			// Variable Declaration & Assignment
 			"no-unused-vars": "warn", // 宣言されているがコード内で未使用の変数がある場合に警告

@@ -51,8 +51,8 @@ class FormatManager {
 				const url     = tab.url;
 				const title   = sanitize ? this.#escapeHTML(tab.title) : tab.title;
 				const current = template
-										.replace(/\$url/gi, url)
-										.replace(/\$title/gi, title);
+					.replace(/\$url/gi, url)
+					.replace(/\$title/gi, title);
 
 				return current;
 			}

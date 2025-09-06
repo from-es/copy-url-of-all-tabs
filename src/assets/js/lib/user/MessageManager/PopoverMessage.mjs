@@ -10,7 +10,7 @@ customElements.define("component-popover-message", PopoverMessageElement, { exte
 
 /**
  * Popover API(https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) を使ったメッセージ表示
- * @lastupdate 2023/06/14
+ * @lastupdate 2025/09/06
  * @support    Google Chrome 114 or later
  * @original   ポップオーバーの表示/非表示を手動で切り替える(https://ics.media/entry/230530/#ポップオーバーの表示/非表示を手動で切り替える)
  */
@@ -21,8 +21,7 @@ export class PopoverMessage {
 
 	static #information = {
 		class : {
-			// Retrieve class name from within static method in typescript(https://stackoverflow.com/questions/36426860/retrieve-class-name-from-within-static-method-in-typescript)
-			name : (() => { return (this.toString().split("(" || /s+/)[0].split(" " || /s+/)[1]); } )()
+			name: this.name
 		},
 		element : {
 			name : "component-popover-message"

@@ -1,77 +1,68 @@
 /**
- * @lastupdate 2024/10/21
+ * Provides static methods to interact with the system clipboard.
+ * @lastupdate 2025/09/06
  */
 class ClipboardManager {
+	/**
+	 * Reads text from the clipboard.
+	 * @returns {Promise<string | false>} - A promise that resolves with the text from the clipboard, or `false` if an error occurs.
+	 */
 	static async readText() {
-		let state = null;
-
-		await navigator.clipboard.readText()
-			.then(
-				// Success
-				(text) => {
-					state = text;
-				},
-
-				// Failure
-				(err) => {
-					state = false;
-				}
-			);
-
-		return state;
+		try {
+			const text = await navigator.clipboard.readText();
+			return text;
+		} catch (error) {
+			console.error("Error, ClipboardManager.readText() >>", { error });
+			return false;
+		}
 	}
 
 	/**
-	 * @param   {any}    data
-	 * @param   {string} mimetype
-	 * @returns
+	 * Writes data to the clipboard with a specified MIME type.
+	 * @param   {any}    data      - The data to write to the clipboard.
+	 * @param   {string} mimetype  - The MIME type of the data.
+	 * @returns {Promise<boolean>} - A promise that resolves with `true` on success, or `false` if an error occurs.
 	 */
 	static async write(data, mimetype) {
-		const blob  = new Blob([ data ], { type : mimetype });
-		const item  = [ new ClipboardItem({ [ blob.type ] : blob }) ];
-		let   state = null;
+		try {
+			const blob = new Blob([ data ], { type : mimetype });
+			const item = [ new ClipboardItem({ [ blob.type ] : blob }) ];
 
-		await navigator.clipboard.write(item)
-			.then(
-				// Success
-				() => {
-					state = true;
-				},
-
-				// Failure
-				(err) => {
-					state = false;
-
-					console.error("Error, ClipboardManager.write(data, mimetype) >>", { data, mimetype, err });
-				}
-			);
-
-		return state;
+			await navigator.clipboard.write(item);
+			return true;
+		} catch (error) {
+			console.error("Error, ClipboardManager.write(data, mimetype) >>", { data, mimetype, error });
+			return false;
+		}
 	}
 
+	/**
+	 * Writes text to the clipboard.
+	 * @param   {string}           text - The text to write to the clipboard.
+	 * @returns {Promise<boolean>}      - A promise that resolves with `true` on success, or `false` if an error occurs.
+	 */
 	static async writeText(text) {
-		let state = null;
-
-		await navigator.clipboard.writeText(text)
-			.then(
-				// Success
-				() => {
-					state = true;
-				},
-
-				// Failure
-				(err) => {
-					state = false;
-
-					console.error("Error, ClipboardManager.writeText(text) >>", { text, err });
-				}
-			);
-
-		return state;
+		try {
+			await navigator.clipboard.writeText(text);
+			return true;
+		} catch (error) {
+			console.error("Error, ClipboardManager.writeText(text) >>", { text, error });
+			return false;
+		}
 	}
 
+	/**
+	 * Clears the clipboard content.
+	 * @returns {Promise<boolean>} - A promise that resolves with `true` on success, or `false` if an error occurs.
+	 */
 	static async clear() {
-		return navigator.clipboard.writeText("");
+		try {
+			await navigator.clipboard.writeText("");
+			return true;
+		} catch (error) {
+			console.error("Error, ClipboardManager.clear() >>", { error });
+			return false;
+		}
 	}
 }
 

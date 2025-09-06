@@ -43,19 +43,19 @@
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "@wxt-dev/module-svelte": "^2.0.4",
-    "eslint": "^9.34.0",
+    "eslint": "^9.35.0",
     "eslint-plugin-svelte": "^3.12.1",
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
-    "svelte": "^5.38.6",
+    "svelte": "^5.38.7",
     "svelte-check": "^4.3.1",
     "tslib": "^2.8.1",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.42.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
-    "wxt": "^0.20.10"
+    "wxt": "^0.20.11"
   },
   "dependencies": {
     "bowser": "^2.12.1",

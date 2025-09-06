@@ -107,6 +107,7 @@ export class UrlDelayCalculator {
 						break;
 					case "prefix":
 						// 'prefix' は 'default' と同じ処理の為、フォールスルーする
+						// eslint-disable-next-line no-fallthrough
 					default:
 						regex = new RegExp(`^${escapedPattern}`, "i");
 						break;

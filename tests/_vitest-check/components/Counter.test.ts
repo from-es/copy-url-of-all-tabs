@@ -1,3 +1,13 @@
+/**
+ * @file tests/_vitest-check/components/Counter.test.ts
+ * @description
+ * This file serves as a smoke test for verifying Svelte component testing capabilities with Vitest.
+ * It ensures that the `Counter.svelte` component:
+ * 1. Renders correctly with initial props.
+ * 2. Displays the initial state as expected.
+ * 3. Responds appropriately to user interactions (e.g., button clicks).
+ * This test helps confirm that the basic testing setup for Svelte components is functional.
+ */
 import { render, fireEvent, screen, cleanup } from "@testing-library/svelte";
 import { describe, it, expect, afterEach } from "vitest";
 import Counter from "./Counter.svelte";
