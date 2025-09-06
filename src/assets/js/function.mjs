@@ -8,7 +8,7 @@ import { ConsoleManager } from "./lib/user/ConsoleManager.mjs";
  * @param {object} config
  * @param {object} define
  */
-function logging(config, define) {
+export function logging(config, define) {
 	const validConfig = ( config && typeof config === "object" && Object.hasOwn(config, "Debug") );
 	const logging     = validConfig ? config.Debug : define.Config.Debug;
 
@@ -25,7 +25,7 @@ function logging(config, define) {
 /*
 	Parse an array of code into unique ID >> config.UserScript.codes
 */
-function parseArrayOfCodeIntoUniqueID(array) {
+export function parseArrayOfCodeIntoUniqueID(array) {
 	const codes       = structuredClone(array);
 	const flatArray   = codes.map(elm => elm.id);
 	const isDuplicate = (flatArray.length !== (new Set(flatArray)).size); // 重複検知
@@ -52,7 +52,7 @@ function parseArrayOfCodeIntoUniqueID(array) {
 	return codes;
 }
 
-function generateID(digit = 8, character = { number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }) {
+export function generateID(digit = 8, character = { number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }) {
 	const validate = (digit && typeof digit === "number" && Number.isInteger(digit));
 	if (!validate) {
 		throw new TypeError(`Error, Invalid value passed to generateID(). digit >> ${digit}`);
@@ -110,22 +110,20 @@ function generateID(digit = 8, character = { number: true, alphabet: { uppercase
 	const cryptoArray = crypto.getRandomValues(typedArray);
 	const char        = getCharacter(character);
 	const rand        = Array.from(cryptoArray)
-								.map((number) => char[number % char.length])
-								.join("");
+		.map((number) => char[number % char.length])
+		.join("");
 
 	return rand;
 }
 
-function sleep(msec) {
+export function sleep(msec) {
 	return new Promise(resolve => setTimeout(resolve, msec));
 }
-
-
 
 /*
 	Deep Freeze(https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)
 */
-function deepFreeze(obj) {
+export function deepFreeze(obj) {
 	// オブジェクトで定義されたプロパティ名を取得
 	const propNames = Object.getOwnPropertyNames(obj);
 
@@ -141,7 +139,7 @@ function deepFreeze(obj) {
 	return Object.freeze(obj);
 }
 
-function isChromeVersion92orLater(define) {
+export function isChromeVersion92orLater(define) {
 	const regex              = /(Chrome|Chromium|Edge)/i;
 	const version            = parseInt(define.Environment.Browser.browser.version, 10);
 	const isChromium         = (regex).test(define.Environment.Browser.browser.name);
@@ -153,15 +151,15 @@ function isChromeVersion92orLater(define) {
 	return result;
 }
 
-function parseObjectToValue(obj) {
+export function parseObjectToValue(obj) {
 	return JSON.parse(JSON.stringify(obj));
 }
 
-function typeOf(obj) {
+export function typeOf(obj) {
 	return (Object.prototype.toString).call(obj).slice(8, -1).toLowerCase();
 }
 
-function hasParentNode(elm) {
+export function hasParentNode(elm) {
 	const parent = elm.parentNode;
 	const obj    = {
 		elm  : parent,
@@ -179,7 +177,7 @@ function hasParentNode(elm) {
 /*
 	escape と encodeURI と encodeURIComponent を正しく使い分ける(https://aloerina01.github.io/blog/2017-04-28-1)
 */
-function escapeHTML(target) {
+export function escapeHTML(target) {
 	if (typeof target !== "string") {
 		return target;
 	}
@@ -200,7 +198,7 @@ function escapeHTML(target) {
 	指定セレクタのCSSルールを取得する(https://qiita.com/life5618/items/950558e4b72c038333f8)
 	呼び出し例 getRuleBySelector(".inner1")  selector に CSSセレクタ
 */
-function getRuleBySelector(selector) {
+export function getRuleBySelector(selector) {
 	let rule = null;
 
 	// stylesheetのリストを取得
@@ -225,15 +223,16 @@ function getRuleBySelector(selector) {
 /*
 	JavaScriptで呼び出し元の関数名を取得する方法 考えてみた(https://pisuke-code.com/js-get-caller-function-name/#i)
 */
-function getCallerFunctionName() {
+export function getCallerFunctionName() {
 	let callerName = null;
 
 	try {
 		throw new Error();
 	} catch (e) {
-		let   callerName = "None";
-		const reg        = /(\w+)@|at (\w+) \(/g;
-		const st         = e.stack;
+		callerName = "None";
+
+		const reg = /(\w+)@|at (\w+) \(/g;
+		const st  = e.stack;
 		let   m;
 
 		while ((m = reg.exec(st))) {
@@ -250,7 +249,7 @@ function getCallerFunctionName() {
 /*
 	JavaScriptで半角を0.5、全角を1で文字数を計算する方法(https://zenn.dev/koojy/articles/javascript-2byte-length)
 */
-function getWidthOfStringLength(str) {
+export function getWidthOfStringLength(str) {
 	let   count = 0;
 	const loop  = str.length;
 
@@ -269,17 +268,12 @@ function getWidthOfStringLength(str) {
 	return count;
 }
 
-
 /*
 	textareaの高さを計算して自動で可変(https://web-dev.tech/front-end/javascript/textarea-auto-height/)
 */
-function setTextareaHeightAutomatically(event) {
+export function setTextareaHeightAutomatically(event) {
 	const self = event.currentTarget;
 
 	self.style.height = "auto";
 	self.style.height = `${this.scrollHeight}px`;
 }
-
-
-
-export { logging, generateID, sleep, getWidthOfStringLength, setTextareaHeightAutomatically };
