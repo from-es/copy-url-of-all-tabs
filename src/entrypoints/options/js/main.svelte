@@ -11,7 +11,7 @@
 
 	// Import from Script
 	import { initializeConfig }  from "@/assets/js/initializeConfig";
-	import { logging }           from "@/assets/js/function.mjs";
+	import { logging }           from "@/assets/js/logging";
 	import { selectTab }         from "@/assets/js/select-tab";
 	import { cloneObject }       from "@/assets/js/lib/user/CloneObject";
 	import { StorageManager }    from "@/assets/js/lib/user/StorageManager";

@@ -6,7 +6,7 @@ import App from "./App.svelte";
 
 // Import from Script
 import { initializeConfig } from "@/assets/js/initializeConfig";
-import { logging }          from "@/assets/js/function.mjs";
+import { logging }          from "@/assets/js/logging";
 
 export let app = null;
 
