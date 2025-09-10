@@ -2,7 +2,7 @@
 import { type ExtensionMessage } from "@/assets/js/types/";
 
 // Import from Script
-import { logging }        from "@/assets/js/function.mjs";
+import { logging }        from "@/assets/js/logging";
 import { handleOpenURLs } from "./js/openUrlsHandler";
 
 export default defineBackground({

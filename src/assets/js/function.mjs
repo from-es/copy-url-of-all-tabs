@@ -1,27 +1,3 @@
-import { ConsoleManager } from "./lib/user/ConsoleManager.mjs";
-
-
-
-/**
- * @dependency ConsoleManager.mjs
- *
- * @param {object} config
- * @param {object} define
- */
-export function logging(config, define) {
-	const validConfig = ( config && typeof config === "object" && Object.hasOwn(config, "Debug") );
-	const logging     = validConfig ? config.Debug : define.Config.Debug;
-
-	// config
-	if ( !validConfig ) {
-		// debug
-		console.log("Error, logging(), Invalid Argument Value was passed. config >>", config);
-	}
-
-	ConsoleManager.option(logging);
-	ConsoleManager.apply();
-}
-
 /*
 	Parse an array of code into unique ID >> config.UserScript.codes
 */
