@@ -7,7 +7,8 @@
 
 /* 差分適応 */
 :root {
-	--base-font-size: 16px;
+	--base-font-size  : 16px;
+	--base-line-height: 1.75; /* code の padding と合わせて値を調整 */
 }
 
 html {
@@ -19,7 +20,7 @@ body {
 }
 
 * {
-	line-height: 1.6;
+	line-height: var(--base-line-height);
 }
 
 #contents {
@@ -38,10 +39,12 @@ details > summary {
 }
 
 code {
-	padding: 0.25rem 0.5rem;
-	color: #fff;
+	margin-left     : 0.05rem;
+	margin-right    : 0.05rem;
+	padding         : 0.20rem 0.35rem;
+	color           : #fff;
 	background-color: #333;
-	border-radius: 0.25rem;
+	border-radius   : 0.25rem;
 }
 
 /* common.css >> 上書き */
