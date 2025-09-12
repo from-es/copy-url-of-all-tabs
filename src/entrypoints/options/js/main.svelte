@@ -10,13 +10,13 @@
 	import { debounce } from "lodash-es";
 
 	// Import from Script
-	import { initializeConfig }  from "@/assets/js/initializeConfig";
-	import { logging }           from "@/assets/js/logging";
-	import { selectTab }         from "@/assets/js/select-tab";
-	import { cloneObject }       from "@/assets/js/lib/user/CloneObject";
-	import { StorageManager }    from "@/assets/js/lib/user/StorageManager";
-	import { UnifiedMessage }    from "@/assets/js/lib/user/MessageManager/UnifiedMessage";
-	import { sortable }          from "@/assets/js/lib/user/sortable";
+	import { initializeConfig } from "@/assets/js/initializeConfig";
+	import { logging }          from "@/assets/js/logging";
+	import { selectTab }        from "@/assets/js/select-tab";
+	import { cloneObject }      from "@/assets/js/lib/user/CloneObject";
+	import { StorageManager }   from "@/assets/js/lib/user/StorageManager";
+	import { PopoverMessage }   from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+	import { sortable }         from "@/assets/js/lib/user/sortable";
 
 	// Test Now...
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
@@ -123,7 +123,7 @@
 				fontsize   : "16px",
 				messagetype: "warning"
 			};
-			UnifiedMessage.create(msg);
+			PopoverMessage.create(msg);
 			return defaultValue;
 		}
 		return num;
@@ -164,8 +164,8 @@
 		// Reinitialize, List of User Script
 		await reInitialize();
 
-		// Show, Flash Message
-		UnifiedMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
+		// Show, Message
+		PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
 
 		// debug
 		console.log("Save to Storage.", config);
@@ -181,8 +181,8 @@
 		// Reinitialize, List of User Script
 		await reInitialize();
 
-		// Flash Message
-		UnifiedMessage.create(status.define.Message.Setting_OnClick_ResetButton);
+		// Show, Message
+		PopoverMessage.create(status.define.Message.Setting_OnClick_ResetButton);
 
 		// debug
 		console.log("Reset Config Data.", status.config);
@@ -227,14 +227,14 @@
 			// Reinitialize, List of User Script
 			await reInitialize();
 
-			// Flash Message
-			UnifiedMessage.create(status.define.Message.Setting_ImportConfig_Success);
+			// Show, Message
+			PopoverMessage.create(status.define.Message.Setting_ImportConfig_Success);
 
 			// debug
 			console.log("main.svelte > importConfig() > config", status.config);
 		} catch (error) {
-			// Flash Message
-			UnifiedMessage.create(status.define.Message.Setting_ImportConfig_Error);
+			// Show, Message
+			PopoverMessage.create(status.define.Message.Setting_ImportConfig_Error);
 
 			// debug
 			console.log("Error, can't read Import File.", { cause: error });
@@ -452,8 +452,8 @@
 
 			exportConfig(setting, filename, filetype);
 
-			// Flash Message
-			UnifiedMessage.create(status.define.Message.Setting_OnClick_ExportButton);
+			// Show, Message
+			PopoverMessage.create(status.define.Message.Setting_OnClick_ExportButton);
 		})();
 	}
 	// --------------------------------------------------------------------------------------------
