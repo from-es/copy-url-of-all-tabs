@@ -1,3 +1,8 @@
+#### [1.1.2] - 2025/09/13
+
+- clean
+	- Improved the layout of the `changelog page` for better readability.
+
 #### [1.1.1] - 2025/09/06
 
 - fix
