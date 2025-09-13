@@ -10,15 +10,13 @@
 	import { debounce } from "lodash-es";
 
 	// Import from Script
-	import { initializeConfig } from "@/assets/js/initializeConfig";
-	import { logging }          from "@/assets/js/logging";
-	import { selectTab }        from "@/assets/js/select-tab";
-	import { cloneObject }      from "@/assets/js/lib/user/CloneObject";
-	import { StorageManager }   from "@/assets/js/lib/user/StorageManager";
-	import { PopoverMessage }   from "@/assets/js/lib/user/MessageManager/PopoverMessage";
-	import { sortable }         from "@/assets/js/lib/user/sortable";
-
-	// Test Now...
+	import { initializeConfig }                              from "@/assets/js/initializeConfig";
+	import { logging }                                       from "@/assets/js/logging";
+	import { selectTab }                                     from "@/assets/js/select-tab";
+	import { cloneObject }                                   from "@/assets/js/lib/user/CloneObject";
+	import { StorageManager }                                from "@/assets/js/lib/user/StorageManager";
+	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+	import { sortable }                                      from "@/assets/js/lib/user/sortable";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 
 	let { status = $bindable() } = $props();
@@ -770,46 +768,46 @@
 
 							<div id="Filtering-Protocol">
 								<form id="Filtering-Protocol-http">
-									<input id="Filtering-Protocol-http-input" type="checkbox" checked={ status.config.Filtering.Protocol.http } data-type="http" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-http-input" type="checkbox" checked={ status.config.Filtering.Protocol.http } data-type="http" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-http-input">http</label>
 								</form>
 								<form id="Filtering-Protocol-https">
-									<input id="Filtering-Protocol-https-input" type="checkbox" checked={ status.config.Filtering.Protocol.https } data-type="https" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-https-input" type="checkbox" checked={ status.config.Filtering.Protocol.https } data-type="https" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-https-input">https</label>
 								</form>
 								<form id="Filtering-Protocol-file">
-									<input id="Filtering-Protocol-https-file" type="checkbox" checked={ status.config.Filtering.Protocol.file } data-type="file" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-https-file" type="checkbox" checked={ status.config.Filtering.Protocol.file } data-type="file" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-https-file">file</label>
 								</form>
 								<form id="Filtering-Protocol-ftp">
-									<input id="Filtering-Protocol-https-ftp" type="checkbox" checked={ status.config.Filtering.Protocol.ftp } data-type="ftp" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-https-ftp" type="checkbox" checked={ status.config.Filtering.Protocol.ftp } data-type="ftp" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-https-ftp">ftp</label>
 								</form>
 
 								<form id="Filtering-Protocol-data">
-									<input id="Filtering-Protocol-data-input" type="checkbox" checked={ status.config.Filtering.Protocol.data } data-type="data" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-data-input" type="checkbox" checked={ status.config.Filtering.Protocol.data } data-type="data" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-data-input">data</label>
 								</form>
 								<form id="Filtering-Protocol-blob">
-									<input id="Filtering-Protocol-blob-input" type="checkbox" checked={ status.config.Filtering.Protocol.blob } data-type="blob" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-blob-input" type="checkbox" checked={ status.config.Filtering.Protocol.blob } data-type="blob" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-blob-input">blob</label>
 								</form>
 
 								<form id="Filtering-Protocol-mailto">
-									<input id="Filtering-Protocol-mailto-input" type="checkbox" checked={ status.config.Filtering.Protocol.mailto } data-type="mailto" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-mailto-input" type="checkbox" checked={ status.config.Filtering.Protocol.mailto } data-type="mailto" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-mailto-input">mailto</label>
 								</form>
 								<form id="Filtering-Protocol-javascript">
-									<input id="Filtering-Protocol-javascript-input" type="checkbox" checked={ status.config.Filtering.Protocol.javascript } data-type="javascript" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-javascript-input" type="checkbox" checked={ status.config.Filtering.Protocol.javascript } data-type="javascript" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-javascript-input">javascript</label>
 								</form>
 
 								<form id="Filtering-Protocol-about">
-									<input id="Filtering-Protocol-about-input" type="checkbox" checked={ status.config.Filtering.Protocol.about } data-type="about" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-about-input" type="checkbox" checked={ status.config.Filtering.Protocol.about } data-type="about" onchange={ eventFilteringProtocol }>
 									<label for="Filtering-Protocol-about-input">about</label>
 								</form>
 								<form id="Filtering-Protocol-chrome">
-									<input id="Filtering-Protocol-chrome-input" type="checkbox" checked={ status.config.Filtering.Protocol.chrome } data-type="chrome" onchange={eventFilteringProtocol}>
+									<input id="Filtering-Protocol-chrome-input" type="checkbox" checked={ status.config.Filtering.Protocol.chrome } data-type="chrome" onchange={ eventFilteringProtocol }>
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 									<label for="Filtering-Protocol-chrome-input">chrome ({@html getChromiumBasedBrowserList()})</label>
 								</form>
@@ -838,7 +836,7 @@
 									max={ status.define.OptionsPageFontSizeValueMax }
 									step={ status.define.OptionsPageFontSizeValueStep }
 									value={ status.config.OptionsPage.fontsize }
-									oninput={eventOptionsPageFontSize}
+									oninput={ eventOptionsPageFontSize }
 								>
 								<label for="OptionsPage-FontSize">font size ({ status.define.OptionsPageFontSizeValueMin } ~ { status.define.OptionsPageFontSizeValueMax } px)</label>
 							</form>
@@ -861,7 +859,7 @@
 									max={ status.define.PopupMenuFontSizeValueMax }
 									step={ status.define.PopupMenuFontSizeValueStep }
 									value={ status.config.PopupMenu.fontsize }
-									oninput={eventPopupMenuFontSize}
+									oninput={ eventPopupMenuFontSize }
 								>
 								<label for="PopupMenu-FontSize">font size ({ status.define.PopupMenuFontSizeValueMin } ~ { status.define.PopupMenuFontSizeValueMax } px)</label>
 							</form>
@@ -872,7 +870,7 @@
 							<form id="PopupMenu-ClearMessage">
 								<input id="PopupMenu-ClearMessage-enable-input" type="checkbox"
 									checked={ status.config.PopupMenu.ClearMessage.enable }
-									onchange={eventPopupMenuClearMessageEnable}
+									onchange={ eventPopupMenuClearMessageEnable }
 								>
 								<label for="PopupMenu-ClearMessage-enable-input">enable</label>
 							</form>
@@ -883,7 +881,7 @@
 									max={ status.define.PopupMenuClearMessageTimeoutValueMax }
 									step={ status.define.PopupMenuClearMessageTimeoutValueStep }
 									value={ status.config.PopupMenu.ClearMessage.timeout }
-									oninput={eventPopupMenuClearMessageTimeout}
+									oninput={ eventPopupMenuClearMessageTimeout }
 								>
 								<label for="PopupMenu-ClearMessage-timeout">timeout ({ status.define.PopupMenuClearMessageTimeoutValueMin } ~ { status.define.PopupMenuClearMessageTimeoutValueMax } seconds)</label>
 							</form>
@@ -892,7 +890,7 @@
 						<fieldset>
 							<legend>OnClick Close</legend>
 							<form id="PopupMenu-ClearMessage">
-								<input id="PopupMenu-OnClickClose-enable-input" type="checkbox" checked={ status.config.PopupMenu.OnClickClose.enable } onchange={eventPopupOnClickCloseEnable}>
+								<input id="PopupMenu-OnClickClose-enable-input" type="checkbox" checked={ status.config.PopupMenu.OnClickClose.enable } onchange={ eventPopupOnClickCloseEnable }>
 								<label for="PopupMenu-OnClickClose-enable-input">enable</label>
 							</form>
 
@@ -902,7 +900,7 @@
 									max={ status.define.PopupMenuOnClickCloseTimeoutValueMax }
 									step={ status.define.PopupMenuOnClickCloseTimeoutValueStep }
 									value={ status.config.PopupMenu.OnClickClose.timeout }
-									oninput={eventPopupOnClickCloseTimeout}
+									oninput={ eventPopupOnClickCloseTimeout }
 								>
 								<label for="PopupMenu-ClearMessage-timeout">timeout ({ status.define.PopupMenuOnClickCloseTimeoutValueMin } ~ { status.define.PopupMenuOnClickCloseTimeoutValueMax } seconds)</label>
 							</form>
@@ -920,12 +918,12 @@
 						<fieldset>
 							<legend>Option</legend>
 							<form id="Debug-logging">
-								<input id="Debug-logging-input" type="checkbox" checked={ status.config.Debug.logging } onchange={eventDebugLogging}>
+								<input id="Debug-logging-input" type="checkbox" checked={ status.config.Debug.logging } onchange={ eventDebugLogging }>
 								<label for="Debug-logging-input">Output debug log to the web console</label>
 							</form>
 
 							<form id="Debug-timestamp">
-								<input id="Debug-timestamp-input" type="checkbox" disabled={ !status.config.Debug.logging } checked={ status.config.Debug.timestamp } onchange={eventDebugTimestamp}>
+								<input id="Debug-timestamp-input" type="checkbox" disabled={ !status.config.Debug.logging } checked={ status.config.Debug.timestamp } onchange={ eventDebugTimestamp }>
 								<label for="Debug-timestamp-input">Add Timestamp to debug log</label>
 							</form>
 						</fieldset>
@@ -935,11 +933,11 @@
 
 							<form id="Debug-timecoordinate">
 								<label for="Debug-timecoordinate-UTC">
-									<input id="Debug-timecoordinate-UTC" type="radio" name="timecoordinate" value="UTC" checked={ status.config.Debug.timecoordinate === "UTC" ? true : false } onchange={eventDebugTimecoordinate}>
+									<input id="Debug-timecoordinate-UTC" type="radio" name="timecoordinate" value="UTC" checked={ status.config.Debug.timecoordinate === "UTC" ? true : false } onchange={ eventDebugTimecoordinate }>
 									UTC
 								</label>
 								<label for="Debug-timecoordinate-GMT">
-									<input id="Debug-timecoordinate-GMT" type="radio" name="timecoordinate" value="GMT" checked={ status.config.Debug.timecoordinate === "GMT" ? true : false } onchange={eventDebugTimecoordinate}>
+									<input id="Debug-timecoordinate-GMT" type="radio" name="timecoordinate" value="GMT" checked={ status.config.Debug.timecoordinate === "GMT" ? true : false } onchange={ eventDebugTimecoordinate }>
 									GMT
 								</label>
 							</form>
@@ -955,8 +953,8 @@
 			<h1>Import &#47; Export</h1>
 
 			<section>
-				<button id="Config-import" title="Import Settings" onclick={eventImportConfig}>Import</button>
-				<button id="Config-export" title="Export Settings" onclick={eventExportConfig}>Export</button>
+				<button id="Config-import" title="Import Settings" onclick={ eventImportConfig }>Import</button>
+				<button id="Config-export" title="Export Settings" onclick={ eventExportConfig }>Export</button>
 			</section>
 		</article>
 		<!-- close id="config" -->
