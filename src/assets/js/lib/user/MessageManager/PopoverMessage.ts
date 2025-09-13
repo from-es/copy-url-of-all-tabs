@@ -1,9 +1,9 @@
-interface UnifiedMessageOptions {
-	message: string | string[];
-	timeout?: number;
+interface PopoverMessageOptions {
+	message  : string | string[];
+	timeout ?: number;
 	fontsize?: string;
-	color?: {
-		font?: string;
+	color   ?: {
+		font      ?: string;
 		background?: string;
 	};
 	messagetype?: "success" | "debug" | "notice" | "warning" | "error";
@@ -11,47 +11,47 @@ interface UnifiedMessageOptions {
 
 // #preprocess メソッドの出力型を定義
 interface ProcessedMessageOptions {
-    message  : string | string[];
-    timeout  : number;
-    fontsize : string;
-    color   ?: {
-        font      ?: string;
-        background?: string;
-    };
-    messagetype?: "success" | "debug" | "notice" | "warning" | "error";
-    max         : number; // #default.message.max から来るプロパティ
+	message  : string | string[];
+	timeout  : number;
+	fontsize : string;
+	color   ?: {
+		font      ?: string;
+		background?: string;
+	};
+	messagetype?: "success" | "debug" | "notice" | "warning" | "error";
+	max         : number; // #default.message.max から来るプロパティ
 };
 
 
 
-class UnifiedMessageElement extends HTMLDivElement {
+class PopoverMessageElement extends HTMLDivElement {
 	constructor() {
 		// コンストラクターでは常に super を最初に呼び出す
 		super();
 	}
 }
-customElements.define("component-unified-message", UnifiedMessageElement, { extends: "div" });
+customElements.define("component-popover-message", PopoverMessageElement, { extends: "div" });
 
 
 
 /**
- * Popover API(https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) を使ったメッセージ表示
- * FlashMessage.mjs の機能（ダブルクリックで閉じる）も統合
- * @lastupdate 2025/08/06
+ * Popover API(https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) を使ったメッセージ表示。
+ * 複数のメッセージをスタック表示し、ダブルクリックで閉じる機能を持つ。
+ * @lastupdate 2025/09/12
  * @support    Google Chrome 114 or later (Popover API)
  * @original   ポップオーバーの表示/非表示を手動で切り替える(https://ics.media/entry/230530/#ポップオーバーの表示/非表示を手動で切り替える)
  */
-export class UnifiedMessage {
+export class PopoverMessage {
 	constructor () {
 		//
 	}
 
 	static #information = {
-		class : {
-			name: "UnifiedMessage"
+		class: {
+			name: "PopoverMessage"
 		},
-		element : {
-			name: "component-unified-message"
+		element: {
+			name: "component-popover-message"
 		}
 	};
 
@@ -59,15 +59,15 @@ export class UnifiedMessage {
 	 * デフォルト設定
 	 */
 	static #default = {
-		message : {
-			max        : 5,                          // 同時に表示するメッセージの最大数
-			timeout    : 5000,                       // メッセージが自動的に消えるまでの時間（ミリ秒）
-			message    : [] as (string | string[]),  // 表示するメッセージのテキスト（文字列または文字列の配列）
-			fontsize   : "16px",                     // フォントサイズ
-			color      : undefined,                  // { font: string, background: string } メッセージの文字色と背景色
-			messagetype: undefined                   // "success", "debug", "notice", "warning", "error" のいずれか
+		message: {
+			max        : 5,                         // 同時に表示するメッセージの最大数
+			timeout    : 5000,                      // メッセージが自動的に消えるまでの時間（ミリ秒）
+			message    : [] as (string | string[]), // 表示するメッセージのテキスト（文字列または文字列の配列）
+			fontsize   : "16px",                    // フォントサイズ
+			color      : undefined,                 // { font: string, background: string } メッセージの文字色と背景色
+			messagetype: undefined                  // "success", "debug", "notice", "warning", "error" のいずれか
 		},
-		style : {
+		style: {
 			margin: 8,                                           // メッセージ間のマージン
 			open  : "opacity 0.2s linear",                       // 表示時のトランジション
 			close : "opacity 0.2s linear, translate 0.2s linear" // 非表示時のトランジション
@@ -78,23 +78,23 @@ export class UnifiedMessage {
 	 * メッセージタイプごとのスタイル定義
 	 */
 	static #MessageType = {
-		"success" : {
+		"success": {
 			font      : "white",
 			background: "#009933" // Green
 		},
-		"debug" : {
+		"debug": {
 			font      : "white",
 			background: "#333333" // Gray
 		},
-		"notice" : {
+		"notice": {
 			font      : "white",
 			background: "#0066ff" // Blue
 		},
-		"warning" : {
+		"warning": {
 			font      : "white",
 			background: "#ff8c00" // Dark Orange
 		},
-		"error" : {
+		"error": {
 			font      : "white",
 			background: "#cc0000" // Red
 		}
@@ -113,24 +113,23 @@ export class UnifiedMessage {
 	:host とドキュメントの両方から同じ要素へスタイルを指定された場合は、ドキュメントのスタイルが優先される。
 */
 :host {
-	--c-green:       #009933;
-	--c-blue:        #0066ff;
-	--c-orange:      #ff8c00;
-	--c-red:         #cc3300;
-	--c-white:       #fff;
-	--c-black:       #000;
-	--c-gray:        #606060;
-	--c-pale-grey:   #B6B6B6;
-
+	--c-green      : #009933;
+	--c-blue       : #0066ff;
+	--c-orange     : #ff8c00;
+	--c-red        : #cc3300;
+	--c-white      : #fff;
+	--c-black      : #000;
+	--c-gray       : #606060;
+	--c-pale-grey  : #B6B6B6;
 	--c-shadow-grey: #e5e5e5;
 
 
 
 	all: initial;
 
-	position: fixed;
-	top:  20%;
-	left: 50%;
+	position : fixed;
+	top      : 20%;
+	left     : 50%;
 	transform: translate(-50%, 0%);
 
 	opacity: 0;
@@ -142,7 +141,7 @@ export class UnifiedMessage {
 
 	border: none;
 
-	font-size: 16px;
+	font-size  : 16px;
 	line-height: 1.2;
 }
 
@@ -153,25 +152,25 @@ export class UnifiedMessage {
 	max-width: 512px;
 	min-width: 256px;
 
-	border: 0.5em double var(--c-white);
+	border       : 0.5em double var(--c-white);
 	border-radius: 0.5em;
 
 	box-shadow: 0 4px 8px var(--c-shadow-grey);
 
-	color: var(--c-black);
+	color           : var(--c-black);
 	background-color: var(--c-white);
 
 	/*
 		CSSで角丸を美しく実装する方法、相対角丸のテクニック(https://coliss.com/articles/build-websites/operation/css/relative-rounded-corners.html)
 	*/
-	--matched-radius-padding:    0.75rem;
+	--matched-radius-padding   : 0.75rem;
 	--matched-radius-inner-size: 0.25rem;
-	padding: var(--matched-radius-padding) 1.0rem;
-	border-radius: calc(var(--matched-radius-inner-size) + var(--matched-radius-padding));
+	padding                    : var(--matched-radius-padding) 1.0rem;
+	border-radius              : calc(var(--matched-radius-inner-size) + var(--matched-radius-padding));
 }
 
 .popover p {
-	line-break: strict;
+	line-break : strict;
 	user-select: none;
 }
 .popover p:first-child {
@@ -184,22 +183,22 @@ export class UnifiedMessage {
 
 	/**
 	 * メッセージを表示
-	 * @param {UnifiedMessageOptions} options - 表示するメッセージの設定オブジェクト
+	 * @param {PopoverMessageOptions} options - 表示するメッセージの設定オブジェクト
 	 */
-	static create(options: UnifiedMessageOptions): void {
-		console.log("UnifiedMessage.create() called.");
+	static create(options: PopoverMessageOptions): void {
+		console.log("PopoverMessage.create() called.");
 		this.#main(options);
 	}
 
 	/**
 	 * メッセージ表示のメイン処理
-	 * @param {UnifiedMessageOptions} options - 表示するメッセージの設定オブジェクト
+	 * @param {PopoverMessageOptions} options - 表示するメッセージの設定オブジェクト
 	 */
-	static #main(options: UnifiedMessageOptions): void {
+	static #main(options: PopoverMessageOptions): void {
 		const popoverMessage = this.#preprocess(options);
 
 		if ( !popoverMessage ) {
-			console.log("UnifiedMessage.#main(): Preprocessing failed or message already displayed.");
+			console.log("PopoverMessage.#main(): Preprocessing failed or message already displayed.");
 			return;
 		}
 
@@ -211,7 +210,7 @@ export class UnifiedMessage {
 	 * @param {ProcessedMessageOptions} popoverMessage - 処理済みのメッセージ設定オブジェクト
 	 */
 	static #setupPopoverMessage(popoverMessage: ProcessedMessageOptions): void {
-		console.log("UnifiedMessage.#setupPopoverMessage(): Setting up new popover.");
+		console.log("PopoverMessage.#setupPopoverMessage(): Setting up new popover.");
 		// ポップオーバーをDOM(document.body)に追加する
 		const popover = this.#createPopoverElement(popoverMessage);
 		const root    = document.body;
@@ -234,7 +233,7 @@ export class UnifiedMessage {
 		popover.addEventListener("toggle", (event: Event) => {
 			const customEvent = event as ToggleEvent; // ToggleEvent にキャスト
 			const isOpen = (customEvent.newState === "open");
-			console.log(`UnifiedMessage: Popover toggle event. isOpen: ${isOpen}, newState: ${customEvent.newState}`);
+			console.log(`PopoverMessage: Popover toggle event. isOpen: ${isOpen}, newState: ${customEvent.newState}`);
 			this.#alignPopoverMessage(isOpen);
 		});
 	}
@@ -297,7 +296,7 @@ export class UnifiedMessage {
 			const moveHeight = sum;
 
 			popover.style.translate = `0px ${moveHeight}px`;
-			popover.style.opacity   = 1;
+			popover.style.opacity   = "1";
 		});
 	}
 
@@ -306,11 +305,11 @@ export class UnifiedMessage {
 	 */
 	static #limitPopoverMessage(): void {
 		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<HTMLDivElement>;
-		console.log(`UnifiedMessage.#limitPopoverMessage(): Current popovers count: ${popovers.length}`);
+		console.log(`PopoverMessage.#limitPopoverMessage(): Current popovers count: ${popovers.length}`);
 
 		//
 		if ( popovers.length > this.#default.message.max ) {
-			console.log(`UnifiedMessage.#limitPopoverMessage(): Removing oldest popover.`);
+			console.log(`PopoverMessage.#limitPopoverMessage(): Removing oldest popover.`);
 			this.#removePopoverElement(popovers[0]);
 		}
 	}
@@ -320,7 +319,7 @@ export class UnifiedMessage {
 	 * @param {HTMLDivElement} popover - 削除したいポップオーバー要素
 	 */
 	static #removePopoverElement(popover: HTMLDivElement): void {
-		console.log("UnifiedMessage.#removePopoverElement(): Removing popover.");
+		console.log("PopoverMessage.#removePopoverElement(): Removing popover.");
 		// hidePopoverメソッドで非表示にする
 		(popover as HTMLDivElement & { hidePopover: () => void }).hidePopover();
 
@@ -331,15 +330,12 @@ export class UnifiedMessage {
 		clearTimeout((popover as HTMLDivElement & { dataset: { timer: NodeJS.Timeout } }).dataset.timer);
 	}
 
-
-
-
 	/**
 	 * メッセージ設定を前処理
-	 * @param   {UnifiedMessageOptions}           options - 元のメッセージ設定オブジェクト。
+	 * @param   {PopoverMessageOptions}           options - 元のメッセージ設定オブジェクト。
 	 * @returns {ProcessedMessageOptions | false}         - 処理済みのメッセージ設定オブジェクト、または処理失敗の場合は false。
 	 */
-	static #preprocess(options: UnifiedMessageOptions): ProcessedMessageOptions | false {
+	static #preprocess(options: PopoverMessageOptions): ProcessedMessageOptions | false {
 		// Check Argument
 		const pass = this.#checkArgument(options);
 		if ( !pass ) {
@@ -363,11 +359,11 @@ export class UnifiedMessage {
 
 	/**
 	 * 引数の妥当性をチェック
-	 * @param {UnifiedMessageOptions} argument - チェックする引数オブジェクト。
+	 * @param {PopoverMessageOptions} argument - チェックする引数オブジェクト。
 	 * @returns {boolean} 引数が有効な場合は true、そうでない場合は false。
 
 	 */
-	static #checkArgument(argument: UnifiedMessageOptions): boolean {
+	static #checkArgument(argument: PopoverMessageOptions): boolean {
 		const template = `Error, The Argument passed to #checkArgument() in class ${this.#information.class.name}() is invalid.`;
 
 		// 引数がオブジェクトであること
@@ -457,7 +453,7 @@ export class UnifiedMessage {
 `
 /* --------------------------------------------------- */
 .popover {
-	color: ${prop.fontColor} !important;
+	color           : ${prop.fontColor} !important;
 	background-color: ${prop.backgroundColor} !important;
 }
 .popover p {
