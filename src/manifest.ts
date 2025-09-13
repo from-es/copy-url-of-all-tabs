@@ -13,7 +13,7 @@ const manifest: UserManifest =
 
 	"name"       : "Copy URL of All Tabs",
 	"description": "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
-	"version"    : "1.1.1",
+	"version"    : "1.1.2",
 
 	/**
 		CSS
