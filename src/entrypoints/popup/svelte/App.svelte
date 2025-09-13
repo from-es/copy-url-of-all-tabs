@@ -6,6 +6,7 @@
 	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
 	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
 	import { eventActionCopy, eventActionPaste }                            from "./userActions";
+	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
 
 
 	const { status } = $props();
@@ -160,8 +161,15 @@
 			}
 		};
 
+		// Firefoxとの互換性と安全性のために、送信前にオブジェクトをサニタイズ >> 構造化複製アルゴリズム不可なプロパティを除去
+		const options = {
+			checkOnly: false,
+			debug    : false
+		};
+		const sanitizedMessage = sanitizeForSendMessage(message, options);
+
 		// アクティブなタブで開くとフォーカスが移動してポップアップメニューが閉じ、処理途中でも終了する為、background.js 側でタブを開く@2024/10/13
-		chrome.runtime.sendMessage(message);
+		chrome.runtime.sendMessage(sanitizedMessage);
 	}
 
 	/**
