@@ -1,28 +1,46 @@
 import type { UserManifest } from "wxt";
+import pkg                   from "../package.json";
 
-
-
-const manifest: UserManifest =
+export const manifest: UserManifest =
 {
 	"manifest_version": 3,
 
-	/**
-		Author keys will no longer be supported by Chrome and the Chrome Web Store after February 2024 (https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/author)
-	*/
+	// @ts-expect-error: Chrome no longer supports the "author" key, but we keep it for legacy reasons.
 	"author": "From E",
 
 	"name"       : "Copy URL of All Tabs",
 	"description": "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
-	"version"    : "1.1.2",
+
+	// package.json から取得
+	"version": pkg.version,
 
 	/**
 		CSS
-			:has() >> Google Chrome 105 & later (https://developer.mozilla.org/en-US/docs/Web/CSS/:has)
+			:has() (https://developer.mozilla.org/en-US/docs/Web/CSS/:has)
+				- Chrome : 105 & later
+				- Firefox: 121 & later
 		JavaScript
-			URL.canParse() >> Google Chrome 120 & later (https://developer.mozilla.org/en-US/docs/Web/API/URL/canParse_static)
-			Error: cause   >> Google Chrome 125 & later (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
+			Popover API (https://developer.mozilla.org/ja/docs/Web/API/Popover_API)
+				- Chrome : 114 & later
+				- Firefox: 125 & later
+			URL.canParse() (https://developer.mozilla.org/en-US/docs/Web/API/URL/canParse_static)
+				- Chrome : 120 & later
+				- Firefox: 115 & later
+			Error: cause (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
+				- Chrome : 125 & later
+				- Firefox:  91 & later
 	*/
+	// for Google Chrome or Chromium-based browsers
 	"minimum_chrome_version": "125.0",
+
+	// for Mozilla Firefox or Firefox-based browsers
+	"browser_specific_settings": {
+		"gecko": {
+			"id"                : "{eb43d3f3-1f18-474a-92f4-17dc487d3ff2}",
+			"strict_min_version": "125.0"
+		}
+	},
+
 	"icons" : {
 		"16" : "/src/img/icon_16.png",
 		"32" : "/src/img/icon_32.png",
@@ -57,7 +75,3 @@ const manifest: UserManifest =
 		"page"       : "/options.html"
 	}
 };
-
-
-
-export { manifest };

@@ -1,6 +1,6 @@
 {
   "name": "copy-url-of-all-tabs",
-  "description": "Chrome extension",
+  "description": "Cross-browser extension supporting both Chrome and Firefox.",
   "version": "1.1.2",
   "license": "MIT",
   "type": "module",
@@ -13,23 +13,26 @@
   },
   "homepage": "https://github.com/from-es/copy-url-of-all-tabs",
   "scripts": {
-    "dev": "wxt",
-    "dev:firefox": "wxt -b firefox",
-    "build": "wxt build",
-    "build:sourcemap": "wxt build --mode sourcemap",
-    "build:firefox": "wxt build -b firefox",
-    "zip": "wxt zip",
-    "zip:firefox": "wxt zip -b firefox",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "postinstall": "wxt prepare",
+    "dev:chrome"        : "wxt --browser chrome --mv3",
+    "dev:firefox"       : "wxt --browser firefox --mv3",
+    "build:chrome:prod" : "wxt build --browser chrome --mv3",
+    "build:chrome:dev"  : "wxt build --browser chrome --mv3 --mode sourcemap",
+    "build:firefox:prod": "wxt build --browser firefox --mv3",
+    "build:firefox:dev" : "wxt build --browser firefox --mv3 --mode sourcemap",
+    "zip:chrome"        : "wxt zip --browser chrome --mv3",
+    "zip:firefox"       : "wxt zip --browser firefox --mv3",
+
+    "check" : "svelte-check --tsconfig ./tsconfig.json",
     "eslint": "eslint src",
-    "prepare": "husky",
-    "test": "vitest run",
-    "test:smoke": "vitest run _vitest-check/",
-    "vitest": "vitest",
-    "vitest:run": "vitest run",
-    "vitest:ui": "vitest --ui",
-    "vitest:coverage": "vitest run --coverage"
+
+    "vitest"         : "vitest",
+    "vitest:run"     : "vitest run",
+    "vitest:ui"      : "vitest --ui",
+    "vitest:coverage": "vitest run --coverage",
+    "vitest:smoke"   : "vitest run ./tests/_vitest-check/",
+
+    "postinstall": "wxt prepare",
+    "prepare"    : "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
