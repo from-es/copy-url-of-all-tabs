@@ -1,4 +1,7 @@
 <script lang="ts">
+	// WXT provided cross-browser compatible API and types.
+	import { browser } from "wxt/browser";
+
 	// Import Types
 	import { type Config } from "@/assets/js/types/";
 
@@ -64,7 +67,7 @@
 	}
 
 	function getInformationOfConfig() {
-		const manifest = chrome.runtime.getManifest();
+		const manifest = browser.runtime.getManifest();
 		const now      = Date.now();
 
 		const result = {

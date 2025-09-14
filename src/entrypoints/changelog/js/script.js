@@ -84,7 +84,7 @@ async function setUpdateHistory() {
  * @returns {Promise<string>} - Markdown 文字列
  */
 async function getMarkdown(path) {
-	const url = chrome.runtime.getURL(path);
+	const url = browser.runtime.getURL(path);
 	try {
 		const response = await fetch(url, { cache: "no-store" });
 

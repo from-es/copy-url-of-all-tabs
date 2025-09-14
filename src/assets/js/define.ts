@@ -1,5 +1,8 @@
 /* eslint-disable indent */
 
+// WXT provided cross-browser compatible API and types.
+import { browser, type Browser } from "wxt/browser";
+
 // Import NPM Package
 import v8n from "v8n";
 
@@ -187,7 +190,7 @@ interface Define extends Define_Delta {
 
 
 
-const manifest = chrome.runtime.getManifest();
+const manifest = browser.runtime.getManifest();
 
 const define: Define = {
 	Environment : {
@@ -227,7 +230,7 @@ const define: Define = {
 		},
 
 		extension : {
-			id: chrome.runtime.id
+			id: browser.runtime.id
 		}
 	},
 
