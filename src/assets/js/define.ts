@@ -150,10 +150,12 @@ interface Define extends Define_Delta {
 		name       : string;
 		description: string | undefined;
 		version    : string;
-		publish    : number;
-		webstote   : {
-			title: string;
-			url  : string;
+		BrowserExtensionStore: {
+			[key: string]: { // "chrome", "firefox"
+				title  : string;
+				url    : string;
+				publish: number;
+			}
 		};
 		github: {
 			title: string;
@@ -205,10 +207,17 @@ const define: Define = {
 		description: manifest.description,
 		version    : manifest.version,
 
-		publish : 2024, // Chrome拡張機能の公開日（年）
-		webstote: {
-			title: `${ manifest.name } - Chrome Web Store`,
-			url  : "https://chromewebstore.google.com/detail/glhbfaabeopieaeoojdlaboihfbdjhbm"
+		BrowserExtensionStore: {
+			chrome: {
+				title  : `${ manifest.name } - Chrome Web Store`,
+				url    : "https://chromewebstore.google.com/detail/glhbfaabeopieaeoojdlaboihfbdjhbm",
+				publish: 2024, // 拡張機能の公開した年
+			},
+			firefox: {
+				title  : `${ manifest.name } - Mozilla Add-ons`,
+				url    : "https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/",
+				publish: 2025, // 拡張機能の公開した年
+			}
 		},
 		github : {
 			title: `${ manifest.name } - GitHub`,
