@@ -33,11 +33,11 @@ If applicable, add screenshots to help explain your problem.
 
 please complete the following information.
 
- 1. OS: [e.g. Windows 11, Debian 12, etc...]
- 2. Browser
- 	- Name [e.g. Google Chrome, Microsoft Edge, Vivaldi, Brave, etc...]
-	- Version [e.g. 131.0.6778.205]
-3. Version of 'Copy URL of All Tabs' [e.g. 0.8.0]
+1. OS: [e.g. Windows 11, Debian 13, etc...]
+2. Browser
+	- Name [e.g. Google Chrome, Microsoft Edge, Vivaldi, Brave, Mozilla Firefox, etc...]
+	- Version [e.g. 140.0.7339.128]
+3. Version of 'Copy URL of All Tabs' [e.g. 1.2.0]
 
 ## Additional context
 
