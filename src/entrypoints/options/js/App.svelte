@@ -1,4 +1,7 @@
 <script lang="ts">
+	// WXT provided cross-browser compatible API and types.
+	import { browser, type Browser } from "wxt/browser";
+
 	// Import from Svelte
 	import { onMount } from "svelte";
 
@@ -15,7 +18,7 @@
 	});
 
 	function setUILanguage() {
-		const lang = chrome.i18n.getUILanguage();
+		const lang = browser.i18n.getUILanguage();
 		const elm  = document.querySelector("html");
 
 		if ( !elm ) {

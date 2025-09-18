@@ -1,3 +1,6 @@
+// WXT provided cross-browser compatible API and types.
+import { browser, type Browser } from "wxt/browser";
+
 // Import Types
 import { type Config, type Define } from "@/assets/js/types/";
 
@@ -88,11 +91,11 @@ export async function eventActionPaste(action: string, config: Config, define: D
 
 /**
  * 全てのタブ情報を取得する
- * @return {chrome.tabs.Tab[]}
+ * @return {Promise<Browser.tabs.Tab[]>}
  */
-async function getAllTabs() {
+async function getAllTabs(): Promise<Browser.tabs.Tab[]> {
 	const queryInfo = { currentWindow : true };            // 取得対象をカレントウインドウのタブに限定
-	const tabs      = await chrome.tabs.query(queryInfo);  // tabs.query() : https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query
+	const tabs      = await browser.tabs.query(queryInfo);  // tabs.query() : https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query
 
 	return tabs;
 }
@@ -155,8 +158,9 @@ function filteringList(urlList, filtering, action, config, define) {
 		// Chrome 系ブラウザ対応の追加処理@2024/10/15
 		if ( config.Filtering.Protocol.chrome ) {
 			(define.ChromiumBasedBrowser).forEach(
-				(browser) => {
-					array.push(browser);
+				// 「chrome.* API を browser.* に置き換え」作業で発生した変数名の衝突を修正
+				(brows) => {
+					array.push(brows);
 				}
 			);
 		}

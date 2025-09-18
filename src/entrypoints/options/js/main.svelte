@@ -1,6 +1,9 @@
 <script lang="ts">
+	// WXT provided cross-browser compatible API and types.
+	import { browser } from "wxt/browser";
+
 	// Import Types
-	import { type Config } from "@/assets/js/types/";
+	import { type Config, type Define } from "@/assets/js/types/";
 
 	// Import Svelte
 	import { onMount } from "svelte";
@@ -18,8 +21,11 @@
 	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
+	import { DynamicContent }                                from "./dynamicContent";
 
 	let { status = $bindable() } = $props();
+
+	const dynamicContent = new DynamicContent(status);
 
 	onMount(() => {
 		console.log("The Component, On mount");
@@ -54,17 +60,8 @@
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 	}
 
-	function getCopyright(data) {
-		const fromYear = (data.publish && typeof data.publish === "number") ? data.publish : null;
-		const thisYear = (new Date()).getFullYear();
-		const lastYear = (fromYear && fromYear !== thisYear && thisYear > fromYear) ? (`-${thisYear}`) : "";
-		const result   = `&copy; ${fromYear}${lastYear} <strong>${data.author}</strong>.`;
-
-		return result;
-	}
-
 	function getInformationOfConfig() {
-		const manifest = chrome.runtime.getManifest();
+		const manifest = browser.runtime.getManifest();
 		const now      = Date.now();
 
 		const result = {
@@ -143,9 +140,6 @@
 		status.define.OptionsPageInputDebounceTime
 	);
 	// --------------------------------------------------------------------------------------------
-
-
-
 
 	// ---------------------------------------------------------------------------------------------
 	async function eventSettingSave() {
@@ -505,8 +499,11 @@
 			</dl>
 
 			<dl>
-				<dt>Chrome Web Store</dt>
-				<dd id="chrome-webstore"><a href="{ status.define.Information.webstote.url }" title="{ status.define.Information.webstote.title }" target="_blank" rel="noopener noreferrer">{ status.define.Information.webstote.title }</a></dd>
+				<dt>Browser Extension Store</dt>
+				<dd id="browser-extension-store">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+					{@html dynamicContent.getBrowserExtensionStoreContent() }
+				</dd>
 			</dl>
 
 			<dl>
@@ -523,12 +520,15 @@
 
 			<h2>Support</h2>
 
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+			{@html dynamicContent.getWarningMessage() }
+
 			<p>Please note that as this is a free extension we are unable to provide personalized support.</p>
 
 			<p>If you have issue or feature requests, please report them at issues (<a href="https://github.com/from-es/copy-url-of-all-tabs/issues" title="Support" target="_blank" rel="noopener noreferrer">https://github.com/from-es/copy-url-of-all-tabs/issues</a>).</p>
 
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			<p id="copyright">{@html getCopyright(status.define.Information)}</p>
+			<p id="copyright">{@html dynamicContent.getCopyright() }</p>
 		</article>
 		<!-- close id="about" -->
 

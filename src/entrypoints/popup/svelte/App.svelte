@@ -1,4 +1,7 @@
 <script lang="ts">
+	// WXT provided cross-browser compatible API and types.
+	import { browser, type Browser } from "wxt/browser";
+
 	// Import Svelte
 	import { onMount } from "svelte";
 
@@ -66,7 +69,7 @@
 	}
 
 	async function eventOpenOptionsPage() {
-		chrome.runtime.openOptionsPage();
+		browser.runtime.openOptionsPage();
 
 		const delay = 500; // milliseconds
 		window.setTimeout(() => { window.close(); }, delay);
@@ -169,7 +172,7 @@
 		const sanitizedMessage = sanitizeForSendMessage(message, options);
 
 		// アクティブなタブで開くとフォーカスが移動してポップアップメニューが閉じ、処理途中でも終了する為、background.js 側でタブを開く@2024/10/13
-		chrome.runtime.sendMessage(sanitizedMessage);
+		browser.runtime.sendMessage(sanitizedMessage);
 	}
 
 	/**

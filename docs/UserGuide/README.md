@@ -1,6 +1,6 @@
 # Copy URL of All Tabs
 
-**Last Updated:** August 11, 2025
+**Last Updated:** September 17, 2025
 
 ## Overview
 
@@ -82,5 +82,11 @@ Your privacy is respected. This extension processes all data locally on your dev
 
 ## Related Links
 
+### Browser Extension Store
+
 - [Copy URL of All Tabs - Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm "Copy URL of All Tabs - Chrome Web Store")
+- [Copy URL of All Tabs - Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/ "Copy URL of All Tabs - Mozilla Add-ons")
+
+### Source Code
+
 - [from-es/copy-url-of-all-tabs - Github](https://github.com/from-es/copy-url-of-all-tabs "https://github.com/from-es/copy-url-of-all-tabs")

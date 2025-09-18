@@ -1,15 +1,18 @@
+// WXT provided cross-browser compatible API and types.
+import { browser, type Browser } from "wxt/browser";
+
 type StorageGetKeys   = string | string[] | object | null;
 type StorageRemoveKey = string | string[];
 
 /*
 	@name        StorageManager
-	@description `chrome.storage.local` API を介して、ローカルストレージにアクセス
+	@description `browser.storage.local` API を介して、ローカルストレージにアクセス
 	@author      From E
 	@lastupdate  2025/09/04
-	@dependency  `chrome.storage.local` API
+	@dependency  `browser.storage.local` API
 
 	@note
-		このクラスは `chrome.storage.local` API に大きく依存しており、`get` / `set` の仕様は以下の通り
+		このクラスは `browser.storage.local` API に大きく依存しており、`get` / `set` の仕様は以下の通り
 
 		■ get(keys) の keys 引数の仕様:
 			1. 単一の文字列（例: "key"）:
@@ -108,7 +111,7 @@ export class StorageManager {
 
 		// エラー時は false を返す
 		const result = await this.#handleStorageOperation(
-			() => chrome.storage.local.set(items),
+			() => browser.storage.local.set(items),
 			false,
 			"Failed to save to Local Storage.",
 			{ items }
@@ -131,7 +134,7 @@ export class StorageManager {
 
 		// エラー時は false を返す
 		const result = await this.#handleStorageOperation(
-			() => chrome.storage.local.remove(key),
+			() => browser.storage.local.remove(key),
 			false,
 			`Failed to remove data for key: ${key}`,
 			{ key }
@@ -146,7 +149,7 @@ export class StorageManager {
 	static async removeAll(): Promise<boolean> {
 		// エラー時は false を返す
 		const result = await this.#handleStorageOperation(
-			() => chrome.storage.local.clear(),
+			() => browser.storage.local.clear(),
 			false,
 			"Failed to clear all data from Local Storage."
 		);
@@ -212,7 +215,7 @@ export class StorageManager {
 	/**
 	 * ストレージからデータを取得
 	 *
-	 * このメソッドは、`chrome.storage.local.get` APIのラッパーとして機能し、成功時には取得したデータを、失敗時には例外をスローする
+	 * このメソッドは、`browser.storage.local.get` APIのラッパーとして機能し、成功時には取得したデータを、失敗時には例外をスローする
 	 * ロギングやエラーハンドリングなどは行わず、該当処理は呼び出し元で
 	 *
 	 * @template T
@@ -225,7 +228,7 @@ export class StorageManager {
 			throw new Error(`Invalid key(s) provided.`);
 		}
 
-		const items = await chrome.storage.local.get(keys ?? null);
+		const items = await browser.storage.local.get(keys ?? null);
 		return items as T;
 	}
 }
