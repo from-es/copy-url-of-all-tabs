@@ -10,6 +10,7 @@
 	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
 	import { eventActionCopy, eventActionPaste }                            from "./userActions";
 	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
+	import { createSafeHTML }                                               from "@/assets/js/utils/setSafeHTML";
 
 
 	const { status } = $props();
@@ -346,7 +347,7 @@
 	<section id="message" aria-live="polite">
 		{#if $shouldShowMessage}
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html $appState.message}
+			{@html createSafeHTML($appState.message)}
 		{/if}
 	</section>
 </main>
