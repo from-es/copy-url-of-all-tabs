@@ -1,3 +1,9 @@
+#### [1.2.0] - 2025/09/20
+
+- feat
+	- Added support for Firefox Add-ons.
+	- Enhanced security by sanitizing HTML content to prevent potential XSS vulnerabilities.
+
 #### [1.1.2] - 2025/09/13
 
 - clean
