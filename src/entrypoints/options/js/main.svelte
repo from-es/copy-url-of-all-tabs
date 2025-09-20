@@ -22,6 +22,7 @@
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
+	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
 
 	let { status = $bindable() } = $props();
 
@@ -357,7 +358,7 @@
 	}
 
 	function showNoticeMessageForPaste(isShow) {
-		const message = "<p style='margin-bottom: 0;'><span style='color: red'>Notice</span>: If \"<b>Search URL of the text in the clipboard</b>\" option is enabled, filtering is only valid for \"http & https\" items.</p>";
+		const message = `<p class="notice-paste"><span class="notice-highlight">Notice</span>: If <b>Search URL of the text in the clipboard</b> option is enabled, filtering is only valid for "http & https" items.</p>`;
 
 		return isShow ? message : "";
 	}
@@ -502,7 +503,8 @@
 				<dt>Browser Extension Store</dt>
 				<dd id="browser-extension-store">
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html dynamicContent.getBrowserExtensionStoreContent() }
+					{@html createSafeHTML(dynamicContent.getBrowserExtensionStoreContent(), { ADD_ATTR: [ "target" ] }) }
+
 				</dd>
 			</dl>
 
@@ -521,14 +523,14 @@
 			<h2>Support</h2>
 
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html dynamicContent.getWarningMessage() }
+			{@html createSafeHTML(dynamicContent.getWarningMessage()) }
 
 			<p>Please note that as this is a free extension we are unable to provide personalized support.</p>
 
 			<p>If you have issue or feature requests, please report them at issues (<a href="https://github.com/from-es/copy-url-of-all-tabs/issues" title="Support" target="_blank" rel="noopener noreferrer">https://github.com/from-es/copy-url-of-all-tabs/issues</a>).</p>
 
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			<p id="copyright">{@html dynamicContent.getCopyright() }</p>
+			<p id="copyright">{@html createSafeHTML(dynamicContent.getCopyright()) }</p>
 		</article>
 		<!-- close id="about" -->
 
@@ -758,7 +760,7 @@
 								<label for="Filtering-Paste-enable-input">Filter URLs when pasting</label>
 
 								<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-								{@html showNoticeMessageForPaste(status.config.Search.regex) }
+								{@html createSafeHTML(showNoticeMessageForPaste(status.config.Search.regex)) }
 							</form>
 						</fieldset>
 
@@ -809,7 +811,7 @@
 								<form id="Filtering-Protocol-chrome">
 									<input id="Filtering-Protocol-chrome-input" type="checkbox" checked={ status.config.Filtering.Protocol.chrome } data-type="chrome" onchange={ eventFilteringProtocol }>
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-									<label for="Filtering-Protocol-chrome-input">chrome ({@html getChromiumBasedBrowserList()})</label>
+									<label for="Filtering-Protocol-chrome-input">chrome ({@html createSafeHTML(getChromiumBasedBrowserList())})</label>
 								</form>
 							</div>
 						</fieldset>
