@@ -2,8 +2,12 @@
 	Convert Markdown to HTML for "Update history"
 */
 
+// WXT provided cross-browser compatible API and types.
+import { browser } from "wxt/browser";
+
 // Import from Script
-import { initializeConfig } from "@/assets/js/initializeConfig";
+import { initializeConfig }           from "@/assets/js/initializeConfig";
+import { setSafeHTML, createSafeDOM } from "@/assets/js/utils/setSafeHTML";
 
 // Import NPM Package
 import { marked } from "marked";
@@ -15,6 +19,11 @@ const PAST_HISTORY_SELECTOR       = "#marked";               // 全ての履歴�
 const ERROR_NOTIFICATION_SELECTOR = "#contents .entry";      // エラーメッセージを表示する要素のセレクタ
 const HISTORY_HEADER_TAG          = "h4";                    // 履歴の各バージョンを識別するヘッダータグ
 const LATEST_HISTORY_COUNT        = 3;                       // 最新の履歴として表示する件数
+const SANITIZED_OPTION            = {                        // configuration object for DOMPurify (for changelog.md)
+	ALLOWED_ATTR: [
+		"href", "title", "target", "rel"  // for Anchor Tag
+	]
+};
 
 // 外部リンクを新しいタブで開くように設定された marked のカスタムレンダラー
 const customLinkRenderer = {
@@ -65,16 +74,16 @@ async function setUpdateHistory() {
 		const markdown     = await getMarkdown(CHANGELOG_PATH);
 		const markedCustom = createCustomMarkedInstance();
 		const html         = markedCustom.parse(markdown);
-		const doc          = new DOMParser().parseFromString(html, "text/html");
 
-		renderLatestHistory(doc);
+		renderLatestHistory(html, LATEST_HISTORY_SELECTOR);
 		renderPastHistory(html);
 
 	} catch (error) {
 		console.error("Failed to display changelog:", error);
 
-		const elm = document.querySelector(ERROR_NOTIFICATION_SELECTOR) || document.body;
-		elm.innerHTML = `<p>Failed to load changelog.</p><p>Error: ${error.message}</p>`;
+		const elm          = document.querySelector(ERROR_NOTIFICATION_SELECTOR) || document.body;
+		const errorMessage = `<p>Failed to load changelog.</p><p>Error: ${error.message}</p>`;
+		setSafeHTML(elm, errorMessage);
 	}
 }
 
@@ -84,7 +93,7 @@ async function setUpdateHistory() {
  * @returns {Promise<string>} - Markdown 文字列
  */
 async function getMarkdown(path) {
-	const url = chrome.runtime.getURL(path);
+	const url = browser.runtime.getURL(path);
 	try {
 		const response = await fetch(url, { cache: "no-store" });
 
@@ -123,11 +132,14 @@ function createCustomMarkedInstance() {
 }
 
 /**
- * 最新の更新履歴を指定された要素に追加
- * @param {Document} doc - パース済みのHTMLドキュメント
+ * 全ての更新履歴のHTML文字列を基に、最新分の更新履歴を指定要素へ追加
+ * @param {string} html   - 表示するHTML文字列
+ * @param {string} target - 追加する要素のCSSセレクタ文字列
  */
-function renderLatestHistory(doc) {
-	const targetElement = document.querySelector(LATEST_HISTORY_SELECTOR);
+function renderLatestHistory(html, target) {
+	const doc           = createSafeDOM(html, SANITIZED_OPTION);
+	const targetElement = document.querySelector(target);
+
 	if (!targetElement) {
 		return;
 	};
@@ -148,12 +160,12 @@ function renderLatestHistory(doc) {
 		}
 	}
 
-	targetElement.innerHTML = ""; // 既存コンテンツを消去
+	targetElement.replaceChildren(); // 既存コンテンツを消去
 	targetElement.appendChild(fragment);
 }
 
 /**
- * 全ての更新履歴を指定された要素に追加
+ * 全ての更新履歴のHTML文字列を指定要素に追加
  * @param {string} html - 表示するHTML文字列
  */
 function renderPastHistory(html) {
@@ -163,5 +175,5 @@ function renderPastHistory(html) {
 		return;
 	}
 
-	targetElement.innerHTML = html;
+	setSafeHTML(targetElement, html, SANITIZED_OPTION);
 }

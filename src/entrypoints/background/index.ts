@@ -1,3 +1,6 @@
+// WXT provided cross-browser compatible API and types.
+import { browser, type Browser } from "wxt/browser";
+
 // Import Types
 import { type ExtensionMessage } from "@/assets/js/types/";
 
@@ -16,17 +19,17 @@ export default defineBackground({
 });
 
 function main() {
-	chrome.runtime.onMessage.addListener(eventOnMessage);
+	browser.runtime.onMessage.addListener(eventOnMessage);
 }
 
 /**
- * `chrome.runtime.onMessage` に登録されたイベントハンドラ。
+ * `browser.runtime.onMessage` に登録されたイベントハンドラ。
  * Promise を返すことで、非同期に応答を処理します。
  * @param   {object}                       message - ポップアップなどから受信したメッセージ
- * @param   {chrome.runtime.MessageSender} sender  - メッセージの送信者情報
+ * @param   {Browser.Runtime.MessageSender} sender  - メッセージの送信者情報
  * @returns {Promise<void | object>}               - 応答内容、または応答がないことを示す Promise
  */
-async function eventOnMessage(message: ExtensionMessage, sender: chrome.runtime.MessageSender): Promise<void | object> {
+async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime.MessageSender): Promise<void | object> {
 	const { config } = message.status;
 
 	// Set logging console
@@ -45,10 +48,10 @@ async function eventOnMessage(message: ExtensionMessage, sender: chrome.runtime.
 
 /**
  * @param   {ExtensionMessage}             message
- * @param   {chrome.runtime.MessageSender} sender
+ * @param   {Browser.Runtime.MessageSender} sender
  * @returns {Promise<object>}
 */
-async function handleDoNotMatchAnySwitchStatement(message: ExtensionMessage, sender: chrome.runtime.MessageSender): Promise<object> {
+async function handleDoNotMatchAnySwitchStatement(message: ExtensionMessage, sender: Browser.runtime.MessageSender): Promise<object> {
 	const warningMessage = "Warning, Received a message with No Option";
 	console.warn(warningMessage, { message, sender });
 

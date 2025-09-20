@@ -1,4 +1,7 @@
 <script lang="ts">
+	// WXT provided cross-browser compatible API and types.
+	import { browser, type Browser } from "wxt/browser";
+
 	// Import Svelte
 	import { onMount } from "svelte";
 
@@ -6,6 +9,8 @@
 	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
 	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
 	import { eventActionCopy, eventActionPaste }                            from "./userActions";
+	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
+	import { createSafeHTML }                                               from "@/assets/js/utils/setSafeHTML";
 
 
 	const { status } = $props();
@@ -65,7 +70,7 @@
 	}
 
 	async function eventOpenOptionsPage() {
-		chrome.runtime.openOptionsPage();
+		browser.runtime.openOptionsPage();
 
 		const delay = 500; // milliseconds
 		window.setTimeout(() => { window.close(); }, delay);
@@ -160,8 +165,15 @@
 			}
 		};
 
+		// Firefoxとの互換性と安全性のために、送信前にオブジェクトをサニタイズ >> 構造化複製アルゴリズム不可なプロパティを除去
+		const options = {
+			checkOnly: false,
+			debug    : false
+		};
+		const sanitizedMessage = sanitizeForSendMessage(message, options);
+
 		// アクティブなタブで開くとフォーカスが移動してポップアップメニューが閉じ、処理途中でも終了する為、background.js 側でタブを開く@2024/10/13
-		chrome.runtime.sendMessage(message);
+		browser.runtime.sendMessage(sanitizedMessage);
 	}
 
 	/**
@@ -335,7 +347,7 @@
 	<section id="message" aria-live="polite">
 		{#if $shouldShowMessage}
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html $appState.message}
+			{@html createSafeHTML($appState.message)}
 		{/if}
 	</section>
 </main>

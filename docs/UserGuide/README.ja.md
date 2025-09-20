@@ -1,6 +1,6 @@
 # Chrome拡張機能「Copy URL of All Tabs」ユーザーガイド
 
-**最終更新日:** 2025年8月11日
+**最終更新日:** 2025年9月17日
 
 
 ## 概要
@@ -89,5 +89,11 @@
 
 ## 関連リンク
 
+### Browser Extension Store
+
 - [Copy URL of All Tabs - Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm "Copy URL of All Tabs - Chrome Web Store")
+- [Copy URL of All Tabs - Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/ "Copy URL of All Tabs - Mozilla Add-ons")
+
+### Source Code
+
 - [from-es/copy-url-of-all-tabs - Github](https://github.com/from-es/copy-url-of-all-tabs "https://github.com/from-es/copy-url-of-all-tabs")

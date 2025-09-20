@@ -1,3 +1,6 @@
+// WXT provided cross-browser compatible API and types.
+import { browser, type Browser } from "wxt/browser";
+
 // Import Types
 import { type Define, type ExtensionMessage }                from "@/assets/js/types/";
 import { type UrlDelayRule, type UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
@@ -87,7 +90,7 @@ async function openURLs(urlList: string[], option: Define["Config"]["Tab"]): Pro
  * @returns {Promise<number | undefined>}
  */
 async function getCurrentWindowID(): Promise<number | undefined> {
-	const window   = await chrome.windows.getCurrent({ windowTypes: [ "normal" ] });
+	const window   = await browser.windows.getCurrent({ windowTypes: [ "normal" ] });
 	const windowId = window.id;
 
 	return windowId;
@@ -101,7 +104,7 @@ async function getCurrentWindowID(): Promise<number | undefined> {
 async function createTab(url: string, option: CreateTabOptions) {
 	const { active, position, windowId } = option;
 
-	const tabs       = await chrome.tabs.query({ currentWindow : true });
+	const tabs       = await browser.tabs.query({ currentWindow : true });
 	const currentTab = (tabs).find((tab) => tab.active === true);
 	const tabIndex   = createTabPosition(position, tabs, currentTab);
 
@@ -111,16 +114,16 @@ async function createTab(url: string, option: CreateTabOptions) {
 	// debug
 	console.log("Debug, Open URLs >> tab >>", { position : position, ...createProperties });
 
-	chrome.tabs.create(createProperties);
+	browser.tabs.create(createProperties);
 }
 
 /**
- * @param   {TabPosition}               position
- * @param   {chrome.tabs.Tab[]}         tabs
- * @param   {chrome.tabs.Tab|undefined} currentTab
+ * @param   {TabPosition}                  position
+ * @param   {Browser.tabs.Tab[]}           tabs
+ * @param   {Browser.tabs.Tab | undefined} currentTab
  * @returns {number | null}
  */
-function createTabPosition(position: TabPosition, tabs: chrome.tabs.Tab[], currentTab: chrome.tabs.Tab | undefined): number | null {
+function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], currentTab: Browser.tabs.Tab | undefined): number | null {
 	let number: number | null = null;
 
 	switch (position) {
@@ -141,7 +144,7 @@ function createTabPosition(position: TabPosition, tabs: chrome.tabs.Tab[], curre
 			break;
 		default:
 			/*
-			  position が "未指定 or undefined or null" の場合のタブの位置は、chrome.tabs.create(options) における index のデフォルトの挙動に準ずる
+			  position が "未指定 or undefined or null" の場合のタブの位置は、browser.tabs.create(options) における index のデフォルトの挙動に準ずる
 			  index のデフォルトの挙動: 新規タブは、指定されたウィンドウの一番右端（末尾）に作成される
 			*/
 

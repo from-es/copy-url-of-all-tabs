@@ -18,12 +18,14 @@ You can copy the URLs of all open tabs to the clipboard or open all URLs in the 
 
 ## System Requirements
 
-- Google Chrome or Chromium-based browsers.
-- Chromium version 125 or later.
+- Google Chrome or Chromium-based browsers (version 125 or later).
+- Mozilla Firefox or Firefox-based browsers (version 125 or later).
 
 ## Installation
 
-Install it by visiting the [Copy URL of All Tabs - Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm "Copy URL of All Tabs - Chrome Web Store").
+Install it from your browser's official extension store:
+- [Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm)
+- [Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/)
 
 ## How to use
 
@@ -55,7 +57,7 @@ Vivaldi prioritizes browser-side settings (**Settings >> Tabs >> New Tab Positio
 
 ### Links to pages opened with "Copy URL to all tabs" do not marked as "Visited"
 
-If opened links are not marked as “visited”, then that is a Google Chrome specification; the behavior specification changed in an update in early 2025/03. For more information on this change, see the following article.
+If opened links are not marked as “visited”, then that is a **Google Chrome** specification; the behavior specification changed in an update in **early 2025/03**. For more information on this change, see the following article.
 
 Partitioning :visited links history - Chrome Platform Status  
 https://chromestatus.com/feature/5101991698628608
@@ -98,7 +100,13 @@ To ensure code quality, maintainability, and collaborative development, we use t
 
 ## Related Links
 
+### Browser Extension Store
+
 - [Copy URL of All Tabs - Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm "Copy URL of All Tabs - Chrome Web Store")
+- [Copy URL of All Tabs - Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/)
+
+### Source Code
+
 - [from-es/copy-url-of-all-tabs - Github](https://github.com/from-es/copy-url-of-all-tabs "https://github.com/from-es/copy-url-of-all-tabs")
 
 

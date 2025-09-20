@@ -1,5 +1,8 @@
 /* eslint-disable indent */
 
+// WXT provided cross-browser compatible API and types.
+import { browser, type Browser } from "wxt/browser";
+
 // Import NPM Package
 import v8n from "v8n";
 
@@ -147,10 +150,12 @@ interface Define extends Define_Delta {
 		name       : string;
 		description: string | undefined;
 		version    : string;
-		publish    : number;
-		webstote   : {
-			title: string;
-			url  : string;
+		BrowserExtensionStore: {
+			[key: string]: { // "chrome", "firefox"
+				title  : string;
+				url    : string;
+				publish: number;
+			}
 		};
 		github: {
 			title: string;
@@ -187,7 +192,7 @@ interface Define extends Define_Delta {
 
 
 
-const manifest = chrome.runtime.getManifest();
+const manifest = browser.runtime.getManifest();
 
 const define: Define = {
 	Environment : {
@@ -202,10 +207,17 @@ const define: Define = {
 		description: manifest.description,
 		version    : manifest.version,
 
-		publish : 2024, // Chrome拡張機能の公開日（年）
-		webstote: {
-			title: `${ manifest.name } - Chrome Web Store`,
-			url  : "https://chromewebstore.google.com/detail/glhbfaabeopieaeoojdlaboihfbdjhbm"
+		BrowserExtensionStore: {
+			chrome: {
+				title  : `${ manifest.name } - Chrome Web Store`,
+				url    : "https://chromewebstore.google.com/detail/glhbfaabeopieaeoojdlaboihfbdjhbm",
+				publish: 2024, // 拡張機能の公開した年
+			},
+			firefox: {
+				title  : `${ manifest.name } - Mozilla Add-ons`,
+				url    : "https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/",
+				publish: 2025, // 拡張機能の公開した年
+			}
 		},
 		github : {
 			title: `${ manifest.name } - GitHub`,
@@ -227,7 +239,7 @@ const define: Define = {
 		},
 
 		extension : {
-			id: chrome.runtime.id
+			id: browser.runtime.id
 		}
 	},
 

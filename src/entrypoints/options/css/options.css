@@ -243,6 +243,16 @@ section {
 	height: 480px;
 }
 
+#warning-message-for-supported-browser {
+	margin : 0.5rem 0;
+	padding: 0.5rem 0.75rem;
+
+	border-radius: 0.5rem;
+
+	color     : #fff;
+	background: #cc0000;
+}
+
 #copyright {
 	text-align: center;
 }
@@ -518,4 +528,11 @@ header h1:before {
 
 #custom-delay-add-button {
 	text-align: center;
+}
+
+.notice-paste {
+	margin-bottom: 0;
+}
+.notice-highlight {
+	color: red;
 }
