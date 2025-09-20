@@ -529,3 +529,10 @@ header h1:before {
 #custom-delay-add-button {
 	text-align: center;
 }
+
+.notice-paste {
+	margin-bottom: 0;
+}
+.notice-highlight {
+	color: red;
+}
