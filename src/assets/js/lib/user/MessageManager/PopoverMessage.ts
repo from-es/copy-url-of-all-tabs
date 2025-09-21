@@ -373,41 +373,54 @@ export class PopoverMessage {
 		}
 
 		// message プロパティの検証
-		if (!("message" in argument) || !(Array.isArray(argument.message) || typeof argument.message === "string")) {
-			console.log(`${template} Arguments(message) >>`, argument?.message);
+		if (!Object.hasOwn(argument, "message")) {
+			console.log(`${template} "message" property is missing.`);
+			return false;
+		}
+		if (typeof argument.message === "string") {
+			// 文字列なのでOK
+		} else if (Array.isArray(argument.message)) {
+			// 配列の場合、全要素が文字列でなければNG
+			if (!(argument.message).every(item => typeof item === "string")) {
+				console.log(`${template} "message" array contains non-string elements >>`, argument.message);
+				return false;
+			}
+		} else {
+			// 文字列でも配列でもない場合はNG
+			console.log(`${template} "message" is not a string or an array >>`, argument.message);
 			return false;
 		}
 
 		// messagetype プロパティの検証
 		const regex_MessageType = /^(notice|success|warning|error|debug)$/i;
-		if (("messagetype" in argument) && (!argument.messagetype || typeof argument.messagetype !== "string" || !(regex_MessageType).test(argument.messagetype))) {
+		if (Object.hasOwn(argument, "messagetype") && (!argument.messagetype || typeof argument.messagetype !== "string" || !(regex_MessageType).test(argument.messagetype))) {
 			console.log(`${template} Arguments(message type) >>`, argument?.messagetype);
 			return false;
 		}
 
 		// timeout プロパティの検証
-		if (("timeout" in argument) && (!argument.timeout || typeof argument.timeout !== "number" || argument.timeout <= 0)) {
+		if (Object.hasOwn(argument, "timeout") && (!argument.timeout || typeof argument.timeout !== "number" || argument.timeout <= 0)) {
 			console.log(`${template} Arguments(timeout) >>`, argument?.timeout);
 			return false;
 		}
 
 		// fontsize プロパティの検証
-		if (("fontsize" in argument) && (!argument.fontsize || typeof argument.fontsize !== "string")) {
+		if (Object.hasOwn(argument, "fontsize") && (!argument.fontsize || typeof argument.fontsize !== "string")) {
 			console.log(`${template} Arguments(font size) >>`, argument?.fontsize);
 			return false;
 		}
 
 		// color プロパティの検証 (font と background)
-		if ("color" in argument) {
+		if (Object.hasOwn(argument, "color")) {
 			if (typeof argument.color !== "object" || argument.color === null) {
 				console.log(`${template} Arguments(color) is not an Object or is null >>`, argument?.color);
 				return false;
 			}
-			if (("font" in argument.color) && (!argument.color.font || typeof argument.color.font !== "string")) {
+			if (Object.hasOwn(argument.color, "font") && (!argument.color.font || typeof argument.color.font !== "string")) {
 				console.log(`${template} Arguments(font color) >>`, argument?.color?.font);
 				return false;
 			}
-			if (("background" in argument.color) && (!argument.color.background || typeof argument.color.background !== "string")) {
+			if (Object.hasOwn(argument.color, "background") && (!argument.color.background || typeof argument.color.background !== "string")) {
 				console.log(`${template} Arguments(background color) >>`, argument?.color?.background);
 				return false;
 			}
@@ -486,56 +499,20 @@ export class PopoverMessage {
 
 	/**
 	 * メッセージテキストからHTMLフラグメントを作成
-	 * @param   {string|string[]}  message - メッセージテキスト
-	 * @returns {DocumentFragment}         - 作成されたHTMLフラグメント
+	 * @param   {string | string[]} message - メッセージテキスト(Not HTML Text)
+	 * @returns {DocumentFragment}          - 作成されたHTMLフラグメント
 	 */
 	static #createMessage(message: string | string[]): DocumentFragment {
-		const parseMessage = (msg: string | string[]): DocumentFragment => {
-			const fragment = document.createDocumentFragment();
+		const fragment = document.createDocumentFragment();
+		const messages = Array.isArray(message) ? message : [ message ];
 
-			if ( Array.isArray(msg) ) {
-				const loop = msg.length;
+		for (const msg of messages) {
+			const paragraph = document.createElement("p");
 
-				for (let i = 0; i < loop; i++) {
-					const elm = document.createElement("p");
-
-					elm.innerHTML = this.#escapeHTML(msg[i]);
-					fragment.appendChild(elm);
-				}
-			}
-			if ( typeof msg === "string" ) {
-				const elm = document.createElement("p");
-
-				elm.innerHTML = this.#escapeHTML(msg);
-				fragment.appendChild(elm);
-			}
-
-			return fragment;
-		};
-		const result = parseMessage(message);
-
-		return result;
-	}
-
-	/**
-	 * HTMLエスケープ処理
-	 * @param   {string} target - エスケープする文字列
-	 * @returns {string}        - エスケープされた文字列
-	 */
-	static #escapeHTML(target: string): string {
-		if (typeof target !== "string") {
-			return target;
+			paragraph.textContent = msg;
+			fragment.appendChild(paragraph);
 		}
 
-		return (target).replace(/[&'`"<>]/g, (match) => {
-			return {
-				"&" : "&amp;",
-				"'" : "&#x27;",
-				"`" : "&#x60;",
-				'"' : "&quot;",
-				"<" : "&lt;",
-				">" : "&gt;"
-			}[match];
-		});
+		return fragment;
 	}
 }
