@@ -39,7 +39,7 @@ export const manifest: UserManifest =
 	// for Mozilla Firefox or Firefox-based browsers
 	"browser_specific_settings": {
 		"gecko": {
-			"id"                : "{eb43d3f3-1f18-474a-92f4-17dc487d3ff2}",
+			"id"                : "{e590379c-55b4-4aaa-b94b-cd45d5b173f7}",
 			"strict_min_version": "127.0"
 		}
 	},
