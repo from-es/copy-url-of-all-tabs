@@ -1,3 +1,10 @@
+#### [1.3.0] - 2025/09/22
+
+- feat
+	- Improved the logic and reliability of pop-up messages.
+- change
+	- Changed the minimum required Firefox version to 127.
+
 #### [1.2.0] - 2025/09/20
 
 - feat
