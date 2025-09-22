@@ -29,6 +29,9 @@ export const manifest: UserManifest =
 			Error: cause (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause)
 				- Chrome : 125 & later
 				- Firefox:  91 & later
+			Clipboard API: ClipboardItem (https://developer.mozilla.org/en-US/docs/Web/API/ClipboardItem)
+				- Chrome :  76 & later
+				- Firefox: 127 & later
 	*/
 	// for Google Chrome or Chromium-based browsers
 	"minimum_chrome_version": "125.0",
@@ -37,7 +40,7 @@ export const manifest: UserManifest =
 	"browser_specific_settings": {
 		"gecko": {
 			"id"                : "{eb43d3f3-1f18-474a-92f4-17dc487d3ff2}",
-			"strict_min_version": "125.0"
+			"strict_min_version": "127.0"
 		}
 	},
 
