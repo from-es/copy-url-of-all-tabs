@@ -19,7 +19,7 @@ You can copy the URLs of all open tabs to the clipboard or open all URLs in the 
 ## System Requirements
 
 - Google Chrome or Chromium-based browsers (version 125 or later).
-- Mozilla Firefox or Firefox-based browsers (version 125 or later).
+- Mozilla Firefox or Firefox-based browsers (version 127 or later).
 
 ## Installation
 

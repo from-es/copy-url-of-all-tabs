@@ -31,7 +31,7 @@ For more detailed instructions, please refer to one of the following:
 
 ## System Requirements
 
-- Mozilla Firefox or Firefox-based browsers (version 125 or later).
+- Mozilla Firefox or Firefox-based browsers (version 127 or later).
 
 ## FAQ or Known Issues
 
