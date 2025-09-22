@@ -357,10 +357,10 @@
 		console.log(`eventGetFilteringProtocol() >> protocol: ${protocol} >>`, { protocol, state: status.config.Filtering.Protocol[protocol]} );
 	}
 
-	function showNoticeMessageForPaste(isShow) {
+	function showNoticeMessageForPaste() {
 		const message = `<p class="notice-paste"><span class="notice-highlight">Notice</span>: If <b>Search URL of the text in the clipboard</b> option is enabled, filtering is only valid for "http & https" items.</p>`;
 
-		return isShow ? message : "";
+		return message;
 	}
 	// --------------------------------------------------------------------------------------------
 
@@ -759,8 +759,10 @@
 								<input id="Filtering-Paste-enable-input" data-action="paste" type="checkbox" checked={ status.config.Filtering.Paste.enable } onchange={ eventFilteringEnable }>
 								<label for="Filtering-Paste-enable-input">Filter URLs when pasting</label>
 
-								<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-								{@html createSafeHTML(showNoticeMessageForPaste(status.config.Search.regex)) }
+								{#if status.config.Search.regex}
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									{@html createSafeHTML(showNoticeMessageForPaste()) }
+								{/if}
 							</form>
 						</fieldset>
 

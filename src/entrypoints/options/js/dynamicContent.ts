@@ -66,14 +66,14 @@ export class DynamicContent {
 		}
 	}
 
-	public getWarningMessage(): string | null {
+	public getWarningMessage(): string {
 		if (!this.storeData) {
 			const issues  = `${this.status.define.Information.github.url}/issues`;
 			const message = `Your browser is <b>not officially supported</b>, as this extension is intended for Chrome or Firefox. You may encounter <b>unexpected issues</b>. To help us improve compatibility, please let us know what browser you are using via Issues (${issues}).`;
 			return `<p id="warning-message-for-supported-browser">${message}</p>`;
 		}
 
-		return null;
+		return "";
 	}
 
 	public getCopyright(): string {

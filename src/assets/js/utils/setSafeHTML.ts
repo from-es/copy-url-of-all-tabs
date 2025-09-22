@@ -5,13 +5,15 @@ import { type Config as DOMPurifyConfig } from "dompurify"; // Import Types
  * innerHTML の代わりに、サニタイズ処理と replaceChildren を使って安全にHTML文字列を要素にセットする
  *
  * @param {Element}                   element    - コンテンツをセットする対象のDOM要素
- * @param {string | null | undefined} htmlString - 描画したいHTML文字列。nullまたは空文字の場合、要素内はクリアされる
+ * @param {string | null | undefined} htmlString - 描画したいHTML文字列。null, undefined, 空文字の場合、要素内はクリアされる
  * @param {DOMPurifyConfig}           options    - DOMPurify の設定オプション
  */
 export function setSafeHTML(element: Element, htmlString: string | null | undefined, options?: DOMPurifyConfig): void {
 	if (!element) {
-		console.error("setSafeHTML: Target element is not provided.");
-		return;
+		throw new TypeError("setSafeHTML: Target element is not provided.");
+	}
+	if (!(element instanceof Element)) {
+		throw new TypeError("setSafeHTML: Target element must be an instance of Element.");
 	}
 
 	if (!htmlString) {
@@ -25,8 +27,8 @@ export function setSafeHTML(element: Element, htmlString: string | null | undefi
 }
 
 /**
- * Sanitizes an HTML string and parses it into a Document object.
- * This is useful when you need to manipulate the DOM structure before inserting it into the page.
+ * HTML文字列をサニタイズし、Document オブジェクトにパース
+ * DOM 構造をページに挿入する前に操作する必要がある場合に使用
  *
  * @param   {string}   htmlString - サニタイズするHTML文字列
  * @returns {Document}            - サニタイズされたドキュメントオブジェクト
@@ -47,7 +49,32 @@ export function createSafeDOM(htmlString: string, options?: DOMPurifyConfig): Do
  * @returns {string}                     - サニタイズされたHTML文字列
  */
 export function createSafeHTML(htmlString: string, options?: DOMPurifyConfig): string {
+	if (typeof htmlString === "string" && htmlString.length === 0) {
+		return "";
+	}
+
+	validateArguments(htmlString, options);
+
 	const sanitizedHTML = DOMPurify.sanitize(htmlString, options ?? {});
 
 	return sanitizedHTML;
+}
+
+/**
+ * createSafeHTML() へ渡す引数を検証
+ * @param  {unknown}   htmlString - サニタイズ対象のHTML文字列
+ * @param  {unknown}   options    - DOMPurify の設定オプション
+ * @throws {TypeError}            - 引数が不正な場合にスローされる
+ */
+function validateArguments(htmlString: unknown, options: unknown): void {
+	// htmlString: 文字列であるか
+	if (typeof htmlString !== "string") {
+		throw new TypeError(`Argument 'htmlString' must be a string, but received type ${typeof htmlString}.`);
+	}
+
+	// options: DOMPurify の設定オプションとして有効か
+	// typeof [] は "object" となるため、Array.isArray で配列を除外するチェックが必須
+	if (options !== undefined && (typeof options !== "object" || options === null || Array.isArray(options))) {
+		throw new TypeError(`Argument 'options' must be an object, but received ${options === null ? "null" : `type ${typeof options}`}.`);
+	}
 }
