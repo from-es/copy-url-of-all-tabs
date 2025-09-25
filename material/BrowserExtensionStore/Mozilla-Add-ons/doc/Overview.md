@@ -1,8 +1,8 @@
-## About
+**##** About
 
 You can copy the URLs of all open tabs to the clipboard or open all URLs in the clipboard at once.
 
-## Features
+**##** Features
 
 The following functions can be selected from the pop-up menu.
 
@@ -11,7 +11,7 @@ The following functions can be selected from the pop-up menu.
 2. Paste
 	Open all URLs in the clipboard at once. The URLs to be opened can be filtered.
 
-## How to use
+**##** How to use
 
 1. Click on the icon of "Copy URL of All Tabs" on the right side of the address bar.
 2. Action
@@ -29,24 +29,23 @@ For more detailed instructions, please refer to one of the following:
 	- https://github.com/from-es/copy-url-of-all-tabs/blob/main/docs/UserGuide/README.md
 	- https://github.com/from-es/copy-url-of-all-tabs/blob/main/docs/UserGuide/README.ja.md
 
-## System Requirements
+**##** System Requirements
 
-- Mozilla Firefox or Firefox-based browsers (version 127 or later).
+Mozilla Firefox or Firefox-based browsers (version 127 or later).
 
-## FAQ or Known Issues
+**##** FAQ or Known Issues
 
 No known issues.
 
-## Support
+**##** Support
 
 Please note that as this is a free extension we are unable to provide personalized support.
 
 If you have issue or feature requests, please report them at issues (https://github.com/from-es/copy-url-of-all-tabs/issues).
 
-## Related Links
+**##** Related Links
 
-- Copy URL of All Tabs
-	- Mozilla Add-ons:
-		- https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/
-	- GitHub:
-		- https://github.com/from-es/copy-url-of-all-tabs
+- Mozilla Add-ons:
+	- https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/
+- GitHub:
+	- https://github.com/from-es/copy-url-of-all-tabs
