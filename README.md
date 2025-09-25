@@ -103,7 +103,7 @@ To ensure code quality, maintainability, and collaborative development, we use t
 ### Browser Extension Store
 
 - [Copy URL of All Tabs - Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm "Copy URL of All Tabs - Chrome Web Store")
-- [Copy URL of All Tabs - Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/)
+- [Copy URL of All Tabs - Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/ "Copy URL of All Tabs - Mozilla Add-ons")
 
 ### Source Code
 
