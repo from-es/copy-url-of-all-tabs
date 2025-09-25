@@ -31,7 +31,7 @@ For more detailed instructions, please refer to one of the following:
 
 ## System Requirements
 
-- Google Chrome or Chromium-based browsers (version 125 or later).
+Google Chrome or Chromium-based browsers (version 125 or later).
 
 ## FAQ or Known Issues
 
@@ -71,8 +71,7 @@ If you have issue or feature requests, please report them at issues (https://git
 
 ## Related Links
 
-- Copy URL of All Tabs
-	- Chrome Web Store:
-		- https://chromewebstore.google.com/detail/glhbfaabeopieaeoojdlaboihfbdjhbm
-	- GitHub:
-		- https://github.com/from-es/copy-url-of-all-tabs
+- Chrome Web Store:
+	- https://chromewebstore.google.com/detail/glhbfaabeopieaeoojdlaboihfbdjhbm
+- GitHub:
+	- https://github.com/from-es/copy-url-of-all-tabs
