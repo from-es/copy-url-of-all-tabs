@@ -1,3 +1,8 @@
+#### [1.3.1] - 2025/09/26
+
+- fix
+	- Fixed an issue where notification messages did not scale correctly with the browser's font size settings.
+
 #### [1.3.0] - 2025/09/22
 
 - feat

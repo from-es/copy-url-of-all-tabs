@@ -3,8 +3,11 @@
 ## Copy URL of All Tabs
 
 - URL:
-	- Chrome Web Store: https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm
-	- GitHub: https://github.com/from-es/copy-url-of-all-tabs
+	- Browser Extension Store:
+		- Chrome Web Store: https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm
+		- Mozilla Add-ons: https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/
+	- Source Code
+		- GitHub: https://github.com/from-es/copy-url-of-all-tabs
 - License:
 	- Type: MIT License
 	- URL: https://github.com/from-es/copy-url-of-all-tabs/blob/main/LICENSE.md
