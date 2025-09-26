@@ -843,7 +843,7 @@ const define: Define = {
 		Setting_OnClick_SaveButton_Success : {
 			message : [ "Save Extension Settings." ],
 			timeout : 5000,
-			fontsize: "16px",
+			fontsize: "1.0rem",
 			color   : {
 				font      : "#ffffff",
 				background: "#009933"
@@ -852,7 +852,7 @@ const define: Define = {
 		Setting_OnClick_ResetButton : {
 			message : [ "Reset, Extension Settings to Default." ],
 			timeout : 5000,
-			fontsize: "16px",
+			fontsize: "1.0rem",
 			color   : {
 				font      : "#ffffff",
 				background: "#009933"
@@ -861,7 +861,7 @@ const define: Define = {
 		Setting_ImportConfig_Success : {
 			message : [ "Success, Import Setting." ],
 			timeout : 5000,
-			fontsize: "16px",
+			fontsize: "1.0rem",
 			color   : {
 				font      : "#ffffff",
 				background: "#0066ff"
@@ -870,7 +870,7 @@ const define: Define = {
 		Setting_ImportConfig_Error : {
 			message : [ 'Failed to import the Settings. can"t read Setting File.' ],
 			timeout : 5000,
-			fontsize: "16px",
+			fontsize: "1.0rem",
 			color   : {
 				font      : "#ffffff",
 				background: "#cc3300"
@@ -879,7 +879,7 @@ const define: Define = {
 		Setting_OnClick_ExportButton : {
 			message : [ "Export Settings" ],
 			timeout : 5000,
-			fontsize: "16px",
+			fontsize: "1.0rem",
 			color   : {
 				font      : "#ffffff",
 				background: "#0066ff"

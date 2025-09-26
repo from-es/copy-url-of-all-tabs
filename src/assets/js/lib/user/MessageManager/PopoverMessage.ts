@@ -10,16 +10,10 @@ interface PopoverMessageOptions {
 };
 
 // #preprocess メソッドの出力型を定義
-interface ProcessedMessageOptions {
-	message  : string | string[];
+interface ProcessedMessageOptions extends PopoverMessageOptions {
 	timeout  : number;
 	fontsize : string;
-	color   ?: {
-		font      ?: string;
-		background?: string;
-	};
-	messagetype?: "success" | "debug" | "notice" | "warning" | "error";
-	max         : number; // #default.message.max から来るプロパティ
+	max      : number; // #default.message.max から来るプロパティ
 };
 
 
@@ -63,12 +57,12 @@ export class PopoverMessage {
 			max        : 5,                         // 同時に表示するメッセージの最大数
 			timeout    : 5000,                      // メッセージが自動的に消えるまでの時間（ミリ秒）
 			message    : [] as (string | string[]), // 表示するメッセージのテキスト（文字列または文字列の配列）
-			fontsize   : "16px",                    // フォントサイズ
+			fontsize   : "1.0rem",                  // フォントサイズ
 			color      : undefined,                 // { font: string, background: string } メッセージの文字色と背景色
 			messagetype: undefined                  // "success", "debug", "notice", "warning", "error" のいずれか
 		},
 		style: {
-			margin: 8,                                           // メッセージ間のマージン
+			margin: 0.5,                                         // メッセージ間の縦方向の間隔を、<html> 要素のフォントサイズを基準にした割合で指定 >> 0.5 ≒ 0.5rem
 			open  : "opacity 0.2s linear",                       // 表示時のトランジション
 			close : "opacity 0.2s linear, translate 0.2s linear" // 非表示時のトランジション
 		}
@@ -123,7 +117,9 @@ export class PopoverMessage {
 	--c-pale-grey  : #B6B6B6;
 	--c-shadow-grey: #e5e5e5;
 
-
+	--message-width-max-upper-limit: 1024px;
+	--message-width-max-lower-limit:  512px;
+	--message-width-min-lower-limit:  256px;
 
 	all: initial;
 
@@ -141,7 +137,7 @@ export class PopoverMessage {
 
 	border: none;
 
-	font-size  : 16px;
+	font-size  : 1.0rem;
 	line-height: 1.2;
 }
 
@@ -149,13 +145,13 @@ export class PopoverMessage {
 	margin: 0;
 	/* padding: 0.75em 1.0rem */;
 
-	max-width: 512px;
-	min-width: 256px;
+	max-width: clamp(var(--message-width-max-lower-limit), 32rem, var(--message-width-max-upper-limit));
+	min-width: max(var(--message-width-min-lower-limit), 16rem);
 
 	border       : 0.5em double var(--c-white);
 	border-radius: 0.5em;
 
-	box-shadow: 0 4px 8px var(--c-shadow-grey);
+	box-shadow: 0 0.25rem 0.5rem var(--c-shadow-grey);
 
 	color           : var(--c-black);
 	background-color: var(--c-white);
@@ -287,9 +283,9 @@ export class PopoverMessage {
 				? this.#default.style.open
 				: this.#default.style.close;
 
-			const margin = this.#default.style.margin;
-			// const moveHeight = popover.clientHeight * index;
-			let sum  = 0;
+			const rootNumberOfFontSize = this.#getFontSizeNumberOfRoot();
+			const margin               = rootNumberOfFontSize * this.#default.style.margin;
+			let   sum                  = 0;
 			for (let i = 0; i < index; i++) {
 				sum += (array[i].clientHeight) + margin;
 			}
@@ -359,9 +355,8 @@ export class PopoverMessage {
 
 	/**
 	 * 引数の妥当性をチェック
-	 * @param {PopoverMessageOptions} argument - チェックする引数オブジェクト。
-	 * @returns {boolean} 引数が有効な場合は true、そうでない場合は false。
-
+	 * @param   {PopoverMessageOptions} argument - チェックする引数オブジェクト。
+	 * @returns {boolean}                        - 引数が有効な場合は true、そうでない場合は false。
 	 */
 	static #checkArgument(argument: PopoverMessageOptions): boolean {
 		const template = `Error, The Argument passed to #checkArgument() in class ${this.#information.class.name}() is invalid.`;
@@ -439,7 +434,7 @@ export class PopoverMessage {
 		const getStyleValue = (obj: ProcessedMessageOptions) => {
 			const style = {
 				// Default Color Setting
-				fontsize        : "16px",
+				fontsize        : "1.0rem",
 				fontColor       : "#fff",
 				backgroundColor : "#000"
 			};
@@ -514,5 +509,21 @@ export class PopoverMessage {
 		}
 
 		return fragment;
+	}
+
+	/**
+	 * html 要素からフォントサイズの数値を取得
+	 */
+	static #getFontSizeNumberOfRoot(): number {
+		const rootElement      = document.documentElement;
+		const rootFontSize     = window.getComputedStyle(rootElement).getPropertyValue("font-size");
+		const fontSize         = rootFontSize.replace(/(px)$/, "");
+		const isValid          = (fontSize && typeof fontSize === "string" && /^([0-9]+)$/.test(fontSize));
+		const numberOfFontSize = (isValid && typeof Number(fontSize) === "number") ? Number(fontSize) : 16; // falsy な値の場合は 16 を適応
+
+		// debug
+		// console.log("Font size of root elements:", { rootElement, rootFontSize, isValid, numberFontSize });
+
+		return numberOfFontSize;
 	}
 }
