@@ -10,16 +10,10 @@ interface PopoverMessageOptions {
 };
 
 // #preprocess メソッドの出力型を定義
-interface ProcessedMessageOptions {
-	message  : string | string[];
+interface ProcessedMessageOptions extends PopoverMessageOptions {
 	timeout  : number;
 	fontsize : string;
-	color   ?: {
-		font      ?: string;
-		background?: string;
-	};
-	messagetype?: "success" | "debug" | "notice" | "warning" | "error";
-	max         : number; // #default.message.max から来るプロパティ
+	max      : number; // #default.message.max から来るプロパティ
 };
 
 
