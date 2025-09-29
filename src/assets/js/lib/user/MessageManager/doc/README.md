@@ -1,6 +1,6 @@
 # PopoverMessage.ts
 
-**Last Updated:** September 21, 2025
+**Last Updated:** September 27, 2025
 
 A utility class for easily displaying stackable messages on the screen using the Popover API.
 
@@ -16,7 +16,7 @@ This utility is designed as a stateless, static class, requiring no instantiatio
 
 - **Stateless Design:** No instance required. All functionality is provided through static methods.
 - **Simple API:** Display messages without complex configuration with a single method call.
-- **Stackable UI:** Displays multiple messages aligned vertically.
+- **Stackable UI:** Displays multiple messages aligned vertically. If the maximum number of messages (default: 5) is exceeded, the oldest ones are automatically removed.
 - **Auto-hide and Manual Close:** Messages disappear automatically after a specified time and can be closed immediately with a double-click.
 - **Flexible Customization:** Individually set the display time, font size, and colors (text and background) for messages.
 - **Predefined Styles:** Comes with five standard message types for common use cases: `success`, `debug`, `notice`, `warning`, and `error`.
@@ -47,7 +47,7 @@ PopoverMessage.create({
 PopoverMessage.create({
   message: "This is a custom message with all options specified.",
   timeout: 15000, // 15 seconds
-  fontsize: "14px",
+  fontsize: "1.0rem", // Recommended to use rem units
   messagetype: "debug", // This will be overridden by the 'color' option
   color: {
     font: "white",
@@ -84,7 +84,8 @@ interface PopoverMessageOptions {
 
   /**
    * (Optional) The font size of the message.
-   * Default: "16px"
+   * It is recommended to use `rem` units for responsiveness.
+   * Default: "1.0rem"
    */
   fontsize?: string;
 
@@ -107,17 +108,42 @@ interface PopoverMessageOptions {
 
 ## Behavioral Specifications & Notes
 
+### Message Display and Stacking Behavior
+
+- **Display Position:** New messages are fixed at the top center of the screen (`top: 20%`, `left: 50%`, `transform: translate(-50%, 0%)`).
+- **Stacking:** When a new message appears, any existing messages slide down with an animation to make room for the new one.
+- **Display Limit:** The maximum number of messages that can be displayed simultaneously is limited to 5 by default. If this limit is exceeded, the oldest message is automatically hidden and removed from the DOM.
+
 ### Message Text Format
 
 **HTML cannot be used in the `message` property.**
 This class safely treats all passed strings as plain text by internally setting the value to the `textContent` property. If a string containing HTML tags is passed, the tags will not be interpreted as HTML elements but will be displayed as a literal string on the screen (e.g., `<b>` will be displayed as `<b>`). This is an intentional design to prevent Cross-Site Scripting (XSS).
 
+### Responsive Design
+
+The width of the popover message is dynamically adjusted based on the viewport width.
+- **Maximum Width:** The smaller of `1024px` and `32rem`.
+- **Minimum Width:** The larger of `256px` and `16rem`.
+This ensures that the message is displayed at an appropriate size on both very wide and very narrow screens.
+
+### Argument Validation
+
+The arguments passed to the `create` method are strictly validated internally.
+- **Invalid Arguments:** If an unexpected argument is passed, such as a missing `message` property or a non-numeric `timeout`, the process is aborted, and an error message is logged to the browser console.
+- **Empty Message:** If the `message` property is an empty string (`""`) or an empty array (`[]`), the process is not aborted. Instead, a default warning message ("This is a confirmation message...") is automatically displayed.
+
 ### Dependencies
 
-This class depends on the [Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API). Therefore, it must be run in a browser environment that supports this API. Compatibility for major browsers is as follows (for full details, please refer to the [MDN Browser compatibility table](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API#browser_compatibility)):
+This class relies on the following modern browser APIs. It must be run in an environment that supports them.
 
-- **Google Chrome**: `114`+
-- **Firefox**: `125`+
+- **Popover API:** Used for the basic show/hide functionality of the popover.
+  - **Google Chrome**: `114`+
+  - **Firefox**: `125`+
+- **CSS Nesting:** Used for writing the stylesheets.
+  - **Google Chrome**: `112`+
+  - **Firefox**: `117`+
+
+For more details, please refer to the respective MDN documentation ([Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API), [CSS Nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting)).
 
 ### Execution Context
 

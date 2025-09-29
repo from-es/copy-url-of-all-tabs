@@ -19,6 +19,9 @@ export const manifest: UserManifest =
 			:has() (https://developer.mozilla.org/en-US/docs/Web/CSS/:has)
 				- Chrome : 105 & later
 				- Firefox: 121 & later
+			CSS Nesting (https://caniuse.com/css-nesting)
+				- Chrome : 120 & later
+				- Firefox: 117 & later
 		JavaScript
 			Popover API (https://developer.mozilla.org/ja/docs/Web/API/Popover_API)
 				- Chrome : 114 & later
