@@ -71,8 +71,8 @@
 			name   : manifest.name,
 			version: manifest.version,
 			date   : {
-				unixtime: now,
-				iso8601 : new Date(now).toISOString()
+				timestamp: now,
+				iso8601  : new Date(now).toISOString()
 			}
 		};
 

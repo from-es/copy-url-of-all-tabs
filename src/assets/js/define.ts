@@ -117,8 +117,8 @@ interface Config extends Config_Delta {
 		name   : string | null;
 		version: string | null;
 		date   : {
-			unixtime: number | null;
-			iso8601 : string | null;
+			timestamp: number | null;
+			iso8601  : string | null;
 		};
 	};
 	Debug: {
@@ -253,8 +253,8 @@ const define: Define = {
 			name   : null, // manifest.name,
 			version: null, // manifest.version
 			date   : {
-				unixtime: null, // new Date()
-				iso8601 : null  // new Date().toISOString()
+				timestamp: null, // new Date()
+				iso8601  : null  // new Date().toISOString()
 			}
 		},
 		Debug : {
@@ -386,7 +386,7 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Information.date.unixtime",
+			property: "Information.date.timestamp",
 			fail    : () => { return Date.now(); },
 			rule    : (value) => {
 								return v8n()
