@@ -3,7 +3,8 @@
 	import { browser } from "wxt/browser";
 
 	// Import Types
-	import { type Config, type Define } from "@/assets/js/types/";
+	import { type Config, type Define }         from "@/assets/js/types/";
+	import { type MimeType, type ExportResult } from "@/assets/js/lib/user/ConfigManager";
 
 	// Import Svelte
 	import { onMount } from "svelte";
@@ -20,9 +21,10 @@
 	import { StorageManager }                                from "@/assets/js/lib/user/StorageManager";
 	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
+	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
+	import { ConfigManager, MIME_TYPES }                     from "@/assets/js/lib/user/ConfigManager";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
-	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
 
 	let { status = $bindable() } = $props();
 
@@ -69,8 +71,8 @@
 			name   : manifest.name,
 			version: manifest.version,
 			date   : {
-				unixtime: now,
-				iso8601 : new Date(now).toISOString()
+				timestamp: now,
+				iso8601  : new Date(now).toISOString()
 			}
 		};
 
@@ -181,77 +183,6 @@
 		console.log("Reset Config Data.", status.config);
 	}
 
-	async function importConfig(filetype) {
-		const showOpenFileDialog = () => {
-			return new Promise(resolve => {
-				const input = document.createElement("input");
-
-				input.type     = "file";
-				input.accept   = filetype;
-				input.onchange = (event) => { resolve(event.target.files[0]); };
-
-				input.click();
-			});
-		};
-
-		const readAsText = (file) => {
-			return new Promise(resolve => {
-				const reader = new FileReader();
-				reader.readAsText(file);
-				reader.onload = () => { resolve(reader.result); };
-			});
-		};
-
-		const file = await showOpenFileDialog();
-		const text = await readAsText(file);
-
-		/*
-			json     であるか
-			正しい設定であるか
-				true : setValue(config)
-				false: 警告メッセージ >> 終了
-		*/
-		try {
-			const _config    = JSON.parse(text);
-			const { config } = await initializeConfig(_config);
-
-			status.config = config;
-
-			// Reinitialize, List of User Script
-			await reInitialize();
-
-			// Show, Message
-			PopoverMessage.create(status.define.Message.Setting_ImportConfig_Success);
-
-			// debug
-			console.log("main.svelte > importConfig() > config", status.config);
-		} catch (error) {
-			// Show, Message
-			PopoverMessage.create(status.define.Message.Setting_ImportConfig_Error);
-
-			// debug
-			console.log("Error, can't read Import File.", { cause: error });
-		}
-	}
-
-	function exportConfig(setting, filename, filetype) {
-		const config = JSON.stringify(setting, null, "\t");
-		const file   = { mimetype : filetype, name : filename};
-		const blob   = new Blob([ config ], { type: file.mimetype });
-		const url    = URL.createObjectURL(blob);
-		const ank    = document.createElement("a");
-
-		ank.download            = file.name;
-		ank.href                = url;
-		ank.dataset.downloadurl = [ file.mimetype, ank.download, ank.href ].join(":");
-		ank.click();
-
-		// 削除
-		URL.revokeObjectURL(url);
-		ank.remove();
-	}
-	// ---------------------------------------------------------------------------------------------
-
 	// ---------------------------------------------------------------------------------------------
 	// Options Page
 
@@ -314,17 +245,17 @@
 			(value) => { status.config.PopupMenu.fontsize = value; }
 		);
 	}
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 	// Search
 
 	function eventSearchRegex() {
 		status.config.Search.regex = !(status.config.Search.regex);
 	}
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 	// Filtering
 
 	function eventFilteringEnable() {
@@ -362,9 +293,9 @@
 
 		return message;
 	}
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 	// Format
 
 	function eventFormatType() {
@@ -380,9 +311,9 @@
 
 		status.config.Format.mimetype = mimetype;
 	}
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 	// Tab
 
 	function eventTabReverse() {
@@ -404,9 +335,9 @@
 			(value) => { status.config.Tab.delay = value; }
 		);
 	}
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 	// Debug
 
 	function eventDebugLogging() {
@@ -420,36 +351,151 @@
 	function eventDebugTimecoordinate() {
 		status.config.Debug.timecoordinate = this.value;
 	}
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 
-
-
-	// --------------------------------------------------------------------------------------------
-	function eventImportConfig() {
-		const filetype = "application/json";
-
-		importConfig(filetype);
+	// ---------------------------------------------------------------------------------------------
+	async function eventImportConfig() {
+		await importConfig(status, "application/json");
 	}
 
-	function eventExportConfig() {
-		(async () => {
-			const keyname          = status.define.Storage.keyname;
-			const localStorageData = await StorageManager.load<{[key: string]: Config}>(keyname);
-			const setting          = localStorageData?.[keyname];
-
-			const datestr  = dayjs().format("YYYY-MM-DD_HH-mm-ss"); // 要、Day.js Library(https://day.js.org/)
-			const filetype = "application/json";
-			const name     = status.define.Information.name;
-			const version  = status.define.Information.version;
-			const filename = `${name}_v${version}_${datestr}.json`;
-
-			exportConfig(setting, filename, filetype);
-
-			// Show, Message
-			PopoverMessage.create(status.define.Message.Setting_OnClick_ExportButton);
-		})();
+	async function eventExportConfig() {
+		await exportConfig(status, "application/json", "YYYY-MM-DD_HH-mm-ss");
 	}
-	// --------------------------------------------------------------------------------------------
+
+	/**
+	 * @param {object} currentStatus - The current status object of the application, containing config and define.
+	 * @param {string} mimetype      - The expected MIME type of the file to import.
+	 */
+	async function importConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType) {
+		const result = await ConfigManager.importFile(mimetype);
+		let   message;
+
+		// Terminate without a message if the user cancels.
+		if (result.isUserCancel) {
+			return;
+		}
+
+		// On successful file read
+		if (result.success && typeof result.content === "string") {
+			try {
+				// Parse and initialize the configuration
+				const _config    = JSON.parse(result.content);
+				const { config } = await initializeConfig(_config);
+
+				// Update status and perform post-processing
+				/*
+				  Note:
+				    Since objects are passed by reference in JavaScript, the `currentStatus`
+				    parameter holds a reference to the original `status` object (the bindable prop).
+				    Therefore, assigning a new value to `currentStatus.config` directly modifies
+				    the `status` prop, updating the component's state.
+				*/
+				currentStatus.config = config;
+				await reInitialize();
+
+				message = currentStatus.define.Message.Setting_ImportConfig_Success;
+			} catch (error) {
+				const err      = error as Error;
+				const template = currentStatus.define.Message.Setting_ImportConfig_Error;
+
+				message = cloneObject(template);
+				message.message.push(`Failed to process configuration: ${err.message}`);
+
+				// debug
+				console.log("Failed to load configuration:", { error });
+
+				// Add supplementary message if JSON.parse fails (SyntaxError)
+				if (err instanceof SyntaxError) {
+					const errorMessages = [
+						"The file may be corrupted or the character encoding may not be UTF-8.",
+						"Please check the file format and encoding."
+					];
+					message.message.push(...errorMessages);
+				}
+			}
+		} else {
+			// On file read failure
+			const template = currentStatus.define.Message.Setting_ImportConfig_Error;
+
+			message = cloneObject(template);
+			message.message.push(result.message);
+		}
+
+		PopoverMessage.create(message);
+	}
+
+	async function exportConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType, timeFormat: string) {
+		/**
+		 * 設定をストレージから読み込む。設定が存在しない場合はエラーをスローする
+		 * @returns {Promise<Config>} - 読み込まれた設定オブジェクト
+		 */
+		const getSetting = async (): Promise<Config> => {
+			const keyname = define.Storage.keyname;
+			const data    = await StorageManager.load<{ [key: string]: Config }>(keyname);
+			const setting = data?.[keyname];
+			if (!setting) {
+				throw new Error("Failed to load settings from storage.");
+			}
+			return setting;
+		};
+		/**
+		 * エクスポート用のファイル名を生成
+		 * @returns {string} - 生成されたファイル名
+		 */
+		const getFileName = (): string => {
+			const getFilenameExtension = (): string => {
+				// Creates a reverse map of MIME types to extensions, based on the "MIME_TYPES" constant from "src/assets/js/lib/user/ConfigManager/index.ts".
+				const extensionMap = Object.fromEntries(
+					Object.entries(MIME_TYPES).map(([ key, value ]) => [ value, key ])
+				);
+
+				return extensionMap[mimetype] ?? "txt";
+			};
+
+			const appName    = define.Information.name.replace(/\s/g, "-");
+			const appVersion = define.Information.version;
+			const datestr    = dayjs().format(timeFormat);
+
+			return `${appName}_v${appVersion}_${datestr}.${getFilenameExtension()}`;
+		};
+		/**
+		 * データ取得からエクスポート実行までの一連の処理をまとめた関数
+		 * @returns {Promise<ExportResult>}
+		 */
+		const performExport = async (): Promise<ExportResult> => {
+			const setting  = await getSetting();
+			const filename = getFileName();
+			const content  = JSON.stringify(setting, null, "\t");
+
+			return ConfigManager.exportFile(content, filename, mimetype);
+		};
+
+		const define = currentStatus.define;
+		let   message;
+
+		try {
+			// データ処理を実行
+			const result = await performExport();
+
+			// 結果に基づいてUIメッセージを準備
+			const template = result.success ? define.Message.Setting_ExportConfig_Success : define.Message.Setting_ExportConfig_Error;
+			message = cloneObject(template);
+
+			if (!result.success) {
+				message.message.push(result.message);
+			}
+		} catch (error) {
+			// エラー発生時のUIメッセージを準備
+			const err      = error as Error;
+			const template = define.Message.Setting_ExportConfig_Error;
+
+			message = cloneObject(template);
+			message.message.push(`Failed to export configuration: ${err.message}`);
+		}
+
+		PopoverMessage.create(message);
+	}
+	// ---------------------------------------------------------------------------------------------
 </script>
 
 

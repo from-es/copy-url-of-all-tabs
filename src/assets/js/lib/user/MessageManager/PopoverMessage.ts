@@ -1,3 +1,5 @@
+export type MessageType = "success" | "debug" | "notice" | "warning" | "error";
+
 interface PopoverMessageOptions {
 	message  : string | string[];
 	timeout ?: number;
@@ -6,7 +8,7 @@ interface PopoverMessageOptions {
 		font      ?: string;
 		background?: string;
 	};
-	messagetype?: "success" | "debug" | "notice" | "warning" | "error";
+	messagetype?: MessageType;
 };
 
 // #preprocess メソッドの出力型を定義
@@ -163,17 +165,19 @@ export class PopoverMessage {
 	--matched-radius-inner-size: 0.25rem;
 	padding                    : var(--matched-radius-padding) 1.0rem;
 	border-radius              : calc(var(--matched-radius-inner-size) + var(--matched-radius-padding));
-}
 
-.popover p {
-	line-break : strict;
-	user-select: none;
-}
-.popover p:first-child {
-	margin-top: 0;
-}
-.popover p:last-child {
-	margin-bottom: 0;
+	p {
+		line-break : strict;
+		user-select: none;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 `;
 
@@ -459,15 +463,14 @@ export class PopoverMessage {
 
 		style.textContent =
 `
-/* --------------------------------------------------- */
 .popover {
 	color           : ${prop.fontColor} !important;
 	background-color: ${prop.backgroundColor} !important;
+
+	p {
+		font-size: ${prop.fontsize} !important;
+	}
 }
-.popover p {
-	font-size: ${prop.fontsize} !important;
-}
-/* --------------------------------------------------- */
 `;
 
 		return style;

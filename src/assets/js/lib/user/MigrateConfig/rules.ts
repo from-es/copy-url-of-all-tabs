@@ -103,7 +103,36 @@ const migrationRules: MigrationRule[] = [
 
 			return config;
 		}
-	}
+	},
+	{
+		rules: {
+			reason : "config.Information.date.unixtime で管理している値が 'UNIXエポック * 1000' とプロパティ名に即していない為、プロパティ名を config.Information.date.timestamp に変更",
+			target : "config.Information.date.unixtime",
+			action : "プロパティ unixtime の値 timestamp にコピー。その後、プロパティ unixtime を削除する",
+			created: "2025/10/04",
+			expires: "2025/12/31"
+		},
+		condition: (argument) => {
+			const { config } = argument;
+
+			return Object.hasOwn(config.Information.date, "unixtime");
+		},
+		execute: (argument) => {
+			const { config } = argument;
+
+			// 移行
+			config.Information.date.timestamp = (config.Information.date as any).unixtime;
+
+			// 削除
+			delete (config.Information.date as any).unixtime;
+
+			// debug
+			console.log(`Report, Migrate Config of Value. Change "config.Information.date.unixtime" to "config.Information.date.timestamp". config >>`, config);
+
+			return config;
+		}
+	},
+
 ];
 
 

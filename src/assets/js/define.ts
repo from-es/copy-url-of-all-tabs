@@ -9,6 +9,7 @@ import v8n from "v8n";
 // Import
 import { ArrayOfObjectsValidator }       from "./lib/user/ArrayOfObjectsValidator";
 import { type BrowserEnvironmentResult } from "./lib/user/BrowserEnvironment/types";
+import { type MessageType }              from "./lib/user/MessageManager/PopoverMessage";
 
 
 
@@ -82,7 +83,7 @@ type Define_Delta = {
 					font      : string;
 					background: string;
 				};
-				messagetype?: string;
+				messagetype?: MessageType;
 			};
 		};
 		MimeType                             : string[];
@@ -116,8 +117,8 @@ interface Config extends Config_Delta {
 		name   : string | null;
 		version: string | null;
 		date   : {
-			unixtime: number | null;
-			iso8601 : string | null;
+			timestamp: number | null;
+			iso8601  : string | null;
 		};
 	};
 	Debug: {
@@ -252,8 +253,8 @@ const define: Define = {
 			name   : null, // manifest.name,
 			version: null, // manifest.version
 			date   : {
-				unixtime: null, // new Date()
-				iso8601 : null  // new Date().toISOString()
+				timestamp: null, // new Date()
+				iso8601  : null  // new Date().toISOString()
 			}
 		},
 		Debug : {
@@ -385,7 +386,7 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Information.date.unixtime",
+			property: "Information.date.timestamp",
 			fail    : () => { return Date.now(); },
 			rule    : (value) => {
 								return v8n()
@@ -876,13 +877,22 @@ const define: Define = {
 				background: "#cc3300"
 			}
 		},
-		Setting_OnClick_ExportButton : {
-			message : [ "Export Settings" ],
+		Setting_ExportConfig_Success : {
+			message : [ "Success, Export Settings" ],
 			timeout : 5000,
 			fontsize: "1.0rem",
 			color   : {
 				font      : "#ffffff",
 				background: "#0066ff"
+			}
+		},
+		Setting_ExportConfig_Error : {
+			message : [ "Failed to export the Settings." ],
+			timeout : 5000,
+			fontsize: "1.0rem",
+			color   : {
+				font      : "#ffffff",
+				background: "#cc3300"
 			}
 		}
 		// ---------------------------------------------------------------------------------------------------------------------------
