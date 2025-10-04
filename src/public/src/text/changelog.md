@@ -1,3 +1,8 @@
+#### [1.4.0] - 2025/10/04
+
+- feat
+	- The settings import/export functionality has been refactored and improved for better stability and maintainability.
+
 #### [1.3.1] - 2025/09/26
 
 - fix
