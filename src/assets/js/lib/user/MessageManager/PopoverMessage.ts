@@ -1,3 +1,5 @@
+export type MessageType = "success" | "debug" | "notice" | "warning" | "error";
+
 interface PopoverMessageOptions {
 	message  : string | string[];
 	timeout ?: number;
@@ -6,7 +8,7 @@ interface PopoverMessageOptions {
 		font      ?: string;
 		background?: string;
 	};
-	messagetype?: "success" | "debug" | "notice" | "warning" | "error";
+	messagetype?: MessageType;
 };
 
 // #preprocess メソッドの出力型を定義
