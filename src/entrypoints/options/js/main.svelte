@@ -145,6 +145,8 @@
 	// --------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------
+	// Save & Reset
+
 	async function eventSettingSave() {
 		const config = cloneObject(status.config);
 
@@ -319,12 +321,15 @@
 	function eventTabReverse() {
 		status.config.Tab.reverse = !(status.config.Tab.reverse);
 	}
+
 	function eventTabActive() {
 		status.config.Tab.active = !(status.config.Tab.active);
 	}
+
 	function eventTabPosition() {
 		status.config.Tab.position = this.value;
 	}
+
 	function eventTabDelay(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
 		debouncedValidation(
@@ -632,7 +637,7 @@
 
 							<p>Specifies the MIME type when copying data to the clipboard. This only affects <b>custom</b> formats.</p>
 
-							<select id="Format-mimetype" onchange={eventFormatSelectMimetype}>
+							<select id="Format-mimetype" onchange={ eventFormatSelectMimetype }>
 								<option value="text/plain" selected={ status.config.Format.mimetype === "text/plain" ? true : false }>text/plain</option>
 								<option value="text/html"  selected={ status.config.Format.mimetype === "text/html"  ? true : false }>text/html</option>
 							</select>

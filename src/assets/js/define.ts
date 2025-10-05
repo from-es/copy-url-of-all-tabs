@@ -14,9 +14,9 @@ import { type MessageType }              from "./lib/user/MessageManager/Popover
 
 
 type customDelayInfo = {
-	id   : string;  // create by crypto.randomUUID()
+	id     : string;  // create by crypto.randomUUID()
 	pattern: string;
-	delay: number;
+	delay  : number;
 };
 
 type Config_Delta = {
@@ -63,47 +63,46 @@ type Config_Delta = {
 };
 
 type Define_Delta = {
-		Regex: {
-			url: {
-				standard: RegExp;
-				RFC3986 : RegExp;
-
-				[key: string]: RegExp
-			};
-			UUID: {
-				v4: RegExp
-			}
+	Regex: {
+		url: {
+			standard: RegExp;
+			RFC3986 : RegExp;
+			[key: string]: RegExp
 		};
-		Message: {
-			[key: string]: {
-				message  : string[];
-				timeout  : number;
-				fontsize : string;
-				color   ?: {
-					font      : string;
-					background: string;
-				};
-				messagetype?: MessageType;
+		UUID: {
+			v4: RegExp
+		}
+	};
+	Message: {
+		[key: string]: {
+			message  : string[];
+			timeout  : number;
+			fontsize : string;
+			color   ?: {
+				font      : string;
+				background: string;
 			};
+			messagetype?: MessageType;
 		};
-		MimeType                             : string[];
-		ChromiumBasedBrowser                 : string[];
-		OptionsPageFontSizeValueMin          : number;
-		OptionsPageFontSizeValueMax          : number;
-		OptionsPageFontSizeValueStep         : number;
-		PopupMenuFontSizeValueMin            : number;
-		PopupMenuFontSizeValueMax            : number;
-		PopupMenuFontSizeValueStep           : number;
-		PopupMenuClearMessageTimeoutValueMin : number;
-		PopupMenuClearMessageTimeoutValueMax : number;
-		PopupMenuClearMessageTimeoutValueStep: number;
-		PopupMenuOnClickCloseTimeoutValueMin : number;
-		PopupMenuOnClickCloseTimeoutValueMax : number;
-		PopupMenuOnClickCloseTimeoutValueStep: number;
-		TabOpenDelayValueMin                 : number;
-		TabOpenDelayValueMax                 : number;
-		TabOpenDelayValueStep                : number;
-		TabOpenCustomDelayValue              : number;
+	};
+	MimeType                             : string[];
+	ChromiumBasedBrowser                 : string[];
+	OptionsPageFontSizeValueMin          : number;
+	OptionsPageFontSizeValueMax          : number;
+	OptionsPageFontSizeValueStep         : number;
+	PopupMenuFontSizeValueMin            : number;
+	PopupMenuFontSizeValueMax            : number;
+	PopupMenuFontSizeValueStep           : number;
+	PopupMenuClearMessageTimeoutValueMin : number;
+	PopupMenuClearMessageTimeoutValueMax : number;
+	PopupMenuClearMessageTimeoutValueStep: number;
+	PopupMenuOnClickCloseTimeoutValueMin : number;
+	PopupMenuOnClickCloseTimeoutValueMax : number;
+	PopupMenuOnClickCloseTimeoutValueStep: number;
+	TabOpenDelayValueMin                 : number;
+	TabOpenDelayValueMax                 : number;
+	TabOpenDelayValueStep                : number;
+	TabOpenCustomDelayValue              : number;
 }
 
 type VerificationRule = {
@@ -196,13 +195,13 @@ interface Define extends Define_Delta {
 const manifest = browser.runtime.getManifest();
 
 const define: Define = {
-	Environment : {
-		Browser : {
+	Environment: {
+		Browser: {
 			//
 		}
 	},
 
-	Information : {
+	Information: {
 		author     : manifest.author,
 		name       : manifest.name,
 		description: manifest.description,
@@ -220,11 +219,11 @@ const define: Define = {
 				publish: 2025, // 拡張機能の公開した年
 			}
 		},
-		github : {
+		github: {
 			title: `${ manifest.name } - GitHub`,
 			url  : "https://github.com/from-es/copy-url-of-all-tabs"
 		},
-		document : {
+		document: {
 			default: { // デフォルトは英語表記用
 				title: "User Guide",
 				url  : "https://github.com/from-es/copy-url-of-all-tabs/blob/main/docs/UserGuide/README.md"
@@ -234,21 +233,21 @@ const define: Define = {
 				url  : "https://github.com/from-es/copy-url-of-all-tabs/blob/main/docs/UserGuide/README.ja.md"
 			}
 		},
-		updatehistory : {
+		updatehistory: {
 			title: `Update History for ${ manifest.name }`,
 			url  : "/changelog.html"
 		},
 
-		extension : {
+		extension: {
 			id: browser.runtime.id
 		}
 	},
 
-	Storage : {
+	Storage: {
 		keyname: "config"
 	},
 
-	Config : {
+	Config: {
 		Information : {
 			name   : null, // manifest.name,
 			version: null, // manifest.version
@@ -262,21 +261,21 @@ const define: Define = {
 			timestamp     : true,  // true >> console 出力にタイムスタンプを付加する
 			timecoordinate: "UTC"  // "UTC" or "GMT"
 		},
-		OptionsPage : {
-			fontsize: 16
+		OptionsPage: {
+			fontsize: 16  // 8 ~ 32 px
 		},
 		PopupMenu : {
-			fontsize    : 16,
-			ClearMessage : {
+			fontsize    : 16,  // 8 ~ 32 px
+			ClearMessage: {
 				enable : true,
 				timeout: 5  // 0 ~ 60 seconds
 			},
-			OnClickClose : {
+			OnClickClose: {
 				enable : true,
 				timeout: 5  // 0 ~ 60 seconds
 			}
 		},
-		Search : {
+		Search: {
 			regex: true  // true >> search regex, false >> clipboard text split "\n" → test URL.canParse(line text)
 		},
 		Filtering : {
@@ -287,10 +286,9 @@ const define: Define = {
 			Copy :  {
 				enable: true
 			},
-			Paste : {
+			Paste: {
 				enable: true
 			},
-
 			Protocol : { // URI schemes(https://developer.mozilla.org/en-US/docs/Web/URI/Schemes)
 				/*
 					Chrome          : FTP Protocol support ends Google Chrome 95 and later
@@ -310,53 +308,43 @@ const define: Define = {
 
 				about: false, // "about:"
 
-				chrome  : false, // "chrome:"
+				chrome: false, // "chrome:"
 				/*
-				edge    : false// "edge:"
-				vivaldi : false// "vivaldi:"
+				edge   : false// "edge:"
+				vivaldi: false// "vivaldi:"
 				*/
 			}
 		},
-		Format : {
-			type    : "text",                                      // type : "text" or "json" or "custom"
+		Format: {
+			type    : "text",                                      // type: "text" or "json" or "custom"
 			template: '<a href="$url" title="$title">$title</a>',
-			mimetype: "text/plain"                                 // mimetype : "text/plain" or "text/html", Type "text/rtf" not supported on "navigator.clipboard.write()".
+			mimetype: "text/plain"                                 // mimetype: "text/plain" or "text/html", Type "text/rtf" not supported on "navigator.clipboard.write()".
 		},
-		Tab : {
-			reverse: false, // true >> reverse, false >> normal
-			active : false, // タブをアクティブで開くか
-			delay  : 250,   // 0 ~ 1000 ms,
-
-			// New features added to version 1.0.0@2025/07/23
+		Tab: {
+			reverse    : false, // true >> reverse, false >> normal
+			active     : false, // タブをアクティブで開くか
+			delay      : 250,   // 0 ~ 1000 ms,
 			customDelay: {
 				enable: false,
 				list  : [
 					{
-						id   : "07db6a58-413e-47de-957d-afd1c8a64f85",
+						id     : "07db6a58-413e-47de-957d-afd1c8a64f85",
 						pattern: "https://x.com/",
-						delay: 1000
+						delay  : 1000
 					},
 					{
-						id   : "8f6a9cd0-d62e-4b70-a007-74de6299a50f",
+						id     : "8f6a9cd0-d62e-4b70-a007-74de6299a50f",
 						pattern: "https://www.reddit.com",
-						delay: 1000
+						delay  : 1000
 					},
 					{
-						id   : "05fe2b9b-a60c-4707-9a47-a4ccc6e44a73",
+						id     : "05fe2b9b-a60c-4707-9a47-a4ccc6e44a73",
 						pattern: "https://www.pixiv.net/",
-						delay: 1000
+						delay  : 1000
 					}
 				]
 			},
-
-			/*
-				"default":
-				"first"  :
-				"left"   :
-				"right"  :
-				"last"   :
-			*/
-			position: "default"
+			position: "default" // Tab position when opened: "default" or "first" or "left" or "right" or "last"
 		}
 	},
 
@@ -444,7 +432,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "PopupMenu.ClearMessage.timeout",
@@ -456,7 +444,7 @@ const define: Define = {
 									.numeric()
 									.range(define.PopupMenuClearMessageTimeoutValueMin, define.PopupMenuClearMessageTimeoutValueMax)
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "PopupMenu.OnClickClose.enable",
@@ -467,7 +455,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "PopupMenu.OnClickClose.timeout",
@@ -479,7 +467,7 @@ const define: Define = {
 									.numeric()
 									.range(define.PopupMenuOnClickCloseTimeoutValueMin, define.PopupMenuOnClickCloseTimeoutValueMax)
 									.test(value);
-							}
+						}
 		},
 
 		// Search
@@ -492,7 +480,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 
 		// Filtering
@@ -505,7 +493,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Paste.enable",
@@ -516,7 +504,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		/*
 		{
@@ -541,7 +529,7 @@ const define: Define = {
 									.not.null()
 									.object()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.http",
@@ -552,7 +540,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.https",
@@ -563,7 +551,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.file",
@@ -574,7 +562,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.ftp",
@@ -585,7 +573,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.data",
@@ -596,7 +584,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.blob",
@@ -607,7 +595,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.mailto",
@@ -618,7 +606,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.javascript",
@@ -629,7 +617,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.about",
@@ -640,7 +628,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Filtering.Protocol.chrome",
@@ -651,7 +639,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 
 		// Format
@@ -665,7 +653,7 @@ const define: Define = {
 									.string()
 									.pattern(/^(text|json|custom)$/i)
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Format.template",
@@ -676,7 +664,7 @@ const define: Define = {
 									.not.null()
 									.string()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Format.mimetype",
@@ -688,7 +676,7 @@ const define: Define = {
 									.string()
 									.pattern(/^(text\/plain|text\/html)$/i)
 									.test(value);
-							}
+						}
 		},
 
 		// Tab
@@ -701,7 +689,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Tab.active",
@@ -712,7 +700,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Tab.delay",
@@ -724,7 +712,7 @@ const define: Define = {
 									.numeric()
 									.range(define.TabOpenDelayValueMin, define.TabOpenDelayValueMax)
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Tab.customDelay.enable",
@@ -735,7 +723,7 @@ const define: Define = {
 									.not.null()
 									.boolean()
 									.test(value);
-							}
+						}
 		},
 		{
 			property: "Tab.customDelay.list",
@@ -769,8 +757,6 @@ const define: Define = {
 							return isAllValid;
 						}
 		},
-
-
 		{
 			property: "Tab.position",
 			fail    : () => { return define.Config.Tab.position; },
@@ -781,7 +767,7 @@ const define: Define = {
 									.string()
 									.pattern(/^(default|first|left|right|last)$/i)
 									.test(value);
-							}
+						}
 		},
 
 		// Debug
@@ -839,9 +825,9 @@ const define: Define = {
 
 	},
 
-	Message : {
+	Message: {
 		// Flash Message : options.html >> main.svelte
-		Setting_OnClick_SaveButton_Success : {
+		Setting_OnClick_SaveButton_Success: {
 			message : [ "Save Extension Settings." ],
 			timeout : 5000,
 			fontsize: "1.0rem",
@@ -850,7 +836,7 @@ const define: Define = {
 				background: "#009933"
 			}
 		},
-		Setting_OnClick_ResetButton : {
+		Setting_OnClick_ResetButton: {
 			message : [ "Reset, Extension Settings to Default." ],
 			timeout : 5000,
 			fontsize: "1.0rem",
@@ -859,7 +845,7 @@ const define: Define = {
 				background: "#009933"
 			}
 		},
-		Setting_ImportConfig_Success : {
+		Setting_ImportConfig_Success: {
 			message : [ "Success, Import Setting." ],
 			timeout : 5000,
 			fontsize: "1.0rem",
@@ -868,7 +854,7 @@ const define: Define = {
 				background: "#0066ff"
 			}
 		},
-		Setting_ImportConfig_Error : {
+		Setting_ImportConfig_Error: {
 			message : [ 'Failed to import the Settings. can"t read Setting File.' ],
 			timeout : 5000,
 			fontsize: "1.0rem",
@@ -877,7 +863,7 @@ const define: Define = {
 				background: "#cc3300"
 			}
 		},
-		Setting_ExportConfig_Success : {
+		Setting_ExportConfig_Success: {
 			message : [ "Success, Export Settings" ],
 			timeout : 5000,
 			fontsize: "1.0rem",
@@ -886,7 +872,7 @@ const define: Define = {
 				background: "#0066ff"
 			}
 		},
-		Setting_ExportConfig_Error : {
+		Setting_ExportConfig_Error: {
 			message : [ "Failed to export the Settings." ],
 			timeout : 5000,
 			fontsize: "1.0rem",
@@ -898,26 +884,12 @@ const define: Define = {
 		// ---------------------------------------------------------------------------------------------------------------------------
 	},
 
-	/*
-		未使用@2024/10/21
-
-		const result = (function (array) {
-			const str     = (array).join("|");
-			const pattern = `^(${str})$`;
-			const regex   = new RegExp(pattern, "i");
-
-			return regex
-		}(define.MimeType));
-	*/
 	MimeType: [
 		"text/plain",
 		"text/html"
 	],
 
-	/*
-		Filtering, List for Settings screen URL of Chromium Based Browser
-		update: 2024/10/15
-	*/
+	// Filtering, List for Settings screen URL of Chromium Based Browser
 	ChromiumBasedBrowser: [
 		"edge",    // edge://
 		"vivaldi"  // vivaldi://

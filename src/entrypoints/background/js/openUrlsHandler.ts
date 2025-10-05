@@ -97,7 +97,7 @@ async function getCurrentWindowID(): Promise<number | undefined> {
 }
 
 /**
- * @param   {string} url
+ * @param   {string}           url
  * @param   {CreateTabOptions} option
  * @returns {void}
  */

@@ -5,7 +5,7 @@ import { browser, type Browser } from "wxt/browser";
 import { type ExtensionMessage } from "@/assets/js/types/";
 
 // Import from Script
-import { define }         from "@/assets/js/define";   // メッセージング経由で define を受け取る場合、構造化複製不可能な型が含まれていると送信エラーが発生する為、事前にインポートする@2025/09/13
+import { define }         from "@/assets/js/define";  // メッセージング経由で define を受け取る場合、構造化複製不可能な型が含まれていると送信エラーが発生する為、事前にインポートする@2025/09/13
 import { logging }        from "@/assets/js/logging";
 import { handleOpenURLs } from "./js/openUrlsHandler";
 
@@ -25,9 +25,9 @@ function main() {
 /**
  * `browser.runtime.onMessage` に登録されたイベントハンドラ。
  * Promise を返すことで、非同期に応答を処理します。
- * @param   {object}                       message - ポップアップなどから受信したメッセージ
+ * @param   {object}                        message - ポップアップなどから受信したメッセージ
  * @param   {Browser.Runtime.MessageSender} sender  - メッセージの送信者情報
- * @returns {Promise<void | object>}               - 応答内容、または応答がないことを示す Promise
+ * @returns {Promise<void | object>}                - 応答内容、または応答がないことを示す Promise
  */
 async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime.MessageSender): Promise<void | object> {
 	const { config } = message.status;
@@ -47,7 +47,7 @@ async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime
 }
 
 /**
- * @param   {ExtensionMessage}             message
+ * @param   {ExtensionMessage}              message
  * @param   {Browser.Runtime.MessageSender} sender
  * @returns {Promise<object>}
 */
