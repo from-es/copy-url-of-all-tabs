@@ -279,10 +279,6 @@ const define: Define = {
 			regex: true  // true >> search regex, false >> clipboard text split "\n" → test URL.canParse(line text)
 		},
 		Filtering : {
-			// Ver 0.6.1.1 まで使用 >> Paste でのみ使用
-			// enable : true,
-
-			// Ver 0.7.0 以降対応
 			Copy :  {
 				enable: true
 			},
@@ -506,20 +502,6 @@ const define: Define = {
 									.test(value);
 						}
 		},
-		/*
-		{
-			property: "Filtering.enable",                               // Ver 0.6.1.1 まで使用 >> Paste でのみ使用
-			fail    : () => { return define.Config.Filtering.enable; },
-			rule    : (value) => {
-								return v8n()
-									.not.undefined()
-									.not.null()
-									.boolean()
-									.test(value);
-							}
-		},
-		*/
-
 		{
 			property: "Filtering.Protocol",
 			fail    : () => { return define.Config.Filtering.Protocol; },
