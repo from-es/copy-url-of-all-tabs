@@ -260,8 +260,9 @@
 	// ---------------------------------------------------------------------------------------------
 	// Filtering
 
-	function eventFilteringEnable() {
-		const action = (this).getAttribute("data-action");
+	function eventFilteringEnable(event: Event) {
+		const elm    = event.currentTarget as HTMLInputElement;
+		const action = elm.getAttribute("data-action");
 		let   key    = "";
 
 		switch (action) {
@@ -281,13 +282,19 @@
 		status.config.Filtering[key].enable = !(status.config.Filtering[key].enable);
 	}
 
-	function eventFilteringProtocol() {
-		const protocol = this.getAttribute("data-type");
+	function eventFilteringProtocol(event: Event) {
+		const elm      = event.currentTarget as HTMLInputElement;
+		const protocol = elm.getAttribute("data-type");
 
-		status.config.Filtering.Protocol[protocol] = !(status.config.Filtering.Protocol[protocol]);
+		if (protocol && typeof protocol === "string") {
+			status.config.Filtering.Protocol[protocol] = !(status.config.Filtering.Protocol[protocol]);
 
-		// debug
-		console.log(`eventGetFilteringProtocol() >> protocol: ${protocol} >>`, { protocol, state: status.config.Filtering.Protocol[protocol]} );
+			// debug
+			console.log(`eventGetFilteringProtocol() >> protocol: ${protocol} >>`, { protocol, bool: status.config.Filtering.Protocol[protocol]} );
+		} else {
+			// debug
+			console.error("Error, The 'data-type' attribute is missing or its value is not a string:", { protocol });
+		}
 	}
 
 	function showNoticeMessageForPaste() {
@@ -300,16 +307,21 @@
 	// ---------------------------------------------------------------------------------------------
 	// Format
 
-	function eventFormatType() {
-		status.config.Format.type = this.value;
+	function eventFormatType(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Format.type = elm.value;
 	}
 
-	function eventFormatCustomTemplate() {
-		status.config.Format.template = this.value;
+	function eventFormatCustomTemplate(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Format.template = elm.value;
 	}
 
-	function eventFormatSelectMimetype(event) {
-		const mimetype = event.target.value;
+	function eventFormatSelectMimetype(event: Event) {
+		const elm      = event.currentTarget as HTMLInputElement;
+		const mimetype = elm.value;
 
 		status.config.Format.mimetype = mimetype;
 	}
@@ -326,8 +338,10 @@
 		status.config.Tab.active = !(status.config.Tab.active);
 	}
 
-	function eventTabPosition() {
-		status.config.Tab.position = this.value;
+	function eventTabPosition(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Tab.position = elm.value;
 	}
 
 	function eventTabDelay(event: Event) {
@@ -353,8 +367,10 @@
 		status.config.Debug.timestamp = !(status.config.Debug.timestamp);
 	}
 
-	function eventDebugTimecoordinate() {
-		status.config.Debug.timecoordinate = this.value;
+	function eventDebugTimecoordinate(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Debug.timecoordinate = elm.value;
 	}
 	// ---------------------------------------------------------------------------------------------
 
