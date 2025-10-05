@@ -363,6 +363,7 @@
 	}
 
 	/**
+	 * Imports a configuration file, updates the application's state, and displays a status message.
 	 * @param {object} currentStatus - The current status object of the application, containing config and define.
 	 * @param {string} mimetype      - The expected MIME type of the file to import.
 	 */
@@ -424,6 +425,12 @@
 		PopoverMessage.create(message);
 	}
 
+	/**
+	 * Exports the current application configuration to a JSON file and initiates a download.
+	 * @param {object} currentStatus - The current status object of the application, containing config and define.
+	 * @param {string} mimetype      - The MIME type for the exported file.
+	 * @param {string} timeFormat    - The `dayjs` format string to use for the timestamp in the filename.
+	 */
 	async function exportConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType, timeFormat: string) {
 		/**
 		 * 設定をストレージから読み込む。設定が存在しない場合はエラーをスローする
