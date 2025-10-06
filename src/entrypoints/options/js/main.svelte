@@ -22,7 +22,7 @@
 	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
 	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
-	import { ConfigManager, MIME_TYPES }                     from "@/assets/js/lib/user/ConfigManager";
+	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/user/ConfigManager";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
 
@@ -461,9 +461,11 @@
 			const keyname = define.Storage.keyname;
 			const data    = await StorageManager.load<{ [key: string]: Config }>(keyname);
 			const setting = data?.[keyname];
+
 			if (!setting) {
 				throw new Error("Failed to load settings from storage.");
 			}
+
 			return setting;
 		};
 		/**
@@ -472,12 +474,16 @@
 		 */
 		const getFileName = (): string => {
 			const getFilenameExtension = (): string => {
-				// Creates a reverse map of MIME types to extensions, based on the "MIME_TYPES" constant from "src/assets/js/lib/user/ConfigManager/index.ts".
-				const extensionMap = Object.fromEntries(
-					Object.entries(MIME_TYPES).map(([ key, value ]) => [ value, key ])
-				);
+				const extensions     = MIME_TO_EXT_MAP[mimetype]; // 存在しない mimetype の文字列を指定されていた場合は undefined が返値として渡される
+				const firstCandidate = extensions?.[0];
+				const extension      = firstCandidate ?? "txt";
+				const result         = extension.replace(/^\./, "");
 
-				return extensionMap[mimetype] ?? "txt";
+				if (!firstCandidate) {
+					console.warn(`exportConfig() >> getFilenameExtension: No extension found for mimetype: "${mimetype}". Defaulting to "txt".`, { availableMimeTypes: MIME_TO_EXT_MAP });
+				}
+
+				return result;
 			};
 
 			const appName    = define.Information.name.replace(/\s/g, "-");
