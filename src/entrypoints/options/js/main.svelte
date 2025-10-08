@@ -22,7 +22,7 @@
 	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
 	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
-	import { ConfigManager, MIME_TYPES }                     from "@/assets/js/lib/user/ConfigManager";
+	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/user/ConfigManager";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
 
@@ -145,6 +145,8 @@
 	// --------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------
+	// Save & Reset
+
 	async function eventSettingSave() {
 		const config = cloneObject(status.config);
 
@@ -258,8 +260,9 @@
 	// ---------------------------------------------------------------------------------------------
 	// Filtering
 
-	function eventFilteringEnable() {
-		const action = (this).getAttribute("data-action");
+	function eventFilteringEnable(event: Event) {
+		const elm    = event.currentTarget as HTMLInputElement;
+		const action = elm.getAttribute("data-action");
 		let   key    = "";
 
 		switch (action) {
@@ -279,13 +282,19 @@
 		status.config.Filtering[key].enable = !(status.config.Filtering[key].enable);
 	}
 
-	function eventFilteringProtocol() {
-		const protocol = this.getAttribute("data-type");
+	function eventFilteringProtocol(event: Event) {
+		const elm      = event.currentTarget as HTMLInputElement;
+		const protocol = elm.getAttribute("data-type");
 
-		status.config.Filtering.Protocol[protocol] = !(status.config.Filtering.Protocol[protocol]);
+		if (protocol && typeof protocol === "string") {
+			status.config.Filtering.Protocol[protocol] = !(status.config.Filtering.Protocol[protocol]);
 
-		// debug
-		console.log(`eventGetFilteringProtocol() >> protocol: ${protocol} >>`, { protocol, state: status.config.Filtering.Protocol[protocol]} );
+			// debug
+			console.log(`eventGetFilteringProtocol() >> protocol: ${protocol} >>`, { protocol, bool: status.config.Filtering.Protocol[protocol]} );
+		} else {
+			// debug
+			console.error("Error, The 'data-type' attribute is missing or its value is not a string:", { protocol });
+		}
 	}
 
 	function showNoticeMessageForPaste() {
@@ -298,16 +307,21 @@
 	// ---------------------------------------------------------------------------------------------
 	// Format
 
-	function eventFormatType() {
-		status.config.Format.type = this.value;
+	function eventFormatType(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Format.type = elm.value;
 	}
 
-	function eventFormatCustomTemplate() {
-		status.config.Format.template = this.value;
+	function eventFormatCustomTemplate(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Format.template = elm.value;
 	}
 
-	function eventFormatSelectMimetype(event) {
-		const mimetype = event.target.value;
+	function eventFormatSelectMimetype(event: Event) {
+		const elm      = event.currentTarget as HTMLInputElement;
+		const mimetype = elm.value;
 
 		status.config.Format.mimetype = mimetype;
 	}
@@ -319,12 +333,17 @@
 	function eventTabReverse() {
 		status.config.Tab.reverse = !(status.config.Tab.reverse);
 	}
+
 	function eventTabActive() {
 		status.config.Tab.active = !(status.config.Tab.active);
 	}
-	function eventTabPosition() {
-		status.config.Tab.position = this.value;
+
+	function eventTabPosition(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Tab.position = elm.value;
 	}
+
 	function eventTabDelay(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
 		debouncedValidation(
@@ -348,8 +367,10 @@
 		status.config.Debug.timestamp = !(status.config.Debug.timestamp);
 	}
 
-	function eventDebugTimecoordinate() {
-		status.config.Debug.timecoordinate = this.value;
+	function eventDebugTimecoordinate(event: Event) {
+		const elm = event.currentTarget as HTMLInputElement;
+
+		status.config.Debug.timecoordinate = elm.value;
 	}
 	// ---------------------------------------------------------------------------------------------
 
@@ -363,6 +384,7 @@
 	}
 
 	/**
+	 * Imports a configuration file, updates the application's state, and displays a status message.
 	 * @param {object} currentStatus - The current status object of the application, containing config and define.
 	 * @param {string} mimetype      - The expected MIME type of the file to import.
 	 */
@@ -424,6 +446,12 @@
 		PopoverMessage.create(message);
 	}
 
+	/**
+	 * Exports the current application configuration to a JSON file and initiates a download.
+	 * @param {object} currentStatus - The current status object of the application, containing config and define.
+	 * @param {string} mimetype      - The MIME type for the exported file.
+	 * @param {string} timeFormat    - The `dayjs` format string to use for the timestamp in the filename.
+	 */
 	async function exportConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType, timeFormat: string) {
 		/**
 		 * 設定をストレージから読み込む。設定が存在しない場合はエラーをスローする
@@ -433,9 +461,11 @@
 			const keyname = define.Storage.keyname;
 			const data    = await StorageManager.load<{ [key: string]: Config }>(keyname);
 			const setting = data?.[keyname];
+
 			if (!setting) {
 				throw new Error("Failed to load settings from storage.");
 			}
+
 			return setting;
 		};
 		/**
@@ -444,12 +474,16 @@
 		 */
 		const getFileName = (): string => {
 			const getFilenameExtension = (): string => {
-				// Creates a reverse map of MIME types to extensions, based on the "MIME_TYPES" constant from "src/assets/js/lib/user/ConfigManager/index.ts".
-				const extensionMap = Object.fromEntries(
-					Object.entries(MIME_TYPES).map(([ key, value ]) => [ value, key ])
-				);
+				const extensions     = MIME_TO_EXT_MAP[mimetype]; // 存在しない mimetype の文字列を指定されていた場合は undefined が返値として渡される
+				const firstCandidate = extensions?.[0];
+				const extension      = firstCandidate ?? "txt";
+				const result         = extension.replace(/^\./, "");
 
-				return extensionMap[mimetype] ?? "txt";
+				if (!firstCandidate) {
+					console.warn(`exportConfig() >> getFilenameExtension: No extension found for mimetype: "${mimetype}". Defaulting to "txt".`, { availableMimeTypes: MIME_TO_EXT_MAP });
+				}
+
+				return result;
 			};
 
 			const appName    = define.Information.name.replace(/\s/g, "-");
@@ -625,7 +659,7 @@
 
 							<p>Specifies the MIME type when copying data to the clipboard. This only affects <b>custom</b> formats.</p>
 
-							<select id="Format-mimetype" onchange={eventFormatSelectMimetype}>
+							<select id="Format-mimetype" onchange={ eventFormatSelectMimetype }>
 								<option value="text/plain" selected={ status.config.Format.mimetype === "text/plain" ? true : false }>text/plain</option>
 								<option value="text/html"  selected={ status.config.Format.mimetype === "text/html"  ? true : false }>text/html</option>
 							</select>

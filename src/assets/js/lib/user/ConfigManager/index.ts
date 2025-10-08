@@ -1,12 +1,38 @@
 // Types for Local File
-export const MIME_TYPES = {
-	csv : "text/csv",
-	ini : "application/x-ini",
-	json: "application/json",
-	txt : "text/plain",
-	toml: "application/toml",
-	yaml: "application/x-yaml"
+const FILE_TYPE_DEFINITIONS = {
+	csv : { mime: "text/csv",           extensions: [ ".csv" ] },
+	ini : { mime: "application/x-ini",  extensions: [ ".ini" ] },
+	json: { mime: "application/json",   extensions: [ ".json" ] },
+	txt : { mime: "text/plain",         extensions: [ ".txt" ] },
+	toml: { mime: "application/toml",   extensions: [ ".toml" ] },
+	yaml: { mime: "application/x-yaml", extensions: [ ".yaml", ".yml" ] }
 } as const;
+
+// "FILE_TYPE_DEFINITIONS" から MIME_TYPES を動的に生成
+// 例: {
+//   csv : "text/csv",
+//   ini : "application/x-ini",
+//   json: "application/json",
+//   txt : "text/plain",
+//   toml: "application/toml",
+//   yaml: "application/x-yaml"
+// }
+export const MIME_TYPES = Object.fromEntries(
+	Object.entries(FILE_TYPE_DEFINITIONS).map(([ key, value ]) => [ key, value.mime ])
+) as { [K in keyof typeof FILE_TYPE_DEFINITIONS]: typeof FILE_TYPE_DEFINITIONS[K]["mime"] };
+
+// "FILE_TYPE_DEFINITIONS" から拡張子へのマッピングを動的に生成
+// 例: {
+//   "text/csv"          : [ ".csv" ],
+//   "application/x-ini" : [ ".ini" ],
+//   "application/json"  : [ ".json" ],
+//   "text/plain"        : [ ".txt" ],
+//   "application/toml"  : [ ".toml" ],
+//   "application/x-yaml": [ ".yaml", ".yml" ]
+// }
+export const MIME_TO_EXT_MAP = Object.fromEntries(
+	Object.values(FILE_TYPE_DEFINITIONS).map(value => [ value.mime, value.extensions ])
+) as Record<string, readonly string[]> as Record<MimeType, readonly string[]>;
 
 export type MimeType = (typeof MIME_TYPES)[keyof typeof MIME_TYPES];
 
@@ -148,16 +174,30 @@ export class ConfigManager {
 	 * @private
 	 */
 	static async #readAsText(file: File, mimetype: MimeType): Promise<string> {
-		if (mimetype !== file.type) {
-			const message = `A file with a different format (${file.type}) from "${mimetype}" was loaded.`;
+		const expectedExtensions = MIME_TO_EXT_MAP[mimetype];
+		const isMimeTypeMatch    = (mimetype === file.type);
+		const isExtensionMatch   = expectedExtensions ? expectedExtensions.some(ext => file.name.endsWith(ext)) : false;
 
-			// debug
-			console.log(`Error, ${message}`, { ConfigType: mimetype, ReadFile: file });
-
+		// MIMEタイプも拡張子も一致しない場合にエラーをスローする
+		if (!isMimeTypeMatch && !isExtensionMatch) {
+			const message = `A file with a different format (${file.type || "unknown"}) from "${mimetype}" was loaded, and the file extension does not match.`;
 			throw new Error(message);
 		}
 
-		// file.text() reads the text file with the appropriate encoding (usually UTF-8).
-		return file.text();
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+
+			reader.onload = () => {
+				if (typeof reader.result === "string") {
+					resolve(reader.result);
+				} else {
+					reject(new Error("Failed to read file as text."));
+				}
+			};
+			reader.onerror = () => {
+				reject(new Error("Error reading file."));
+			};
+			reader.readAsText(file);
+		});
 	}
 }

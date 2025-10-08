@@ -1,4 +1,8 @@
+// Import Types
 import { type MigrationRule } from "./types";
+
+// Import from Script
+import { compareVersions } from "@/assets/js/utils/CompareVersions";
 
 
 
@@ -132,7 +136,66 @@ const migrationRules: MigrationRule[] = [
 			return config;
 		}
 	},
+	{
+		rules: {
+			reason : "オプションページ側の実装不具合が原因で v1.0.0 から v1.4.0 間のカスタム遅延設定追加時に発生した、データ構造の不整合による不要な `url` プロパティを削除する為",
+			target : "config.Information.version, config.Tab.customDelay.list[].url",
+			action : "設定バージョンが v1.4.0 以前で、カスタム遅延リストに `url` プロパティが存在する場合、その `url` プロパティを削除",
+			created: "2025/10/07",
+			expires: "2026/12/31"
+		},
+		condition: (argument) => {
+			const { config } = argument;
 
+			const isSameOrEarlier = (base: unknown, target: unknown) => {
+				const comp = compareVersions(base, target);
+
+				if (comp === 0 || comp === -1) {
+					return true;
+				} else {
+					return false;
+				}
+			};
+
+			let   isTargetVersion = false;
+			const base            = "1.4.0";
+			let   target          = null;
+			try {
+				// 設定保存時のバージョンが v1.4.0 以前であるか
+				target = config.Information?.version ?? "1.0.0"; // 設定保存時のバージョン
+
+				isTargetVersion = isSameOrEarlier(base, target);
+			} catch (error) {
+				console.error("Migration Rule Error: Failed to compare versions for custom delay rule.", {
+					"Migration Rule": "v1.0.0 から v1.4.0 間で追加されていたカスタム遅延設定の url プロパティを削除",
+					baseVersion     : base,
+					targetVersion   : target,
+					originalError   : error
+				});
+			}
+
+			// customDelay.list 配列内に、一つでも 'url' プロパティを持つオブジェクトが存在するか
+			const hasUrlPropertyInList = config.Tab?.customDelay?.list?.some(item => Object.hasOwn(item, "url")) ?? false;
+
+			return isTargetVersion && hasUrlPropertyInList;
+		},
+		execute: (argument) => {
+			const { config } = argument;
+
+			if (config.Tab?.customDelay?.list) {
+				config.Tab.customDelay.list.forEach(item => {
+					if (Object.hasOwn(item, "url")) {
+						delete (item as any).url;
+					}
+				});
+			}
+
+			// debug
+			console.log(`Report, Migrate Config of Value. Remove "config.Tab.customDelay.list[].url" property. config >>`, config);
+
+			return config;
+		}
+	},
 ];
 
 
