@@ -1,3 +1,8 @@
+#### [1.5.0] - 2025/10/08
+
+- fix
+	- Fixed an issue where custom delay settings were not saved or applied correctly.
+
 #### [1.4.0] - 2025/10/04
 
 - feat
