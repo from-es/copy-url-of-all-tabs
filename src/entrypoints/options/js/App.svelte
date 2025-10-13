@@ -1,6 +1,6 @@
 <script lang="ts">
 	// WXT provided cross-browser compatible API and types.
-	import { browser, type Browser } from "wxt/browser";
+	import { browser } from "wxt/browser";
 
 	// Import from Svelte
 	import { onMount } from "svelte";

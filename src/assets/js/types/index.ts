@@ -1,6 +1,9 @@
 import { type Config, type Define } from "@/assets/js/define";
 
-
+type Status = {
+	config: Config;
+	define: Define;
+};
 
 type ExtensionMessage = {
 	action : string;
@@ -8,10 +11,7 @@ type ExtensionMessage = {
 		from: string;
 		to  : string;
 	};
-	status: {
-		config: Config;
-		define: Define;
-	};
+	status: Status;
 	argument?: {
 		urlList?: string[];
 		option ?: Config["Tab"];
@@ -22,5 +22,5 @@ type ExtensionMessage = {
 
 
 
-export { ExtensionMessage };
+export { type ExtensionMessage, type Status };
 export { type Config, type Define } from "@/assets/js/define";

@@ -3,8 +3,9 @@
 	import { browser } from "wxt/browser";
 
 	// Import Types
-	import { type Config, type Define }         from "@/assets/js/types/";
-	import { type MimeType, type ExportResult } from "@/assets/js/lib/user/ConfigManager";
+	import { type Config, type Define, type Status } from "@/assets/js/types/";
+	import { type MimeType, type ExportResult }      from "@/assets/js/lib/user/ConfigManager";
+	import { type MessageType }                      from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 
 	// Import Svelte
 	import { onMount } from "svelte";
@@ -26,7 +27,7 @@
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
 
-	let { status = $bindable() } = $props();
+	let { status = $bindable() }: { status: Status } = $props();
 
 	const dynamicContent = new DynamicContent(status);
 
@@ -115,13 +116,13 @@
 		const num = parseFloat(currentValue);
 
 		if (isNaN(num) || num < min || num > max) {
-			const msg = {
+			const message = {
 				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
 				timeout    : 5000,
-				fontsize   : "16px",
-				messagetype: "warning"
+				fontsize   : "1rem",
+				messagetype: "warning" as MessageType
 			};
-			PopoverMessage.create(msg);
+			PopoverMessage.create(message);
 			return defaultValue;
 		}
 		return num;
@@ -286,7 +287,7 @@
 		const elm      = event.currentTarget as HTMLInputElement;
 		const protocol = elm.getAttribute("data-type");
 
-		if (protocol && typeof protocol === "string") {
+		if (protocol && typeof protocol === "string" && Object.hasOwn(status.config.Filtering.Protocol, protocol)) {
 			status.config.Filtering.Protocol[protocol] = !(status.config.Filtering.Protocol[protocol]);
 
 			// debug
@@ -320,10 +321,9 @@
 	}
 
 	function eventFormatSelectMimetype(event: Event) {
-		const elm      = event.currentTarget as HTMLInputElement;
-		const mimetype = elm.value;
+		const elm = event.currentTarget as HTMLInputElement;
 
-		status.config.Format.mimetype = mimetype;
+		status.config.Format.mimetype = elm.value;
 	}
 	// ---------------------------------------------------------------------------------------------
 
@@ -916,7 +916,7 @@
 							<legend>Font Size of "Options Page"</legend>
 							<form>
 								<input id="OptionsPage-FontSize" name="OptionsPage-FontSize" type="number"
-									min={ status.define.OptionsPageSizeValueMin }
+									min={ status.define.OptionsPageFontSizeValueMin }
 									max={ status.define.OptionsPageFontSizeValueMax }
 									step={ status.define.OptionsPageFontSizeValueStep }
 									value={ status.config.OptionsPage.fontsize }

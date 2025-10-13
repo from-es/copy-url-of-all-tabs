@@ -103,6 +103,8 @@ type Define_Delta = {
 	TabOpenDelayValueMax                 : number;
 	TabOpenDelayValueStep                : number;
 	TabOpenCustomDelayValue              : number;
+	DisabledTimeoutValue                 : number;
+	OptionsPageInputDebounceTime         : number;
 }
 
 type VerificationRule = {
