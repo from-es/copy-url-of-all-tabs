@@ -1,7 +1,7 @@
 // Import Types
-import { type Config, type Define } from "@/assets/js/types/";
+import { type Config, type Define, type Status } from "@/assets/js/types/";
 
-// Import from Script
+// Import Script
 import { define }             from "@/assets/js/define";
 import { migrateConfig }      from "./lib/user/MigrateConfig";
 import { cloneObject }        from "./lib/user/CloneObject";
@@ -15,78 +15,33 @@ import { BrowserEnvironment } from "./lib/user/BrowserEnvironment";
  * 設定の初期化、移行、検証を行う責務を持つクラス
  */
 class ConfigInitializer {
-	#config : Config | null = null;
-	#define : Define | null = null;
-
-	constructor() {
-		// nothing
-	}
-
 	/**
-	 * 設定の初期化プロセスを実行します
+	 * 設定の初期化プロセスを実行
 	 */
-	public async initialize(initialConfig: Config, define: Define): Promise<Config> {
-		// initialize() 呼び出しのタイミンクで初期化 >> インスタント再利用時の混入対策
-		this.#config = initialConfig;
-		this.#define = define;
+	public static async initialize(initialConfig: Config, define: Define): Promise<Config> {
+		const config         = await ConfigInitializer.#migrate(initialConfig, define);
+		const verifiedConfig = ConfigInitializer.#verify(config, define);
 
-		await this.#migrate();
-		this.#verify();
-
-		return this.#config;
+		return verifiedConfig;
 	}
 
 	/**
 	 * 設定の移行（マイグレーション）を実行
 	 */
-	async #migrate(): Promise<void> {
-		const migrationResult = migrateConfig(this.#config, this.#define);
+	static async #migrate(config: Config, define: Define): Promise<Config> {
+		const migrationResult = migrateConfig(config, define);
 
-		this.#config = migrationResult.config;
+		return migrationResult.config;
 	}
 
 	/**
 	 * 設定値を検証し、不正な値を修正
 	 */
-	#verify(): void {
+	static #verify(config: Config, define: Define): Config {
 		const verify = new VerifyConfigValue();
 
-		this.#config = verify.verify(this.#config, this.#define);
+		return verify.verify(config, define);
 	}
-}
-
-
-
-/**
- * config & define オブジェクトの初期化・検証
- */
-async function initializeConfig(config: Config | null): Promise<{ config: Config; define: Define; }> {
-	const keyname = define.Storage.keyname;
-	const _define = cloneObject(define);
-	let   _config: Config | undefined;
-
-	// config !== null の場合は config オブジェクトして扱う、config === null の時はストレージから取得
-	if ( config ) {
-		_config = cloneObject(config);
-	} else {
-		const localStorageData = await StorageManager.load<{[key: string]: Config}>(keyname);
-		_config = localStorageData?.[keyname];
-	}
-
-	// Check Variable of Config >> 初回起動用チェック
-	if ( _config === undefined || _config === null || typeof _config !== "object" || Object.keys(_config).length === 0 ) {
-		_config = _define.Config;
-
-		const item = { [keyname]: _config };
-		await StorageManager.save(item);
-	}
-
-	const initializer = new ConfigInitializer();
-
-	return {
-		config: await initializer.initialize(_config, _define),
-		define: await getInitDefine()
-	};
 }
 
 async function getInitDefine(): Promise<Define> {
@@ -97,6 +52,35 @@ async function getInitDefine(): Promise<Define> {
 	_define.Environment.Browser = env;
 
 	return _define;
+}
+
+/**
+ * config & define オブジェクトの初期化・検証
+ */
+async function initializeConfig(config: Config | null): Promise<Status> {
+	const keyname                = define.Storage.keyname;
+	const _define                = cloneObject(define);
+	let   _config: Config | null = null;
+
+	// config が渡された場合はそれを使用、そうでなければストレージからロード
+	if (config) {
+		_config = cloneObject(config);
+	} else {
+		const localStorageData = await StorageManager.load<{[key: string]: Config}>(keyname);
+		_config = localStorageData?.[keyname] ?? _define.Config;
+	}
+
+	// _config が undefined or null or 空オブジェクトの場合は _define.Config で初期化し、保存
+	if (!_config || typeof _config !== "object" || Object.keys(_config).length === 0) {
+		_config = _define.Config;
+		const item = { [keyname]: _config };
+		await StorageManager.save(item);
+	}
+
+	return {
+		config: await ConfigInitializer.initialize(_config, _define),
+		define: await getInitDefine()
+	};
 }
 
 
