@@ -1,3 +1,11 @@
+#### [1.6.0] - 2025/10/13
+
+- feat
+	- Internal system improvements for enhanced stability.
+	- Improved input validation on the options page.
+- fix
+	- Fixed a minor spelling error.
+
 #### [1.5.0] - 2025/10/08
 
 - fix
