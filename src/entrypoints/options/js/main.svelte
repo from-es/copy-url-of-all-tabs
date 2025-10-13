@@ -917,7 +917,7 @@
 							<legend>Font Size of "Options Page"</legend>
 							<form>
 								<input id="OptionsPage-FontSize" name="OptionsPage-FontSize" type="number"
-									min={ status.define.OptionsPageSizeValueMin }
+									min={ status.define.OptionsPageFontSizeValueMin }
 									max={ status.define.OptionsPageFontSizeValueMax }
 									step={ status.define.OptionsPageFontSizeValueStep }
 									value={ status.config.OptionsPage.fontsize }
