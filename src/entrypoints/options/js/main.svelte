@@ -3,8 +3,9 @@
 	import { browser } from "wxt/browser";
 
 	// Import Types
-	import { type Config, type Define }         from "@/assets/js/types/";
-	import { type MimeType, type ExportResult } from "@/assets/js/lib/user/ConfigManager";
+	import { type Config, type Define, type Status } from "@/assets/js/types/";
+	import { type MimeType, type ExportResult }      from "@/assets/js/lib/user/ConfigManager";
+	import { type MessageType }                      from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 
 	// Import Svelte
 	import { onMount } from "svelte";
@@ -26,7 +27,7 @@
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
 
-	let { status = $bindable() } = $props();
+	let { status = $bindable() }: { status: Status } = $props();
 
 	const dynamicContent = new DynamicContent(status);
 
@@ -119,7 +120,7 @@
 				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
 				timeout    : 5000,
 				fontsize   : "16px",
-				messagetype: "warning"
+				messagetype: "warning" as MessageType
 			};
 			PopoverMessage.create(msg);
 			return defaultValue;
