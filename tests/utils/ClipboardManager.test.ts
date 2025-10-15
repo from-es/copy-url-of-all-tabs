@@ -13,7 +13,7 @@
  * class behaves as expected.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager.mjs";
+import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager";
 
 describe("ClipboardManager", () => {
 	const mockClipboard = {

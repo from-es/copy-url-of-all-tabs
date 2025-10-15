@@ -5,8 +5,8 @@ import { browser, type Browser } from "wxt/browser";
 import { type Config, type Define } from "@/assets/js/types/";
 
 // Import from Script
-import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager.mjs";
-import { FormatManager }    from "../js/FormatManager.mjs";
+import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager";
+import { FormatManager }    from "../js/FormatManager";
 
 
 
