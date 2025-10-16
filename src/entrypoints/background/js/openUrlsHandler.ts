@@ -90,31 +90,38 @@ async function openURLs(urlList: string[], option: Define["Config"]["Tab"]): Pro
  * @returns {Promise<number | undefined>}
  */
 async function getCurrentWindowID(): Promise<number | undefined> {
-	const window   = await browser.windows.getCurrent({ windowTypes: [ "normal" ] });
-	const windowId = window.id;
-
-	return windowId;
+	try {
+		const window = await browser.windows.getCurrent({ windowTypes: [ "normal" ] });
+		return window?.id;
+	} catch (error) {
+		console.error("Failed to get current window:", { error });
+		return undefined;
+	}
 }
 
 /**
  * @param   {string}           url
  * @param   {CreateTabOptions} option
- * @returns {void}
+ * @returns {Promise<void>}
  */
-async function createTab(url: string, option: CreateTabOptions) {
+async function createTab(url: string, option: CreateTabOptions): Promise<void> {
 	const { active, position, windowId } = option;
 
-	const tabs       = await browser.tabs.query({ currentWindow : true });
-	const currentTab = (tabs).find((tab) => tab.active === true);
-	const tabIndex   = createTabPosition(position, tabs, currentTab);
+	try {
+		const tabs       = await browser.tabs.query({ currentWindow : true });
+		const currentTab = (tabs).find((tab) => tab.active === true);
+		const tabIndex   = createTabPosition(position, tabs, currentTab);
 
-	const property         = { url, active, windowId };
-	const createProperties = (typeof tabIndex === "number") ? Object.assign(property, { index : tabIndex }) : property;
+		const property         = { url, active, windowId };
+		const createProperties = (typeof tabIndex === "number") ? Object.assign(property, { index : tabIndex }) : property;
 
-	// debug
-	console.log("Debug, Open URLs >> tab >>", { position : position, ...createProperties });
+		// debug
+		console.log("Debug, Open URLs >> tab >>", { position : position, ...createProperties });
 
-	browser.tabs.create(createProperties);
+		browser.tabs.create(createProperties);
+	} catch (error) {
+		console.error("Error, Can not Open URL >> createTab() >>", { error });
+	}
 }
 
 /**
