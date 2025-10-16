@@ -1,3 +1,8 @@
+#### [1.7.0] - 2025/10/16
+
+- improve
+	- Improved the stability and robustness of the extension.
+
 #### [1.6.0] - 2025/10/13
 
 - feat
