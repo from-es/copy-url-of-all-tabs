@@ -5,8 +5,8 @@ import { browser, type Browser } from "wxt/browser";
 import { type Config, type Define } from "@/assets/js/types/";
 
 // Import from Script
-import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager.mjs";
-import { FormatManager }    from "../js/FormatManager.mjs";
+import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager";
+import { FormatManager }    from "../js/FormatManager";
 
 
 
@@ -94,10 +94,16 @@ export async function eventActionPaste(action: string, config: Config, define: D
  * @return {Promise<Browser.tabs.Tab[]>}
  */
 async function getAllTabs(): Promise<Browser.tabs.Tab[]> {
-	const queryInfo = { currentWindow : true };            // 取得対象をカレントウインドウのタブに限定
-	const tabs      = await browser.tabs.query(queryInfo);  // tabs.query() : https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query
+	try {
+		const queryInfo = { currentWindow : true };            // 取得対象をカレントウインドウのタブに限定
+		const tabs      = await browser.tabs.query(queryInfo);  // tabs.query() : https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query
 
-	return tabs;
+		return tabs;
+	} catch (error) {
+		console.error("Error, Failed to get tabs >> getAllTabs() >>", { error });
+
+		return [];
+	}
 }
 
 /**
