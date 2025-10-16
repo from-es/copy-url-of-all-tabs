@@ -15,3 +15,5 @@
 
 - select-tab.ts
 	- [クリックで切り替わるシンプルなタブメニュー - 25egg(Wayback Machine)](http://web.archive.org/web/20220812231056/https://blog.25egg.com/?p=203 "クリックで切り替わるシンプルなタブメニュー - 25egg")
+- escapeHtml
+	- [escape と encodeURI と encodeURIComponent を正しく使い分ける - Feel and Code](https://aloerina01.github.io/blog/2017-04-28-1 "escape と encodeURI と encodeURIComponent を正しく使い分ける - Feel and Code")
