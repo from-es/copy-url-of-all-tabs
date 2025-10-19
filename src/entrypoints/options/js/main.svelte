@@ -729,7 +729,7 @@
 									right
 								</label>
 								<label data-description="To the last of the tab bar">
-									<input type="radio" name="Tab-position-type" value="last"  checked={ status.config.Tab.position === "last" ? true : false } onchange={ eventTabPosition }>
+									<input type="radio" name="Tab-position-type" value="last" checked={ status.config.Tab.position === "last" ? true : false } onchange={ eventTabPosition }>
 									last
 								</label>
 							</form>
@@ -804,6 +804,77 @@
 									<button class="button-add-row" title="Add" onclick={ () => { addRowForCustomDelay(status.config.Tab.customDelay.list); } }>Add</button>
 								</div>
 							</div>
+						</fieldset>
+					</div>
+				</section>
+
+				<section class="container">
+					<div class="flex-side">
+						<h3>Task Control</h3>
+
+						<p>Configure how to process and queue multiple URLs.</p>
+					</div>
+
+					<div class="flex-main">
+						<fieldset>
+							<legend>Processing Unit</legend>
+
+							<form id="Tab-TaskControl-taskMode">
+								<label data-description="Treats each URL as an individual task. This is the most responsive mode.">
+									<input type="radio" name="taskMode" value="unitary" bind:group={ status.config.Tab.TaskControl.taskMode }>
+									Unitary
+								</label>
+								<label data-description="Groups URLs into chunks of a specified size. Each chunk is treated as a single task.">
+									<input type="radio" name="taskMode" value="batch" bind:group={ status.config.Tab.TaskControl.taskMode }>
+									Batch
+								</label>
+								<label data-description="Treats the entire list of URLs as a single large task. This is the least responsive mode.">
+									<input type="radio" name="taskMode" value="monolithic" bind:group={ status.config.Tab.TaskControl.taskMode }>
+									Monolithic
+								</label>
+							</form>
+
+							{#if status.config.Tab.TaskControl.taskMode === "batch"}
+								<form id="Tab-TaskControl-chunkSize-form">
+									<input id="Tab-TaskControl-chunkSize" name="TaskControl-chunkSize" type="number"
+										min={ status.define.TaskControlChunkSizeValueMin }
+										max={ status.define.TaskControlChunkSizeValueMax }
+										step="1"
+										bind:value={ status.config.Tab.TaskControl.chunkSize }
+									>
+									<label for="TaskControl-chunkSize">Number of URLs per Batch ({ status.define.TaskControlChunkSizeValueMin } ~ { status.define.TaskControlChunkSizeValueMax })</label>
+								</form>
+							{/if}
+						</fieldset>
+
+						<fieldset>
+							<legend>Execution Order</legend>
+
+							<form id="Tab-TaskControl-openMode">
+								<label data-description="Bypasses the queue and attempts to open all tabs at once. Not recommended for a large number of URLs.">
+									<input type="radio" name="openMode" value="parallel" bind:group={ status.config.Tab.TaskControl.openMode }>
+									Parallel
+								</label>
+								<label data-description="Adds the new task to the end of the queue.">
+									<input type="radio" name="openMode" value="append" bind:group={ status.config.Tab.TaskControl.openMode }>
+									Append
+								</label>
+								<label data-description="Adds the new task to the front of the waiting queue to be processed next.">
+									<input type="radio" name="openMode" value="prepend" bind:group={ status.config.Tab.TaskControl.openMode }>
+									Prepend
+								</label>
+								<!--
+								   The 'insertNext' option is reserved for future use.
+								   It is currently commented out because its unique functionality is not yet implemented in this version.
+								   For now, its behavior defaults to 'Prepend'.
+								 -->
+								<!--
+								<label data-description="Same as 'Prepend'. Semantically distinct for future use.">
+									<input type="radio" name="openMode" value="insertNext" bind:group={ status.config.Tab.TaskControl.openMode }>
+									Insert Next
+								</label>
+								-->
+							</form>
 						</fieldset>
 					</div>
 				</section>

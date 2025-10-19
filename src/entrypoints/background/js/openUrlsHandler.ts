@@ -1,18 +1,29 @@
-// WXT provided cross-browser compatible API and types.
+// WXT provided cross-browser compatible API and Types
 import { browser, type Browser } from "wxt/browser";
 
 // Import Types
 import { type Define, type ExtensionMessage }                from "@/assets/js/types/";
 import { type UrlDelayRule, type UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
-// Import from Script
+// Import Module
+import { define }             from "@/assets/js/define";
 import { UrlDelayCalculator } from "@/assets/js/lib/user/UrlDelayCalculator";
+import { sleep }              from "@/assets/js/utils/sleep";
+import { QueueManager }       from "@/assets/js/lib/user/QueueManager";
 
-type TabPosition      = "default" | "first" | "left" | "right" | "last";
-type CreateTabOptions = Define["Config"]["Tab"] & { windowId: number | undefined };
+// Types
+export type TabPosition = "default" | "first" | "left" | "right" | "last";
+export type TaskMode    = "unitary" | "batch" | "monolithic";
+export type OpenMode    = "parallel" | "append" | "prepend" | "insertNext";
+
+type TabOption       = Define["Config"]["Tab"];
+type CreateTabOption = TabOption & { windowId: number | undefined };
+
+
 
 /**
- * @param   {ExtensionMessage} message
+ * メッセージを受け取り、URLを開くプロセスを開始するハンドラー
+ * @param   {ExtensionMessage} message - 拡張機能メッセージ
  * @returns {Promise<void>}
  */
 export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
@@ -20,74 +31,195 @@ export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
 	const urlList      = argument?.urlList;
 	const option       = argument?.option;
 
-	if (urlList && option) {
+	if ( urlList && option ) {
 		openURLs(urlList, option);
 	} else {
-		console.error("Error: Cannot open URL List! urlList or option are missing in the message argument.", { argument });
+		console.error("Error, Cannot open URL List! urlList or option are missing in the message argument.", { argument });
 	}
 }
 
 /**
- * @param   {string[]}      urlList
- * @param   {object}        option
+ * URLリストと指定されたオプションに基づき、タブを開くプロセスを調整
+ * @param   {string[]}      urlList   - 開く対象のURLリスト
+ * @param   {TabOptions}    tabOption - タブの開き方に関する設定
  * @returns {Promise<void>}
  */
-async function openURLs(urlList: string[], option: Define["Config"]["Tab"]): Promise<void> {
-	const { reverse, delay, customDelay } = option;
-	const windowId                        = await getCurrentWindowID();
-
-	// debug
-	console.log("Debug, Open URLs >> config >>", { urlList, ...option });
-
-	if ( !urlList || !Array.isArray(urlList) ) {
+async function openURLs(urlList: string[], tabOption: TabOption): Promise<void> {
+	if ( !urlList || !Array.isArray(urlList) || urlList.length === 0 ) {
+		console.warn("Warning, URL list is missing or empty. No tabs will be opened.", { received: urlList });
 		return;
 	}
 
-	// 逆順に開く？
-	const list = reverse ? urlList.toReversed() : urlList;
-
-	const getDelayList = (urls: string[], defaultDelay: number, customDelayConfig: Define["Config"]["Tab"]["customDelay"]): UrlDelayCalculationResult[] => {
-		const { enable, list }      = customDelayConfig;
-		const applyFrom             = 2;  // 遅延適応はルールマッチ二回目から
-		let   rules: UrlDelayRule[] = [];
-
-		if ( enable && list ) {
-			rules = list.map(
-				(rule) => {
-					return {
-						pattern  : rule.pattern,
-						delay    : rule.delay,
-						matchType: "prefix"
-					};
-				}
-			);
-		}
-
-		return UrlDelayCalculator.calculate(urls, defaultDelay, rules, applyFrom);
-	};
-
-	// getRebuildUrlList 経由でカスタム遅延リストを取得
-	const rebuildUrlList = getDelayList(list, delay, customDelay);
+	const windowId     = await getCurrentWindowID();
+	const delayResults = buildUrlListWithDelay(urlList, tabOption);
 
 	// debug
 	console.log(
-		"Debug, Open URLs >> option & URL List >>",
+		"Debug, Open URLs >> Tab Option & URL List >>",
 		{
-			option    : { reverse, delay, customDelay },
+			option: {
+				...tabOption
+			},
 			"URL List": {
-				source : list,
-				rebuild: rebuildUrlList
+				source : urlList,
+				rebuild: delayResults
 			}
 		}
 	);
 
-	(rebuildUrlList).forEach((obj) => {
-		setTimeout(() => { createTab(obj.url, { ...option, windowId }); }, obj.delay.cumulative);
-	});
+	taskController(delayResults, windowId, tabOption);
 }
 
 /**
- * @returns {Promise<number | undefined>}
+ * URLリストとタブ設定に基づき、適切な順序と遅延時間を持つURL処理リストを構築
+ * @param   {string[]}                    urlList   - 元のURLリスト
+ * @param   {TabOption}                   tabOption - タブの開き方に関する設定
+ * @returns {UrlDelayCalculationResult[]}           - 遅延計算後のURL情報配列
+ */
+function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDelayCalculationResult[] {
+	const { reverse, delay, customDelay } = tabOption;
+
+	// 逆順に開くかどうか
+	const orderedUrlList = reverse ? urlList.toReversed() : urlList;
+
+	const { enable, list: customDelayList } = customDelay;
+	const applyFrom                         = define.TabOpenCustomDelayApplyFrom;  // 遅延適応はルールマッチ二回目(デフォルト値: 2)から
+	let   rules: UrlDelayRule[]             = [];
+
+	if ( enable && customDelayList ) {
+		rules = customDelayList.map(
+			(rule) => ({
+				pattern  : rule.pattern,
+				delay    : rule.delay,
+				matchType: define.TabOpenCustomDelayMatchType // `UrlDelayCalculator` に渡す正規表現判定時用の値(デフォルト値: "prefix")
+			})
+		);
+	}
+
+	return UrlDelayCalculator.calculate(orderedUrlList, delay, rules, applyFrom);
+}
+
+/**
+ * タスクの生成とキューへのディスパッチを統括
+ * @param {UrlDelayCalculationResult[]} delayResults - 遅延時間を含むURL情報
+ * @param {number | undefined}          windowId     - タブを開くウィンドウのID
+ * @param {TabOption}                   tabOption    - タブの開き方に関する設定
+ */
+function taskController(delayResults: UrlDelayCalculationResult[], windowId: number | undefined, tabOption: TabOption): void {
+	// タスクオブジェクト（関数）の配列を生成
+	const tasks = createTasks(delayResults, windowId, tabOption);
+
+	// 生成されたタスク配列を、指定されたモードで実行
+	dispatchTasks(tasks, tabOption.TaskControl.openMode);
+}
+
+/**
+ * 遅延結果の配列から、実行可能なタスク（関数）の配列を生成
+ * @param   {UrlDelayCalculationResult[]} delayResults - 遅延時間を含むURL情報
+ * @param   {number | undefined}          windowId     - タブを開くウィンドウのID
+ * @param   {TabOption}                   tabOption    - タブの開き方に関する設定
+ * @returns {(() => Promise<void>)[]}                  - 生成されたタスク関数の配列
+ */
+function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number | undefined, tabOption: TabOption): (() => Promise<void>)[] {
+	const openTabWithDelay = async (result: UrlDelayCalculationResult): Promise<void> => {
+		const individual = result.delay.individual;
+
+		if ( typeof individual === "number" && individual > 0 ) {
+			await sleep(individual);
+		}
+
+		createTab(result.url, { ...tabOption, windowId }); // tabOption と windowId はクロージャでキャプチャ
+	};
+
+	const taskMode: TaskMode = tabOption?.TaskControl?.taskMode ?? "unitary";
+
+	switch (taskMode) {
+		// URLリスト全体を1つの大きなタスクとして扱う
+		case "monolithic": {
+			const task = async () => { for (const result of delayResults) { await openTabWithDelay(result); } };
+			return [ task ];
+		}
+
+		// URLリストを指定されたサイズで分割し、それぞれをタスクとして扱う
+		case "batch": {
+			const chunkSize                             = tabOption?.TaskControl?.chunkSize ?? define.TaskControlChunkSizeValue;
+			const loop                                  = delayResults.length;
+			const chunks: UrlDelayCalculationResult[][] = [];
+
+			for (let i = 0; i < loop; i += chunkSize) {
+				const piece = delayResults.slice(i, i + chunkSize);
+				chunks.push(piece);
+			}
+
+			return chunks.map(chunk => {
+				return async () => {
+					for (const result of chunk) {
+						await openTabWithDelay(result);
+					}
+				};
+			});
+		}
+
+		// URL一つひとつを個別のタスクとして扱う
+		case "unitary": {
+			return delayResults.map(result => {
+				return async () => {
+					await openTabWithDelay(result);
+				};
+			});
+		}
+
+		// 未知のモードが渡された場合はエラーをスローし、開発者に問題を通知
+		default: {
+			const exhaustiveCheck: never = taskMode;
+			throw new Error(`Unknown TaskMode: ${exhaustiveCheck}. This indicates a programming error.`);
+		}
+	}
+}
+
+/**
+ * タスクの配列を、指定されたモードに応じてキューに追加、または直接実行
+ * @param {(() => Promise<void>)[]} tasks - 実行するタスクの配列
+ * @param {OpenMode}                mode  - 実行モード
+ */
+function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
+	switch (mode) {
+		case "parallel":
+			for (const task of tasks) {
+				task();
+			}
+			break;
+
+		case "prepend":
+			for (const task of tasks) {
+				QueueManager.addPriorityTask(task);
+			}
+			break;
+
+		case "insertNext":
+			// v1.8.0 の実装では prepend と同じ挙動（優先キューへの追加）。将来的には、実行中のタスクの直後に挿入する機能の実装を検討。
+			for (const task of tasks) {
+				QueueManager.addPriorityTask(task);
+			}
+			break;
+
+		case "append":
+			for (const task of tasks) {
+				QueueManager.addTask(task);
+			}
+			break;
+
+		default: {
+			// 未知のモードが渡された場合はエラーをスローし、開発者に問題を通知
+			const exhaustiveCheck: never = mode;
+			throw new Error(`Unknown OpenMode: ${exhaustiveCheck}. This indicates a programming error.`);
+		}
+	}
+}
+
+/**
+ * 現在アクティブなウィンドウのIDを取得
+ * @returns {Promise<number | undefined>} ウィンドウID、または取得失敗時に undefined
  */
 async function getCurrentWindowID(): Promise<number | undefined> {
 	try {
@@ -100,11 +232,12 @@ async function getCurrentWindowID(): Promise<number | undefined> {
 }
 
 /**
- * @param   {string}           url
- * @param   {CreateTabOptions} option
+ * 指定されたURLとオプションで新しいタブを作成
+ * @param   {string}          url    - 開くURL
+ * @param   {CreateTabOption} option - タブ作成に関するオプション
  * @returns {Promise<void>}
  */
-async function createTab(url: string, option: CreateTabOptions): Promise<void> {
+async function createTab(url: string, option: CreateTabOption): Promise<void> {
 	const { active, position, windowId } = option;
 
 	try {
@@ -116,7 +249,7 @@ async function createTab(url: string, option: CreateTabOptions): Promise<void> {
 		const createProperties = (typeof tabIndex === "number") ? Object.assign(property, { index : tabIndex }) : property;
 
 		// debug
-		console.log("Debug, Open URLs >> tab >>", { position : position, ...createProperties });
+		console.log("Debug, Open URLs >> createTab() >>", { position : position, ...createProperties });
 
 		browser.tabs.create(createProperties);
 	} catch (error) {
@@ -125,10 +258,11 @@ async function createTab(url: string, option: CreateTabOptions): Promise<void> {
 }
 
 /**
- * @param   {TabPosition}                  position
- * @param   {Browser.tabs.Tab[]}           tabs
- * @param   {Browser.tabs.Tab | undefined} currentTab
- * @returns {number | null}
+ * 指定された位置設定に基づき、新しいタブを挿入すべきインデックスを計算
+ * @param   {TabPosition}                  position   - タブの挿入位置を示す識別子
+ * @param   {Browser.tabs.Tab[]}           tabs       - 現在のウィンドウにあるタブの配列
+ * @param   {Browser.tabs.Tab | undefined} currentTab - 現在アクティブなタブ
+ * @returns {number | null}                           - 計算されたタブのインデックス、またはデフォルトの挙動に任せる場合は null
  */
 function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], currentTab: Browser.tabs.Tab | undefined): number | null {
 	let number: number | null = null;
@@ -156,7 +290,7 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 			*/
 
 			// debug
-			console.error("Error, Invalid argument passed to createTabPosition(position, tabs, currentTab) >> position >>", position);
+			console.error("Error, Invalid argument passed to createTabPosition() >> position >>", position);
 			break;
 	}
 

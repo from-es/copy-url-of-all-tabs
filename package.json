@@ -67,6 +67,7 @@
     "lodash-es": "^4.17.21",
     "marked": "^16.2.1",
     "modern-normalize": "^3.0.1",
+    "p-queue": "^9.0.0",
     "sortablejs": "^1.15.6",
     "v8n": "^1.5.1"
   }
