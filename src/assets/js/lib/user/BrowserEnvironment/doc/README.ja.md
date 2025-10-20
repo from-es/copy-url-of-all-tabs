@@ -250,3 +250,7 @@ User-Agent文字列を解析し、ブラウザ、OS、デバイスなどの情�
 
 *   公式サイト: [https://bowser-js.github.io/bowser/](https://bowser-js.github.io/bowser/)
 *   GitHub: [https://github.com/bowser-js/bowser](https://github.com/bowser-js/bowser)
+
+## ライセンス
+
+このプロジェクトは [MIT License](../../../../../../../LICENSE.md) の下で公開されています。

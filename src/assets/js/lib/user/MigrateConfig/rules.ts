@@ -99,7 +99,7 @@ const migrationRules: MigrationRule[] = [
 		execute: (argument) => {
 			const { config, define } = argument;
 
-			// 追加 & デフォルト値適応
+			// プロパティ追加 & デフォルト値適応
 			config.Tab.customDelay = define.Config.Tab.customDelay;
 
 			// debug
@@ -192,6 +192,30 @@ const migrationRules: MigrationRule[] = [
 
 			// debug
 			console.log(`Report, Migrate Config of Value. Remove "config.Tab.customDelay.list[].url" property. config >>`, config);
+
+			return config;
+		}
+	},
+	{
+		rules: {
+			reason : "v1.7.0 で追加された、タブ展開の動作を制御する機能（Tab.TaskControl）の設定値が存在しない場合に追加",
+			target : "config.Tab.TaskControl",
+			action : "config.Tab.TaskControl が存在しない場合に、デフォルト値を追加",
+			created: "2025/10/18",
+			expires: "2026/12/31"
+		},
+		condition: (argument) => {
+			const { config } = argument;
+			return !Object.hasOwn(config?.Tab, "TaskControl");
+		},
+		execute: (argument) => {
+			const { config, define } = argument;
+
+			// プロパティ追加 & デフォルト値適応
+			config.Tab.TaskControl = define.Config.Tab.TaskControl;
+
+			// debug
+			console.log(`Report, Add "config.Tab.TaskControl". config >>`, config);
 
 			return config;
 		}

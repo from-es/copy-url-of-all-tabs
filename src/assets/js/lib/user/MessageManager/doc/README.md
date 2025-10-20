@@ -148,3 +148,7 @@ For more details, please refer to the respective MDN documentation ([Popover API
 ### Execution Context
 
 This class performs DOM manipulation internally. Therefore, it is intended for use in a client-side context (such as a Content Script, or an extension's Popup or Options page). It will not work in environments without a DOM, such as a Background Script.
+
+## License
+
+This project is licensed under the [MIT License](../../../../../../../LICENSE.md).

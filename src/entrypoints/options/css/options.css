@@ -401,19 +401,23 @@ header h1:before {
 
 /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 #Format-type  > label,
-#Tab-position > label {
+#Tab-position > label,
+#Tab-TaskControl-taskMode > label,
+#Tab-TaskControl-openMode > label {
 	display: block;
 
 	position: relative;
 }
 
 #Format-type  > label[data-description]:hover::after,
-#Tab-position > label[data-description]:hover::after {
+#Tab-position > label[data-description]:hover::after,
+#Tab-TaskControl-taskMode > label[data-description]:hover::after,
+#Tab-TaskControl-openMode > label[data-description]:hover::after {
 	content: attr(data-description);
 
 	position: absolute;
 	top     : -0.5rem;
-	left    : 5rem;
+	left    : 8rem;
 
 	margin : 0;
 	padding: 0.5rem 0.75rem;
@@ -535,4 +539,10 @@ header h1:before {
 }
 .notice-highlight {
 	color: red;
+}
+
+
+
+#Tab-TaskControl-chunkSize-form {
+	margin-top: 0.5rem;
 }

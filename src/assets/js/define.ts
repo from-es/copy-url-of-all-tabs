@@ -7,9 +7,11 @@ import { browser, type Browser } from "wxt/browser";
 import v8n from "v8n";
 
 // Import
-import { ArrayOfObjectsValidator }       from "./lib/user/ArrayOfObjectsValidator";
-import { type BrowserEnvironmentResult } from "./lib/user/BrowserEnvironment/types";
-import { type MessageType }              from "./lib/user/MessageManager/PopoverMessage";
+import { ArrayOfObjectsValidator }              from "@/assets/js/lib/user/ArrayOfObjectsValidator";
+import { type BrowserEnvironmentResult }        from "@/assets/js/lib/user/BrowserEnvironment/types";
+import { type MessageType }                     from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+import { type UrlDelayRule }                    from "@/assets/js/lib/user/UrlDelayCalculator";
+import type { TabPosition, TaskMode, OpenMode } from "@/entrypoints/background/js/openUrlsHandler";
 
 
 
@@ -55,10 +57,15 @@ type Config_Delta = {
 		active     : boolean;
 		delay      : number;
 		customDelay: {
-			enable: boolean
-			list  : customDelayInfo[]
+			enable: boolean;
+			list  : customDelayInfo[];
 		};
-		position: "default" | "first" | "left" | "right" | "last";
+		position   : TabPosition;
+		TaskControl: {
+			taskMode : TaskMode;
+			openMode : OpenMode;
+			chunkSize: number;
+		}
 	};
 };
 
@@ -103,8 +110,13 @@ type Define_Delta = {
 	TabOpenDelayValueMax                 : number;
 	TabOpenDelayValueStep                : number;
 	TabOpenCustomDelayValue              : number;
+	TabOpenCustomDelayMatchType          : UrlDelayRule["matchType"]
+	TabOpenCustomDelayApplyFrom          : number;
 	DisabledTimeoutValue                 : number;
 	OptionsPageInputDebounceTime         : number;
+	TaskControlChunkSizeValue            : number;
+	TaskControlChunkSizeValueMin         : number;
+	TaskControlChunkSizeValueMax         : number;
 }
 
 type VerificationRule = {
@@ -342,7 +354,13 @@ const define: Define = {
 					}
 				]
 			},
-			position: "default" // Tab position when opened: "default" or "first" or "left" or "right" or "last"
+			position: "default", // Tab position when opened: "default" or "first" or "left" or "right" or "last"
+
+			TaskControl: {
+				taskMode : "unitary",
+				openMode : "append",
+				chunkSize: 5
+			}
 		}
 	},
 
@@ -754,6 +772,43 @@ const define: Define = {
 						}
 		},
 
+		{
+			property: "Tab.TaskControl.openMode",
+			fail    : () => { return define.Config.Tab.TaskControl.openMode; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.string()
+									.pattern(/^(parallel|append|prepend|insertNext)$/i)
+									.test(value);
+						}
+		},
+		{
+			property: "Tab.TaskControl.taskMode",
+			fail    : () => { return define.Config.Tab.TaskControl.taskMode; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.string()
+									.pattern(/^(unitary|batch|monolithic)$/i)
+									.test(value);
+						}
+		},
+		{
+			property: "Tab.TaskControl.chunkSize",
+			fail    : () => { return define.Config.Tab.TaskControl.chunkSize; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.numeric()
+									.range(define.TaskControlChunkSizeValueMin, define.TaskControlChunkSizeValueMax)
+									.test(value);
+						}
+		},
+
 		// Debug
 		{
 			property: "Debug.logging",
@@ -903,11 +958,19 @@ const define: Define = {
 	TabOpenDelayValueStep  : 1,
 	TabOpenCustomDelayValue: 1000,  // millisecond
 
+	TabOpenCustomDelayMatchType: "prefix",
+	TabOpenCustomDelayApplyFrom: 2,
+
 	// Options >> Reset Button: ボタン要素の連打対策用
 	DisabledTimeoutValue: 1000, // millisecond
 
 	// Options >> Input Tag: オプションページの入力フィールドにおけるデバウンス処理用
-	OptionsPageInputDebounceTime: 500 // millisecond
+	OptionsPageInputDebounceTime: 500, // millisecond
+
+	// TaskControl
+	TaskControlChunkSizeValue   : 5,
+	TaskControlChunkSizeValueMin: 1,
+	TaskControlChunkSizeValueMax: 16
 };
 
 
