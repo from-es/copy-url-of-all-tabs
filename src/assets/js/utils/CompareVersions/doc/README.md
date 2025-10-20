@@ -114,3 +114,7 @@ If an invalid version string is passed to the `compareVersions` function, an `Er
 ### Execution Context
 
 This utility is a pure logic function and does not depend on DOM manipulation or specific browser APIs. Therefore, it can be safely used in both client-side (Content Scripts, Popup, Options pages, etc.) and server-side (Node.js environments, etc.) contexts.
+
+## License
+
+This project is licensed under the [MIT License](../../../../../../LICENSE.md).

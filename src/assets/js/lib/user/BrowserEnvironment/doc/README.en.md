@@ -250,3 +250,7 @@ A JavaScript library for parsing User-Agent strings and extracting information s
 
 *   Official Website: [https://bowser-js.github.io/bowser/](https://bowser-js.github.io/bowser/)
 *   GitHub: [https://github.com/bowser-js/bowser](https://github.com/bowser-js/bowser)
+
+## License
+
+This project is licensed under the [MIT License](../../../../../../../LICENSE.md).

@@ -187,4 +187,4 @@ const results = UrlDelayCalculator.calculateDelays(urls, 250, invalidRules);
 
 ## ライセンス
 
-このプロジェクトは [MIT License](LICENSE.md) の下で公開されています。
+このプロジェクトは [MIT License](../../../../../../../LICENSE.md) の下で公開されています。

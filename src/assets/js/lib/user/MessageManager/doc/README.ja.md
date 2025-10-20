@@ -148,3 +148,7 @@ interface PopoverMessageOptions {
 ### 実行コンテキスト
 
 このクラスは内部でDOM操作を行います。そのため、クライアントサイドのコンテキスト（Content Script、拡張機能のPopupページやOptionsページなど）での使用を想定しています。Background ScriptのようなDOMが存在しない環境では動作しません。
+
+## ライセンス
+
+このプロジェクトは [MIT License](../../../../../../../LICENSE.md) の下で公開されています。
