@@ -1,3 +1,10 @@
+#### [1.8.0] - 2025/10/20
+
+- feat
+	- Added "Task Control" options to the options page. You can now fine-tune how multiple tabs are processed, such as the processing unit (unitary, batch, monolithic) and the execution order (parallel, append, prepend).
+- improve
+	- Significantly improved the stability and performance when opening a large number of tabs by introducing a new queueing system.
+
 #### [1.7.0] - 2025/10/16
 
 - improve
