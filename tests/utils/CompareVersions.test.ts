@@ -1,3 +1,28 @@
+/**
+ * @file CompareVersions.test.ts
+ * @lastupdate 2025-10-23
+ * @description
+ * This file tests the `compareVersions` utility function, which is responsible for
+ * comparing two semantic version strings according to the SemVer 2.0.0 specification.
+ *
+ * Purpose of Inspection:
+ * - To ensure the function correctly compares major, minor, and patch versions.
+ * - To verify the handling of pre-release identifiers (e.g., `-alpha`, `-beta`, numeric vs. string).
+ * - To confirm that build metadata is correctly ignored during comparison.
+ * - To ensure the function is robust and throws appropriate errors for invalid inputs,
+ *   such as malformed version strings, non-string types, or versions with prefixes.
+ * - To test against edge cases and potential security vulnerabilities like ReDoS attacks
+ *   on long version strings.
+ *
+ * Inspection Method:
+ * - The test uses a series of `describe` and `it` blocks to group test cases by
+ *   functionality (valid comparisons, invalid inputs, edge cases).
+ * - For valid versions, it asserts that the function returns the expected `-1`, `0`, or `1`.
+ * - For invalid versions, it asserts that the function correctly throws an `Error`.
+ * - Specific edge cases, like long strings and potential ReDoS patterns, are tested
+ *   to ensure stability and security.
+ */
+
 import { describe, it, expect } from "vitest";
 import { compareVersions } from "../../src/assets/js/utils/CompareVersions";
 

@@ -1,6 +1,6 @@
 /**
- * @file tests/utils/ClipboardManager.test.ts
- * @lastupdate 2025/09/06
+ * @file ClipboardManager.test.ts
+ * @lastupdate 2025-09-06
  * @description
  * This file tests the ClipboardManager class.
  *
@@ -12,6 +12,7 @@
  * both successful execution and failure handling to ensure the wrapper
  * class behaves as expected.
  */
+
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager";
 
