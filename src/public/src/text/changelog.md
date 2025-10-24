@@ -1,3 +1,8 @@
+#### [1.9.0] - 2025/10/24
+
+- improve
+	- Optimized the internal settings update process to improve extension efficiency and reliability.
+
 #### [1.8.0] - 2025/10/20
 
 - feat
