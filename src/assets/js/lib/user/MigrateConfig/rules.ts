@@ -1,33 +1,21 @@
 // Import Types
 import { type MigrationRule } from "./types";
 
-// Import from Script
+// Import Module
 import { compareVersions } from "@/assets/js/utils/CompareVersions";
 
 
 
-/*
-	# List of functions to migrate config properties
-
-	## migration rules
-
-	```
-	{
-		rules: { // ルールの説明、処理には使用しない
-			reason : "なぜこのルールを適応するのか",
-			target : "判定対象のオブジェクト",
-			action : "何をどう変更するのか",
-			created: "作成日   e.x. 2025/07/12",
-			expires: "有効要件 e.x. 2025/12/31 or Until upgrade to v10.0.0" // 「指定期日 or 公開日から6ヶ月経過 or 任意バージョンに到達」後、任意アップデート時にルールを手動で削除
-		},
-		condition: (argument) => { ... }, // argument = { config, define }, return value  is boolean
-		execute  : (argument) => { ... }  // argument = { config, define }, return object is config
-	}
-	```
-*/
-const migrationRules: MigrationRule[] = [
+/**
+ * 設定移行ルールを定義する配列。
+ * 各ルールは、特定の設定変更を適用するための条件と実行ロジックをカプセル化します。
+ * ルールの詳細な定義方法については、MigrationRuleDefinition.md を参照してください。
+ * @see {@link ./doc/MigrationRuleDefinition.en.md}
+ */
+export const migrationRules: MigrationRule[] = [
 	{
 		rules: {
+			author : "From E",
 			reason : "v0.6.1.1 から v0.7.0 へのアップデート時の設定追加（Copy & Paste, それぞれ別個にURLフィルタリングを適応可能に）に伴うプロパティ名の変更、それに伴う動作互換性維持の為",
 			target : "config.Filtering.enable",
 			action : "config.Filtering.enable の値を config.Filtering.Copy.enable と config.Filtering.Paste.enable を作成後、コピー。その後 config.Filtering.enable は削除",
@@ -57,6 +45,7 @@ const migrationRules: MigrationRule[] = [
 	},
 	{
 		rules: {
+			author : "From E",
 			reason : "config.Format.mimetype のプロパティ名を config.Format.minetype とタイポ",
 			target : "config.Format.minetype",
 			action : "プロパティ名を minetype から mimetype に修正後、minetype の値をコピー。その後 minetype は削除",
@@ -85,6 +74,7 @@ const migrationRules: MigrationRule[] = [
 	},
 	{
 		rules: {
+			author : "From E",
 			reason : "v1.0.0 で追加された、タブを個別に遅延させる機能（Tab.customDelay）の設定値が存在しない場合に追加する",
 			target : "config.Tab.customDelay",
 			action : "config.Tab.customDelay が存在しない場合に、デフォルト値を追加する",
@@ -110,6 +100,7 @@ const migrationRules: MigrationRule[] = [
 	},
 	{
 		rules: {
+			author : "From E",
 			reason : "config.Information.date.unixtime で管理している値が 'UNIXエポック * 1000' とプロパティ名に即していない為、プロパティ名を config.Information.date.timestamp に変更",
 			target : "config.Information.date.unixtime",
 			action : "プロパティ unixtime の値 timestamp にコピー。その後、プロパティ unixtime を削除する",
@@ -138,6 +129,7 @@ const migrationRules: MigrationRule[] = [
 	},
 	{
 		rules: {
+			author : "From E",
 			reason : "オプションページ側の実装不具合が原因で v1.0.0 から v1.4.0 間のカスタム遅延設定追加時に発生した、データ構造の不整合による不要な `url` プロパティを削除する為",
 			target : "config.Information.version, config.Tab.customDelay.list[].url",
 			action : "設定バージョンが v1.4.0 以前で、カスタム遅延リストに `url` プロパティが存在する場合、その `url` プロパティを削除",
@@ -167,7 +159,7 @@ const migrationRules: MigrationRule[] = [
 				isTargetVersion = isSameOrEarlier(base, target);
 			} catch (error) {
 				console.error("Migration Rule Error: Failed to compare versions for custom delay rule.", {
-					"Migration Rule": "v1.0.0 から v1.4.0 間で追加されていたカスタム遅延設定の url プロパティを削除",
+					"Migration Rule": "v1.0.0 から v1.4.0 間で追加されていたカスタム遅延設定の `url` プロパティを削除",
 					baseVersion     : base,
 					targetVersion   : target,
 					originalError   : error
@@ -198,6 +190,7 @@ const migrationRules: MigrationRule[] = [
 	},
 	{
 		rules: {
+			author : "From E",
 			reason : "v1.7.0 で追加された、タブ展開の動作を制御する機能（Tab.TaskControl）の設定値が存在しない場合に追加",
 			target : "config.Tab.TaskControl",
 			action : "config.Tab.TaskControl が存在しない場合に、デフォルト値を追加",
@@ -221,7 +214,3 @@ const migrationRules: MigrationRule[] = [
 		}
 	},
 ];
-
-
-
-export { migrationRules };
