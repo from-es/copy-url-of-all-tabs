@@ -782,7 +782,7 @@
 										{#snippet customDelayList(item: { id: string; pattern: string; delay: number; })}
 											<tr>
 												<td data-cell-type="sort" class="sortable" title="Drag to sort">✠</td>
-												<td data-cell-type="url"><input class="blank-field-warning" type="url" bind:value={ item.pattern } placeholder="URL strings, regular expressions, and wildcards are not supported" required></td>
+												<td data-cell-type="url"><input class="blank-field-warning" type="url" bind:value={ item.pattern } placeholder="Only URL strings are supported. Regular expressions and wildcards are not. (e.g., https://example.com/)" required></td>
 												<td data-cell-type="delay"><input type="number" bind:value={ item.delay } min={ status.define.TabOpenDelayValueMin } max={ status.define.TabOpenDelayValueMax } placeholder={ status.define.TabOpenCustomDelayValue } required></td>
 												<td data-cell-type="delete"><input class="delete-button" type="button" value="✖" title="Delete this item." onclick={ () => { deleteRowForCustomDelay(status.config.Tab.customDelay.list, item.id); } }></td>
 											</tr>
