@@ -1,6 +1,6 @@
 /**
- * @file tests/utils/sanitizeForSendMessage.test.ts
- * @lastupdate 2025/09/13
+ * @file sanitizeForSendMessage.test.ts
+ * @lastupdate 2025-09-13
  * @description
  * This file tests the `sanitizeForSendMessage` utility function.
  *
@@ -13,6 +13,7 @@
  * 2. That an already-serializable object remains unchanged.
  * 3. That it correctly handles arrays containing objects with non-serializable properties.
  */
+
 import { describe, it, expect } from "vitest";
 import { sanitizeForSendMessage } from "@/assets/js/utils/sanitizeForSendMessage";
 

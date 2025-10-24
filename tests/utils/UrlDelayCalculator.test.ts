@@ -19,6 +19,7 @@
  * - Multiple test cases are executed in a data-driven manner using `it.each` to
  *   enhance test coverage.
  */
+
 import { describe, it, expect } from "vitest";
 import { UrlDelayCalculator, type UrlDelayRule, type UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
