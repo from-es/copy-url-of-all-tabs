@@ -14,7 +14,7 @@
 	import dayjs        from "dayjs";
 	import { debounce } from "lodash-es";
 
-	// Import from Script
+// Import Module
 	import { initializeConfig }                              from "@/assets/js/initializeConfig";
 	import { logging }                                       from "@/assets/js/logging";
 	import { selectTab }                                     from "@/assets/js/select-tab";
@@ -205,10 +205,6 @@
 	// ---------------------------------------------------------------------------------------------
 	// Popup Menu
 
-	function eventPopupMenuClearMessageEnable() {
-		status.config.PopupMenu.ClearMessage.enable = !(status.config.PopupMenu.ClearMessage.enable);
-	}
-
 	function eventPopupMenuClearMessageTimeout(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
 
@@ -219,10 +215,6 @@
 			status.define.Config.PopupMenu.ClearMessage.timeout,
 			(value) => { status.config.PopupMenu.ClearMessage.timeout = value; }
 		);
-	}
-
-	function eventPopupOnClickCloseEnable() {
-		status.config.PopupMenu.OnClickClose.enable = !(status.config.PopupMenu.OnClickClose.enable);
 	}
 
 	function eventPopupOnClickCloseTimeout(event: Event) {
@@ -251,52 +243,7 @@
 	// ---------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------
-	// Search
-
-	function eventSearchRegex() {
-		status.config.Search.regex = !(status.config.Search.regex);
-	}
-	// ---------------------------------------------------------------------------------------------
-
-	// ---------------------------------------------------------------------------------------------
 	// Filtering
-
-	function eventFilteringEnable(event: Event) {
-		const elm    = event.currentTarget as HTMLInputElement;
-		const action = elm.getAttribute("data-action");
-		let   key    = "";
-
-		switch (action) {
-			case "copy":
-				key = "Copy";
-				break;
-			case "paste":
-				key = "Paste";
-				break;
-			default:
-				// debug
-				console.error("Error, Invalid argument passed to eventFilteringEnable() >> action >>", action);
-
-				return;
-		}
-
-		status.config.Filtering[key].enable = !(status.config.Filtering[key].enable);
-	}
-
-	function eventFilteringProtocol(event: Event) {
-		const elm      = event.currentTarget as HTMLInputElement;
-		const protocol = elm.getAttribute("data-type");
-
-		if (protocol && typeof protocol === "string" && Object.hasOwn(status.config.Filtering.Protocol, protocol)) {
-			status.config.Filtering.Protocol[protocol] = !(status.config.Filtering.Protocol[protocol]);
-
-			// debug
-			console.log(`eventGetFilteringProtocol() >> protocol: ${protocol} >>`, { protocol, bool: status.config.Filtering.Protocol[protocol]} );
-		} else {
-			// debug
-			console.error("Error, The 'data-type' attribute is missing or its value is not a string:", { protocol });
-		}
-	}
 
 	function showNoticeMessageForPaste() {
 		const message = `<p class="notice-paste"><span class="notice-highlight">Notice</span>: If <b>Search URL of the text in the clipboard</b> option is enabled, filtering is only valid for "http & https" items.</p>`;
@@ -306,43 +253,7 @@
 	// ---------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------
-	// Format
-
-	function eventFormatType(event: Event) {
-		const elm = event.currentTarget as HTMLInputElement;
-
-		status.config.Format.type = elm.value;
-	}
-
-	function eventFormatCustomTemplate(event: Event) {
-		const elm = event.currentTarget as HTMLInputElement;
-
-		status.config.Format.template = elm.value;
-	}
-
-	function eventFormatSelectMimetype(event: Event) {
-		const elm = event.currentTarget as HTMLInputElement;
-
-		status.config.Format.mimetype = elm.value;
-	}
-	// ---------------------------------------------------------------------------------------------
-
-	// ---------------------------------------------------------------------------------------------
 	// Tab
-
-	function eventTabReverse() {
-		status.config.Tab.reverse = !(status.config.Tab.reverse);
-	}
-
-	function eventTabActive() {
-		status.config.Tab.active = !(status.config.Tab.active);
-	}
-
-	function eventTabPosition(event: Event) {
-		const elm = event.currentTarget as HTMLInputElement;
-
-		status.config.Tab.position = elm.value;
-	}
 
 	function eventTabDelay(event: Event) {
 		const input = event.currentTarget as HTMLInputElement;
@@ -353,24 +264,6 @@
 			status.define.Config.Tab.delay,
 			(value) => { status.config.Tab.delay = value; }
 		);
-	}
-	// ---------------------------------------------------------------------------------------------
-
-	// ---------------------------------------------------------------------------------------------
-	// Debug
-
-	function eventDebugLogging() {
-		status.config.Debug.logging = !(status.config.Debug.logging);
-	}
-
-	function eventDebugTimestamp() {
-		status.config.Debug.timestamp = !(status.config.Debug.timestamp);
-	}
-
-	function eventDebugTimecoordinate(event: Event) {
-		const elm = event.currentTarget as HTMLInputElement;
-
-		status.config.Debug.timecoordinate = elm.value;
 	}
 	// ---------------------------------------------------------------------------------------------
 
@@ -633,15 +526,15 @@
 							<legend>Format type</legend>
 							<form id="Format-type">
 								<label data-description="URL">
-									<input type="radio" name="Format-type" value="text" checked={ status.config.Format.type === "text" ? true : false } onchange={ eventFormatType }>
+									<input type="radio" name="Format-type" value="text" bind:group={ status.config.Format.type }>
 									text
 								</label>
 								<label data-description="JSON format Text with title & url as object key names">
-									<input type="radio" name="Format-type" value="json" checked={ status.config.Format.type === "json" ? true : false } onchange={ eventFormatType }>
+									<input type="radio" name="Format-type" value="json" bind:group={ status.config.Format.type }>
 									json
 								</label>
 								<label data-description="You can specify a template with your own format">
-									<input type="radio" name="Format-type" value="custom" checked={ status.config.Format.type === "custom" ? true : false } onchange={ eventFormatType }>
+									<input type="radio" name="Format-type" value="custom" bind:group={ status.config.Format.type }>
 									custom
 								</label>
 							</form>
@@ -651,7 +544,7 @@
 							<legend>Custom Template</legend>
 							<!-- イベント経由で変更を即反映 -->
 							<p>You can specify a template with your own format. Use <b>$title</b> &amp; <b>$url</b> variables.</p>
-							<textarea id="Format-template" spellcheck="false" value={ status.config.Format.template } oninput={ eventFormatCustomTemplate }></textarea>
+							<textarea id="Format-template" spellcheck="false" bind:value={ status.config.Format.template }></textarea>
 						</fieldset>
 
 						<fieldset>
@@ -659,9 +552,9 @@
 
 							<p>Specifies the MIME type when copying data to the clipboard. This only affects <b>custom</b> formats.</p>
 
-							<select id="Format-mimetype" onchange={ eventFormatSelectMimetype }>
-								<option value="text/plain" selected={ status.config.Format.mimetype === "text/plain" ? true : false }>text/plain</option>
-								<option value="text/html"  selected={ status.config.Format.mimetype === "text/html"  ? true : false }>text/html</option>
+							<select id="Format-mimetype" bind:value={ status.config.Format.mimetype }>
+								<option value="text/plain">text/plain</option>
+								<option value="text/html">text/html</option>
 							</select>
 						</fieldset>
 					</div>
@@ -682,7 +575,7 @@
 						<fieldset>
 							<legend>Search for URLs in the clipboard text</legend>
 							<form id="Search-regex">
-								<input id="Search-regex" type="checkbox" checked={ status.config.Search.regex } onchange={ eventSearchRegex }>
+								<input id="Search-regex" type="checkbox" bind:checked={ status.config.Search.regex }>
 								<label for="Search-regex">Search for URLs in the clipboard text using a regular expression. This option only applies to "<b>http://</b> & <b>https://</b>".</label>
 							</form>
 						</fieldset>
@@ -699,12 +592,12 @@
 						<fieldset>
 							<legend>Option</legend>
 							<form id="Tab-reverse">
-								<input id="Tab-reverse-input" type="checkbox" checked={ status.config.Tab.reverse } onchange={ eventTabReverse }>
+								<input id="Tab-reverse-input" type="checkbox" bind:checked={ status.config.Tab.reverse }>
 								<label for="Tab-reverse-input">Open tabs in reverse order</label>
 							</form>
 
 							<form id="Tab-active">
-								<input id="Tab-active-input" type="checkbox" checked={ status.config.Tab.active } onchange={ eventTabActive }>
+								<input id="Tab-active-input" type="checkbox" bind:checked={ status.config.Tab.active }>
 								<label for="Tab-active-input">Open in active tab</label>
 							</form>
 						</fieldset>
@@ -713,23 +606,23 @@
 							<legend>New tab position</legend>
 							<form id="Tab-position">
 								<label data-description="Follow your browser settings">
-									<input type="radio" name="Tab-position-type" value="default" checked={ status.config.Tab.position === "default" ? true : false } onchange={ eventTabPosition }>
+									<input type="radio" name="Tab-position-type" value="default" bind:group={ status.config.Tab.position }>
 									default
 								</label>
 								<label data-description="To the first of the tab bar">
-									<input type="radio" name="Tab-position-type" value="first" checked={ status.config.Tab.position === "first" ? true : false } onchange={ eventTabPosition }>
+									<input type="radio" name="Tab-position-type" value="first" bind:group={ status.config.Tab.position }>
 									first
 								</label>
 								<label data-description="To the left of the active tab">
-									<input type="radio" name="Tab-position-type" value="left" checked={ status.config.Tab.position === "left" ? true : false } onchange={ eventTabPosition }>
+									<input type="radio" name="Tab-position-type" value="left" bind:group={ status.config.Tab.position }>
 									left
 								</label>
 								<label data-description="To the right of the active tab">
-									<input type="radio" name="Tab-position-type" value="right" checked={ status.config.Tab.position === "right" ? true : false } onchange={ eventTabPosition }>
+									<input type="radio" name="Tab-position-type" value="right" bind:group={ status.config.Tab.position }>
 									right
 								</label>
 								<label data-description="To the last of the tab bar">
-									<input type="radio" name="Tab-position-type" value="last" checked={ status.config.Tab.position === "last" ? true : false } onchange={ eventTabPosition }>
+									<input type="radio" name="Tab-position-type" value="last" bind:group={ status.config.Tab.position }>
 									last
 								</label>
 							</form>
@@ -897,7 +790,7 @@
 							<legend>Copy</legend>
 
 							<form id="Filtering-Copy-enable">
-								<input id="Filtering-Copy-enable-input" data-action="copy" type="checkbox" checked={ status.config.Filtering.Copy.enable } onchange={ eventFilteringEnable }>
+								<input id="Filtering-Copy-enable-input" data-action="copy" type="checkbox" bind:checked={ status.config.Filtering.Copy.enable }>
 								<label for="Filtering-Copy-enable-input">Filter URLs when copying</label>
 							</form>
 						</fieldset>
@@ -907,7 +800,7 @@
 							<legend>Paste</legend>
 
 							<form id="Filtering-Paste-enable">
-								<input id="Filtering-Paste-enable-input" data-action="paste" type="checkbox" checked={ status.config.Filtering.Paste.enable } onchange={ eventFilteringEnable }>
+								<input id="Filtering-Paste-enable-input" data-action="paste" type="checkbox" bind:checked={ status.config.Filtering.Paste.enable }>
 								<label for="Filtering-Paste-enable-input">Filter URLs when pasting</label>
 
 								{#if status.config.Search.regex}
@@ -923,46 +816,46 @@
 
 							<div id="Filtering-Protocol">
 								<form id="Filtering-Protocol-http">
-									<input id="Filtering-Protocol-http-input" type="checkbox" checked={ status.config.Filtering.Protocol.http } data-type="http" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-http-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.http }>
 									<label for="Filtering-Protocol-http-input">http</label>
 								</form>
 								<form id="Filtering-Protocol-https">
-									<input id="Filtering-Protocol-https-input" type="checkbox" checked={ status.config.Filtering.Protocol.https } data-type="https" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-https-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.https }>
 									<label for="Filtering-Protocol-https-input">https</label>
 								</form>
 								<form id="Filtering-Protocol-file">
-									<input id="Filtering-Protocol-https-file" type="checkbox" checked={ status.config.Filtering.Protocol.file } data-type="file" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-https-file" type="checkbox" bind:checked={ status.config.Filtering.Protocol.file }>
 									<label for="Filtering-Protocol-https-file">file</label>
 								</form>
 								<form id="Filtering-Protocol-ftp">
-									<input id="Filtering-Protocol-https-ftp" type="checkbox" checked={ status.config.Filtering.Protocol.ftp } data-type="ftp" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-https-ftp" type="checkbox" bind:checked={ status.config.Filtering.Protocol.ftp }>
 									<label for="Filtering-Protocol-https-ftp">ftp</label>
 								</form>
 
 								<form id="Filtering-Protocol-data">
-									<input id="Filtering-Protocol-data-input" type="checkbox" checked={ status.config.Filtering.Protocol.data } data-type="data" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-data-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.data }>
 									<label for="Filtering-Protocol-data-input">data</label>
 								</form>
 								<form id="Filtering-Protocol-blob">
-									<input id="Filtering-Protocol-blob-input" type="checkbox" checked={ status.config.Filtering.Protocol.blob } data-type="blob" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-blob-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.blob }>
 									<label for="Filtering-Protocol-blob-input">blob</label>
 								</form>
 
 								<form id="Filtering-Protocol-mailto">
-									<input id="Filtering-Protocol-mailto-input" type="checkbox" checked={ status.config.Filtering.Protocol.mailto } data-type="mailto" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-mailto-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.mailto }>
 									<label for="Filtering-Protocol-mailto-input">mailto</label>
 								</form>
 								<form id="Filtering-Protocol-javascript">
-									<input id="Filtering-Protocol-javascript-input" type="checkbox" checked={ status.config.Filtering.Protocol.javascript } data-type="javascript" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-javascript-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.javascript }>
 									<label for="Filtering-Protocol-javascript-input">javascript</label>
 								</form>
 
 								<form id="Filtering-Protocol-about">
-									<input id="Filtering-Protocol-about-input" type="checkbox" checked={ status.config.Filtering.Protocol.about } data-type="about" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-about-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.about }>
 									<label for="Filtering-Protocol-about-input">about</label>
 								</form>
 								<form id="Filtering-Protocol-chrome">
-									<input id="Filtering-Protocol-chrome-input" type="checkbox" checked={ status.config.Filtering.Protocol.chrome } data-type="chrome" onchange={ eventFilteringProtocol }>
+									<input id="Filtering-Protocol-chrome-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.chrome }>
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 									<label for="Filtering-Protocol-chrome-input">chrome ({@html createSafeHTML(getChromiumBasedBrowserList())})</label>
 								</form>
@@ -1023,10 +916,7 @@
 						<fieldset>
 							<legend>Clear Message</legend>
 							<form id="PopupMenu-ClearMessage">
-								<input id="PopupMenu-ClearMessage-enable-input" type="checkbox"
-									checked={ status.config.PopupMenu.ClearMessage.enable }
-									onchange={ eventPopupMenuClearMessageEnable }
-								>
+								<input id="PopupMenu-ClearMessage-enable-input" type="checkbox" bind:checked={ status.config.PopupMenu.ClearMessage.enable }>
 								<label for="PopupMenu-ClearMessage-enable-input">enable</label>
 							</form>
 
@@ -1045,7 +935,7 @@
 						<fieldset>
 							<legend>OnClick Close</legend>
 							<form id="PopupMenu-ClearMessage">
-								<input id="PopupMenu-OnClickClose-enable-input" type="checkbox" checked={ status.config.PopupMenu.OnClickClose.enable } onchange={ eventPopupOnClickCloseEnable }>
+								<input id="PopupMenu-OnClickClose-enable-input" type="checkbox" bind:checked={ status.config.PopupMenu.OnClickClose.enable }>
 								<label for="PopupMenu-OnClickClose-enable-input">enable</label>
 							</form>
 
@@ -1073,12 +963,12 @@
 						<fieldset>
 							<legend>Option</legend>
 							<form id="Debug-logging">
-								<input id="Debug-logging-input" type="checkbox" checked={ status.config.Debug.logging } onchange={ eventDebugLogging }>
+								<input id="Debug-logging-input" type="checkbox" bind:checked={ status.config.Debug.logging }>
 								<label for="Debug-logging-input">Output debug log to the web console</label>
 							</form>
 
 							<form id="Debug-timestamp">
-								<input id="Debug-timestamp-input" type="checkbox" disabled={ !status.config.Debug.logging } checked={ status.config.Debug.timestamp } onchange={ eventDebugTimestamp }>
+								<input id="Debug-timestamp-input" type="checkbox" disabled={ !status.config.Debug.logging } bind:checked={ status.config.Debug.timestamp }>
 								<label for="Debug-timestamp-input">Add Timestamp to debug log</label>
 							</form>
 						</fieldset>
@@ -1088,11 +978,11 @@
 
 							<form id="Debug-timecoordinate">
 								<label for="Debug-timecoordinate-UTC">
-									<input id="Debug-timecoordinate-UTC" type="radio" name="timecoordinate" value="UTC" checked={ status.config.Debug.timecoordinate === "UTC" ? true : false } onchange={ eventDebugTimecoordinate }>
+									<input id="Debug-timecoordinate-UTC" type="radio" name="timecoordinate" value="UTC" bind:group={ status.config.Debug.timecoordinate }>
 									UTC
 								</label>
 								<label for="Debug-timecoordinate-GMT">
-									<input id="Debug-timecoordinate-GMT" type="radio" name="timecoordinate" value="GMT" checked={ status.config.Debug.timecoordinate === "GMT" ? true : false } onchange={ eventDebugTimecoordinate }>
+									<input id="Debug-timecoordinate-GMT" type="radio" name="timecoordinate" value="GMT" bind:group={ status.config.Debug.timecoordinate }>
 									GMT
 								</label>
 							</form>
