@@ -117,6 +117,7 @@ type Define_Delta = {
 	TaskControlChunkSizeValue            : number;
 	TaskControlChunkSizeValueMin         : number;
 	TaskControlChunkSizeValueMax         : number;
+	TaskControlChunkSizeValueStep        : number;
 }
 
 type VerificationRule = {
@@ -968,9 +969,10 @@ const define: Define = {
 	OptionsPageInputDebounceTime: 500, // millisecond
 
 	// TaskControl
-	TaskControlChunkSizeValue   : 5,
-	TaskControlChunkSizeValueMin: 1,
-	TaskControlChunkSizeValueMax: 16
+	TaskControlChunkSizeValue    : 5,
+	TaskControlChunkSizeValueMin : 1,
+	TaskControlChunkSizeValueMax : 16,
+	TaskControlChunkSizeValueStep: 1,
 };
 
 

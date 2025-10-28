@@ -3,18 +3,19 @@
 	import { browser } from "wxt/browser";
 
 	// Import Types
-	import { type Config, type Define, type Status } from "@/assets/js/types/";
-	import { type MimeType, type ExportResult }      from "@/assets/js/lib/user/ConfigManager";
-	import { type MessageType }                      from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+	import type { Config, Define, Status } from "@/assets/js/types/";
+	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
 
 	// Import Svelte
 	import { onMount } from "svelte";
 
-	// Import NPM Package
-	import dayjs        from "dayjs";
-	import { debounce } from "lodash-es";
+	// Import Svelte Module
+	import DebouncedNumericInput from "./DebouncedNumericInput.svelte";
 
-// Import Module
+	// Import NPM Package
+	import dayjs from "dayjs";
+
+	// Import Module
 	import { initializeConfig }                              from "@/assets/js/initializeConfig";
 	import { logging }                                       from "@/assets/js/logging";
 	import { selectTab }                                     from "@/assets/js/select-tab";
@@ -103,47 +104,7 @@
 		element.setAttribute("disabled", "true");
 		setTimeout((elm) => { elm.removeAttribute("disabled"); }, duration, element);
 	}
-
-	/**
-	 * 指定された範囲内であるか数値入力を検証
-	 * @param   {string} currentValue - 入力イベントからの現在の値
-	 * @param   {number} min          - 許容される最小値
-	 * @param   {number} max          - 許容される最大値
-	 * @param   {number} defaultValue - 範囲外の場合に設定するデフォルト値
-	 * @returns {number}              - 検証された数値
-	 */
-	function validateNumericInput(currentValue: string, min: number, max: number, defaultValue: number): number {
-		const num = parseFloat(currentValue);
-
-		if (isNaN(num) || num < min || num > max) {
-			const message = {
-				message    : [ `A value out of range has been entered. Please set a value in the range ${min} ~ ${max}.` ],
-				timeout    : 5000,
-				fontsize   : "1rem",
-				messagetype: "warning" as MessageType
-			};
-			PopoverMessage.create(message);
-			return defaultValue;
-		}
-		return num;
-	}
-
-	/**
-	 * デバウンスされたバリデーション関数を格納する変数
-	 */
-	const debouncedValidation = debounce(
-		(input: HTMLInputElement, min: number, max: number, defaultValue: number, updateFn: (value: number) => void) => {
-			const validatedValue = validateNumericInput(input.value, min, max, defaultValue);
-
-			if (input.value !== validatedValue.toString()) {
-				input.value = validatedValue.toString();
-			}
-
-			updateFn(validatedValue);
-		},
-		status.define.OptionsPageInputDebounceTime
-	);
-	// --------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------
 	// Save & Reset
@@ -185,62 +146,8 @@
 		// debug
 		console.log("Reset Config Data.", status.config);
 	}
-
-	// ---------------------------------------------------------------------------------------------
-	// Options Page
-
-	function eventOptionsPageFontSize(event: Event) {
-		const input = event.currentTarget as HTMLInputElement;
-
-		debouncedValidation(
-			input,
-			status.define.OptionsPageFontSizeValueMin,
-			status.define.OptionsPageFontSizeValueMax,
-			status.define.Config.OptionsPage.fontsize,
-			(value) => { status.config.OptionsPage.fontsize = value; }
-		);
-	}
 	// ---------------------------------------------------------------------------------------------
 
-	// ---------------------------------------------------------------------------------------------
-	// Popup Menu
-
-	function eventPopupMenuClearMessageTimeout(event: Event) {
-		const input = event.currentTarget as HTMLInputElement;
-
-		debouncedValidation(
-			input,
-			status.define.PopupMenuClearMessageTimeoutValueMin,
-			status.define.PopupMenuClearMessageTimeoutValueMax,
-			status.define.Config.PopupMenu.ClearMessage.timeout,
-			(value) => { status.config.PopupMenu.ClearMessage.timeout = value; }
-		);
-	}
-
-	function eventPopupOnClickCloseTimeout(event: Event) {
-		const input = event.currentTarget as HTMLInputElement;
-
-		debouncedValidation(
-			input,
-			status.define.PopupMenuOnClickCloseTimeoutValueMin,
-			status.define.PopupMenuOnClickCloseTimeoutValueMax,
-			status.define.Config.PopupMenu.OnClickClose.timeout,
-			(value) => { status.config.PopupMenu.OnClickClose.timeout = value; }
-		);
-	}
-
-	function eventPopupMenuFontSize(event: Event) {
-		const input = event.currentTarget as HTMLInputElement;
-
-		debouncedValidation(
-			input,
-			status.define.PopupMenuFontSizeValueMin,
-			status.define.PopupMenuFontSizeValueMax,
-			status.define.Config.PopupMenu.fontsize,
-			(value) => { status.config.PopupMenu.fontsize = value; }
-		);
-	}
-	// ---------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------
 	// Filtering
@@ -249,21 +156,6 @@
 		const message = `<p class="notice-paste"><span class="notice-highlight">Notice</span>: If <b>Search URL of the text in the clipboard</b> option is enabled, filtering is only valid for "http & https" items.</p>`;
 
 		return message;
-	}
-	// ---------------------------------------------------------------------------------------------
-
-	// ---------------------------------------------------------------------------------------------
-	// Tab
-
-	function eventTabDelay(event: Event) {
-		const input = event.currentTarget as HTMLInputElement;
-		debouncedValidation(
-			input,
-			status.define.TabOpenDelayValueMin,
-			status.define.TabOpenDelayValueMax,
-			status.define.Config.Tab.delay,
-			(value) => { status.config.Tab.delay = value; }
-		);
 	}
 	// ---------------------------------------------------------------------------------------------
 
@@ -631,13 +523,14 @@
 						<fieldset>
 							<legend>Delay</legend>
 							<form>
-								<input id="Tab-delay-number" name="Tab-delay-number" type="number"
-									min={ status.define.TabOpenDelayValueMin }
-									max={ status.define.TabOpenDelayValueMax }
-									step={ status.define.TabOpenDelayValueStep }
-									value={ status.config.Tab.delay }
-									oninput={ eventTabDelay }
-								>
+								<DebouncedNumericInput
+									id="Tab-delay-number"
+									bind:value={status.config.Tab.delay}
+									min={status.define.TabOpenDelayValueMin}
+									max={status.define.TabOpenDelayValueMax}
+									step={status.define.TabOpenDelayValueStep}
+									debounceTime={status.define.OptionsPageInputDebounceTime}
+								/>
 								<label for="Tab-delay-number">wait time before opening the next tab ({ status.define.TabOpenDelayValueMin } ~ { status.define.TabOpenDelayValueMax } milliseconds)</label>
 							</form>
 						</fieldset>
@@ -676,7 +569,17 @@
 											<tr>
 												<td data-cell-type="sort" class="sortable" title="Drag to sort">✠</td>
 												<td data-cell-type="url"><input class="blank-field-warning" type="url" bind:value={ item.pattern } placeholder="Only URL strings are supported. Regular expressions and wildcards are not. (e.g., https://example.com/)" required></td>
-												<td data-cell-type="delay"><input type="number" bind:value={ item.delay } min={ status.define.TabOpenDelayValueMin } max={ status.define.TabOpenDelayValueMax } placeholder={ status.define.TabOpenCustomDelayValue } required></td>
+												<td data-cell-type="delay">
+													<DebouncedNumericInput
+														bind:value={item.delay}
+														min={status.define.TabOpenDelayValueMin}
+														max={status.define.TabOpenDelayValueMax}
+														step={status.define.TabOpenDelayValueStep}
+														debounceTime={status.define.OptionsPageInputDebounceTime}
+														placeholder={status.define.TabOpenCustomDelayValue}
+														required
+													/>
+												</td>
 												<td data-cell-type="delete"><input class="delete-button" type="button" value="✖" title="Delete this item." onclick={ () => { deleteRowForCustomDelay(status.config.Tab.customDelay.list, item.id); } }></td>
 											</tr>
 										{/snippet}
@@ -729,12 +632,14 @@
 
 							{#if status.config.Tab.TaskControl.taskMode === "batch"}
 								<form id="Tab-TaskControl-chunkSize-form">
-									<input id="Tab-TaskControl-chunkSize" name="TaskControl-chunkSize" type="number"
-										min={ status.define.TaskControlChunkSizeValueMin }
-										max={ status.define.TaskControlChunkSizeValueMax }
-										step="1"
-										bind:value={ status.config.Tab.TaskControl.chunkSize }
-									>
+									<DebouncedNumericInput
+										id="TaskControl-chunkSize"
+										bind:value={status.config.Tab.TaskControl.chunkSize}
+										min={status.define.TaskControlChunkSizeValueMin}
+										max={status.define.TaskControlChunkSizeValueMax}
+										step={status.define.TaskControlChunkSizeValueStep}
+										debounceTime={status.define.OptionsPageInputDebounceTime}
+									/>
 									<label for="TaskControl-chunkSize">Number of URLs per Batch ({ status.define.TaskControlChunkSizeValueMin } ~ { status.define.TaskControlChunkSizeValueMax })</label>
 								</form>
 							{/if}
@@ -868,90 +773,97 @@
 			<!-- System -->
 			<fieldset id="setting-system">
 				<legend>System</legend>
+					<!-- Options Page -->
+					<section class="container">
+						<div class="flex-side">
+							<h3>Options Page</h3>
+						</div>
 
-				<!-- Options Page -->
-				<section class="container">
-					<div class="flex-side">
-						<h3>Options Page</h3>
-					</div>
+						<div class="flex-main">
+							<fieldset>
+								<legend>Font Size of "Options Page"</legend>
 
-					<div class="flex-main">
-						<fieldset>
-							<legend>Font Size of "Options Page"</legend>
-							<form>
-								<input id="OptionsPage-FontSize" name="OptionsPage-FontSize" type="number"
-									min={ status.define.OptionsPageFontSizeValueMin }
-									max={ status.define.OptionsPageFontSizeValueMax }
-									step={ status.define.OptionsPageFontSizeValueStep }
-									value={ status.config.OptionsPage.fontsize }
-									oninput={ eventOptionsPageFontSize }
-								>
-								<label for="OptionsPage-FontSize">font size ({ status.define.OptionsPageFontSizeValueMin } ~ { status.define.OptionsPageFontSizeValueMax } px)</label>
-							</form>
-						</fieldset>
-					</div>
-				</section>
+								<form>
+									<DebouncedNumericInput
+										id="OptionsPage-FontSize"
+										bind:value={status.config.OptionsPage.fontsize}
+										min={status.define.OptionsPageFontSizeValueMin}
+										max={status.define.OptionsPageFontSizeValueMax}
+										step={status.define.OptionsPageFontSizeValueStep}
+										debounceTime={status.define.OptionsPageInputDebounceTime}
+									/>
+									<label for="OptionsPage-FontSize">font size ({ status.define.OptionsPageFontSizeValueMin } ~ { status.define.OptionsPageFontSizeValueMax } px)</label>
+								</form>
+							</fieldset>
+						</div>
+					</section>
 
-				<!-- Popup Menu -->
-				<section class="container">
-					<div class="flex-side">
-						<h3>Popup Menu</h3>
-					</div>
+					<!-- Popup Menu -->
+					<section class="container">
+						<div class="flex-side">
+							<h3>Popup Menu</h3>
+						</div>
 
-					<div class="flex-main">
-						<fieldset>
-							<legend>Font Size of "Popup Menu"</legend>
-							<form>
-								<input id="PopupMenu-FontSize" name="PopupMenu-FontSize" type="number"
-									min={ status.define.PopupMenuFontSizeValueMin }
-									max={ status.define.PopupMenuFontSizeValueMax }
-									step={ status.define.PopupMenuFontSizeValueStep }
-									value={ status.config.PopupMenu.fontsize }
-									oninput={ eventPopupMenuFontSize }
-								>
-								<label for="PopupMenu-FontSize">font size ({ status.define.PopupMenuFontSizeValueMin } ~ { status.define.PopupMenuFontSizeValueMax } px)</label>
-							</form>
-						</fieldset>
+						<div class="flex-main">
+							<fieldset>
+								<legend>Font Size of "Popup Menu"</legend>
 
-						<fieldset>
-							<legend>Clear Message</legend>
-							<form id="PopupMenu-ClearMessage">
-								<input id="PopupMenu-ClearMessage-enable-input" type="checkbox" bind:checked={ status.config.PopupMenu.ClearMessage.enable }>
-								<label for="PopupMenu-ClearMessage-enable-input">enable</label>
-							</form>
+								<form>
+									<DebouncedNumericInput
+										id="PopupMenu-FontSize"
+										bind:value={status.config.PopupMenu.fontsize}
+										min={status.define.PopupMenuFontSizeValueMin}
+										max={status.define.PopupMenuFontSizeValueMax}
+										step={status.define.PopupMenuFontSizeValueStep}
+										debounceTime={status.define.OptionsPageInputDebounceTime}
+									/>
+									<label for="PopupMenu-FontSize">font size ({ status.define.PopupMenuFontSizeValueMin } ~ { status.define.PopupMenuFontSizeValueMax } px)</label>
+								</form>
+							</fieldset>
 
-							<form>
-								<input id="PopupMenu-ClearMessage-timeout" name="PopupMenu-ClearMessage-timeout" type="number"
-									min={ status.define.PopupMenuClearMessageTimeoutValueMin }
-									max={ status.define.PopupMenuClearMessageTimeoutValueMax }
-									step={ status.define.PopupMenuClearMessageTimeoutValueStep }
-									value={ status.config.PopupMenu.ClearMessage.timeout }
-									oninput={ eventPopupMenuClearMessageTimeout }
-								>
-								<label for="PopupMenu-ClearMessage-timeout">timeout ({ status.define.PopupMenuClearMessageTimeoutValueMin } ~ { status.define.PopupMenuClearMessageTimeoutValueMax } seconds)</label>
-							</form>
-						</fieldset>
+							<fieldset>
+								<legend>Clear Message</legend>
 
-						<fieldset>
-							<legend>OnClick Close</legend>
-							<form id="PopupMenu-ClearMessage">
-								<input id="PopupMenu-OnClickClose-enable-input" type="checkbox" bind:checked={ status.config.PopupMenu.OnClickClose.enable }>
-								<label for="PopupMenu-OnClickClose-enable-input">enable</label>
-							</form>
+								<form id="PopupMenu-ClearMessage">
+									<input id="PopupMenu-ClearMessage-enable-input" type="checkbox" bind:checked={status.config.PopupMenu.ClearMessage.enable}>
+									<label for="PopupMenu-ClearMessage-enable-input">enable</label>
+								</form>
 
-							<form>
-								<input id="PopupMenu-ClearMessage-timeout" name="PopupMenu-ClearMessage-timeout" type="number"
-									min={ status.define.PopupMenuOnClickCloseTimeoutValueMin }
-									max={ status.define.PopupMenuOnClickCloseTimeoutValueMax }
-									step={ status.define.PopupMenuOnClickCloseTimeoutValueStep }
-									value={ status.config.PopupMenu.OnClickClose.timeout }
-									oninput={ eventPopupOnClickCloseTimeout }
-								>
-								<label for="PopupMenu-ClearMessage-timeout">timeout ({ status.define.PopupMenuOnClickCloseTimeoutValueMin } ~ { status.define.PopupMenuOnClickCloseTimeoutValueMax } seconds)</label>
-							</form>
-						</fieldset>
-					</div>
-				</section>
+								<form>
+									<DebouncedNumericInput
+										id="PopupMenu-ClearMessage-timeout"
+										bind:value={status.config.PopupMenu.ClearMessage.timeout}
+										min={status.define.PopupMenuClearMessageTimeoutValueMin}
+										max={status.define.PopupMenuClearMessageTimeoutValueMax}
+										step={status.define.PopupMenuClearMessageTimeoutValueStep}
+										debounceTime={status.define.OptionsPageInputDebounceTime}
+									/>
+									<label for="PopupMenu-ClearMessage-timeout">timeout ({ status.define.PopupMenuClearMessageTimeoutValueMin } ~ { status.define.PopupMenuClearMessageTimeoutValueMax } seconds)</label>
+								</form>
+							</fieldset>
+
+							<fieldset>
+								<legend>OnClick Close</legend>
+
+								<form id="PopupMenu-ClearMessage">
+									<input id="PopupMenu-OnClickClose-enable-input" type="checkbox" bind:checked={status.config.PopupMenu.OnClickClose.enable}>
+									<label for="PopupMenu-OnClickClose-enable-input">enable</label>
+								</form>
+
+								<form>
+									<DebouncedNumericInput
+										id="PopupMenu-OnClickClose-timeout"
+										bind:value={status.config.PopupMenu.OnClickClose.timeout}
+										min={status.define.PopupMenuOnClickCloseTimeoutValueMin}
+										max={status.define.PopupMenuOnClickCloseTimeoutValueMax}
+										step={status.define.PopupMenuOnClickCloseTimeoutValueStep}
+										debounceTime={status.define.OptionsPageInputDebounceTime}
+									/>
+									<label for="PopupMenu-OnClickClose-timeout">timeout ({ status.define.PopupMenuOnClickCloseTimeoutValueMin } ~ { status.define.PopupMenuOnClickCloseTimeoutValueMax } seconds)</label>
+								</form>
+							</fieldset>
+						</div>
+					</section>
 
 				<!-- Debug -->
 				<section class="container">
