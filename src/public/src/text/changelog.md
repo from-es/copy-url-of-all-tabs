@@ -1,3 +1,12 @@
+#### [1.10.0] - 2025/10/28
+
+- feat
+	- Improved the responsiveness and stability of numeric input fields on the options page.
+- fix
+	- Fixed an issue where the placeholder text for the custom delay setting on the options page was incorrect.
+- improve
+	- Refactored UI components on the options page for better performance and maintainability.
+
 #### [1.9.0] - 2025/10/24
 
 - improve
