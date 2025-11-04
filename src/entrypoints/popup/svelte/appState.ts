@@ -1,16 +1,25 @@
+// Import Types
+import type { Action, EventOnClickActionResult } from "./types";
+
 // Import Svelte
 import { writable, derived } from "svelte/store";
 
-
+// AppStateの型定義
+type AppState = {
+	isLoading    : boolean;
+	currentAction: Action | null;
+	result       : EventOnClickActionResult | null;
+	message      : string | null;
+};
 
 // PopupMenu の状態管理用変数の初期化
-const appState = writable(getDefaultValueOfAppState());
+const appState = writable<AppState>(getDefaultValueOfAppState());
 
 /**
  * appState オブジェクトのテンプレート
- * @returns {object}
+ * @returns {AppState}
  */
-function getDefaultValueOfAppState() {
+function getDefaultValueOfAppState(): AppState {
 	return {
 		isLoading    : false,
 		currentAction: null,
@@ -21,18 +30,18 @@ function getDefaultValueOfAppState() {
 
 /**
  * result オブジェクトのテンプレート
- * @returns {object}
+ * @returns {ActionResult}
  */
-function createResultTemplate() {
+function createResultTemplate(): EventOnClickActionResult {
 	return {
 		action   : null,
-		status   : null,    // クリップボードへのアクセス成否
-		message  : null,
-		judgment : false,   // 結果の総合判断 >> メッセージ表示用
+		status   : false,
+		message  : "",
+		judgment : false,
 		urlList  : [],
 		clipboard: {
-			direction: null, // "From Tabs to Clipboard" or "From Clipboard to Tabs"
-			text     : null  // クリップボードの中身
+			direction: null,
+			text     : null
 		}
 	};
 };
@@ -40,7 +49,7 @@ function createResultTemplate() {
 // PopupMenu の状態管理用メソッド
 const actionStore = {
 	// アクション開始
-	startAction: (action) => {
+	startAction: (action: Action | null) => {
 		appState.update(
 			(state) => {
 				return {
@@ -58,7 +67,7 @@ const actionStore = {
 	},
 
 	// アクション完了
-	completeAction: (result) => {
+	completeAction: (result: EventOnClickActionResult | null) => {
 		appState.update((state) => {
 			return {
 				// 現在の appState の値、スプレッド構文で展開
@@ -73,7 +82,7 @@ const actionStore = {
 	},
 
 	// メッセージを設定
-	setMessage: (message) => {
+	setMessage: (message: string | null) => {
 		appState.update((state) => {
 			return {
 				// 現在の appState の値、スプレッド構文で展開

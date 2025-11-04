@@ -26,24 +26,33 @@ type Config_Delta = {
 		regex: boolean;
 	};
 	Filtering: {
-		enable?: boolean;     // v0.7.0 で削除
-		Copy  ?: {            // v0.7.0 で追加
-			enable?: boolean;
-		};
-		Paste?: {             // v0.7.0 で追加
-			enable?: boolean;
+		Deduplicate: {
+			Copy:  {
+				enable: boolean;
+			};
+			Paste: {
+				enable: boolean;
+			};
 		};
 		Protocol: {
-			http      : boolean;
-			https     : boolean;
-			file      : boolean;
-			ftp       : boolean;
-			data      : boolean;
-			blob      : boolean;
-			mailto    : boolean;
-			javascript: boolean;
-			about     : boolean;
-			chrome    : boolean;
+			Copy: {
+				enable: boolean;
+			};
+			Paste: {
+				enable: boolean;
+			};
+			type: {
+				http:       boolean;
+				https:      boolean;
+				file:       boolean;
+				ftp:        boolean;
+				data:       boolean;
+				blob:       boolean;
+				mailto:     boolean;
+				javascript: boolean;
+				about:      boolean;
+				chrome:     boolean;
+			};
 		};
 	};
 	Format: {
@@ -294,36 +303,38 @@ const define: Define = {
 			regex: true  // true >> search regex, false >> clipboard text split "\n" → test URL.canParse(line text)
 		},
 		Filtering : {
-			Copy :  {
-				enable: true
+			Deduplicate: {
+				Copy: {
+					enable: false
+				},
+				Paste: {
+					enable: false
+				}
 			},
-			Paste: {
-				enable: true
-			},
-			Protocol : { // URI schemes(https://developer.mozilla.org/en-US/docs/Web/URI/Schemes)
-				/*
-					Chrome          : FTP Protocol support ends Google Chrome 95 and later
-					Firefox         : セキュリティの仕様から 特権URL は開けない(https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
-					privileged URLs : "about:*****"  (e.x. about:config, about:addons, about:debugging)。ただし非特権URL (about:blank) は使用可
-				*/
-				http : true,  // "http:"
-				https: true,  // "https:"
-				file : false, // "file:"
-				ftp  : false, // "ftp:"
-
-				data: false, // "data:"
-				blob: false, // "blob:"
-
-				mailto    : false, // "mailto:"
-				javascript: false, // "javascript:"
-
-				about: false, // "about:"
-
-				chrome: false, // "chrome:"
-				/*
-				edge   : false// "edge:"
-				vivaldi: false// "vivaldi:"
-				*/
+			Protocol: {
+				Copy: {
+					enable: true
+				},
+				Paste: {
+					enable: true
+				},
+				type: {
+					/*
+				   	Chrome         : FTP Protocol support ends Google Chrome 95 and later
+				   	Firefox        : セキュリティの仕様から 特権URL は開けない(https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
+				   	privileged URLs: "about:*****"  (e.x. about:config, about:addons, about:debugging)。ただし非特権URL (about:blank) は使用可
+					*/
+					http      : true,
+					https     : true,
+					file      : false,
+					ftp       : false,
+					data      : false,
+					blob      : false,
+					mailto    : false,
+					javascript: false,
+					about     : false,
+					chrome    : false,
+				}
 			}
 		},
 		Format: {
@@ -502,8 +513,8 @@ const define: Define = {
 
 		// Filtering
 		{
-			property: "Filtering.Copy.enable",
-			fail    : () => { return define.Config.Filtering?.Copy?.enable; },
+			property: "Filtering.Deduplicate.Copy.enable",
+			fail    : () => { return define.Config.Filtering.Deduplicate.Copy.enable; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -513,8 +524,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Paste.enable",
-			fail    : () => { return define.Config.Filtering?.Paste?.enable; },
+			property: "Filtering.Deduplicate.Paste.enable",
+			fail    : () => { return define.Config.Filtering.Deduplicate.Paste.enable; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -524,8 +535,30 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol",
-			fail    : () => { return define.Config.Filtering.Protocol; },
+			property: "Filtering.Protocol.Copy.enable",
+			fail    : () => { return define.Config.Filtering.Protocol.Copy.enable; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.boolean()
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.Protocol.Paste.enable",
+			fail    : () => { return define.Config.Filtering.Protocol.Paste.enable; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.boolean()
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.Protocol.type",
+			fail    : () => { return define.Config.Filtering.Protocol.type; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -535,8 +568,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.http",
-			fail    : () => { return define.Config.Filtering.Protocol.http; },
+			property: "Filtering.Protocol.type.http",
+			fail    : () => { return define.Config.Filtering.Protocol.type.http; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -546,8 +579,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.https",
-			fail    : () => { return define.Config.Filtering.Protocol.https; },
+			property: "Filtering.Protocol.type.https",
+			fail    : () => { return define.Config.Filtering.Protocol.type.https; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -557,8 +590,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.file",
-			fail    : () => { return define.Config.Filtering.Protocol.file; },
+			property: "Filtering.Protocol.type.file",
+			fail    : () => { return define.Config.Filtering.Protocol.type.file; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -568,8 +601,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.ftp",
-			fail    : () => { return define.Config.Filtering.Protocol.ftp; },
+			property: "Filtering.Protocol.type.ftp",
+			fail    : () => { return define.Config.Filtering.Protocol.type.ftp; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -579,8 +612,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.data",
-			fail    : () => { return define.Config.Filtering.Protocol.data; },
+			property: "Filtering.Protocol.type.data",
+			fail    : () => { return define.Config.Filtering.Protocol.type.data; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -590,8 +623,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.blob",
-			fail    : () => { return define.Config.Filtering.Protocol.blob; },
+			property: "Filtering.Protocol.type.blob",
+			fail    : () => { return define.Config.Filtering.Protocol.type.blob; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -601,8 +634,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.mailto",
-			fail    : () => { return define.Config.Filtering.Protocol.mailto; },
+			property: "Filtering.Protocol.type.mailto",
+			fail    : () => { return define.Config.Filtering.Protocol.type.mailto; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -612,8 +645,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.javascript",
-			fail    : () => { return define.Config.Filtering.Protocol.javascript; },
+			property: "Filtering.Protocol.type.javascript",
+			fail    : () => { return define.Config.Filtering.Protocol.type.javascript; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -623,8 +656,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.about",
-			fail    : () => { return define.Config.Filtering.Protocol.about; },
+			property: "Filtering.Protocol.type.about",
+			fail    : () => { return define.Config.Filtering.Protocol.type.about; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()
@@ -634,8 +667,8 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.Protocol.chrome",
-			fail    : () => { return define.Config.Filtering.Protocol.chrome; },
+			property: "Filtering.Protocol.type.chrome",
+			fail    : () => { return define.Config.Filtering.Protocol.type.chrome; },
 			rule    : (value) => {
 								return v8n()
 									.not.undefined()

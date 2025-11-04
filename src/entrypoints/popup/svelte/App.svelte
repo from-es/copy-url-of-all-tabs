@@ -2,16 +2,19 @@
 	// WXT provided cross-browser compatible API and types.
 	import { browser } from "wxt/browser";
 
+	// Import Types
+	import type { Config, Define, Status }           from "@/assets/js/types/";
+	import type { Action, EventOnClickActionResult } from "./types";
+
 	// Import Svelte
 	import { onMount } from "svelte";
 
-	// Import from Script
+	// Import Module
 	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
 	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
 	import { eventActionCopy, eventActionPaste }                            from "./userActions";
 	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                                               from "@/assets/js/utils/setSafeHTML";
-
 
 	const { status } = $props();
 
@@ -21,7 +24,10 @@
 		initialize();
 	});
 
-	function initialize() {
+	/**
+	 * ポップアップメニューの初期化処理を行う。
+	 */
+	function initialize(): void {
 		// スタイル(popup.css >> :root要素)の動的書き換え
 		const fontSize = status.config.PopupMenu.fontsize;
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
@@ -31,13 +37,16 @@
 		console.log("Debug, status >>", status);
 	}
 
-
-
-	async function eventOnClick(event: MouseEvent) {
+	/**
+	 * ボタンクリックイベントを処理するハンドラ。
+	 * data-action属性に基づいて、対応するアクションを実行。
+	 * @param {MouseEvent} event - マウスクリックイベントオブジェクト
+	 */
+	async function eventOnClick(event: MouseEvent): Promise<void> {
 		const self               = event.currentTarget;
-		const { config, define } = await initializeConfig(null);                                    // 「ポップアップメニュー呼び出した状態でオプション変更 → 再度、ポップアップメニューから呼び出し」時の対策@2024/10/18
-		const action             = self ? (self as HTMLElement).getAttribute("data-action") : null; // 実行するアクション >> "copy" or "paste" or "options"
-		let   result             = null;
+		const { config, define } = await initializeConfig(null);                                              // 「ポップアップメニュー呼び出した状態でオプション変更 → 再度、ポップアップメニューから呼び出し」時の対策@2024/10/18
+		const action             = self ? (self as HTMLElement).getAttribute("data-action") as Action : null; // 実行するアクション >> "copy" or "paste" or "options"
+		let   result: EventOnClickActionResult | null = null;
 
 		// 状態管理を appState に委譲
 		actionStore.startAction(action);
@@ -45,7 +54,7 @@
 		try {
 			result = await handleAction(action, config, define);
 		} catch (error) {
-			result = createErrorResult(action, error);
+			result = createErrorResult(action, error as Error);
 
 			// debug
 			console.error("Error, Action execution failed. { action, error } >>", { action, error });
@@ -59,7 +68,7 @@
 
 		// "paste" アクションの後処理
 		if ( action === "paste" && result && result.judgment && result.urlList?.length > 0 ) {
-			openURLs(result.urlList, config.Tab, status);
+			openURLs(result.urlList, config, status);
 		}
 
 		// メッセージの表示
@@ -69,16 +78,26 @@
 		closePopupMenu(config.PopupMenu.OnClickClose);
 	}
 
-	async function eventOpenOptionsPage() {
+	/**
+	 * 拡張機能のオプションページを開く。
+	 * ページを開いた後、少し遅れてポップアップメニューを閉じる。
+	 */
+	async function eventOpenOptionsPage(): Promise<void> {
 		browser.runtime.openOptionsPage();
 
 		const delay = 500; // milliseconds
 		window.setTimeout(() => { window.close(); }, delay);
 	}
 
-	function eventDoNotMatch(action) {
+	/**
+	 * いずれのアクションにも一致しない場合のフォールバック処理。
+	 * エラーメッセージを含む結果オブジェクトを生成。
+	 * @param   {Action | null}            action - 実行されなかったアクション
+	 * @returns {EventOnClickActionResult}        - エラー情報を含む結果オブジェクト
+	 */
+	function eventDoNotMatch(action: Action | null): EventOnClickActionResult {
 		const message = `Error, Do not match any switch statement. >> eventOnClick() >> ${action}`;
-		const result  = {
+		const result: EventOnClickActionResult  = {
 			action,
 			status   : false,
 			message  : message,
@@ -93,16 +112,15 @@
 		return result;
 	}
 
-
-
 	/**
-	 * @param   {string} action
-	 * @param   {object} config
-	 * @param   {object} define
-	 * @returns {object}        - result
+	 * 渡されたアクションに応じて、対応するイベント処理関数を呼び出す。
+	 * @param   {Action | null}                            action - 実行するアクション
+	 * @param   {Config}                                   config - 拡張機能の設定オブジェクト
+	 * @param   {Define}                                   define - 拡張機能の定義オブジェクト
+	 * @returns {Promise<EventOnClickActionResult | null>}        - アクションの実行結果。'options'アクションの場合は null を返す
 	 */
-	async function handleAction(action, config, define) {
-		let result = null;
+	async function handleAction(action: Action | null, config: Config, define: Define): Promise<EventOnClickActionResult | null> {
+		let result: EventOnClickActionResult | null = null;
 
 		switch (action) {
 			case "copy":
@@ -122,10 +140,12 @@
 	}
 
 	/**
-	 * @param {string} action
-	 * @param error
+	 * アクション実行中にエラーが発生した場合に、エラー結果オブジェクトを生成。
+	 * @param   {Action | null}            action - エラーが発生したアクション
+	 * @param   {Error}                    error  - 発生したエラーオブジェクト
+	 * @returns {EventOnClickActionResult}        - エラー情報を含む結果オブジェクト
 	 */
-	function createErrorResult(action, error) {
+	function createErrorResult(action: Action | null, error: Error): EventOnClickActionResult {
 		let message = "An error occurred during the operation.";
 
 		if (error instanceof Error && error?.message) {
@@ -143,12 +163,12 @@
 	}
 
 	/**
-	 * @param   {string[]} urlList
-	 * @param   {object}   option
-	 * @param   {object}   status
-	 * @returns {void}
+	 * 指定されたURLリストを新しいタブで開くよう、バックグラウンドスクリプトにメッセージを送信。
+	 * @param {string[]} urlList - 開く対象のURLリスト
+	 * @param {Config}   option  - 拡張機能の設定オブジェクト
+	 * @param {Status}   status  - 現在のステータスオブジェクト
 	 */
-	function openURLs(urlList, option, status) {
+	function openURLs(urlList: string[], option: Config, status: Status): void {
 		const message  = {
 			action  : status.define.Messaging.OpenURLs,
 			address : {
@@ -177,13 +197,12 @@
 	}
 
 	/**
-	 * メッセージの表示
-	 * @param   {string} action
-	 * @param   {object} result
-	 * @param   {object} config
-	 * @returns {void}
+	 * アクションの結果に基づいたメッセージをUIに表示。
+	 * @param {Action | null}                   action - 実行されたアクション
+	 * @param {EventOnClickActionResult | null} result - アクションの結果オブジェクト
+	 * @param {Config}                          config - 拡張機能の設定オブジェクト
 	 */
-	function showMessage(action, result, config) {
+	function showMessage(action: Action | null, result: EventOnClickActionResult | null, config: Config): void {
 		const message = createMessage(action, result);
 		const option  = config.PopupMenu.ClearMessage;
 
@@ -201,12 +220,12 @@
 	}
 
 	/**
-	 * メッセージの生成
-	 * @param   {string} action
-	 * @param   {object} result
-	 * @returns {string}
+	 * アクション結果から、UIに表示するためのHTMLメッセージ文字列を生成。
+	 * @param   {Action | null}                   action - 実行されたアクション
+	 * @param   {EventOnClickActionResult | null} result - アクションの結果オブジェクト
+	 * @returns {string | null}                          - 生成されたHTML文字列。結果がない場合は null を返す
 	 */
-	function createMessage(action, result) {
+	function createMessage(action: Action | null, result: EventOnClickActionResult | null): string | null {
 		if ( !result || !result?.message ) {
 			// debug
 			console.log('Debug, "result or result.message" is "null or undefined or empty"! >>', { action, result });
@@ -225,12 +244,11 @@
 	}
 
 	/**
-	 * メッセージの消去
-	 * @param   {string} message - HTML Text
-	 * @param   {object} option  - config.PopupMenu.ClearMessage
-	 * @returns {void}
+	 * 表示されているメッセージを、設定されたタイムアウト後に消去。
+	 * @param {string}                              message - 表示されているメッセージ文字列
+	 * @param {Config["PopupMenu"]["ClearMessage"]} option  - メッセージクリアに関する設定
 	 */
-	function clearMessage(message, option) {
+	function clearMessage(message: string, option: Config["PopupMenu"]["ClearMessage"]): void {
 		if ( !message || !(typeof message === "string") || !(message.length > 0) ) {
 			// debug
 			console.error("Error, Invalid argument passed to showMessage(message, option) >> message >>", message);
@@ -264,10 +282,10 @@
 	}
 
 	/**
-	 * @param   {object} config
-	 * @returns {void}
+	 * ポップアップメニューを、設定されたタイムアウト後に閉じる。
+	 * @param {Config["PopupMenu"]["OnClickClose"]} option - ポップアップメニューを閉じる動作に関する設定
 	 */
-	function closePopupMenu(option) {
+	function closePopupMenu(option: Config["PopupMenu"]["OnClickClose"]): void {
 		const { enable: close, timeout: delay } = option;
 
 		if ( !(typeof close === "boolean") || !(typeof delay === "number" && delay >= 0) ) {
