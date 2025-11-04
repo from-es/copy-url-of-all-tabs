@@ -1,6 +1,6 @@
 # Copy URL of All Tabs
 
-**Last Updated:** October 20, 2025
+**Last Updated:** November 4, 2025
 
 ## Overview
 
@@ -16,16 +16,18 @@ This extension provides the following features:
 	*   **Paste:** Reads a list of URLs from the clipboard and opens each one in a new tab. The behavior of how tabs are opened is configurable.
 	*   **Options:** Opens the extension's settings page.
 
-### Options Page
+## Options
 
-You can customize the extension's behavior to fit your workflow. The settings are organized into the following categories:
+You can customize the extension's behavior to fit your workflow. Changes are not applied until you click the **Save** button.
 
-#### Copy
+### Copy
 
 *   **Format:** Controls the format of the text copied to the clipboard.
 	*   **Format Type:** Choose between `text` (list of URLs), `json` (structured with titles and URLs), or `custom`.
 	*   **Custom Template:** If `custom` is selected, you can define your own format using `$title` and `$url` as placeholders.
 	*   **MIME Type:** For the `custom` format, you can set the MIME type of the copied data (e.g., `text/plain` or `text/html`).
+*   **Deduplication:**
+	*   **Remove Duplicate URLs:** When enabled, this option prevents copying duplicate tabs (tabs with the same URL), ensuring that only unique URLs are copied.
 
 ### Paste
 
@@ -33,6 +35,9 @@ You can customize the extension's behavior to fit your workflow. The settings ar
 
 *   **Search for URLs:** When enabled, the extension uses a regular expression to find URLs within the entire clipboard text. If disabled, it treats each line of the text as a potential URL.
 
+#### **Deduplication**
+
+*   **Remove Duplicate URLs:** When enabled, this option ignores duplicate URLs in the clipboard and opens only unique URLs in new tabs.
 
 #### **Tab**
 
@@ -47,11 +52,40 @@ Controls how new tabs are opened.
 
 For **Delay** and **Task Control** settings, please refer to "[Settings Details (Paste)](#settings-details-paste)".
 
+### Filtering
+
+*   **Enable Filtering:** You can enable or disable URL filtering independently for the **Copy** and **Paste** actions.
+*   **Allowed Protocols:** When filtering is enabled, only URLs with the selected protocols will be processed (e.g., `http`, `https`, `file`, etc.).
+
+### System
+
+*   **Options Page:**
+	*   **Font Size:** Adjust the font size for the options page itself.
+*   **Popup Menu:**
+	*   **Font Size:** Adjust the font size for the popup menu.
+	*   **Clear Message:** Automatically clear success or error messages in the popup after a set number of seconds.
+	*   **OnClick Close:** Automatically close the popup menu after an action (like Copy or Paste) is performed.
+
+### Debug
+
+*   **Enable Logging:** Output debug information to the browser's developer console.
+*   **Add Timestamp:** Add a timestamp to the debug logs.
+*   **Time Coordinate:** Choose the time coordinate for the timestamp (UTC or GMT).
+
+### Import / Export
+
+Allows you to export your current settings to a file or import settings from a file. Click the 'Export' button to save your settings to a JSON file, or click 'Import' and select a JSON file to load previously saved settings. This is useful for backing up your configuration or sharing it across different browsers or profiles.
+
+### Save / Reset
+
+*   **Save:** Saves all changes made on the settings page. Changes will not take effect until this button is clicked.
+*   **Reset:** Resets all settings to their original defaults. This action will reset the displayed settings to their initial state, but the settings will not be overwritten until you click Save.
+
 ## Settings Details (Paste)
 
 ### Delay
 
-*   **Delay (Common):** Set a general delay (in milliseconds) to wait before opening the next tab.
+*   **Delay:** Set a common delay time in milliseconds to wait before opening the next tab.
 *   **Custom Delay:** Define rules to set specific delay times for URLs that match certain patterns.
 
 ### Task Control
@@ -59,16 +93,14 @@ For **Delay** and **Task Control** settings, please refer to "[Settings Details 
 Controls how multiple URLs are processed and queued.
 
 *   **Processing Unit:** Sets how URLs are grouped and processed.
-    *   `Unitary`: Processes URLs **one by one as individual tasks**. This is the lightest method for your PC.
-    *   `Batch`: Processes URLs by **dividing them into specified groups**.
-    *   `Monolithic`: Processes **all URLs as one large task**. Other operations may be delayed during this process.
+	*   `Unitary`: Processes URLs **one by one as individual tasks**. This is the lightest method for your PC.
+	*   `Batch`: Processes URLs by **dividing them into specified groups**.
+	*   `Monolithic`: Processes **all URLs as one large task**. Other operations may be delayed during this process.
 *   **Execution Order:** Sets how generated tasks are added to the execution queue.
-    *   `Parallel`: Bypasses the queue and attempts to open all tabs at once. Not recommended for a large number of URLs.
-    *   `Append`: Adds new tasks to the end of the queue.
-    *   `Prepend`: Adds new tasks to the front of the waiting queue to be processed next.
-    *   `Insert Next`: Same as 'Prepend'. **Reserved for future use**. It is commented out in the UI.
-
----
+  * `Parallel`: Bypasses the queue and attempts to open all tabs at once. Not recommended for a large number of URLs.
+  - `Append`: Adds new tasks to the end of the queue.
+  - `Prepend`: Adds new tasks to the front of the waiting queue to be processed next.
+  - `Insert Next`: Same as 'Prepend'. **Reserved for future use**. It is commented out in the UI.
 
 #### Operation Examples: Combinations of Processing Unit and Execution Order
 
@@ -82,33 +114,6 @@ These settings significantly impact browser responsiveness and how tabs are open
     *   In this mode, all URLs are processed as a single large task, so the effect of `Execution Order: Append` or `Prepend` is limited. Once processing begins, no other tasks can interrupt until all tabs have finished opening.
 
 By combining these settings, you can adjust the user experience and the load on your PC.
-
-*   **Enable Filtering:** You can enable or disable URL filtering independently for the **Copy** and **Paste** actions.
-*   **Allowed Protocols:** When filtering is enabled, only URLs with the selected protocols will be processed (e.g., `http`, `https`, `file`, etc.).
-
-#### System
-
-*   **Options Page:**
-	*   **Font Size:** Adjust the font size for the options page itself.
-*   **Popup Menu:**
-	*   **Font Size:** Adjust the font size for the popup menu.
-	*   **Clear Message:** Automatically clear success or error messages in the popup after a set number of seconds.
-	*   **OnClick Close:** Automatically close the popup menu after an action (like Copy or Paste) is performed.
-
-#### Debug
-
-*   **Enable Logging:** Output debug information to the browser's developer console.
-*   **Add Timestamp:** Add a timestamp to the debug logs.
-*   **Time Coordinate:** Choose the time coordinate for the timestamp (UTC or GMT).
-
-#### Import / Export
-
-Allows you to export your current settings to a file or import settings from a file. Click the 'Export' button to save your settings to a JSON file, or click 'Import' and select a JSON file to load previously saved settings. This is useful for backing up your configuration or sharing it across different browsers or profiles.
-
-#### Save / Reset
-
-*   **Save:** Saves all changes made on the settings page. Changes will not take effect until this button is clicked.
-*   **Reset:** Resets all settings to their original defaults. This action cannot be undone.
 
 ## Permissions Required
 

@@ -16,7 +16,7 @@ type ExtensionMessage = {
 	status: Status;
 	argument?: {
 		urlList?: string[];
-		option ?: Config["Tab"];
+		option ?: Config;
 
 		[key: string]: unknown;
 	};

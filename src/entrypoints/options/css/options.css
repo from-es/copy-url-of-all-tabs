@@ -211,7 +211,7 @@ header, main, footer {
 	padding-top   : 0;
 	padding-bottom: 0;
 }
-#setting-copy > legend, #setting-paste > legend, #setting-system > legend {
+#setting-copy > legend, #setting-paste > legend, #setting-filtering > legend, #setting-system > legend {
 	font-size: 1.5rem;
 	font-weight: normal;
 }
@@ -286,7 +286,7 @@ main {
 	border-bottom: dotted 2px #666;
 }
 
-.flex-side { width: 11.5rem; }
+.flex-side { width: 13rem; }
 .flex-main { flex: 1; }
 
 .flex-side > h3 {
