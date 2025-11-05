@@ -33,9 +33,9 @@ customElements.define("component-popover-message", PopoverMessageElement, { exte
 /**
  * Popover API(https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) を使ったメッセージ表示。
  * 複数のメッセージをスタック表示し、ダブルクリックで閉じる機能を持つ。
- * @lastupdate 2025/09/12
- * @support    Google Chrome 114 or later (Popover API)
- * @original   ポップオーバーの表示/非表示を手動で切り替える(https://ics.media/entry/230530/#ポップオーバーの表示/非表示を手動で切り替える)
+ * @lastupdate 2025/11/05
+ * @support    Google Chrome 114+, Mozilla Firefox 125+ (dependent on Popover API compatibility)
+ * @original   ポップオーバーの表示/非表示を手動で切り替える (https://ics.media/entry/230530/#ポップオーバーの表示/非表示を手動で切り替える)
  */
 export class PopoverMessage {
 	constructor () {
@@ -186,7 +186,8 @@ export class PopoverMessage {
 	 * @param {PopoverMessageOptions} options - 表示するメッセージの設定オブジェクト
 	 */
 	static create(options: PopoverMessageOptions): void {
-		console.log("PopoverMessage.create() called.");
+		console.debug("PopoverMessage.create() called.");
+
 		this.#main(options);
 	}
 
@@ -198,7 +199,7 @@ export class PopoverMessage {
 		const popoverMessage = this.#preprocess(options);
 
 		if ( !popoverMessage ) {
-			console.log("PopoverMessage.#main(): Preprocessing failed or message already displayed.");
+			console.error("PopoverMessage.#main(): Preprocessing failed or message already displayed.");
 			return;
 		}
 
@@ -210,7 +211,8 @@ export class PopoverMessage {
 	 * @param {ProcessedMessageOptions} popoverMessage - 処理済みのメッセージ設定オブジェクト
 	 */
 	static #setupPopoverMessage(popoverMessage: ProcessedMessageOptions): void {
-		console.log("PopoverMessage.#setupPopoverMessage(): Setting up new popover.");
+		console.debug("PopoverMessage.#setupPopoverMessage(): Setting up new popover.");
+
 		// ポップオーバーをDOM(document.body)に追加する
 		const popover = this.#createPopoverElement(popoverMessage);
 		const root    = document.body;
@@ -233,7 +235,9 @@ export class PopoverMessage {
 		popover.addEventListener("toggle", (event: Event) => {
 			const customEvent = event as ToggleEvent; // ToggleEvent にキャスト
 			const isOpen = (customEvent.newState === "open");
-			console.log(`PopoverMessage: Popover toggle event. isOpen: ${isOpen}, newState: ${customEvent.newState}`);
+
+			console.debug(`PopoverMessage: Popover toggle event. isOpen: ${isOpen}, newState: ${customEvent.newState}`);
+
 			this.#alignPopoverMessage(isOpen);
 		});
 	}
@@ -279,9 +283,11 @@ export class PopoverMessage {
 	static #alignPopoverMessage(isOpen: boolean): void {
 		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<HTMLDivElement>;
 		const array  = Array.from(popovers).reverse();
-		// ポップオーバーを順番に縦に並べる
-		// isOpen : true  >> opacityのアニメーション
-		// isOpen : false >> opacityとtranslateのアニメーション
+		/*
+			ポップオーバーを順番に縦に並べる
+			isOpen: true  >> opacity のアニメーション
+			isOpen: false >> opacity と translate のアニメーション
+		*/
 		(array).forEach((popover, index) => {
 			popover.style.transition = isOpen
 				? this.#default.style.open
@@ -301,25 +307,27 @@ export class PopoverMessage {
 	}
 
 	/**
-	 * 表示されるポップオーバーメッセージの数を制限し、古いものを削除
+	 * 表示されるポップオーバーメッセージの数を制限し、古いメッセージを削除
 	 */
 	static #limitPopoverMessage(): void {
 		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<HTMLDivElement>;
-		console.log(`PopoverMessage.#limitPopoverMessage(): Current popovers count: ${popovers.length}`);
+		console.debug(`PopoverMessage.#limitPopoverMessage(): Current popovers count: ${popovers.length}`);
 
 		//
 		if ( popovers.length > this.#default.message.max ) {
-			console.log(`PopoverMessage.#limitPopoverMessage(): Removing oldest popover.`);
+			console.debug(`PopoverMessage.#limitPopoverMessage(): Removing oldest popover.`);
+
 			this.#removePopoverElement(popovers[0]);
 		}
 	}
 
 	/**
 	 * ポップオーバーを削除
-	 * @param {HTMLDivElement} popover - 削除したいポップオーバー要素
+	 * @param {HTMLDivElement} popover - 削除対象のポップオーバー要素
 	 */
 	static #removePopoverElement(popover: HTMLDivElement): void {
-		console.log("PopoverMessage.#removePopoverElement(): Removing popover.");
+		console.debug("PopoverMessage.#removePopoverElement(): Removing popover.");
+
 		// hidePopoverメソッドで非表示にする
 		(popover as HTMLDivElement & { hidePopover: () => void }).hidePopover();
 
@@ -347,7 +355,7 @@ export class PopoverMessage {
 		// Verify Message Text
 		let warning = "";
 		if ( !popoverMessage.message ) { // !popoverMessage.message === undefined or null or ""
-			warning = "このテキストは確認用メッセージです。これが表示されている場合は、フラッシュメッセージ用に空のテキストが渡されている可能性があります。";
+			warning = "Message text missing. This is a developer debug message. The message text may be empty or incorrectly provided.";
 			popoverMessage.message = [ warning ];
 		}
 		if ( Array.isArray(popoverMessage.message) && !(popoverMessage.message).length ) {
@@ -367,13 +375,13 @@ export class PopoverMessage {
 
 		// 引数がオブジェクトであること
 		if (typeof argument !== "object" || argument === null) {
-			console.log(`${template} Arguments is not an Object or is null >>`, argument);
+			console.error(`${template} Arguments is not an Object or is null >>`, argument);
 			return false;
 		}
 
 		// message プロパティの検証
 		if (!Object.hasOwn(argument, "message")) {
-			console.log(`${template} "message" property is missing.`);
+			console.error(`${template} "message" property is missing.`);
 			return false;
 		}
 		if (typeof argument.message === "string") {
@@ -381,46 +389,46 @@ export class PopoverMessage {
 		} else if (Array.isArray(argument.message)) {
 			// 配列の場合、全要素が文字列でなければNG
 			if (!(argument.message).every(item => typeof item === "string")) {
-				console.log(`${template} "message" array contains non-string elements >>`, argument.message);
+				console.error(`${template} "message" array contains non-string elements >>`, argument.message);
 				return false;
 			}
 		} else {
 			// 文字列でも配列でもない場合はNG
-			console.log(`${template} "message" is not a string or an array >>`, argument.message);
+			console.error(`${template} "message" is not a string or an array >>`, argument.message);
 			return false;
 		}
 
 		// messagetype プロパティの検証
 		const regex_MessageType = /^(notice|success|warning|error|debug)$/i;
 		if (Object.hasOwn(argument, "messagetype") && (!argument.messagetype || typeof argument.messagetype !== "string" || !(regex_MessageType).test(argument.messagetype))) {
-			console.log(`${template} Arguments(message type) >>`, argument?.messagetype);
+			console.error(`${template} Arguments(message type) >>`, argument?.messagetype);
 			return false;
 		}
 
 		// timeout プロパティの検証
 		if (Object.hasOwn(argument, "timeout") && (!argument.timeout || typeof argument.timeout !== "number" || argument.timeout <= 0)) {
-			console.log(`${template} Arguments(timeout) >>`, argument?.timeout);
+			console.error(`${template} Arguments(timeout) >>`, argument?.timeout);
 			return false;
 		}
 
 		// fontsize プロパティの検証
 		if (Object.hasOwn(argument, "fontsize") && (!argument.fontsize || typeof argument.fontsize !== "string")) {
-			console.log(`${template} Arguments(font size) >>`, argument?.fontsize);
+			console.error(`${template} Arguments(font size) >>`, argument?.fontsize);
 			return false;
 		}
 
 		// color プロパティの検証 (font と background)
 		if (Object.hasOwn(argument, "color")) {
 			if (typeof argument.color !== "object" || argument.color === null) {
-				console.log(`${template} Arguments(color) is not an Object or is null >>`, argument?.color);
+				console.error(`${template} Arguments(color) is not an Object or is null >>`, argument?.color);
 				return false;
 			}
 			if (Object.hasOwn(argument.color, "font") && (!argument.color.font || typeof argument.color.font !== "string")) {
-				console.log(`${template} Arguments(font color) >>`, argument?.color?.font);
+				console.error(`${template} Arguments(font color) >>`, argument?.color?.font);
 				return false;
 			}
 			if (Object.hasOwn(argument.color, "background") && (!argument.color.background || typeof argument.color.background !== "string")) {
-				console.log(`${template} Arguments(background color) >>`, argument?.color?.background);
+				console.error(`${template} Arguments(background color) >>`, argument?.color?.background);
 				return false;
 			}
 		}
@@ -524,8 +532,7 @@ export class PopoverMessage {
 		const isValid          = (fontSize && typeof fontSize === "string" && /^([0-9]+)$/.test(fontSize));
 		const numberOfFontSize = (isValid && typeof Number(fontSize) === "number") ? Number(fontSize) : 16; // falsy な値の場合は 16 を適応
 
-		// debug
-		// console.log("Font size of root elements:", { rootElement, rootFontSize, isValid, numberFontSize });
+		console.debug("Font size of root elements:", { rootElement, rootFontSize, isValid, numberOfFontSize });
 
 		return numberOfFontSize;
 	}
