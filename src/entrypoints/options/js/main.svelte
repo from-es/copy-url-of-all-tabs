@@ -561,7 +561,7 @@
 										use:sortable={{
 											list  : status.config.Tab.customDelay.list,
 											onSort: (newList) => {
-												status.config.Tab.customDelay.list = newList;
+												status.config.Tab.customDelay.list = newList as Config["Tab"]["customDelay"]["list"];
 											}
 										}}
 									>
@@ -680,34 +680,46 @@
 
 
 			<!-- Filtering -->
-			<fieldset id="setting-paste">
+			<fieldset id="setting-filtering">
 				<legend>Filtering</legend>
 
-				<!-- Filtering -->
+				<!-- Deduplicate URLs -->
 				<section class="container">
 					<div class="flex-side">
-						<h3>Filtering</h3>
+						<h3>URL Deduplication</h3>
 					</div>
 
 					<div class="flex-main">
-						<!-- Copy -->
 						<fieldset>
-							<legend>Copy</legend>
-
-							<form id="Filtering-Copy-enable">
-								<input id="Filtering-Copy-enable-input" data-action="copy" type="checkbox" bind:checked={ status.config.Filtering.Copy.enable }>
-								<label for="Filtering-Copy-enable-input">Filter URLs when copying</label>
+							<legend>Enable</legend>
+							<form>
+								<input id="Filtering-Deduplicate-Copy-enable-input" type="checkbox" bind:checked={ status.config.Filtering.Deduplicate.Copy.enable }>
+								<label for="Filtering-Deduplicate-Copy-enable-input">Deduplicate URLs on Copy</label>
+							</form>
+							<form>
+								<input id="Filtering-Deduplicate-Paste-enable-input" type="checkbox" bind:checked={ status.config.Filtering.Deduplicate.Paste.enable }>
+								<label for="Filtering-Deduplicate-Paste-enable-input">Deduplicate URLs on Paste</label>
 							</form>
 						</fieldset>
+					</div>
+				</section>
 
-						<!-- Paste -->
+				<!-- Protocol Filtering -->
+				<section class="container">
+					<div class="flex-side">
+						<h3>Protocol Filtering</h3>
+					</div>
+
+					<div class="flex-main">
 						<fieldset>
-							<legend>Paste</legend>
-
-							<form id="Filtering-Paste-enable">
-								<input id="Filtering-Paste-enable-input" data-action="paste" type="checkbox" bind:checked={ status.config.Filtering.Paste.enable }>
-								<label for="Filtering-Paste-enable-input">Filter URLs when pasting</label>
-
+							<legend>Enable</legend>
+							<form>
+								<input id="Filtering-Protocol-Copy-enable-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.Copy.enable }>
+								<label for="Filtering-Protocol-Copy-enable-input">Filter on Copy</label>
+							</form>
+							<form>
+								<input id="Filtering-Protocol-Paste-enable-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.Paste.enable }>
+								<label for="Filtering-Protocol-Paste-enable-input">Filter on Paste</label>
 								{#if status.config.Search.regex}
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 									{@html createSafeHTML(showNoticeMessageForPaste()) }
@@ -715,54 +727,49 @@
 							</form>
 						</fieldset>
 
-						<!-- Protocol -->
 						<fieldset>
 							<legend>Allowed Protocols (Select all that apply)</legend>
-
-							<div id="Filtering-Protocol">
-								<form id="Filtering-Protocol-http">
-									<input id="Filtering-Protocol-http-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.http }>
-									<label for="Filtering-Protocol-http-input">http</label>
+							<div id="Filtering-Protocol-type">
+								<form>
+									<input id="Filtering-Protocol-type-http-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.http }>
+									<label for="Filtering-Protocol-type-http-input">http</label>
 								</form>
-								<form id="Filtering-Protocol-https">
-									<input id="Filtering-Protocol-https-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.https }>
-									<label for="Filtering-Protocol-https-input">https</label>
+								<form>
+									<input id="Filtering-Protocol-type-https-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.https }>
+									<label for="Filtering-Protocol-type-https-input">https</label>
 								</form>
-								<form id="Filtering-Protocol-file">
-									<input id="Filtering-Protocol-https-file" type="checkbox" bind:checked={ status.config.Filtering.Protocol.file }>
-									<label for="Filtering-Protocol-https-file">file</label>
+								<form>
+									<input id="Filtering-Protocol-type-file-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.file }>
+									<label for="Filtering-Protocol-type-file-input">file</label>
 								</form>
-								<form id="Filtering-Protocol-ftp">
-									<input id="Filtering-Protocol-https-ftp" type="checkbox" bind:checked={ status.config.Filtering.Protocol.ftp }>
-									<label for="Filtering-Protocol-https-ftp">ftp</label>
+								<form>
+									<input id="Filtering-Protocol-type-ftp-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.ftp }>
+									<label for="Filtering-Protocol-type-ftp-input">ftp</label>
 								</form>
-
-								<form id="Filtering-Protocol-data">
-									<input id="Filtering-Protocol-data-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.data }>
-									<label for="Filtering-Protocol-data-input">data</label>
+								<form>
+									<input id="Filtering-Protocol-type-data-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.data }>
+									<label for="Filtering-Protocol-type-data-input">data</label>
 								</form>
-								<form id="Filtering-Protocol-blob">
-									<input id="Filtering-Protocol-blob-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.blob }>
-									<label for="Filtering-Protocol-blob-input">blob</label>
+								<form>
+									<input id="Filtering-Protocol-type-blob-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.blob }>
+									<label for="Filtering-Protocol-type-blob-input">blob</label>
 								</form>
-
-								<form id="Filtering-Protocol-mailto">
-									<input id="Filtering-Protocol-mailto-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.mailto }>
-									<label for="Filtering-Protocol-mailto-input">mailto</label>
+								<form>
+									<input id="Filtering-Protocol-type-mailto-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.mailto }>
+									<label for="Filtering-Protocol-type-mailto-input">mailto</label>
 								</form>
-								<form id="Filtering-Protocol-javascript">
-									<input id="Filtering-Protocol-javascript-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.javascript }>
-									<label for="Filtering-Protocol-javascript-input">javascript</label>
+								<form>
+									<input id="Filtering-Protocol-type-javascript-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.javascript }>
+									<label for="Filtering-Protocol-type-javascript-input">javascript</label>
 								</form>
-
-								<form id="Filtering-Protocol-about">
-									<input id="Filtering-Protocol-about-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.about }>
-									<label for="Filtering-Protocol-about-input">about</label>
+								<form>
+									<input id="Filtering-Protocol-type-about-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.about }>
+									<label for="Filtering-Protocol-type-about-input">about</label>
 								</form>
-								<form id="Filtering-Protocol-chrome">
-									<input id="Filtering-Protocol-chrome-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.chrome }>
+								<form>
+									<input id="Filtering-Protocol-type-chrome-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.chrome }>
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-									<label for="Filtering-Protocol-chrome-input">chrome ({@html createSafeHTML(getChromiumBasedBrowserList())})</label>
+									<label for="Filtering-Protocol-type-chrome-input">chrome ({@html createSafeHTML(getChromiumBasedBrowserList())})</label>
 								</form>
 							</div>
 						</fieldset>

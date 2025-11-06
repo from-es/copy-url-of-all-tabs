@@ -1,3 +1,10 @@
+#### [1.11.0] - 2025/11/07
+
+- feat
+	- Added an option to exclude duplicate URLs from being copied.
+- fix
+	- Fixed an issue where tabs were not opened in the correct order when using the 'prepend' mode to open URLs.
+
 #### [1.10.0] - 2025/10/28
 
 - feat

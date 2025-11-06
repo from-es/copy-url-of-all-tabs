@@ -2,8 +2,8 @@
 import { browser, type Browser } from "wxt/browser";
 
 // Import Types
-import { type Define, type ExtensionMessage }                from "@/assets/js/types/";
-import { type UrlDelayRule, type UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
+import type { Config, ExtensionMessage }                from "@/assets/js/types/";
+import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
 // Import Module
 import { define }             from "@/assets/js/define";
@@ -16,49 +16,63 @@ export type TabPosition = "default" | "first" | "left" | "right" | "last";
 export type TaskMode    = "unitary" | "batch" | "monolithic";
 export type OpenMode    = "parallel" | "append" | "prepend" | "insertNext";
 
-type TabOption       = Define["Config"]["Tab"];
+type TabOption       = Config["Tab"];
 type CreateTabOption = TabOption & { windowId: number | undefined };
 
 
 
 /**
- * メッセージを受け取り、URLを開くプロセスを開始するハンドラー
- * @param   {ExtensionMessage} message - 拡張機能メッセージ
+ * メッセージを受け取り、URLを開くプロセスを開始するハンドラー。
+ * メッセージに含まれるURLリストは、popup側でフィルタリング等の前処理が済んでいることを前提とする。
+ * @param   {ExtensionMessage} message - 拡張機能メッセージ（前処理済みのURLリストと設定を含む）
  * @returns {Promise<void>}
  */
 export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
 	const { argument } = message;
 	const urlList      = argument?.urlList;
-	const option       = argument?.option;
+	const config       = argument?.option;
 
-	if ( urlList && option ) {
-		openURLs(urlList, option);
+	if ( urlList && config ) {
+		openURLs(urlList, config);
 	} else {
 		console.error("Error, Cannot open URL List! urlList or option are missing in the message argument.", { argument });
 	}
 }
 
 /**
- * URLリストと指定されたオプションに基づき、タブを開くプロセスを調整
- * @param   {string[]}      urlList   - 開く対象のURLリスト
- * @param   {TabOptions}    tabOption - タブの開き方に関する設定
+ * 渡されたURLリストとタブ設定に基づき、タブを開くプロセスを調整。
+ * この関数はURLのフィルタリングは行わず、タブの順序変更や遅延計算、タスクのディスパッチを担当。
+ * @param   {string[]}      urlList - 開く対象のURLリスト（popup側でフィルタリング済み）
+ * @param   {Config}        config  - 設定オブジェクト
  * @returns {Promise<void>}
  */
-async function openURLs(urlList: string[], tabOption: TabOption): Promise<void> {
+async function openURLs(urlList: string[], config: Config): Promise<void> {
 	if ( !urlList || !Array.isArray(urlList) || urlList.length === 0 ) {
 		console.warn("Warning, URL list is missing or empty. No tabs will be opened.", { received: urlList });
 		return;
 	}
 
-	const windowId     = await getCurrentWindowID();
-	const delayResults = buildUrlListWithDelay(urlList, tabOption);
+	// Tab: is reverse ?
+	if ( config.Tab.reverse ) {
+		urlList = urlList.toReversed();
+	}
+
+	const tabOption       = config.Tab;
+	const filteringOption = config.Filtering;
+	const windowId        = await getCurrentWindowID();
+	const delayResults    = buildUrlListWithDelay(urlList, tabOption);
 
 	// debug
 	console.log(
 		"Debug, Open URLs >> Tab Option & URL List >>",
 		{
 			option: {
-				...tabOption
+				Filtering: {
+					...filteringOption
+				},
+				Tab: {
+					...tabOption
+				}
 			},
 			"URL List": {
 				source : urlList,
@@ -72,16 +86,12 @@ async function openURLs(urlList: string[], tabOption: TabOption): Promise<void> 
 
 /**
  * URLリストとタブ設定に基づき、適切な順序と遅延時間を持つURL処理リストを構築
- * @param   {string[]}                    urlList   - 元のURLリスト
+ * @param   {string[]}                    urlList   - 処理対象のURLリスト
  * @param   {TabOption}                   tabOption - タブの開き方に関する設定
  * @returns {UrlDelayCalculationResult[]}           - 遅延計算後のURL情報配列
  */
 function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDelayCalculationResult[] {
-	const { reverse, delay, customDelay } = tabOption;
-
-	// 逆順に開くかどうか
-	const orderedUrlList = reverse ? urlList.toReversed() : urlList;
-
+	const { delay, customDelay }            = tabOption;
 	const { enable, list: customDelayList } = customDelay;
 	const applyFrom                         = define.TabOpenCustomDelayApplyFrom;  // 遅延適応はルールマッチ二回目(デフォルト値: 2)から
 	let   rules: UrlDelayRule[]             = [];
@@ -96,7 +106,7 @@ function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDela
 		);
 	}
 
-	return UrlDelayCalculator.calculate(orderedUrlList, delay, rules, applyFrom);
+	return UrlDelayCalculator.calculate(urlList, delay, rules, applyFrom);
 }
 
 /**
@@ -191,9 +201,24 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 			break;
 
 		case "prepend":
-			for (const task of tasks) {
+			/*
+				ループでタスクを追加している途中でキューの処理が始まると、タスクの実行順序が狂ってしまう。
+				これを防ぐため、全てのタスクを追加し終えるまでキューを一時停止する。
+			*/
+			QueueManager.pause();
+
+			/*
+				`QueueManager.addPriorityTask` は、優先度を上げてタスクをキューに追加する際、
+				後から追加されたタスクほど高い優先度を持つように動作する。
+				そのため、タスクが追加された順序とは逆の順序で実行される傾向がある。
+				意図した順序（FIFO）でタスクを実行させるため、ここでタスク配列を逆順にしてからキューに追加する必要がある。
+			*/
+			for (const task of tasks.toReversed()) {
 				QueueManager.addPriorityTask(task);
 			}
+
+			// 全てのタスクを追加し終えたので、キューの処理を再開する。
+			QueueManager.resume();
 			break;
 
 		case "insertNext":
@@ -234,11 +259,11 @@ async function getCurrentWindowID(): Promise<number | undefined> {
 /**
  * 指定されたURLとオプションで新しいタブを作成
  * @param   {string}          url    - 開くURL
- * @param   {CreateTabOption} option - タブ作成に関するオプション
+ * @param   {CreateTabOption} tabOption - タブ作成に関するオプション
  * @returns {Promise<void>}
  */
-async function createTab(url: string, option: CreateTabOption): Promise<void> {
-	const { active, position, windowId } = option;
+async function createTab(url: string, tabOption: CreateTabOption): Promise<void> {
+	const { active, position, windowId } = tabOption;
 
 	try {
 		const tabs       = await browser.tabs.query({ currentWindow : true });

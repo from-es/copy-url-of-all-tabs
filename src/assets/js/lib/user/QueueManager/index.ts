@@ -5,9 +5,9 @@ const CONCURRENCY: number = 1;
 
 class QueueClass {
 	readonly #LOWEST_PRIORITY: number = 0;
-	readonly #HIGHT_PRIORITY : number = this.#LOWEST_PRIORITY + 1;
 	readonly #empty          : number = 0;
 	readonly #queue          : PQueue;
+	#HighestPriority         : number = this.#LOWEST_PRIORITY + 1;
 
 	constructor(concurrency: number) {
 		this.#queue = new PQueue({ concurrency });
@@ -18,9 +18,9 @@ class QueueClass {
 	}
 
 	addPriorityTask(task: () => Promise<any>): void {
-		this.#queue.add(task, { priority: this.#HIGHT_PRIORITY });
+		this.#HighestPriority++;                                    // 優先度を呼出し毎に上げる事で、追加タスクを先に処理させる
+		this.#queue.add(task, { priority: this.#HighestPriority }); // 新しい優先度を割り当てる
 	}
-
 	clear(): void {
 		this.#queue.clear();
 	}

@@ -213,4 +213,45 @@ export const migrationRules: MigrationRule[] = [
 			return config;
 		}
 	},
+	{
+		rules: {
+			author : "From E",
+			reason : "v1.11.0 で追加された、URLの重複除去の設定追加に伴う `config.Filtering 構造変更` への対応",
+			target : "config.Filtering",
+			action : "Filtering 設定を新しい構造（Deduplicate と Protocol）に再構成し、Deduplicate 設定を初期化",
+			created: "2025/11/01",
+			expires: "2026/12/31"
+		},
+		condition: (argument) => {
+			const { config } = argument;
+
+			return !Object.hasOwn(config?.Filtering, "Deduplicate");
+		},
+		execute: (argument) => {
+			const { config, define } = argument;
+
+			// 移行元の値を取得（存在しない場合は undefined）
+			const oldCopyEnable  = config.Filtering?.Copy?.enable;
+			const oldPasteEnable = config.Filtering?.Paste?.enable;
+			const oldProtocol    = config.Filtering?.Protocol;
+
+			// 新しい構造を define.Config からディープコピーして作成
+			config.Filtering = structuredClone(define.Config.Filtering);
+
+			// 古い値が存在すれば、新しい構造に上書き
+			config.Filtering.Protocol.Copy.enable  = (oldCopyEnable !== undefined) ? oldCopyEnable : define.Config.Filtering.Protocol.Copy.enable;
+			config.Filtering.Protocol.Paste.enable = (oldPasteEnable !== undefined) ? oldPasteEnable : define.Config.Filtering.Protocol.Paste.enable;
+
+			// 古い Protocol がオブジェクトで、httpプロパティを持つ（プロトコル定義オブジェクトである）ことを確認
+			if (typeof oldProtocol === "object" && oldProtocol !== null && Object.hasOwn(oldProtocol, "http")) {
+				// 古いプロトコル設定で新しい `type` オブジェクトを上書き（設定を移行）
+				Object.assign(config.Filtering.Protocol.type, oldProtocol);
+			}
+
+			// debug
+			console.log(`Report, Migrate Config of Value. Restructure "config.Filtering". config >>`, config);
+
+			return config;
+		}
+	}
 ];
