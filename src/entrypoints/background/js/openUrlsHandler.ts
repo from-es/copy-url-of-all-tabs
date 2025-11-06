@@ -201,9 +201,24 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 			break;
 
 		case "prepend":
-			for (const task of tasks) {
+			/*
+				ループでタスクを追加している途中でキューの処理が始まると、タスクの実行順序が狂ってしまう。
+				これを防ぐため、全てのタスクを追加し終えるまでキューを一時停止する。
+			*/
+			QueueManager.pause();
+
+			/*
+				`QueueManager.addPriorityTask` は、優先度を上げてタスクをキューに追加する際、
+				後から追加されたタスクほど高い優先度を持つように動作する。
+				そのため、タスクが追加された順序とは逆の順序で実行される傾向がある。
+				意図した順序（FIFO）でタスクを実行させるため、ここでタスク配列を逆順にしてからキューに追加する必要がある。
+			*/
+			for (const task of tasks.toReversed()) {
 				QueueManager.addPriorityTask(task);
 			}
+
+			// 全てのタスクを追加し終えたので、キューの処理を再開する。
+			QueueManager.resume();
 			break;
 
 		case "insertNext":
