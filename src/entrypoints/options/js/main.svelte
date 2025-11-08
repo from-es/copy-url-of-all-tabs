@@ -186,8 +186,15 @@
 		if (result.success && typeof result.content === "string") {
 			try {
 				// Parse and initialize the configuration
+				/*
+				  Notes:
+				    Disable automatic saving of settings during import to maintain consistency
+				    with the user documentation's specification that "settings are not saved
+				    until the Save button is pressed."
+				*/
 				const _config    = JSON.parse(result.content);
-				const { config } = await initializeConfig(_config);
+				const save       = false;
+				const { config } = await initializeConfig(_config, save);
 
 				// Update status and perform post-processing
 				/*
