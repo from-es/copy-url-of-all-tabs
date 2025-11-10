@@ -2,6 +2,9 @@
 	// WXT provided cross-browser compatible API and types.
 	import { browser } from "wxt/browser";
 
+	// Import NPM Package
+	import dayjs from "dayjs";
+
 	// Import Types
 	import type { Config, Define, Status } from "@/assets/js/types/";
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
@@ -11,9 +14,6 @@
 
 	// Import Svelte Module
 	import DebouncedNumericInput from "./DebouncedNumericInput.svelte";
-
-	// Import NPM Package
-	import dayjs from "dayjs";
 
 	// Import Module
 	import { initializeConfig }                              from "@/assets/js/initializeConfig";
@@ -186,8 +186,15 @@
 		if (result.success && typeof result.content === "string") {
 			try {
 				// Parse and initialize the configuration
+				/*
+				  Notes:
+				    Disable automatic saving of settings during import to maintain consistency
+				    with the user documentation's specification that "settings are not saved
+				    until the Save button is pressed."
+				*/
 				const _config    = JSON.parse(result.content);
-				const { config } = await initializeConfig(_config);
+				const save       = false;
+				const { config } = await initializeConfig(_config, save);
 
 				// Update status and perform post-processing
 				/*
@@ -872,8 +879,57 @@
 						</div>
 					</section>
 
-				<!-- Debug -->
-				<section class="container">
+					<!-- Badge -->
+					<section class="container">
+						<div class="flex-side">
+							<h3>Badge</h3>
+						</div>
+
+						<div class="flex-main">
+							<fieldset>
+								<legend>Badge Display</legend>
+								<form>
+									<input id="Badge-enable-input" type="checkbox" bind:checked={ status.config.Badge.enable }>
+									<label for="Badge-enable-input">Display the number of waiting URLs in a badge on the extension icon.</label>
+								</form>
+							</fieldset>
+
+							<fieldset>
+								<legend>Theme</legend>
+								<form id="Badge-theme-type">
+									<label>
+										<input type="radio" name="Badge-theme-type" value="light" bind:group={ status.config.Badge.theme.type }>
+										Light
+									</label>
+									<label>
+										<input type="radio" name="Badge-theme-type" value="dark" bind:group={ status.config.Badge.theme.type }>
+										Dark
+									</label>
+									<label>
+										<input type="radio" name="Badge-theme-type" value="custom" bind:group={ status.config.Badge.theme.type }>
+										Custom
+									</label>
+								</form>
+							</fieldset>
+
+							{#if status.config.Badge.theme.type === "custom"}
+								<fieldset>
+									<legend>Custom Colors</legend>
+									<form class="custom-color-picker">
+										<input id="Badge-theme-color-text" type="color" bind:value={ status.config.Badge.theme.color.text }>
+										<label for="Badge-theme-color-text">: Text</label>
+									</form>
+									<form class="custom-color-picker">
+										<input id="Badge-theme-color-background" type="color" bind:value={ status.config.Badge.theme.color.background }>
+										<label for="Badge-theme-color-background">: Background</label>
+									</form>
+								</fieldset>
+							{/if}
+						</div>
+					</section>
+
+					<!-- Debug -->
+					<section class="container">
 					<div class="flex-side">
 						<h3>Debug</h3>
 					</div>

@@ -1,146 +1,181 @@
-# Copy URL of All Tabs
+# User Guide for "Copy URL of All Tabs"
 
-**Last Updated:** November 4, 2025
+**Last Updated:** November 10, 2025
 
 ## Overview
 
-"Copy URL of All Tabs" is a Chrome extension that allows you to easily manage tab URLs. With a single click, you can copy the URLs of all open tabs in the current window to your clipboard. You can also paste a list of URLs from your clipboard to open them all in new tabs.
+"Copy URL of All Tabs" is a browser extension designed to streamline your tab management. With a single click, you can copy the URLs of all open tabs to the clipboard or open a list of URLs from your clipboard into new tabs.
 
-## Features
+## Core Features
 
-This extension provides the following features:
+Click the extension icon in your browser's toolbar to open the popup menu.
 
-1.  **Click the extension icon** in the Chrome toolbar to open the popup menu.
-2.  From the popup menu, click the action you want to perform (Copy, Paste, Options).
-	*   **Copy:** Copies the URLs of all tabs in the active window to the clipboard. The format of the copied text can be customized in the options.
-	*   **Paste:** Reads a list of URLs from the clipboard and opens each one in a new tab. The behavior of how tabs are opened is configurable.
-	*   **Options:** Opens the extension's settings page.
+- **Copy**: Copies the URLs of all tabs in the current window to the clipboard.
+- **Paste**: Opens all URLs listed in the clipboard, each in a new tab.
+- **Options**: Opens the detailed settings page for the extension.
 
-## Options
+---
 
-You can customize the extension's behavior to fit your workflow. Changes are not applied until you click the **Save** button.
+## Settings
 
-### Copy
+On the options page, you can customize the extension's behavior in detail. Settings are organized by category.
 
-*   **Format:** Controls the format of the text copied to the clipboard.
-	*   **Format Type:** Choose between `text` (list of URLs), `json` (structured with titles and URLs), or `custom`.
-	*   **Custom Template:** If `custom` is selected, you can define your own format using `$title` and `$url` as placeholders.
-	*   **MIME Type:** For the `custom` format, you can set the MIME type of the copied data (e.g., `text/plain` or `text/html`).
-*   **Deduplication:**
-	*   **Remove Duplicate URLs:** When enabled, this option prevents copying duplicate tabs (tabs with the same URL), ensuring that only unique URLs are copied.
+**Important:** After changing any settings, you must click the **Save** button at the bottom left of the screen. Changes will not be applied until they are saved.
 
-### Paste
+### Copy Settings
 
-#### **Search**
+Manage the format and data type of the content you copy.
 
-*   **Search for URLs:** When enabled, the extension uses a regular expression to find URLs within the entire clipboard text. If disabled, it treats each line of the text as a potential URL.
+- **Format**
+  - **Format Type**: Choose from three formats.
+	 - `text`: Copies only the URLs, separated by newlines.
+	 - `json`: Copies the tab titles and URLs in JSON format.
+	 - `custom`: Copies using your own defined template.
+  - **Custom Template**: When `custom` is selected, you can define your own format using the variables `$title` (tab title) and `$url` (tab URL).
+  - **MIME Type**: For the `custom` format, you can select the data's MIME type, such as `text/plain` (plain text) or `text/html` (HTML format). This allows applications like Word or Gmail to interpret the format, enabling you to paste content while preserving its structure.
 
-#### **Deduplication**
+### Paste Settings
 
-*   **Remove Duplicate URLs:** When enabled, this option ignores duplicate URLs in the clipboard and opens only unique URLs in new tabs.
+Manage how URLs from the clipboard are opened in new tabs.
 
-#### **Tab**
+- **Search for URLs**
+  - **Search for URLs in the clipboard text**: When enabled, this option uses a regular expression to automatically extract URLs (starting with `http://` or `https://`) from the entire text in the clipboard. If disabled, each line of text is treated as a single URL. **Note: When this option is enabled, protocol filtering will only apply to URLs with `http` and `https`.**
 
-Controls how new tabs are opened.
+- **Tab Behavior**
+  - **Open tabs in reverse order**: Opens URLs from the clipboard list in reverse order (from bottom to top).
+  - **Open in active tab**: Opens new tabs in an active (front-facing) state.
+  - **New tab position**: Specifies where new tabs are opened.
+	 - `default`: Follows your browser's default setting.
+	 - `first` / `last`: Opens at the beginning or end of the tab bar.
+	 - `left` / `right`: Opens to the left or right of the currently active tab.
+  - **Delay**: Sets the waiting time in milliseconds before opening the next tab. This helps reduce the load on your browser when opening many tabs at once.
+  - **Custom Delay**: Allows you to set specific delay times for particular domains or URL patterns.
+	 - `Enable`: Activates this feature.
+	 - Use the `Add` button to create rules, specifying a URL (exact match) and a delay time. The list can be reordered via drag-and-drop.
 
-*   **Reverse Order:** Open tabs in the reverse order of how they appear in your clipboard.
-*   **Active Tab:** Open new tabs as active (focused) tabs.
-*   **Position:** Choose where new tabs are opened (e.g., next to the current tab, at the beginning/end of the tab list).
-*   **Delay:** Sets the delay time when opening tabs.
-*   **Custom Delay:** Define rules to set specific delay times for URLs that match certain patterns.
-*   **Task Control:** Controls how multiple URLs are processed and queued.
+- **Task Control**
+  Provides fine-grained control over how multiple URLs are processed and executed. For details, see the "[Advanced Settings](#advanced-settings)" section.
 
-For **Delay** and **Task Control** settings, please refer to "[Settings Details (Paste)](#settings-details-paste)".
+### Filtering Settings
 
-### Filtering
+Exclude URLs based on specific criteria during copy or paste actions.
 
-*   **Enable Filtering:** You can enable or disable URL filtering independently for the **Copy** and **Paste** actions.
-*   **Allowed Protocols:** When filtering is enabled, only URLs with the selected protocols will be processed (e.g., `http`, `https`, `file`, etc.).
+- **URL Deduplication**
+  - `Deduplicate URLs on Copy`: Consolidates duplicate URLs into a single entry when copying.
+  - `Deduplicate URLs on Paste`: Consolidates duplicate URLs into a single entry when pasting.
 
-### System
+- **Protocol Filtering**
+  - `Filter on Copy` / `Filter on Paste`: Excludes URLs with non-permitted protocols when copying or pasting.
+  - `Allowed Protocols`: Select the protocol types to be processed (e.g., `http`, `https`, `file`).
 
-*   **Options Page:**
-	*   **Font Size:** Adjust the font size for the options page itself.
-*   **Popup Menu:**
-	*   **Font Size:** Adjust the font size for the popup menu.
-	*   **Clear Message:** Automatically clear success or error messages in the popup after a set number of seconds.
-	*   **OnClick Close:** Automatically close the popup menu after an action (like Copy or Paste) is performed.
+### System Settings
 
-### Debug
+Configure the extension's own UI and behavior.
 
-*   **Enable Logging:** Output debug information to the browser's developer console.
-*   **Add Timestamp:** Add a timestamp to the debug logs.
-*   **Time Coordinate:** Choose the time coordinate for the timestamp (UTC or GMT).
+- **Options Page**
+  - `Font Size`: Adjusts the font size of the options page itself.
+
+- **Popup Menu**
+  - `Font Size`: Adjusts the font size of the popup menu that appears when you click the extension icon.
+  - `Clear Message`: Automatically clears completion messages in the popup after a specified number of seconds.
+  - `OnClick Close`: Automatically closes the popup menu after a specified number of seconds following an action (Copy/Paste).
+
+- **Badge**
+  - `Enable`: Displays the number of URLs waiting to be opened as tabs by the "Paste" feature on the extension icon.
+  - `Theme`: Selects the color theme for the badge.
+    - `Light` / `Dark`: Uses predefined light or dark themes.
+    - `Custom`: Sets `Text` (text color) and `Background` (background color) freely.
+
+### Debug Settings
+
+Settings for developers.
+
+- **Output debug log**: Prints the extension's operational logs to the browser's developer console.
+- **Add Timestamp**: Adds a timestamp to the debug logs.
+- **Select Timestamp Type**: Choose the timezone for the timestamp (`UTC` or `GMT`).
+
+## Advanced Settings
+
+### Task Control Details
+
+This section provides fine-grained control over how multiple URLs are processed and executed. As these settings significantly impact browser performance, please ensure you understand them before making changes.
+
+Here, "task" refers to a series of operations that open a group of URLs read from the clipboard as new tabs.
+
+#### Configuration Items
+
+- **Processing Unit**: Determines how URLs are grouped for processing.
+  - `Unitary`: Treats each URL as a single, individual task. If you choose `Append` or `Prepend` in the `Execution Order` below, this can help distribute the load on your browser.
+  - `Batch`: Processes URLs in groups (chunks) of a specified size (`Number of URLs per Batch`).
+  - `Monolithic`: Processes all URLs as a single, large task.
+
+- **Execution Order**: Determines how generated tasks are added to the execution queue (a waiting line for tasks).
+  - `Parallel`: Bypasses the queue and attempts to open all URLs simultaneously.
+  - `Append`: Adds the new task to the end of the queue. It will be processed after any currently running tasks are complete.
+  - `Prepend`: Adds the new task to the front of the queue. It will be processed immediately after the currently running task is complete.
+
+#### Behavior Examples
+
+- **For `Unitary` or `Batch` mode:**
+	- `Execution Order: Append`: The new task is processed sequentially after the current tasks are finished.
+	- `Execution Order: Prepend`: The new task is prioritized and jumps to the front of the line to be processed next.
+
+- **For `Monolithic` mode:**
+	- In this mode, the effect of the `Execution Order` is limited because all URLs are treated as a single, uninterruptible task.
+
+#### Warning: Maximum Load Combination
+
+**`Processing Unit: Unitary` + `Execution Order: Parallel`**
+
+This combination theoretically results in the highest possible load when opening tabs.
+
+A large number of URLs, broken into individual tasks by `Unitary`, are sent to the browser simultaneously by `Parallel`. When this happens, any **delay settings you have configured are completely ignored**.
+This can cause a sharp spike in CPU and memory usage, potentially leading to significant browser slowdowns or unresponsiveness.
+
+**It is strongly recommended to avoid this combination, except when you need to open a very small number of URLs (e.g., up to 5) as quickly as possible.**
+
+---
+
+## Settings Management
 
 ### Import / Export
 
-Allows you to export your current settings to a file or import settings from a file. Click the 'Export' button to save your settings to a JSON file, or click 'Import' and select a JSON file to load previously saved settings. This is useful for backing up your configuration or sharing it across different browsers or profiles.
+You can save your settings to a file (export) or load them from a file (import). This is useful for syncing your configuration across different computers or browser profiles.
+
+- **Import**: Select a settings file (in JSON format) to load.
+- **Export**: Downloads all your current settings as a JSON file.
 
 ### Save / Reset
 
-*   **Save:** Saves all changes made on the settings page. Changes will not take effect until this button is clicked.
-*   **Reset:** Resets all settings to their original defaults. This action will reset the displayed settings to their initial state, but the settings will not be overwritten until you click Save.
+- **Save**: Saves all changes made on the options page.
+- **Reset**: Resets all settings to their original default values. This action will not be saved until you click the `Save` button.
 
-## Settings Details (Paste)
-
-### Delay
-
-*   **Delay:** Set a common delay time in milliseconds to wait before opening the next tab.
-*   **Custom Delay:** Define rules to set specific delay times for URLs that match certain patterns.
-
-### Task Control
-
-Controls how multiple URLs are processed and queued.
-
-*   **Processing Unit:** Sets how URLs are grouped and processed.
-	*   `Unitary`: Processes URLs **one by one as individual tasks**. This is the lightest method for your PC.
-	*   `Batch`: Processes URLs by **dividing them into specified groups**.
-	*   `Monolithic`: Processes **all URLs as one large task**. Other operations may be delayed during this process.
-*   **Execution Order:** Sets how generated tasks are added to the execution queue.
-  * `Parallel`: Bypasses the queue and attempts to open all tabs at once. Not recommended for a large number of URLs.
-  - `Append`: Adds new tasks to the end of the queue.
-  - `Prepend`: Adds new tasks to the front of the waiting queue to be processed next.
-  - `Insert Next`: Same as 'Prepend'. **Reserved for future use**. It is commented out in the UI.
-
-#### Operation Examples: Combinations of Processing Unit and Execution Order
-
-These settings significantly impact browser responsiveness and how tabs are opened, especially when processing a large number of URLs.
-
--   **When Processing Unit is `Unitary` or `Batch`:**
-    *   If `Execution Order: Append` is selected, new tabs will open sequentially after the currently opening tabs are processed.
-    *   If `Execution Order: Prepend` is selected, new tabs will be inserted at the beginning of the list of tabs to be opened next, and will be opened preferentially as soon as the currently opening tabs are processed. This allows urgent tabs to be opened quickly.
-
--   **When Processing Unit is `Monolithic`:**
-    *   In this mode, all URLs are processed as a single large task, so the effect of `Execution Order: Append` or `Prepend` is limited. Once processing begins, no other tasks can interrupt until all tabs have finished opening.
-
-By combining these settings, you can adjust the user experience and the load on your PC.
+---
 
 ## Permissions Required
 
-This extension requires the following permissions to function correctly:
+This extension requires the following permissions to function. Your privacy is respected, and all data is processed locally on your device.
 
 | Permission       | Purpose                                                              |
 | ---------------- | -------------------------------------------------------------------- |
-| `tabs`           | To access the URLs and titles of your open tabs.                     |
-| `storage`        | To save your custom settings.                                        |
-| `clipboardRead`  | To read the list of URLs from the clipboard when using the "Paste" feature. |
-| `clipboardWrite` | To save the list of URLs to the clipboard when using the "Copy" feature.   |
+| `tabs`           | Required to access the URLs and titles of your open tabs.            |
+| `storage`        | Required to save the extension's settings in your browser.           |
+| `clipboardRead`  | Required to read the list of URLs from the clipboard for the "Paste" feature. |
+| `clipboardWrite` | Required to write the list of URLs to the clipboard for the "Copy" feature.   |
 
-Your privacy is respected. This extension processes all data locally on your device.
+---
 
 ## Support
 
-Please note that as this is a free extension we are unable to provide personalized support.
+As this is a free extension, we are unable to provide personalized support.
 
-If you have issue or feature requests, please report them at issues (https://github.com/from-es/copy-url-of-all-tabs/issues).
+For bug reports or feature requests, please submit them on our GitHub Issues page.
+- [GitHub Issues](https://github.com/from-es/copy-url-of-all-tabs/issues)
 
 ## Related Links
 
-### Browser Extension Store
-
-- [Copy URL of All Tabs - Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm "Copy URL of All Tabs - Chrome Web Store")
-- [Copy URL of All Tabs - Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/ "Copy URL of All Tabs - Mozilla Add-ons")
-
-### Source Code
-
-- [from-es/copy-url-of-all-tabs - Github](https://github.com/from-es/copy-url-of-all-tabs "https://github.com/from-es/copy-url-of-all-tabs")
+- **Source Code:**
+  - [from-es/copy-url-of-all-tabs (GitHub)](https://github.com/from-es/copy-url-of-all-tabs)
+- **Store Pages:**
+  - [Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm)
+  - [Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/)

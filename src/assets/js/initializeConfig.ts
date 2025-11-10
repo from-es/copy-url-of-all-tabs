@@ -124,12 +124,13 @@ async function getInitDefine(): Promise<Define> {
  * ロードまたは初期化された設定に対して、移行処理と検証処理を実行し、
  * 必要に応じてストレージに保存する。
  *
- * @param   {Config}          _config - ロードまたは初期化された設定オブジェクト
- * @param   {Define}          _define - 設定の定義オブジェクト
- * @param   {string}          keyname - ストレージに保存する際のキー名
- * @returns {Promise<Status>}         - 初期化された設定と define を含む Status オブジェクト
+ * @param   {Config}          _config     - ロードまたは初期化された設定オブジェクト
+ * @param   {Define}          _define     - 設定の定義オブジェクト
+ * @param   {string}          keyname     - ストレージに保存する際のキー名
+ * @param   {boolean}         [save=true] - 移行や初期化が行われた場合に設定をストレージに保存するかどうか
+ * @returns {Promise<Status>}             - 初期化された設定と define を含む Status オブジェクト
  */
-async function processConfigInitialization(_config: Config, _define: Define, keyname: string): Promise<Status> {
+async function processConfigInitialization(_config: Config, _define: Define, keyname: string, save: boolean): Promise<Status> {
 	const configInitializer = new ConfigInitializer();
 
 	const result = {
@@ -139,9 +140,13 @@ async function processConfigInitialization(_config: Config, _define: Define, key
 
 	// 移行処理を実行かつ、全ての移行処理がエラーなく完了している場合は、移行済み config を保存
 	const migrationStatus = configInitializer.getMigrationStatus();
-	if (migrationStatus.isSucceeded) {
-		const item = { [keyname]: result.config };
-		await StorageManager.save(item);
+	if (migrationStatus.isSucceeded && save) {
+		try {
+			const item = { [keyname]: result.config };
+			await StorageManager.save(item);
+		} catch (error) {
+			console.error("Failed to save migrated config to storage.", error);
+		}
 	}
 
 	console.log("Config initialization. Migration Status:", { status: migrationStatus });
@@ -152,10 +157,13 @@ async function processConfigInitialization(_config: Config, _define: Define, key
 /**
  * アプリケーションの設定を初期化するメイン関数
  *
- * @param   {Config | null}   config - 設定オブジェクト。null の場合はストレージから読み込む
- * @returns {Promise<Status>}        - 初期化された設定と define を含む Status オブジェクト
+ * 設定のロード、初期化、移行、検証を行い、オプションでストレージへの保存も行う。
+ *
+ * @param   {Config | null}   config      - 設定オブジェクト。null の場合はストレージから読み込む
+ * @param   {boolean}         [save=true] - 移行や初期化が行われた場合に設定をストレージに保存するかどうか
+ * @returns {Promise<Status>}             - 初期化された設定と define を含む Status オブジェクト
  */
-export async function initializeConfig(config: Config | null): Promise<Status> {
+export async function initializeConfig(config: Config | null, save: boolean = true): Promise<Status> {
 	const keyname                = define.Storage.keyname;
 	const _define                = cloneObject(define);
 	let   _config: Config | null = null;
@@ -164,19 +172,29 @@ export async function initializeConfig(config: Config | null): Promise<Status> {
 	if (config) {
 		_config = cloneObject(config);
 	} else {
-		const localStorageData = await StorageManager.load<{[key: string]: Config}>(keyname);
-		_config = localStorageData?.[keyname] ?? _define.Config;
+		try {
+			const localStorageData = await StorageManager.load<{[key: string]: Config}>(keyname);
+			_config = localStorageData?.[keyname] ?? _define.Config;
+		} catch (error) {
+			console.error("Failed to load config from storage. Using default config.", error);
+			// ストレージからの設定読み込みに失敗した場合でも、デフォルト設定を適応し処理を続行
+			_config = _define.Config;
+		}
 	}
 
 	// _config が undefined or null or 空オブジェクトの場合は _define.Config で初期化し、ストレージに保存
 	const isInValidConfig = !_config || typeof _config !== "object" || Object.keys(_config).length === 0;
-	if (isInValidConfig) {
+	if (isInValidConfig && save) {
 		_config = _define.Config;
-		const item = { [keyname]: _config };
-		await StorageManager.save(item);
+		try {
+			const item = { [keyname]: _config };
+			await StorageManager.save(item);
+		} catch (error) {
+			console.error("Failed to save initial default config to storage.", error);
+		}
 	}
 
-	const result = await processConfigInitialization(_config, _define, keyname);
+	const result = await processConfigInitialization(_config, _define, keyname, save);
 
 	return result;
 }

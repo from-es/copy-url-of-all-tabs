@@ -1,3 +1,10 @@
+#### [1.12.0] - 2025/11/10
+
+- feat
+	- Added a badge feature to display the number of URLs waiting to be opened on the extension icon.
+- fix
+	- Fixed an issue where importing a settings file would save the settings immediately, instead of waiting for the user to press the "Save" button.
+
 #### [1.11.0] - 2025/11/07
 
 - feat
