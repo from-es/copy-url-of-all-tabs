@@ -10,6 +10,7 @@ import { define }             from "@/assets/js/define";
 import { UrlDelayCalculator } from "@/assets/js/lib/user/UrlDelayCalculator";
 import { sleep }              from "@/assets/js/utils/sleep";
 import { QueueManager }       from "@/assets/js/lib/user/QueueManager";
+import { countManager }       from "@/entrypoints/background/js/CountManager";
 
 // Types
 export type TabPosition = "default" | "first" | "left" | "right" | "last";
@@ -131,14 +132,22 @@ function taskController(delayResults: UrlDelayCalculationResult[], windowId: num
  * @returns {(() => Promise<void>)[]}                  - 生成されたタスク関数の配列
  */
 function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number | undefined, tabOption: TabOption): (() => Promise<void>)[] {
+	// これから処理するURLの総数を一度にカウンターへ加算
+	countManager.increment(delayResults.length);
+
 	const openTabWithDelay = async (result: UrlDelayCalculationResult): Promise<void> => {
-		const individual = result.delay.individual;
+		try {
+			const individual = result.delay.individual;
 
-		if ( typeof individual === "number" && individual > 0 ) {
-			await sleep(individual);
+			if ( typeof individual === "number" && individual > 0 ) {
+				await sleep(individual);
+			}
+
+			createTab(result.url, { ...tabOption, windowId }); // tabOption と windowId はクロージャでキャプチャ
+		} finally {
+			// 個々のURLのタブ展開処理完了後、成功・失敗に関わらずカウンターを減算
+			countManager.decrement();
 		}
-
-		createTab(result.url, { ...tabOption, windowId }); // tabOption と windowId はクロージャでキャプチャ
 	};
 
 	const taskMode: TaskMode = tabOption?.TaskControl?.taskMode ?? "unitary";

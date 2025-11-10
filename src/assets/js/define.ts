@@ -76,6 +76,16 @@ type Config_Delta = {
 			chunkSize: number;
 		}
 	};
+	Badge: {
+		enable : boolean;
+		theme: {
+			type : "light" | "dark" | "custom";
+			color: {
+				text      : string;
+				background: string;
+			};
+		};
+	};
 };
 
 type Define_Delta = {
@@ -372,6 +382,16 @@ const define: Define = {
 				taskMode : "unitary",
 				openMode : "append",
 				chunkSize: 5
+			}
+		},
+		Badge: {
+			enable: false,
+			theme : {
+				type : "light", // "light", "dark", "custom"
+				color: { // "custom" 時のみ、オプション画面から任意色を設定可能
+					text      : "#ffffff",
+					background: "#767676"
+				}
 			}
 		}
 	},
@@ -839,6 +859,76 @@ const define: Define = {
 									.not.null()
 									.numeric()
 									.range(define.TaskControlChunkSizeValueMin, define.TaskControlChunkSizeValueMax)
+									.test(value);
+						}
+		},
+
+
+		// Badge
+		{
+			property: "Badge.enable",
+			fail    : () => { return define.Config.Badge.enable; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.boolean()
+									.test(value);
+						}
+		},
+		{
+			property: "Badge.theme",
+			fail    : () => { return define.Config.Badge.theme; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.object()
+									.test(value);
+						}
+		},
+		{
+			property: "Badge.theme.type",
+			fail    : () => { return define.Config.Badge.theme.type; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.string()
+									.pattern(/^(light|dark|custom)$/i)
+									.test(value);
+						}
+		},
+		{
+			property: "Badge.theme.color",
+			fail    : () => { return define.Config.Badge.theme.color; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.object()
+									.test(value);
+						}
+		},
+		{
+			property: "Badge.theme.color.text",
+			fail    : () => { return define.Config.Badge.theme.color.text; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.string()
+									.test(value);
+						}
+		},
+		{
+			property: "Badge.theme.color.background",
+			fail    : () => { return define.Config.Badge.theme.color.background; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.string()
 									.test(value);
 						}
 		},

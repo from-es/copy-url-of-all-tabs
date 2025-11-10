@@ -253,5 +253,30 @@ export const migrationRules: MigrationRule[] = [
 
 			return config;
 		}
+	},
+	{
+		rules: {
+			author : "From E",
+			reason : "v1.12.0 で追加された、拡張機能アイコンに「待機中URL数」を表示するバッジ機能（Badge）の設定値が存在しない場合に追加",
+			target : "config.Badge",
+			action : "config.Badge が存在しない場合、デフォルト値を適応",
+			created: "2025/11/10",
+			expires: "2026/12/31"
+		},
+		condition: (argument) => {
+			const { config } = argument;
+			return !Object.hasOwn(config, "Badge");
+		},
+		execute: (argument) => {
+			const { config, define } = argument;
+
+			// プロパティ追加 & デフォルト値適応
+			config.Badge = define.Config.Badge;
+
+			// debug
+			console.log(`Report, Add "config.Badge". config >>`, config);
+
+			return config;
+		}
 	}
 ];

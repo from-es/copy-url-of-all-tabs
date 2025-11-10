@@ -403,7 +403,8 @@ header h1:before {
 #Format-type  > label,
 #Tab-position > label,
 #Tab-TaskControl-taskMode > label,
-#Tab-TaskControl-openMode > label {
+#Tab-TaskControl-openMode > label,
+#Badge-theme-type > label {
 	display: block;
 
 	position: relative;
