@@ -1,6 +1,6 @@
 # User Guide for "Copy URL of All Tabs"
 
-**Last Updated:** November 9, 2025
+**Last Updated:** November 10, 2025
 
 ## Overview
 
@@ -80,6 +80,12 @@ Configure the extension's own UI and behavior.
   - `Clear Message`: Automatically clears completion messages in the popup after a specified number of seconds.
   - `OnClick Close`: Automatically closes the popup menu after a specified number of seconds following an action (Copy/Paste).
 
+- **Badge**
+  - `Enable`: Displays the number of URLs waiting to be opened as tabs by the "Paste" feature on the extension icon.
+  - `Theme`: Selects the color theme for the badge.
+    - `Light` / `Dark`: Uses predefined light or dark themes.
+    - `Custom`: Sets `Text` (text color) and `Background` (background color) freely.
+
 ### Debug Settings
 
 Settings for developers.
@@ -93,6 +99,8 @@ Settings for developers.
 ### Task Control Details
 
 This section provides fine-grained control over how multiple URLs are processed and executed. As these settings significantly impact browser performance, please ensure you understand them before making changes.
+
+Here, "task" refers to a series of operations that open a group of URLs read from the clipboard as new tabs.
 
 #### Configuration Items
 
