@@ -98,6 +98,7 @@ type Define_Delta = {
 		UUID: {
 			v4: RegExp
 		}
+		NeverMatch: RegExp;
 	};
 	Message: {
 		[key: string]: {
@@ -984,8 +985,8 @@ const define: Define = {
 		},
 		UUID: {
 			v4: /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-		}
-
+		},
+		NeverMatch: /(?!)/
 	},
 
 	Message: {
