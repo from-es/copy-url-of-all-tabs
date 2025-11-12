@@ -698,7 +698,7 @@
 
 					<div class="flex-main">
 						<fieldset>
-							<legend>Enable</legend>
+							<legend>Enable Deduplication</legend>
 							<form>
 								<input id="Filtering-Deduplicate-Copy-enable-input" type="checkbox" bind:checked={ status.config.Filtering.Deduplicate.Copy.enable }>
 								<label for="Filtering-Deduplicate-Copy-enable-input">Deduplicate URLs on Copy</label>
@@ -719,7 +719,7 @@
 
 					<div class="flex-main">
 						<fieldset>
-							<legend>Enable</legend>
+							<legend>Enable Filtering</legend>
 							<form>
 								<input id="Filtering-Protocol-Copy-enable-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.Copy.enable }>
 								<label for="Filtering-Protocol-Copy-enable-input">Filter on Copy</label>
