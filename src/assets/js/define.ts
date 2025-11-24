@@ -226,7 +226,10 @@ interface Define extends Define_Delta {
 // V8n Custom Rules
 v8n.extend({
 	// Used for validating the value of "Tab.customDelay.list"
-	canParseURL: () => (str) => { return URL.canParse(str); }
+	canParseURL: () => (str) => { return URL.canParse(str); },
+
+	// Used for validating the value of "Badge.theme.color.text" & "Badge.theme.color.background"
+	isSupportCssColor: () => (str) => { return CSS.supports("color", str); }
 });
 
 const manifest = browser.runtime.getManifest();
@@ -915,6 +918,7 @@ const define: Define = {
 									.not.undefined()
 									.not.null()
 									.string()
+									.isSupportCssColor()
 									.test(value);
 						}
 		},
@@ -926,6 +930,7 @@ const define: Define = {
 									.not.undefined()
 									.not.null()
 									.string()
+									.isSupportCssColor()
 									.test(value);
 						}
 		},
