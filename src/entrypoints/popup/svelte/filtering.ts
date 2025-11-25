@@ -107,8 +107,8 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 			return (new RegExp(reg, "i"));
 		}
 
-		// 何にも一致しない正規表現
-		return /(?!)/;
+		// 何にも一致しない正規表現を返す
+		return define.Regex.NeverMatch;
 	};
 	const filteringURL = (url: string) => {
 		url = (url).trim();

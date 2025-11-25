@@ -6,21 +6,21 @@ import { browser, type Browser } from "wxt/browser";
 // Import NPM Package
 import v8n from "v8n";
 
-// Import
-import { ArrayOfObjectsValidator }              from "@/assets/js/lib/user/ArrayOfObjectsValidator";
-import { type BrowserEnvironmentResult }        from "@/assets/js/lib/user/BrowserEnvironment/types";
-import { type MessageType }                     from "@/assets/js/lib/user/MessageManager/PopoverMessage";
-import { type UrlDelayRule }                    from "@/assets/js/lib/user/UrlDelayCalculator";
+// Import Module
+import { ArrayOfObjectsValidator } from "@/assets/js/lib/user/ArrayOfObjectsValidator";
+
+// Import Types
+import type { BrowserEnvironmentResult }        from "@/assets/js/lib/user/BrowserEnvironment/types";
+import type { MessageType }                     from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+import type { UrlDelayRule }                    from "@/assets/js/lib/user/UrlDelayCalculator";
 import type { TabPosition, TaskMode, OpenMode } from "@/entrypoints/background/js/openUrlsHandler";
 
-
-
+// Types
 type customDelayInfo = {
 	id     : string;  // create by crypto.randomUUID()
 	pattern: string;
 	delay  : number;
 };
-
 type Config_Delta = {
 	Search: {
 		regex: boolean;
@@ -87,7 +87,6 @@ type Config_Delta = {
 		};
 	};
 };
-
 type Define_Delta = {
 	Regex: {
 		url: {
@@ -98,6 +97,7 @@ type Define_Delta = {
 		UUID: {
 			v4: RegExp
 		}
+		NeverMatch: RegExp;
 	};
 	Message: {
 		[key: string]: {
@@ -138,13 +138,11 @@ type Define_Delta = {
 	TaskControlChunkSizeValueMax         : number;
 	TaskControlChunkSizeValueStep        : number;
 }
-
 type VerificationRule = {
 	property: string;
 	fail    : () => any;
 	rule    : (value: any) => boolean;
 };
-
 interface Config extends Config_Delta {
 	Information: {
 		name   : string | null;
@@ -174,7 +172,6 @@ interface Config extends Config_Delta {
 		};
 	};
 };
-
 interface Define extends Define_Delta {
 	Environment: {
 		Browser: Partial<BrowserEnvironmentResult>;
@@ -225,6 +222,15 @@ interface Define extends Define_Delta {
 };
 
 
+
+// V8n Custom Rules
+v8n.extend({
+	// Used for validating the value of "Tab.customDelay.list"
+	canParseURL: () => (str) => { return URL.canParse(str); },
+
+	// Used for validating the value of "Badge.theme.color.text" & "Badge.theme.color.background"
+	isSupportCssColor: () => (str) => { return CSS.supports("color", str); }
+});
 
 const manifest = browser.runtime.getManifest();
 
@@ -785,27 +791,22 @@ const define: Define = {
 			property: "Tab.customDelay.list",
 			fail    : () => { return define.Config.Tab.customDelay.list; },
 			rule    : (value) => {
-							v8n.extend({
-								canParseToURL: () => (str) => { return URL.canParse(str); }
-							});
 							const ValidationRules = {
-								id   : v8n().string().pattern(define.Regex.UUID.v4),
-								pattern: v8n().string().canParseToURL(),
-								delay: v8n().integer().between(define.TabOpenDelayValueMin, define.TabOpenDelayValueMax),
+								id     : v8n().string().pattern(define.Regex.UUID.v4),
+								pattern: v8n().string().canParseURL(),
+								delay  : v8n().integer().between(define.TabOpenDelayValueMin, define.TabOpenDelayValueMax),
 							};
 							const option = {
-								allowEmptyArray: true,
-
+								allowEmptyArray            : true,
 								continueOnArrayTypeMismatch: true, // デバック用、本番環境へのビルド時は false を指定 >> 設定保存 or インポート時に厳重検証
 								continueOnMissingKeys      : true, // デバック用、本番環境へのビルド時は false を指定 >> 設定保存 or インポート時に厳重検証
 							};
 
-							const validator = new ArrayOfObjectsValidator();
-							const result    = validator.validate(value, ValidationRules, option);
-							const { isAllValid} = result;
+							const validator      = new ArrayOfObjectsValidator();
+							const result         = validator.validate(value, ValidationRules, option);
+							const { isAllValid } = result;
 
-							// debug, Validation Rules Object
-							console.log("Debug, Validation Data & v8n Rules Object >>", { value, ValidationRules });
+							console.debug("Validation Data & v8n Custom Rule Object: Tab.customDelay.list >>", { value, ValidationRules });
 
 							// debug, Report the result to the console
 							validator.reportToConsole();
@@ -825,7 +826,6 @@ const define: Define = {
 									.test(value);
 						}
 		},
-
 		{
 			property: "Tab.TaskControl.openMode",
 			fail    : () => { return define.Config.Tab.TaskControl.openMode; },
@@ -918,6 +918,7 @@ const define: Define = {
 									.not.undefined()
 									.not.null()
 									.string()
+									.isSupportCssColor()
 									.test(value);
 						}
 		},
@@ -929,6 +930,7 @@ const define: Define = {
 									.not.undefined()
 									.not.null()
 									.string()
+									.isSupportCssColor()
 									.test(value);
 						}
 		},
@@ -984,8 +986,8 @@ const define: Define = {
 		},
 		UUID: {
 			v4: /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-		}
-
+		},
+		NeverMatch: /(?!)/
 	},
 
 	Message: {
