@@ -1,3 +1,11 @@
+#### [1.13.0] - 2025/11/25
+
+- feat
+	- Added validation for badge color format to ensure valid CSS color values.
+	- Improved the clarity of explanatory texts on the options screen.
+- improve
+	- Internal code has been refactored for better performance and maintainability.
+
 #### [1.12.0] - 2025/11/10
 
 - feat
