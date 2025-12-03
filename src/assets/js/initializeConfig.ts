@@ -11,24 +11,23 @@
  */
 
 // Import Types
-import  type { Config, Define, Status, EmptyObject } from "@/assets/js/types/";
-import { type MigrationResult }                      from "@/assets/js/lib/user/MigrateConfig/types";
+import type { Config, Define, Status, EmptyObject } from "@/assets/js/types/";
+import type { MigrationResult }                     from "@/assets/js/lib/user/MigrationManager/types";
 
 // Import Module
 import { define }             from "@/assets/js/define";
-import { migrateConfig }      from "./lib/user/MigrateConfig";
+import { MigrationManager }   from "@/assets/js/lib/user/MigrationManager";
+import { migrationRules }     from "@/assets/js/lib/user/MigrationManager/rules";
 import { cloneObject }        from "./lib/user/CloneObject";
 import { StorageManager }     from "./lib/user/StorageManager";
 import { VerifyConfigValue  } from "./lib/user/VerifyConfigValue";
 import { BrowserEnvironment } from "./lib/user/BrowserEnvironment";
 
-
-
 /**
  * 設定の初期化、移行、検証を行う責務を持つクラス
  */
 class ConfigInitializer {
-	#migrationStatus: MigrationResult | EmptyObject;
+	#migrationStatus: MigrationResult<Config> | EmptyObject;
 
 	/**
 	 * @constructor
@@ -42,13 +41,13 @@ class ConfigInitializer {
 	 *
 	 * @param   {Config} initialConfig - 初期設定オブジェクト
 	 * @param   {Define} define        - 設定定義
-	 * @returns {Promise<Config>}        初期化された設定
+	 * @returns {Promise<Config>}      - 初期化された設定
 	 */
 	async initialize(initialConfig: Config, define: Define): Promise<Config> {
 		this.#resetMigrationStatus();
 
 		const migrationResult = await this.#migrate(initialConfig, define);
-		const verifiedConfig  = this.#verify(migrationResult.config, define);
+		const verifiedConfig  = this.#verify(migrationResult.data, define);
 
 		this.#migrationStatus = migrationResult;
 
@@ -58,10 +57,10 @@ class ConfigInitializer {
 	/**
 	 * 設定の初期化処理で得られた移行ステータスを返す
 	 *
-	 * @returns {MigrationResult} 移行ステータス
+	 * @returns {MigrationResult<Config>} - 移行ステータス
 	 */
-	getMigrationStatus(): MigrationResult {
-		return this.#migrationStatus as MigrationResult;
+	getMigrationStatus(): MigrationResult<Config> {
+		return this.#migrationStatus as MigrationResult<Config>;
 	}
 
 	/**
@@ -79,12 +78,17 @@ class ConfigInitializer {
 	 * 定義された移行ルールを適用し、設定を最新の状態に更新する。
 	 *
 	 * @private
-	 * @param   {Config}                   config - 移行対象の設定オブジェクト
-	 * @param   {Define}                   define - 設定の定義オブジェクト
-	 * @returns {Promise<MigrationResult>}        - 移行処理の結果を含むオブジェクト
+	 * @param   {Config}                           config - 移行対象の設定オブジェクト
+	 * @param   {Define}                           define - 設定の定義オブジェクト
+	 * @returns {Promise<MigrationResult<Config>>}        - 移行処理の結果を含むオブジェクト
 	 */
-	async #migrate(config: Config, define: Define): Promise<MigrationResult> {
-		const migrationResult = migrateConfig(config, define);
+	async #migrate(config: Config, define: Define): Promise<MigrationResult<Config>> {
+		const manager         = new MigrationManager<Config>(migrationRules);
+		const migrationResult = await manager.migrate(
+			config,
+			define.Config, // defaultValues として define.Config を渡す
+			{ failFast: false }
+		);
 
 		return migrationResult;
 	}
