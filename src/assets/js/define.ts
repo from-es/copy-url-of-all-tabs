@@ -1045,6 +1045,27 @@ const define: Define = {
 				font      : "#ffffff",
 				background: "#cc3300"
 			}
+		},
+		Setting_AutoCorrect: {
+			message: [
+				"一部の設定値が無効な為、設定の保存をキャンセルしました。内容を確認後、再度保存してください。",
+				"要修正箇所は、以下の項目です。"
+			],
+			timeout: 10000,
+			fontsize: "1.0rem",
+			color: {
+				font: "#ffffff",
+				background: "#ff9800" // Warning color (Orange)
+			}
+		},
+		Setting_UnexpectedError: {
+			message: [ "設定の保存中に予期せぬエラーが発生しました。" ],
+			timeout: 5000,
+			fontsize: "1.0rem",
+			color: {
+				font: "#ffffff",
+				background: "#cc3300" // Error color (Red)
+			}
 		}
 		// ---------------------------------------------------------------------------------------------------------------------------
 	},
@@ -1098,6 +1119,18 @@ const define: Define = {
 	TaskControlChunkSizeValueMin : 1,
 	TaskControlChunkSizeValueMax : 16,
 	TaskControlChunkSizeValueStep: 1,
+
+	ConfigPropertyDisplayNames: {
+		Information: "拡張機能の情報",
+		Debug      : "デバッグ設定",
+		OptionsPage: "オプションページ設定",
+		PopupMenu  : "ポップアップメニュー設定",
+		Search     : "検索設定",
+		Filtering  : "フィルタリング設定",
+		Format     : "フォーマット設定",
+		Tab        : "タブ設定",
+		Badge      : "バッジ設定"
+	} as const,
 };
 
 

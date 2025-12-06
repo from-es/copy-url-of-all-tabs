@@ -150,6 +150,10 @@ You can save your settings to a file (export) or load them from a file (import).
 - **Save**: Saves all changes made on the options page.
 - **Reset**: Resets all settings to their original default values. This action will not be saved until you click the `Save` button.
 
+#### **Important Notice**
+
+When you click the `Save` button, the settings values are first validated. If any invalid values are detected, you will be notified which items have issues, and the save process will be canceled. **The values in the UI will not be automatically corrected**, so please review the notification, correct the values manually, and then click the `Save` button again.
+
 ---
 
 ## Permissions Required

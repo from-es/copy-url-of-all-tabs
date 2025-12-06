@@ -8,6 +8,7 @@
 	// Import Types
 	import type { Config, Define, Status } from "@/assets/js/types/";
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
+	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
 
 	// Import Svelte
 	import { onMount } from "svelte";
@@ -25,8 +26,11 @@
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
 	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
 	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/user/ConfigManager";
+	import { MigrationManager }                              from "@/assets/js/lib/user/MigrationManager";
+	import { rules as PreSaveCorrections }                   from "@/assets/js/lib/user/MigrationManager/rules/patch/preSaveCorrections";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
+	import { compareConfig }                                 from "./utils/configComparer";
 
 	let { status = $bindable() }: { status: Status } = $props();
 
@@ -110,24 +114,57 @@
 	// Save & Reset
 
 	async function eventSettingSave() {
-		const config = cloneObject(status.config);
+		try {
+			const currentStatus = cloneObject(status);
+			const currentConfig = await applyPreSaveCorrections(currentStatus.config, currentStatus.define, PreSaveCorrections); // 設定保存の前処理として軽微な修正を行う
+			const { config: validatedConfig } = await initializeConfig(currentConfig, false);  // 検証・正規化された設定を取得（検証目的の為、ストレージへの保存はしない）
+			const { isEqual, diffKeys }       = compareConfig(currentConfig, validatedConfig); // 検証前後で差分があるかを確認（差分発生で、不正な入力が有ったとみなす）
 
-		// Add, Information Of Config
-		config.Information = getInformationOfConfig();
+			/*
+				差分が無い場合:
+					`config.Information` を更新後、設定を保存する
+				差分が有る場合:
+					`差分発生 → 不正な入力があった` と判断し、差分が発生した設定項目をユーザーに通知する。設定の保存は行わない
+			*/
+			if (isEqual) {
+				// Update, Information Of Config
+				currentConfig.Information = getInformationOfConfig();
 
-		// Save to Local Storage
-		const keyname = status.define.Storage.keyname;
-		const item    = { [keyname]: config };
-		StorageManager.save(item);
+				// Save to Local Storage
+				const keyname = status.define.Storage.keyname;
+				const item    = { [keyname]: currentConfig };
+				StorageManager.save(item);
 
-		// Reinitialize, List of User Script
-		await reInitialize();
+				// 設定保存時のみ UI を再初期化
+				await reInitialize();
 
-		// Show, Message
-		PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
+				PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
+				console.log("Save to Storage.", currentConfig);
+			} else {
+				// 差分が発生したオブジェクトのキーを表示名に変換
+				const displayNames = diffKeys.map(key => {
+					const displayNameMap = status.define.ConfigPropertyDisplayNames as Record<string, string | undefined>;
+					return displayNameMap[String(key)] ?? String(key);
+				}).join(", ");
 
-		// debug
-		console.log("Save to Storage.", config);
+				const message = cloneObject(status.define.Message.Setting_AutoCorrect);
+				message.message.push(displayNames);
+
+				// ユーザーに差分が発生した設定項目を通知
+				PopoverMessage.create(message);
+				console.warn("Save cancelled. Invalid values were auto-corrected.", { correctedKeys: diffKeys });
+			}
+		} catch (error) {
+			const message = cloneObject(status.define.Message.Setting_UnexpectedError);
+
+			if (error instanceof Error && error?.message) {
+				message.message.push(error.message);
+			}
+
+			// エラーメッセージを追加
+			PopoverMessage.create(message);
+			console.error("An unexpected error occurred during the save process.", error);
+		}
 	}
 
 	async function eventSettingReset(event: MouseEvent) {
@@ -145,6 +182,26 @@
 
 		// debug
 		console.log("Reset Config Data.", status.config);
+	}
+
+	/**
+	 * 設定保存前にコンフィグに修正を適用する。
+	 * この関数は、設定が保存される前にデータの整合性と完全性を確保するために、一連の移行ルールを適用します。
+	 * @param   {Config}                  config - 修正対象の現在の設定オブジェクト
+	 * @param   {Define}                  define - デフォルト設定値を含む定義オブジェクト
+	 * @param   {MigrationRule<Config>[]} rule   - 適用する移行ルールの配列
+	 * @returns {Promise<Config>}                - 修正された設定オブジェクトで解決される Promise
+	 */
+	async function applyPreSaveCorrections(config: Config, define: Define, rule: MigrationRule<Config>[]): Promise<Config> {
+		const date             = cloneObject(config);
+		const defaultValues    = cloneObject(define.Config);
+		const migrationManager = new MigrationManager(rule);
+		const migrationResult  = await migrationManager.migrate(date, defaultValues, { failFast: false });
+		const result           = migrationResult.isSucceeded ? migrationResult.data : cloneObject(config);
+
+		console.debug("[Apply, Pre Save Corrections]", migrationResult);
+
+		return result;
 	}
 	// ---------------------------------------------------------------------------------------------
 
