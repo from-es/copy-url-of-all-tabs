@@ -1,3 +1,10 @@
+#### [1.14.0] - 2025/12/06
+
+- feat
+	- When saving, if invalid values are found in the settings, a notification will now specify which fields need correction.
+- improve
+	- Enhanced the validation process on the Options screen when saving settings.
+
 #### [1.13.0] - 2025/11/25
 
 - feat
