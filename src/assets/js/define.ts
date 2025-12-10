@@ -54,6 +54,16 @@ type Config_Delta = {
 				chrome:     boolean;
 			};
 		};
+		PatternMatch: {
+			Copy: {
+				enable: boolean;
+			};
+			Paste: {
+				enable: boolean;
+			};
+			type   : "prefix" | "substring" | "exact" | "regex";
+			pattern: string;
+		}
 	};
 	Format: {
 		type     : "text" | "json" | "custom";
@@ -351,6 +361,16 @@ const define: Define = {
 					about     : false,
 					chrome    : false,
 				}
+			},
+			PatternMatch: {
+				Copy: {
+					enable: false
+				},
+				Paste: {
+					enable: false
+				},
+				type   : "prefix",
+				pattern: "// prefix\nhttps://example.com\nhttps://example.net\nhttps://example.org\nhttps://example.edu"
 			}
 		},
 		Format: {
@@ -700,6 +720,53 @@ const define: Define = {
 									.not.undefined()
 									.not.null()
 									.boolean()
+									.test(value);
+						}
+		},
+
+
+
+		{
+			property: "Filtering.PatternMatch.Copy.enable",
+			fail    : () => { return define.Config.Filtering.PatternMatch.Copy.enable; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.boolean()
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.PatternMatch.Paste.enable",
+			fail    : () => { return define.Config.Filtering.PatternMatch.Paste.enable; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.boolean()
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.PatternMatch.matchType",
+			fail    : () => { return define.Config.Filtering.PatternMatch.type; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.pattern(/^(prefix|substring|exact|regex)$/i)
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.PatternMatch.pattern",
+			fail    : () => { return define.Config.Filtering.PatternMatch.pattern; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.string()
 									.test(value);
 						}
 		},

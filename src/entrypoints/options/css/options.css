@@ -89,13 +89,15 @@ textarea {
 
 	padding: 0.5rem;
 
-	width: 100%;
-	min-height: 6rem;
-	resize: vertical;
+	width       : 100%;
+	field-sizing: content;
+	min-height  : 8rem;
+	max-height  : 32rem;
+	resize      : vertical;
 
 	tab-size   : 4;
 	font-family: monospace, serif;
-	font-size  : 1rem;
+	font-size  : 0.85rem;
 }
 
 input {
@@ -401,6 +403,7 @@ header h1:before {
 
 /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 #Format-type  > label,
+#PatternMatch-type > label,
 #Tab-position > label,
 #Tab-TaskControl-taskMode > label,
 #Tab-TaskControl-openMode > label,
@@ -411,6 +414,7 @@ header h1:before {
 }
 
 #Format-type  > label[data-description]:hover::after,
+#PatternMatch-type > label[data-description]:hover::after,
 #Tab-position > label[data-description]:hover::after,
 #Tab-TaskControl-taskMode > label[data-description]:hover::after,
 #Tab-TaskControl-openMode > label[data-description]:hover::after {

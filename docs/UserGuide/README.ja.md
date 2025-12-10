@@ -1,6 +1,6 @@
 # 「Copy URL of All Tabs」ユーザーガイド
 
-**最終更新日:** 2025年11月10日
+**最終更新日:** 2025年12月10日
 
 ## 概要
 
@@ -27,64 +27,74 @@
 コピーする際のフォーマットやデータ形式を管理します。
 
 - **Format (フォーマット)**
-  - **Format Type (形式)**: 3種類の形式から選択します。
-	 - `text`: URLのみを改行区切りでコピーします。
-	 - `json`: 各タブのタイトルとURLをJSON形式でコピーします。
-	 - `custom`: 独自のテンプレートでコピーします。
-  - **Custom Template (カスタムテンプレート)**: `Format Type`で`custom`を選んだ場合に使用します。`$title`（タブのタイトル）と`$url`（タブのURL）を変数として使い、自由な形式を定義できます。
-  - **MIME Type**: `custom`形式でコピーする際のデータ形式（MIMEタイプ）を`text/plain`（書式なしテキスト）または`text/html`（HTML形式）から選択します。貼り付け先のアプリケーション（例: WordやGmail）がこの形式を解釈することで、書式を維持したまま貼り付けることができます。
+	- **Format Type (形式)**: 3種類の形式から選択します。
+		- `text`: URLのみを改行区切りでコピーします。
+		- `json`: 各タブのタイトルとURLをJSON形式でコピーします。
+		- `custom`: 独自のテンプレートでコピーします。
+	- **Custom Template (カスタムテンプレート)**: `Format Type`で`custom`を選んだ場合に使用します。`$title`（タブのタイトル）と`$url`（タブのURL）を変数として使い、自由な形式を定義できます。
+	- **MIME Type**: `custom`形式でコピーする際のデータ形式（MIMEタイプ）を`text/plain`（書式なしテキスト）または`text/html`（HTML形式）から選択します。貼り付け先のアプリケーション（例: WordやGmail）がこの形式を解釈することで、書式を維持したまま貼り付けることができます。
 
 ### Paste (貼り付け・タブ展開設定)
 
 クリップボードのURLを新しいタブで開く際の動作を管理します。
 
 - **Search (URLの検索)**
-  - **Search for URLs in the clipboard text**: このオプションを有効にすると、クリップボード内のテキスト全体から正規表現を使ってURL（`http://`または`https://`で始まるもの）を自動的に抽出します。無効の場合、テキストの各行が1つのURLとして扱われます。**なお、このオプションが有効な場合、プロトコルフィルタリングは`http`と`https`を持つURLに対してのみ適用されます。**
+	- **Search for URLs in the clipboard text**: このオプションを有効にすると、クリップボード内のテキスト全体から正規表現を使ってURL（`http://`または`https://`で始まるもの）を自動的に抽出します。無効の場合、テキストの各行が1つのURLとして扱われます。**なお、このオプションが有効な場合、プロトコルフィルタリングは`http`と`https`を持つURLに対してのみ適用されます。**
 
 - **Tab (タブの動作)**
-  - **Open tabs in reverse order**: クリップボードのURLリストを逆順（下から上へ）に開きます。
-  - **Open in active tab**: 新しく開くタブをアクティブな状態（前面に表示）にします。
-  - **New tab position**: 新しいタブを開く位置を指定します。
-	 - `default`: ブラウザのデフォルト設定に従います。
-	 - `first` / `last`: タブバーの最初または最後に開きます。
-	 - `left` / `right`: 現在アクティブなタブの左隣または右隣に開きます。
-  - **Delay (遅延)**: 次のタブを開くまでの待機時間をミリ秒単位で設定します。多数のタブを一度に開く際のブラウザへの負荷を軽減します。
-  - **Custom Delay (カスタム遅延)**: 特定のドメインやURLパターンに対して、個別の遅延時間を設定できます。
-	 - `Enable`: この機能を有効にします。
-	 - `Add`ボタンでルールを追加し、URL（完全一致）と遅延時間を設定します。リストはドラッグ＆ドロップで並べ替え可能です。
+	- **Open tabs in reverse order**: クリップボードのURLリストを逆順（下から上へ）に開きます。
+	- **Open in active tab**: 新しく開くタブをアクティブな状態（前面に表示）にします。
+	- **New tab position**: 新しいタブを開く位置を指定します。
+		- `default`: ブラウザのデフォルト設定に従います。
+		- `first` / `last`: タブバーの最初または最後に開きます。
+		- `left` / `right`: 現在アクティブなタブの左隣または右隣に開きます。
+	- **Delay (遅延)**: 次のタブを開くまでの待機時間をミリ秒単位で設定します。多数のタブを一度に開く際のブラウザへの負荷を軽減します。
+	- **Custom Delay (カスタム遅延)**: 特定のドメインやURLパターンに対して、個別の遅延時間を設定できます。
+		- `Enable`: この機能を有効にします。
+		- `Add`ボタンでルールを追加し、URL（完全一致）と遅延時間を設定します。リストはドラッグ＆ドロップで並べ替え可能です。
 
 - **Task Control (タスク制御)**
-  多数のURLを開く際の処理方法と実行順序を細かく制御します。詳細は「[設定 (上級者向け設定)](#設定-上級者向け設定)」の章をご覧ください。
+	多数のURLを開く際の処理方法と実行順序を細かく制御します。詳細は「[設定 (上級者向け設定)](#設定-上級者向け設定)」の章をご覧ください。
 
 ### Filtering (フィルタリング設定)
 
 コピーまたは貼り付けの際に、特定の条件に基づいてURLを除外します。
 
 - **URL Deduplication (URLの重複排除)**
-  - `Deduplicate URLs on Copy`: コピー時に、重複するURLを1つにまとめます。
-  - `Deduplicate URLs on Paste`: 貼り付け時に、重複するURLを1つにまとめます。
+	- `Deduplicate URLs on Copy`: コピー時に、重複するURLを1つにまとめます。
+	- `Deduplicate URLs on Paste`: 貼り付け時に、重複するURLを1つにまとめます。
 
 - **Protocol Filtering (プロトコルでのフィルタリング)**
-  - `Filter on Copy` / `Filter on Paste`: コピー時または貼り付け時に、許可されたプロトコル以外のURLを除外します。
-  - `Allowed Protocols`: 処理を許可するプロトコルの種類を選択します（例: `http`, `https`, `file`など）。
+	- `Filter on Copy` / `Filter on Paste`: コピー時または貼り付け時に、許可されたプロトコル以外のURLを除外します。
+	- `Allowed Protocols`: 処理を許可するプロトコルの種類を選択します（例: `http`, `https`, `file`など）。
+
+- **URL Filtering (URLでのフィルタリング)**
+	コピー時または貼り付け時に、指定したパターンに一致するURLを除外します。
+	- `Filter on Copy` / `Filter on Paste`: それぞれのアクションでフィルタリングを有効にします。
+	- `Pattern Matching type`: 4種類のマッチング方法から選択します。
+		- `Prefix`: 前方一致。指定した文字列で始まるURLを除外します。
+		- `Substring`: 部分一致。指定した文字列をURL内に含むものを除外します。
+		- `Exact`: 完全一致。指定した文字列と完全に一致するURLを除外します。
+		- `Regular expression`: 正規表現。指定した正規表現にマッチするURLを除外します。
+	- `Filtering Pattern`: 除外対象とするURLのパターンを（1行に1パターンずつ）入力します。
 
 ### System (システム設定)
 
 拡張機能自体のUIや動作に関する設定です。
 
 - **Options Page (オプションページ)**
-  - `Font Size`: このオプションページ自体のフォントサイズを調整します。
+	- `Font Size`: このオプションページ自体のフォントサイズを調整します。
 
 - **Popup Menu (ポップアップメニュー)**
-  - `Font Size`: 拡張機能アイコンをクリックした際に表示されるポップアップメニューのフォントサイズを調整します。
-  - `Clear Message`: ポップアップに表示された完了メッセージなどを、指定した秒数後に自動で消去します。
-  - `OnClick Close`: ポップアップメニューのボタン（Copy/Paste）をクリックした後、指定した秒数後にメニューを自動で閉じます。
+	- `Font Size`: 拡張機能アイコンをクリックした際に表示されるポップアップメニューのフォントサイズを調整します。
+	- `Clear Message`: ポップアップに表示された完了メッセージなどを、指定した秒数後に自動で消去します。
+	- `OnClick Close`: ポップアップメニューのボタン（Copy/Paste）をクリックした後、指定した秒数後にメニューを自動で閉じます。
 
 - **Badge (アイコンバッジ)**
-  - `Enable`: 拡張機能のアイコン上に、「Paste」機能でタブとして開かれるのを待っているURLの数をバッジとして表示します。
-  - `Theme`: バッジの配色テーマを選択します。
-    - `Light` / `Dark`: 事前定義されたライトテーマまたはダークテーマを使用します。
-    - `Custom`: `Text`（文字色）と`Background`（背景色）を自由に設定します。
+	- `Enable`: 拡張機能のアイコン上に、「Paste」機能でタブとして開かれるのを待っているURLの数をバッジとして表示します。
+	- `Theme`: バッジの配色テーマを選択します。
+		- `Light` / `Dark`: 事前定義されたライトテーマまたはダークテーマを使用します。
+		- `Custom`: `Text`（文字色）と`Background`（背景色）を自由に設定します。
 
 ### Debug (デバッグ設定)
 
@@ -98,21 +108,21 @@
 
 ### Task Control (タスク制御)
 
-多数のURLを開く際の処理方法と実行順序を細かく制御します。ブラウザのパフォーマンスに大きく影響するため、設定内容をよく理解した上でご使用ください。
+多数のURLを開く際の処理方法と実行順序を細かく制御します。**ブラウザのパフォーマンスに大きく影響**するため、設定内容をよく理解した上でご使用ください。
 
 ここでいう「タスク」とは、「クリップボードから読み取られたURL群を新しいタブとして開く」一連の処理を指します。
 
 #### 設定項目
 
 - **Processing Unit (処理単位)**: URLをどのようにグループ化して処理するかを決定します。
-  - `Unitary`: URLを1つずつ個別のタスクとして扱います。後述の`Execution Order`で`Append`や`Prepend`を選んだ場合、ブラウザへの負荷を分散させることができます。
-  - `Batch`: URLを指定した数（`Number of URLs per Batch`）のまとまり（チャンク）にして、グループ単位で処理します。
-  - `Monolithic`: すべてのURLを一つの巨大なタスクとして一括で処理します。
+	- `Unitary`: URLを1つずつ個別のタスクとして扱います。後述の`Execution Order`で`Append`や`Prepend`を選んだ場合、ブラウザへの負荷を分散させることができます。
+	- `Batch`: URLを指定した数（`Number of URLs per Batch`）のまとまり（チャンク）にして、グループ単位で処理します。
+	- `Monolithic`: すべてのURLを一つの巨大なタスクとして一括で処理します。
 
 - **Execution Order (実行順序)**: 生成されたタスクを、実行待ちの列（キュー）にどのように追加するかを決定します。
-  - `Parallel`: キューを使わず、**すべてのURLを同時に開こう**とします。
-  - `Append`: 新しいタスクを**キューの末尾に追加**します。現在実行中のタスクがあれば、それが終わった後に処理されます。
-  - `Prepend`: 新しいタスクを**キューの先頭に追加**します。現在実行中のタスクがあれば、それが終わった直後に優先的に処理されます。
+	- `Parallel`: キューを使わず、**すべてのURLを同時に開こう**とします。
+	- `Append`: 新しいタスクを**キューの末尾に追加**します。現在実行中のタスクがあれば、それが終わった後に処理されます。
+	- `Prepend`: 新しいタスクを**キューの先頭に追加**します。現在実行中のタスクがあれば、それが終わった直後に優先的に処理されます。
 
 #### 組み合わせの動作例
 
@@ -181,5 +191,5 @@
 - **ソースコード:**
 	- [from-es/copy-url-of-all-tabs (GitHub)](https://github.com/from-es/copy-url-of-all-tabs)
 - **ストアページ:**
-  - [Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm)
-  - [Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/)
+	- [Chrome Web Store](https://chromewebstore.google.com/detail/copy-url-of-all-tabs/glhbfaabeopieaeoojdlaboihfbdjhbm)
+	- [Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/)

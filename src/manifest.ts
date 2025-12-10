@@ -22,6 +22,9 @@ export const manifest: UserManifest =
 			CSS Nesting (https://caniuse.com/css-nesting)
 				- Chrome : 120 & later
 				- Firefox: 117 & later
+			field-sizing (https://developer.mozilla.org/ja/docs/Web/CSS/Reference/Properties/field-sizing)
+				- Chrome : 123 & later
+				- Firefox: No support@2025-12-10
 		JavaScript
 			Popover API (https://developer.mozilla.org/ja/docs/Web/API/Popover_API)
 				- Chrome : 114 & later
