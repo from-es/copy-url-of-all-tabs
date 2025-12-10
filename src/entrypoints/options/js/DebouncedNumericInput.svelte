@@ -53,7 +53,7 @@
 		}
 	}
 
-	const handleInput = debounce(processInput, debounceTime);
+	const handleInput = $derived(debounce(processInput, debounceTime));
 </script>
 
 
