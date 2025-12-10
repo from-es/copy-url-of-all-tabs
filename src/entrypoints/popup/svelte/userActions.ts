@@ -56,7 +56,7 @@ export async function eventActionCopy(action: Action, config: Config, define: De
  */
 export async function eventActionPaste(action: Action, config: Config, define: Define): Promise<EventActionPasteResult> {
 	const regexSearch     = config.Search.regex;
-	const regexUrlPattern = define.Regex.url.RFC3986WithAuth;
+	const regexUrlPattern = define.Regex.url.RFC3986LooseWithAuth;
 
 	const status  = await ClipboardManager.readText();
 	const text    = status ? status : "";
