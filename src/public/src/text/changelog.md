@@ -1,3 +1,12 @@
+#### [1.15.0] - 2025/12/11
+
+- feat
+	- Enhanced URL filtering with pattern matching capabilities. This includes `prefix`, `substring`, and `exact` matches, as well as a `regex` mode for advanced filtering using regular expressions.
+- fix
+	- Improved URL parsing to correctly handle URLs from the clipboard that contain underscores in the hostname.
+- improve
+	- Refactored and optimized internal components for better performance and maintainability.
+
 #### [1.14.0] - 2025/12/06
 
 - feat
