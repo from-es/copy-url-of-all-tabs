@@ -54,6 +54,16 @@ type Config_Delta = {
 				chrome:     boolean;
 			};
 		};
+		PatternMatch: {
+			Copy: {
+				enable: boolean;
+			};
+			Paste: {
+				enable: boolean;
+			};
+			type   : "prefix" | "substring" | "exact" | "regex";
+			pattern: string;
+		}
 	};
 	Format: {
 		type     : "text" | "json" | "custom";
@@ -351,6 +361,16 @@ const define: Define = {
 					about     : false,
 					chrome    : false,
 				}
+			},
+			PatternMatch: {
+				Copy: {
+					enable: false
+				},
+				Paste: {
+					enable: false
+				},
+				type   : "prefix",
+				pattern: "// prefix\nhttps://example.com\nhttps://example.net\nhttps://example.org\nhttps://example.edu"
 			}
 		},
 		Format: {
@@ -704,6 +724,53 @@ const define: Define = {
 						}
 		},
 
+
+
+		{
+			property: "Filtering.PatternMatch.Copy.enable",
+			fail    : () => { return define.Config.Filtering.PatternMatch.Copy.enable; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.boolean()
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.PatternMatch.Paste.enable",
+			fail    : () => { return define.Config.Filtering.PatternMatch.Paste.enable; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.boolean()
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.PatternMatch.matchType",
+			fail    : () => { return define.Config.Filtering.PatternMatch.type; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.pattern(/^(prefix|substring|exact|regex)$/i)
+									.test(value);
+						}
+		},
+		{
+			property: "Filtering.PatternMatch.pattern",
+			fail    : () => { return define.Config.Filtering.PatternMatch.pattern; },
+			rule    : (value) => {
+								return v8n()
+									.not.undefined()
+									.not.null()
+									.string()
+									.test(value);
+						}
+		},
+
 		// Format
 		{
 			property: "Format.type",
@@ -981,8 +1048,11 @@ const define: Define = {
 			standard: /(https?):\/\/(?:[-\w.])+(?:\\:[0-9]+)?(?:\/(?:[\w\\._~:/?#[\]@!$&"()*+,;=%-])*)?/gi,
 			RFC3986 : /https?:\/\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::[1-9][0-9]{0,4})?(?:\/[a-z0-9._~:/?#[\]@!$&"()*+,;=%-]*)?/gi,
 
-			// Basic認証対応
-			RFC3986WithAuth: /https?:\/\/(?:[a-z0-9._~%!$&'()*+,;=:-]+(?::[a-z0-9._~%!$&'()*+,;=:-]+)?@)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::[1-9][0-9]{0,4})?(?:\/[a-z0-9._~:/?#[\]@!$&"'()*+,;=%-]*)?/gi
+			// RFC3986 & Basic認証対応
+			RFC3986WithAuth: /https?:\/\/(?:[a-z0-9._~%!$&'()*+,;=:-]+(?::[a-z0-9._~%!$&'()*+,;=:-]+)?@)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::[1-9][0-9]{0,4})?(?:\/[a-z0-9._~:/?#[\]@!$&"'()*+,;=%-]*)?/gi,
+
+			// RFC3986 にホスト名にアンダースコアを許容 & Basic認証対応
+			RFC3986LooseWithAuth: /https?:\/\/(?:[a-z0-9._~%!$&'()*+,;=:-]+(?::[a-z0-9._~%!$&'()*+,;=:-]+)?@)?(?:[a-z0-9_](?:[a-z0-9_-]{0,61}[a-z0-9_])?\.)*[a-z0-9_](?:[a-z0-9_-]{0,61}[a-z0-9_])?(?::[1-9][0-9]{0,4})?(?:\/[a-z0-9._~:/?#[\]@!$&"'()*+,;=%-]*)?/gi
 		},
 		UUID: {
 			v4: /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i

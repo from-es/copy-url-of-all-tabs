@@ -51,14 +51,19 @@ export function prepareForActionPaste(urlList: string[], action: Action, config:
  * @returns {string[]}         - 設定適応済みURLリスト
  */
 function applyUrlProcessingRules(urlList: string[], action: Action, config: Config, define: Define): string[] {
-	const isProtocolFilteringEnabled = (action === "copy") ? config.Filtering.Protocol.Copy.enable    : config.Filtering.Protocol.Paste.enable;
-	const isDeduplicate              = (action === "copy") ? config.Filtering.Deduplicate.Copy.enable : config.Filtering.Deduplicate.Paste.enable;
+	const isProtocolFilteringEnabled     = (action === "copy") ? config.Filtering.Protocol.Copy.enable     : config.Filtering.Protocol.Paste.enable;
+	const isPatternMatchFilteringEnabled = (action === "copy") ? config.Filtering.PatternMatch.Copy.enable : config.Filtering.PatternMatch.Paste.enable;
+	const isDeduplicateEnabled           = (action === "copy") ? config.Filtering.Deduplicate.Copy.enable  : config.Filtering.Deduplicate.Paste.enable;
+	let   filteredUrlList                = urlList;
 
 	// Filtering: Protocol
-	let filteredUrlList = filterUrlsByProtocol(urlList, isProtocolFilteringEnabled, action, config, define);
+	filteredUrlList = filterUrlsByProtocol(filteredUrlList, isProtocolFilteringEnabled, action, config, define);
 
-	// Filtering: deduplicate
-	if (isDeduplicate) {
+	// Filtering: URL Pattern match
+	filteredUrlList = filterUrlsByPatternMatch(filteredUrlList, isPatternMatchFilteringEnabled, action, config, define);
+
+	// Filtering: Deduplicate
+	if (isDeduplicateEnabled) {
 		const originalCount = filteredUrlList.length;
 		filteredUrlList = toUniqueArray(filteredUrlList);
 
@@ -175,6 +180,81 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 			regex
 		}
 	);
+
+	return result;
+}
+
+/**
+ * URLリストをフィルタリングリストに基づいてフィルタリング
+ * @param   {string[]} urlList   - フィルタリング対象のURLリスト
+ * @param   {boolean}  filtering - フィルタリングを有効にするか
+ * @param   {Action}   action    - フィルタリングを実行するアクションの文字列（例: "copy" or "paste"）
+ * @param   {Config}   config    - ユーザー設定オブジェクト
+ * @param   {Define}   define    - 定義済み定数オブジェクト
+ * @returns {string[]}           - フィルタリング済みURLリストの配列
+ */
+function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action: Action, config: Config, define: Define): string[] {
+	/**
+	 * 文字列を正規表現で使用できるように、特殊文字をエスケープ
+	 * @param   {string} str - エスケープする文字列
+	 * @returns {string}     - エスケープされた文字列
+	 */
+	const escapeRegExp = (str: string): string => {
+		return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	};
+
+	const currentUrlList = structuredClone(urlList);
+
+	// Step 01: パターンを取得し、空行やコメント行(`// `)を除外
+	const text     = (config.Filtering.PatternMatch.pattern).replace(/\r\n|\r/g, "\n").replace(/\n+$/, "");
+	const patterns = (text.split("\n")).filter((elm) => { return (elm !== undefined && elm !== null && elm !== "" && !(/^[\\/]{2}\s/).test(elm)); });
+
+	if (!filtering || patterns.length === 0) {
+		console.debug("[Filter URLs By Pattern Match] Filtering disabled or no patterns.");
+		return currentUrlList;
+	}
+
+	// Step 02: matchType に応じてURLをフィルタリング
+	const matchType = config.Filtering.PatternMatch.type;
+	let   result: string[];
+
+	try {
+		const regexParts = patterns.map(
+			(pattern) => {
+				if (pattern === "") {
+					return null; // 空のパターンは無視
+				}
+
+				switch (matchType) {
+					case "prefix":
+						return `^${escapeRegExp(pattern)}`;
+					case "substring":
+						return escapeRegExp(pattern);
+					case "exact":
+						return `^${escapeRegExp(pattern)}$`;
+					case "regex":
+						return pattern;
+					default: {
+						const exhaustiveCheck: never = matchType;
+						throw new Error(`Unknown matchType: ${exhaustiveCheck}`);
+					}
+				}
+			})
+			.filter((ptn): ptn is string => ptn !== null);
+
+		if (regexParts.length === 0) {
+			return currentUrlList;
+		}
+
+		const combinedRegex = new RegExp(regexParts.join("|"), "i");
+		result = currentUrlList.filter(url => !combinedRegex.test(url));
+
+	} catch (error) {
+		console.error("Invalid regex pattern provided. Filtering is disabled.", error);
+		return currentUrlList;
+	}
+
+	console.debug("[Filter URLs By Pattern Match]", { config, patterns, url: { before: urlList, after: result } });
 
 	return result;
 }

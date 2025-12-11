@@ -839,6 +839,56 @@
 						</fieldset>
 					</div>
 				</section>
+
+				<!-- URL Filtering -->
+				<section class="container">
+					<div class="flex-side">
+						<h3>URL Filtering</h3>
+					</div>
+
+					<div class="flex-main">
+						<fieldset>
+							<legend>Enable Filtering</legend>
+
+							<form>
+								<input id="Filtering-PatternMatch-Copy-enable-input" type="checkbox" bind:checked={ status.config.Filtering.PatternMatch.Copy.enable }>
+								<label for="Filtering-PatternMatch-Copy-enable-input">Filter on Copy</label>
+							</form>
+							<form>
+								<input id="Filtering-PatternMatch-Paste-enable-input" type="checkbox" bind:checked={ status.config.Filtering.PatternMatch.Paste.enable }>
+								<label for="Filtering-PatternMatch-Paste-enable-input">Filter on Paste</label>
+							</form>
+						</fieldset>
+
+						<fieldset>
+							<legend>Pattern Matching type</legend>
+							<form id="PatternMatch-type">
+								<label data-description="Excludes URLs that start with the specified string">
+									<input type="radio" name="PatternMatch-type" value="prefix" bind:group={ status.config.Filtering.PatternMatch.type }>
+									Prefix
+								</label>
+								<label data-description="Excludes URLs that contain the specified string">
+									<input type="radio" name="PatternMatch-type" value="substring" bind:group={ status.config.Filtering.PatternMatch.type }>
+									Substring
+								</label>
+								<label data-description="Excludes URLs that exactly match the specified string">
+									<input type="radio" name="PatternMatch-type" value="exact" bind:group={ status.config.Filtering.PatternMatch.type }>
+									Exact
+								</label>
+								<label data-description="Excludes URLs that match the specified regular expression">
+									<input type="radio" name="PatternMatch-type" value="regex" bind:group={ status.config.Filtering.PatternMatch.type }>
+									Regular expression
+								</label>
+							</form>
+						</fieldset>
+
+						<fieldset>
+							<legend>Filtering Pattern</legend>
+
+							<textarea id="Filtering-PatternMatch-Paste-pattern" spellcheck="false" bind:value={ status.config.Filtering.PatternMatch.pattern }></textarea>
+						</fieldset>
+					</div>
+				</section>
 			</fieldset>
 
 			<!-- System -->
