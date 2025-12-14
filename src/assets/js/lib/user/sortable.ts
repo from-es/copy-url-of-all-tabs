@@ -1,9 +1,15 @@
 // Import NPM Package
 import Sortable from "sortablejs";
 
+// Import Types
+import type { Options } from "sortablejs";
 
+type SortableOptions = Options & {
+	list  : object[],
+	onSort: (list: object[]) => void
+};
 
-export function sortable(node: HTMLElement, options: { list: object[], onSort: (list: object[]) => void }) {
+export function sortable(node: HTMLElement, options: SortableOptions) {
 	let sortableInstance: Sortable;
 
 	const reorder = (list: object[], oldIndex: number, newIndex: number) => {
@@ -13,17 +19,22 @@ export function sortable(node: HTMLElement, options: { list: object[], onSort: (
 	};
 
 	const initialize = () => {
+		const { list, onSort, ...restOptions } = options;
+
 		sortableInstance = new Sortable(node, {
 			animation: 150,
 			handle   : ".sortable",
 			onEnd    : (evt) => {
 				if (evt.oldIndex !== undefined && evt.newIndex !== undefined) {
-					const newList = reorder([ ...options.list ], evt.oldIndex, evt.newIndex);
+					const newList = reorder([ ...list ], evt.oldIndex, evt.newIndex);
 
 					// イベントを発行する代わりに、渡された onSort 関数を呼び出す
-					options.onSort(newList);
+					onSort(newList);
 				}
-			}
+			},
+
+			// 呼び出し元からのオプションで上書き
+			...restOptions
 		});
 	};
 
