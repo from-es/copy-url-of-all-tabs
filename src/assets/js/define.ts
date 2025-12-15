@@ -724,9 +724,6 @@ const define: Define = {
 									.test(value);
 						}
 		},
-
-
-
 		{
 			property: "Filtering.PatternMatch.Copy.enable",
 			fail    : () => { return define.Config.Filtering.PatternMatch.Copy.enable; },
@@ -750,7 +747,7 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.PatternMatch.matchType",
+			property: "Filtering.PatternMatch.type",
 			fail    : () => { return define.Config.Filtering.PatternMatch.type; },
 			rule    : (value) => {
 								return v8n()
@@ -930,7 +927,6 @@ const define: Define = {
 									.test(value);
 						}
 		},
-
 
 		// Badge
 		{
