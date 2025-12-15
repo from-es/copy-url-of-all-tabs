@@ -143,6 +143,7 @@ type Define_Delta = {
 	TabOpenCustomDelayApplyFrom          : number;
 	DisabledTimeoutValue                 : number;
 	OptionsPageInputDebounceTime         : number;
+	OptionsPageSortListDebounceTime      : number;
 	TaskControlChunkSizeValue            : number;
 	TaskControlChunkSizeValueMin         : number;
 	TaskControlChunkSizeValueMax         : number;
@@ -723,9 +724,6 @@ const define: Define = {
 									.test(value);
 						}
 		},
-
-
-
 		{
 			property: "Filtering.PatternMatch.Copy.enable",
 			fail    : () => { return define.Config.Filtering.PatternMatch.Copy.enable; },
@@ -749,7 +747,7 @@ const define: Define = {
 						}
 		},
 		{
-			property: "Filtering.PatternMatch.matchType",
+			property: "Filtering.PatternMatch.type",
 			fail    : () => { return define.Config.Filtering.PatternMatch.type; },
 			rule    : (value) => {
 								return v8n()
@@ -929,7 +927,6 @@ const define: Define = {
 									.test(value);
 						}
 		},
-
 
 		// Badge
 		{
@@ -1181,8 +1178,9 @@ const define: Define = {
 	// Options >> Reset Button: ボタン要素の連打対策用
 	DisabledTimeoutValue: 1000, // millisecond
 
-	// Options >> Input Tag: オプションページの入力フィールドにおけるデバウンス処理用
-	OptionsPageInputDebounceTime: 500, // millisecond
+	// Options >> デバウンス処理用
+	OptionsPageInputDebounceTime   : 500, // millisecond >> オプションページの入力フィールドの待ち時間
+	OptionsPageSortListDebounceTime: 500, // millisecond >> オプションページのソート対応リストの待ち時間
 
 	// TaskControl
 	TaskControlChunkSizeValue    : 5,

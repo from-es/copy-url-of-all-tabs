@@ -1,3 +1,10 @@
+#### [1.15.1] - 2025/12/15
+
+- fix
+	- Fixed a bug on the options page that could prevent URL pattern matching settings from being applied correctly.
+- fix
+	- In the user guide's section for the 'Custom Delay' feature, an error in the description of the URL pattern matching rules has been corrected.
+
 #### [1.15.0] - 2025/12/11
 
 - feat
