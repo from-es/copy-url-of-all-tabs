@@ -622,13 +622,14 @@
 
 									<tbody
 										id="Tab-custom-delay-list"
-										use:sortable={{
+										{@attach sortable({
 											list  : status.config.Tab.customDelay.list,
 											handle: "#Tab-custom-delay-list .sortable",
 											onSort: (newList) => {
 												status.config.Tab.customDelay.list = newList as Config["Tab"]["customDelay"]["list"];
-											}
-										}}
+											},
+											debounceTime: status.define.OptionsPageSortListDebounceTime
+										})}
 									>
 										{#snippet customDelayList(item: { id: string; pattern: string; delay: number; })}
 											<tr>
