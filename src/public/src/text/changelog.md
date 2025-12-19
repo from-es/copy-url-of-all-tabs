@@ -1,3 +1,8 @@
+#### [1.15.2] - 2025/12/19
+
+- fix
+	- Fixed a bug that could cause a validation warning to be displayed on the options page after resetting and then saving the settings.
+
 #### [1.15.1] - 2025/12/15
 
 - fix
