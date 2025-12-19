@@ -174,6 +174,9 @@
 
 		status.config = cloneObject(status.define.Config);
 
+		// Update config.Information with current values to prevent validation warnings on save.
+		status.config.Information = getInformationOfConfig();
+
 		// Reinitialize, List of User Script
 		await reInitialize();
 
