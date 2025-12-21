@@ -1,3 +1,10 @@
+#### [1.16.0] - 2025/12/21
+
+- feat
+	- Updated core dependencies, build tools (WXT, Svelte), and development tools (ESLint, TypeScript-ESLint, Vitest).
+- fix
+	- Removed redundant dependency of `@types/dompurify`.
+
 #### [1.15.3] - 2025/12/21
 
 - fix
