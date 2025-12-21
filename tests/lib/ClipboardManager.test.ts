@@ -29,11 +29,21 @@ describe("ClipboardManager", () => {
 			clipboard: mockClipboard,
 		});
 		// Mock ClipboardItem and Blob as they are not fully available in JSDOM
-		vi.stubGlobal("ClipboardItem", vi.fn(item => item));
-		vi.stubGlobal("Blob", vi.fn((content, options) => ({
-			content,
-			...options,
-		})));
+		vi.stubGlobal(
+			"ClipboardItem",
+			vi.fn(function (item) {
+				return item;
+			}),
+		);
+		vi.stubGlobal(
+			"Blob",
+			vi.fn(function (content, options) {
+				return {
+					content,
+					...options,
+				};
+			}),
+		);
 	});
 
 	afterEach(() => {
