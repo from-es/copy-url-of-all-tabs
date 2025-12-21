@@ -60,7 +60,6 @@
     "wxt": "^0.20.13"
   },
   "dependencies": {
-    "@types/dompurify": "^3.2.0",
     "bowser": "^2.13.1",
     "dayjs": "^1.11.19",
     "dompurify": "^3.3.1",
