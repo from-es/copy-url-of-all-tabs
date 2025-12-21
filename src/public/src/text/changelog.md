@@ -1,3 +1,8 @@
+#### [1.15.3] - 2025/12/21
+
+- fix
+	- Standardized all warning messages on the options page to English.
+
 #### [1.15.2] - 2025/12/19
 
 - fix
