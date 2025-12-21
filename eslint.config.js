@@ -133,5 +133,14 @@ export default [
 	},
 
 	// Add, Custom Rules
-	...customRules
+	...customRules,
+
+	// Override or add specific rules for TypeScript after recommended configs
+	{
+		files: [ "**/*.ts", "**/*.mts", "**/*.svelte" ],
+		rules: {
+			"@typescript-eslint/no-unused-vars": "warn",  // 宣言されているがコード内で未使用の変数がある場合に警告
+			"@typescript-eslint/no-explicit-any": "warn", // any 型の使用を許可しない (例外的に警告)
+		}
+	}
 ];

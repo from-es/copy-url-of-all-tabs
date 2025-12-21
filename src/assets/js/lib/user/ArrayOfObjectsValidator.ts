@@ -119,7 +119,7 @@ class ArrayOfObjectsValidator {
 
 		if (!error || !Array.isArray(error.violations)) {
 			let fieldName = error?.property;
-			let ruleName  = error?.rule?.name;
+			const ruleName  = error?.rule?.name;
 
 			if (fieldName === undefined) {
 				fieldName = ruleName === "schema" ? "schema_validation_failed" : "unspecified_property";
