@@ -60,14 +60,14 @@
     "wxt": "^0.20.13"
   },
   "dependencies": {
-    "@types/dompurify": "^3.0.5",
-    "bowser": "^2.12.1",
-    "dayjs": "^1.11.18",
-    "dompurify": "^3.2.7",
-    "lodash-es": "^4.17.21",
-    "marked": "^16.2.1",
+    "@types/dompurify": "^3.2.0",
+    "bowser": "^2.13.1",
+    "dayjs": "^1.11.19",
+    "dompurify": "^3.3.1",
+    "lodash-es": "^4.17.22",
+    "marked": "^17.0.1",
     "modern-normalize": "^3.0.1",
-    "p-queue": "^9.0.0",
+    "p-queue": "^9.0.1",
     "sortablejs": "^1.15.6",
     "v8n": "^1.5.1"
   }
