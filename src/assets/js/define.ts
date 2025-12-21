@@ -1115,8 +1115,8 @@ const define: Define = {
 		},
 		Setting_AutoCorrect: {
 			message: [
-				"一部の設定値が無効な為、設定の保存をキャンセルしました。内容を確認後、再度保存してください。",
-				"要修正箇所は、以下の項目です。"
+				"Save was canceled because some settings were invalid. Please review and save again.",
+				"The following items need correction:"
 			],
 			timeout: 10000,
 			fontsize: "1.0rem",
@@ -1126,7 +1126,7 @@ const define: Define = {
 			}
 		},
 		Setting_UnexpectedError: {
-			message: [ "設定の保存中に予期せぬエラーが発生しました。" ],
+			message: [ "An unexpected error occurred while saving the settings." ],
 			timeout: 5000,
 			fontsize: "1.0rem",
 			color: {
@@ -1189,15 +1189,15 @@ const define: Define = {
 	TaskControlChunkSizeValueStep: 1,
 
 	ConfigPropertyDisplayNames: {
-		Information: "拡張機能の情報",
-		Debug      : "デバッグ設定",
-		OptionsPage: "オプションページ設定",
-		PopupMenu  : "ポップアップメニュー設定",
-		Search     : "検索設定",
-		Filtering  : "フィルタリング設定",
-		Format     : "フォーマット設定",
-		Tab        : "タブ設定",
-		Badge      : "バッジ設定"
+		Information: "Extension Information",
+		Debug      : "Debug Settings",
+		OptionsPage: "Options Page Settings",
+		PopupMenu  : "Popup Menu Settings",
+		Search     : "Search Settings",
+		Filtering  : "Filtering Settings",
+		Format     : "Format Settings",
+		Tab        : "Tab Settings",
+		Badge      : "Badge Settings"
 	} as const,
 };
 
