@@ -57,7 +57,8 @@ describe("MigrationManager", () => {
 			Search: { regex: true },
 			Filtering: {
 				Deduplicate: { Copy: { enable: false }, Paste: { enable: false } },
-				Protocol: { Copy: { enable: true }, Paste: { enable: true }, type: { http: true, https: true, file: false, ftp: false, data: false, blob: false, mailto: false, javascript: false, about: false, chrome: false } }
+				Protocol: { Copy: { enable: true }, Paste: { enable: true }, type: { http: true, https: true, file: false, ftp: false, data: false, blob: false, mailto: false, javascript: false, about: false, chrome: false } },
+				PatternMatch: { Copy: { enable: false }, Paste: { enable: false }, type: "prefix", pattern: "" }
 			},
 			Format: { type: "text", template: "", mimetype: "text/plain" },
 			Tab: {
@@ -81,7 +82,7 @@ describe("MigrationManager", () => {
 			Config: mockConfig, // Using mockConfig as the default config for simplicity in tests
 			Verification: [],
 			Messaging: {},
-			Regex: { url: { standard: /a/, RFC3986: /b/, v4: /c/ }, UUID: { v4: /d/ }, NeverMatch: /e/ },
+			Regex: { url: { standard: /a/, RFC3986: /b/ }, UUID: { v4: /d/ }, NeverMatch: /e/ },
 			Message: {},
 			MimeType: [],
 			ChromiumBasedBrowser: [],
@@ -93,6 +94,7 @@ describe("MigrationManager", () => {
 			TabOpenCustomDelayMatchType: "prefix", TabOpenCustomDelayApplyFrom: 2,
 			DisabledTimeoutValue: 1000,
 			OptionsPageInputDebounceTime: 500,
+			OptionsPageSortListDebounceTime: 500,
 			TaskControlChunkSizeValue: 5, TaskControlChunkSizeValueMin: 1, TaskControlChunkSizeValueMax: 16, TaskControlChunkSizeValueStep: 1
 		};
 	});
