@@ -3,7 +3,7 @@
 	import { browser } from "wxt/browser";
 
 	// Import Types
-	import type { Config, Define, Status }           from "@/assets/js/types/";
+	import type { Config, Define, ExtensionMessage } from "@/assets/js/types/";
 	import type { Action, EventOnClickActionResult } from "./types";
 
 	// Import Svelte
@@ -68,7 +68,24 @@
 
 		// "paste" アクションの後処理
 		if ( action === "paste" && result && result.judgment && result.urlList?.length > 0 ) {
-			openURLs(result.urlList, config, status);
+			const urlList          = result.urlList;
+			const extensionMessage = {
+				action : status.define.Messaging.OpenURLs,
+				address: {
+					from: "popup.js",
+					to  : "background.js"
+				},
+				status: {
+					config: status.config,
+					define: status.define
+				},
+				argument: {
+					urlList: urlList,
+					option : config
+				}
+			};
+
+			openURLs(extensionMessage);
 		}
 
 		// メッセージの表示
@@ -164,27 +181,9 @@
 
 	/**
 	 * 指定されたURLリストを新しいタブで開くよう、バックグラウンドスクリプトにメッセージを送信。
-	 * @param {string[]} urlList - 開く対象のURLリスト
-	 * @param {Config}   option  - 拡張機能の設定オブジェクト
-	 * @param {Status}   status  - 現在のステータスオブジェクト
+	 * @param {ExtensionMessage} message - 開くURLリストと設定を含むメッセージオブジェクト
 	 */
-	function openURLs(urlList: string[], option: Config, status: Status): void {
-		const message  = {
-			action  : status.define.Messaging.OpenURLs,
-			address : {
-				from : "popup.js",
-				to   : "background.js"
-			},
-			status : {
-				config : status.config,
-				define : status.define
-			},
-			argument : {
-				urlList : urlList,
-				option  : option
-			}
-		};
-
+	function openURLs(message: ExtensionMessage): void {
 		// Firefoxとの互換性と安全性のために、送信前にオブジェクトをサニタイズ >> 構造化複製アルゴリズム不可なプロパティを除去
 		const options = {
 			checkOnly: false,
