@@ -305,7 +305,7 @@
 
 
 
-{#snippet button(attr)}
+{#snippet button(attr: { action: Action; label: string; text: string; disabled: boolean })}
 	<button
 		class       = "text"
 		type        = "button"
