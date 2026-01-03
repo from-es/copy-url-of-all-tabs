@@ -1,3 +1,8 @@
+#### [1.17.0] - 2026/01/03
+
+- improve
+	- The internal architecture has been significantly updated to improve performance and stability.
+
 #### [1.16.1] - 2025/12/26
 
 - improve
