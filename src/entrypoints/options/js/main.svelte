@@ -6,7 +6,7 @@
 	import dayjs from "dayjs";
 
 	// Import Types
-	import type { Config, Define, Status } from "@/assets/js/types/";
+	import type { Config, Define }         from "@/assets/js/types/";
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
 	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
 
@@ -32,12 +32,14 @@
 	import { DynamicContent }                                from "./dynamicContent";
 	import { compareConfig }                                 from "./utils/configComparer";
 
-	let { status = $bindable() }: { status: Status } = $props();
+	// Import Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
 
 	const dynamicContent = new DynamicContent(status);
 
 	onMount(() => {
-		console.log("The Component, On mount");
+		console.info("The Component, On mount");
+		console.debug("status >>", cloneObject(status)); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
 
 		initialize();
 	});
@@ -45,13 +47,13 @@
 
 	// ---------------------------------------------------------------------------------------------
 	async function initialize() {
-		console.log("The Component, Initialize");
-
 		document.title = `Options - ${status.define.Information.name}`;
 
 		setFontSizeForOptionsPage();
 
 		selectTab();
+
+		console.info("The Component, Initialize");
 	}
 
 	async function reInitialize() {

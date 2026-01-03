@@ -11,15 +11,18 @@
 
 	// Import Module
 	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
-	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
 	import { eventActionCopy, eventActionPaste }                            from "./userActions";
+	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
+	import { cloneObject }                                                  from "@/assets/js/lib/user/CloneObject";
 	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                                               from "@/assets/js/utils/setSafeHTML";
 
-	const { status } = $props();
+	// Import Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
 
 	onMount(() => {
-		console.info("The Component status, On mount");
+		console.info("The Component, On mount");
+		console.debug("status >>", cloneObject(status)); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
 
 		initialize();
 	});
@@ -28,13 +31,11 @@
 	 * ポップアップメニューの初期化処理を行う。
 	 */
 	function initialize(): void {
-		// スタイル(popup.css >> :root要素)の動的書き換え
+		// スタイル (popup.css >> :root要素) の動的書き換え
 		const fontSize = status.config.PopupMenu.fontsize;
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 
-		// debug
-		console.info("The Component, initialize");
-		console.log("Debug, status >>", status);
+		console.info("The Component, Initialize");
 	}
 
 	/**
