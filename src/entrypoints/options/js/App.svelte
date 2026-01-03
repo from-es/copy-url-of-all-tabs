@@ -10,8 +10,8 @@
 	import Main   from "./main.svelte";
 	import Footer from "./footer.svelte";
 
-	let { variables = $bindable() } = $props();
-	let status = $state(variables);
+	// Import Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
 
 	onMount(() => {
 		setUILanguage();
@@ -41,7 +41,7 @@
 <!-- Svelte Component Tag, Start -->
 <Header title={ status.define.Information.name } />
 
-<Main bind:status={ status } />
+<Main />
 
 <Footer />
 <!-- Svelte Component Tag, End -->

@@ -1,6 +1,3 @@
-// Import Types
-import { type Config, type Define } from "@/assets/js/types";
-
 // Import Svelte
 import { mount } from "svelte";
 
@@ -8,41 +5,31 @@ import { mount } from "svelte";
 import App          from "../svelte/App.svelte";
 import type AppType from "../svelte/App.svelte";
 
-// Import from Script
-import { initializeConfig } from "@/assets/js/initializeConfig";
-import { logging }          from "@/assets/js/logging";
+// Import Module
+import { initializeConfig }      from "@/assets/js/initializeConfig";
+import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state";
+import { logging }               from "@/assets/js/logging";
 
-// Import from CSS
+// Import CSS
 import "../css/popup.css";
 
-export let app: AppType | null = null;
+export let app: ReturnType<typeof mount> | AppType | null = null;
 
-window.addEventListener("load", boot);
+window.addEventListener("load", main);
 
-
-
-async function boot() {
+async function main() {
 	console.clear();
 
+	// Initialize settings
 	const { config, define } = await initializeConfig(null);
 
-	main(config, define);
-}
-
-function main(config: Config, define: Define) {
 	// Set logging console
 	logging(config, define);
 
-	const target = document.body;
-	const values = {
-		status : {
-			config: config,
-			define: define
-		}
-	};
+	// Initialize Share State Object
+	initializeSharedState(config, define);
 
-	app = mount(App, {
-		target: target,
-		props : values
-	});
+	// Mounting the starting module
+	const target = document.body;
+	app = mount(App, { target });
 }

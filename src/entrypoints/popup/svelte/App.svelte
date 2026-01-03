@@ -3,7 +3,7 @@
 	import { browser } from "wxt/browser";
 
 	// Import Types
-	import type { Config, Define, Status }           from "@/assets/js/types/";
+	import type { Config, Define, ExtensionMessage } from "@/assets/js/types/";
 	import type { Action, EventOnClickActionResult } from "./types";
 
 	// Import Svelte
@@ -11,15 +11,18 @@
 
 	// Import Module
 	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
-	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
 	import { eventActionCopy, eventActionPaste }                            from "./userActions";
+	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
+	import { cloneObject }                                                  from "@/assets/js/lib/user/CloneObject";
 	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                                               from "@/assets/js/utils/setSafeHTML";
 
-	const { status } = $props();
+	// Import Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
 
 	onMount(() => {
-		console.info("The Component status, On mount");
+		console.info("The Component, On mount");
+		console.debug("status >>", cloneObject(status)); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
 
 		initialize();
 	});
@@ -28,13 +31,11 @@
 	 * ポップアップメニューの初期化処理を行う。
 	 */
 	function initialize(): void {
-		// スタイル(popup.css >> :root要素)の動的書き換え
+		// スタイル (popup.css >> :root要素) の動的書き換え
 		const fontSize = status.config.PopupMenu.fontsize;
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 
-		// debug
-		console.info("The Component, initialize");
-		console.log("Debug, status >>", status);
+		console.info("The Component, Initialize");
 	}
 
 	/**
@@ -68,7 +69,24 @@
 
 		// "paste" アクションの後処理
 		if ( action === "paste" && result && result.judgment && result.urlList?.length > 0 ) {
-			openURLs(result.urlList, config, status);
+			const urlList          = result.urlList;
+			const extensionMessage = {
+				action : status.define.Messaging.OpenURLs,
+				address: {
+					from: "popup.js",
+					to  : "background.js"
+				},
+				status: {
+					config: status.config,
+					define: status.define
+				},
+				argument: {
+					urlList: urlList,
+					option : config
+				}
+			};
+
+			openURLs(extensionMessage);
 		}
 
 		// メッセージの表示
@@ -164,27 +182,9 @@
 
 	/**
 	 * 指定されたURLリストを新しいタブで開くよう、バックグラウンドスクリプトにメッセージを送信。
-	 * @param {string[]} urlList - 開く対象のURLリスト
-	 * @param {Config}   option  - 拡張機能の設定オブジェクト
-	 * @param {Status}   status  - 現在のステータスオブジェクト
+	 * @param {ExtensionMessage} message - 開くURLリストと設定を含むメッセージオブジェクト
 	 */
-	function openURLs(urlList: string[], option: Config, status: Status): void {
-		const message  = {
-			action  : status.define.Messaging.OpenURLs,
-			address : {
-				from : "popup.js",
-				to   : "background.js"
-			},
-			status : {
-				config : status.config,
-				define : status.define
-			},
-			argument : {
-				urlList : urlList,
-				option  : option
-			}
-		};
-
+	function openURLs(message: ExtensionMessage): void {
 		// Firefoxとの互換性と安全性のために、送信前にオブジェクトをサニタイズ >> 構造化複製アルゴリズム不可なプロパティを除去
 		const options = {
 			checkOnly: false,
@@ -306,7 +306,7 @@
 
 
 
-{#snippet button(attr)}
+{#snippet button(attr: { action: Action; label: string; text: string; disabled: boolean })}
 	<button
 		class       = "text"
 		type        = "button"
