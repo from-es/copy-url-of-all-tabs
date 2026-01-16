@@ -1,3 +1,8 @@
+#### [1.18.0] - 2026/01/16
+
+- feat
+	- Added a feature to enable or disable individual items in the custom delay list on the options page.
+
 #### [1.17.0] - 2026/01/03
 
 - improve
