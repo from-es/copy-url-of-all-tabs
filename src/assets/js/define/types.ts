@@ -11,6 +11,7 @@ type FormatMimeType   = "text/plain" | "text/html";
 type BadgeThemeType   = "light" | "dark" | "custom";
 type CustomDelayInfo  = {
 	id     : string;  // create by crypto.randomUUID()
+	enable : boolean;
 	pattern: string;
 	delay  : number;
 };
