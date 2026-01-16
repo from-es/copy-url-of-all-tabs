@@ -98,13 +98,13 @@ function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDela
 	let   rules: UrlDelayRule[]             = [];
 
 	if ( enable && customDelayList ) {
-		rules = customDelayList.map(
-			(rule) => ({
-				pattern  : rule.pattern,
-				delay    : rule.delay,
+		rules = customDelayList
+			.filter(item => item.enable)
+			.map(item => ({
+				pattern  : item.pattern,
+				delay    : item.delay,
 				matchType: define.TabOpenCustomDelayMatchType // `UrlDelayCalculator` に渡す正規表現判定時用の値(デフォルト値: "prefix")
-			})
-		);
+			}));
 	}
 
 	return UrlDelayCalculator.calculate(urlList, delay, rules, applyFrom);

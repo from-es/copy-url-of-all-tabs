@@ -512,6 +512,10 @@ header h1:before {
     overflow     : hidden;
 	 text-overflow: ellipsis;
 }
+#Tab-custom-delay-table > thead > tr > th[data-cell-type="enable"],
+#Tab-custom-delay-list  >         tr > td[data-cell-type="enable"] {
+	padding: 0 0.25rem;
+}
 #Tab-custom-delay-list > tr > td[data-cell-type="url"] > input {
     width: 100%;
 }

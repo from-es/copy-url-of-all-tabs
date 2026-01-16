@@ -1,6 +1,6 @@
 # "Copy URL of All Tabs" User Guide
 
-**Last Updated:** December 15, 2025
+**Last Updated:** January 16, 2026
 
 ## Overview
 
@@ -61,7 +61,8 @@ Manage how URLs from the clipboard are opened in new tabs.
 		- `left` / `right`: Opens to the left or right of the currently active tab.
 	- **Delay**: Sets a wait time in milliseconds before opening the next tab. This helps reduce the load on your browser when opening many tabs at once.
 	- **Custom Delay**: Set individual delay times for specific domains or URL patterns.
-		- `Enable`: Enables this feature.
+		- `Enable (Overall Feature)`: Enables the entire custom delay feature.
+		- `Enable (Individual Rule)`: Toggles the enable/disable state for each individual custom delay rule.
 		- Use the `Add` button to create rules, setting a URL (prefix match) and a delay time. The list can be reordered via drag-and-drop.
 
 > [!NOTE]

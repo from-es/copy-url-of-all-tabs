@@ -7,6 +7,7 @@
 
 	// Import Types
 	import type { Config, Define }         from "@/assets/js/types/";
+	import type { CustomDelayInfo }        from "@/assets/js/define/types";
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
 	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
 
@@ -618,10 +619,11 @@
 								<table id="Tab-custom-delay-table">
 									<thead>
 										<tr>
-											<th>Sort</th>
-											<th>URL</th>
-											<th>Delay</th>
-											<th>Delete</th>
+											<th data-cell-type="sort">Sort</th>
+											<th data-cell-type="enable">Enable</th>
+											<th data-cell-type="url">URL</th>
+											<th data-cell-type="delay">Delay</th>
+											<th data-cell-type="delete">Delete</th>
 										</tr>
 									</thead>
 
@@ -636,18 +638,19 @@
 											debounceTime: status.define.OptionsPageSortListDebounceTime
 										})}
 									>
-										{#snippet customDelayList(item: { id: string; pattern: string; delay: number; })}
+										{#snippet customDelayList(item: CustomDelayInfo)}
 											<tr>
 												<td data-cell-type="sort" class="sortable" title="Drag to sort">✠</td>
+												<td data-cell-type="enable"><input type="checkbox" bind:checked={item.enable}></td>
 												<td data-cell-type="url"><input class="blank-field-warning" type="url" bind:value={ item.pattern } placeholder="Only URL strings are supported. Regular expressions and wildcards are not. (e.g., https://example.com/)" required></td>
 												<td data-cell-type="delay">
 													<DebouncedNumericInput
-														bind:value={item.delay}
-														min={status.define.TabOpenDelayValueMin}
-														max={status.define.TabOpenDelayValueMax}
-														step={status.define.TabOpenDelayValueStep}
-														debounceTime={status.define.OptionsPageInputDebounceTime}
-														placeholder={status.define.TabOpenCustomDelayValue}
+														bind:value   = { item.delay }
+														min          = { status.define.TabOpenDelayValueMin }
+														max          = { status.define.TabOpenDelayValueMax }
+														step         = { status.define.TabOpenDelayValueStep }
+														debounceTime = { status.define.OptionsPageInputDebounceTime }
+														placeholder  = { status.define.TabOpenCustomDelayValue }
 														required
 													/>
 												</td>
@@ -659,7 +662,7 @@
 											{@render customDelayList(item)}
 										{:else}
 											<tr>
-												<td data-cell-type="empty" colspan="4">
+												<td data-cell-type="empty" colspan="5">
 													<p>No custom delays are set. Click the "Add" button to create one.</p>
 												</td>
 											</tr>

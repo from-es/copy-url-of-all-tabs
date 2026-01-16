@@ -465,6 +465,7 @@ export const VerificationRules: VerificationRule[] = [
 		rule    : (value) => {
 			const ValidationRules = {
 				id     : v8n().string().pattern(Constants.Regex.UUID.v4),
+				enable : v8n().boolean(),
 				pattern: v8n().string().canParseURL(),
 				delay  : v8n().integer().range(Constants.TabOpenDelayValueMin, Constants.TabOpenDelayValueMax),
 			};

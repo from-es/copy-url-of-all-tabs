@@ -314,5 +314,48 @@ export const rules: MigrationRule<Config>[] = [
 
 			return newData;
 		}
+	},
+	{
+		meta: {
+			author  : "From E",
+			reason  : "v1.18.0 で CustomDelay の各項目に有効/無効フラグを追加する為",
+			target  : "config.Tab.customDelay.list[].enable",
+			action  : "config.Tab.customDelay.list の各項目に `enable: true` を追加する（プロパティが存在しない場合）",
+			authored: "2026-01-16",
+			version : {
+				introduced: "1.18.0",
+				obsoleted : null
+			}
+		},
+		order: 9,
+		condition: (argument) => {
+			const { data }      = argument;
+			const configVersion = data.Information?.version ?? "0.0.0";
+
+			// configVersion が "1.18.0" より小さい場合でなければ、移行対象外
+			if (compareVersions("1.18.0", configVersion) !== -1) {
+				return false;
+			}
+
+			// `customDelay.list` が配列として存在し、かつその中に「`enable` プロパティを持ち、その値は boolean 値である（不正書き換え対策）」ではない項目が1つでもあれば移行対象とする
+			return data.Tab?.customDelay?.list?.some(item => !(Object.hasOwn(item, "enable") && typeof item.enable === "boolean")) ?? false;
+		},
+		execute: (argument) => {
+			const { data } = argument;
+			const newData  = cloneObject(data);
+
+			if (newData.Tab?.customDelay?.list) {
+				newData.Tab.customDelay.list.forEach(item => {
+					// 「`enable` プロパティを持ち、その値は boolean 値である」ではない項目にデフォルト値 `true` を設定
+					if (!(Object.hasOwn(item, "enable") && typeof item.enable === "boolean")) {
+						item.enable = true;
+					}
+				});
+			}
+
+			console.log(`Report, Add "enable" property to "data.Tab.customDelay.list" items.`, newData);
+
+			return newData;
+		}
 	}
 ];
