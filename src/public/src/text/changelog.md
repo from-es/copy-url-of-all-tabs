@@ -1,3 +1,8 @@
+#### [1.19.0] - 2026/01/23
+
+- improve
+	- Improved the stability of the initial setup process after installation.
+
 #### [1.18.0] - 2026/01/16
 
 - feat
