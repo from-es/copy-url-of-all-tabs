@@ -6,7 +6,7 @@
 	import dayjs from "dayjs";
 
 	// Import Types
-	import type { Config, Define }         from "@/assets/js/types/";
+	import type { Config, Define, Status } from "@/assets/js/types/";
 	import type { CustomDelayInfo }        from "@/assets/js/define/types";
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
 	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
@@ -233,10 +233,10 @@
 
 	/**
 	 * Imports a configuration file, updates the application's state, and displays a status message.
-	 * @param {object} currentStatus - The current status object of the application, containing config and define.
+	 * @param {Status} currentStatus - The current status object of the application, containing config and define.
 	 * @param {string} mimetype      - The expected MIME type of the file to import.
 	 */
-	async function importConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType) {
+	async function importConfig(currentStatus: Status, mimetype: MimeType) {
 		const result = await ConfigManager.importFile(mimetype);
 		let   message;
 
@@ -304,11 +304,11 @@
 		 * Exports the current application config to a JSON file and initiates a download.
 		 * This function now explicitly loads saved config from storage and will fail if it
 		 * cannot be retrieved, preventing the accidental export of unsaved UI config.
-		 * @param {object} currentStatus - The current status object of the application, containing config and define.
+		 * @param {Status} currentStatus - The current status object of the application, containing config and define.
 		 * @param {string} mimetype      - The MIME type for the exported file.
 		 * @param {string} timeFormat    - The `dayjs` format string to use for the timestamp in the filename.
 		 */
-		async function exportConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType, timeFormat: string) {
+		async function exportConfig(currentStatus: Status, mimetype: MimeType, timeFormat: string) {
 			const define = currentStatus.define;
 
 			/**
