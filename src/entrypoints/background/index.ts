@@ -21,10 +21,31 @@ export default defineBackground({
 	main
 });
 
+
 function main() {
+	initialize();
+}
+
+async function initialize(): Promise<void> {
 	browser.runtime.onMessage.addListener(eventOnMessage);
 
+	await initializeLocalStorage();
+
 	initializeBadgeCounter();
+}
+
+/**
+ * 拡張機能起動時にローカルストレージを初期化する。
+ * ストレージが空の場合、デフォルト設定が保存される。既に設定が保存されている場合は、何も行われない。
+ */
+async function initializeLocalStorage(): Promise<void> {
+	try {
+		await initializeConfig(null, true);
+
+		console.info("[Initialize LocalStorage] Configuration successfully initialized on startup.");
+	} catch (error) {
+		console.error("[Initialize LocalStorage] Error during initial configuration on startup:", error);
+	}
 }
 
 /**

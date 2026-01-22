@@ -7,6 +7,7 @@ import v8n from "v8n";
 // Import Module
 import { defaultConfig }           from "./config";
 import { ArrayOfObjectsValidator } from "@/assets/js/lib/user/ArrayOfObjectsValidator";
+import { ColorManager }            from "@/assets/js/lib/user/ColorManager";
 
 // Import Types
 import type { VerificationRule } from "./types";
@@ -24,7 +25,7 @@ v8n.extend({
 	canParseURL: () => (str) => { return URL.canParse(str); },
 
 	// Used for validating the value of "Badge.theme.color.text" & "Badge.theme.color.background"
-	isSupportCssColor: () => (str) => { return CSS.supports("color", str); }
+	isSupportCssColor: () => (str) => { return ColorManager.isValidColor(str); }
 });
 
 const manifest = browser.runtime.getManifest();

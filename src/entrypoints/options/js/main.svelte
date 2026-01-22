@@ -6,7 +6,7 @@
 	import dayjs from "dayjs";
 
 	// Import Types
-	import type { Config, Define }         from "@/assets/js/types/";
+	import type { Config, Define, Status } from "@/assets/js/types/";
 	import type { CustomDelayInfo }        from "@/assets/js/define/types";
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
 	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
@@ -233,10 +233,10 @@
 
 	/**
 	 * Imports a configuration file, updates the application's state, and displays a status message.
-	 * @param {object} currentStatus - The current status object of the application, containing config and define.
+	 * @param {Status} currentStatus - The current status object of the application, containing config and define.
 	 * @param {string} mimetype      - The expected MIME type of the file to import.
 	 */
-	async function importConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType) {
+	async function importConfig(currentStatus: Status, mimetype: MimeType) {
 		const result = await ConfigManager.importFile(mimetype);
 		let   message;
 
@@ -300,90 +300,109 @@
 
 		PopoverMessage.create(message);
 	}
-
-	/**
-	 * Exports the current application configuration to a JSON file and initiates a download.
-	 * @param {object} currentStatus - The current status object of the application, containing config and define.
-	 * @param {string} mimetype      - The MIME type for the exported file.
-	 * @param {string} timeFormat    - The `dayjs` format string to use for the timestamp in the filename.
-	 */
-	async function exportConfig(currentStatus: { config: Config, define: Define }, mimetype: MimeType, timeFormat: string) {
 		/**
-		 * 設定をストレージから読み込む。設定が存在しない場合はエラーをスローする
-		 * @returns {Promise<Config>} - 読み込まれた設定オブジェクト
+		 * Exports the current application config to a JSON file and initiates a download.
+		 * This function now explicitly loads saved config from storage and will fail if it
+		 * cannot be retrieved, preventing the accidental export of unsaved UI config.
+		 * @param {Status} currentStatus - The current status object of the application, containing config and define.
+		 * @param {string} mimetype      - The MIME type for the exported file.
+		 * @param {string} timeFormat    - The `dayjs` format string to use for the timestamp in the filename.
 		 */
-		const getSetting = async (): Promise<Config> => {
-			const keyname = define.Storage.keyname;
-			const data    = await StorageManager.load<{ [key: string]: Config }>(keyname);
-			const setting = data?.[keyname];
+		async function exportConfig(currentStatus: Status, mimetype: MimeType, timeFormat: string) {
+			const define = currentStatus.define;
 
-			if (!setting) {
-				throw new Error("Failed to load settings from storage.");
-			}
+			/**
+			 * Loads config from storage. Throws an error if config does not exist.
+			 * @returns {Promise<Config>} - The loaded config object.
+			 * @throws {Error}            - If loading fails or config is not found.
+			 */
+			const getSetting = async (): Promise<Config> => {
+				const keyname = define.Storage.keyname;
+				const data    = await StorageManager.load<{ [key: string]: Config }>(keyname);
 
-			return setting;
-		};
-		/**
-		 * エクスポート用のファイル名を生成
-		 * @returns {string} - 生成されたファイル名
-		 */
-		const getFileName = (): string => {
-			const getFilenameExtension = (): string => {
-				const extensions     = MIME_TO_EXT_MAP[mimetype]; // 存在しない mimetype の文字列を指定されていた場合は undefined が返値として渡される
-				const firstCandidate = extensions?.[0];
-				const extension      = firstCandidate ?? "txt";
-				const result         = extension.replace(/^\./, "");
-
-				if (!firstCandidate) {
-					console.warn(`exportConfig() >> getFilenameExtension: No extension found for mimetype: "${mimetype}". Defaulting to "txt".`, { availableMimeTypes: MIME_TO_EXT_MAP });
+				// StorageManager.load returns null on I/O errors
+				if (data === null) {
+					// The details of the error have already been logged to the console by StorageManager.load
+					throw new Error("An error occurred while loading config from storage.");
 				}
 
-				return result;
+				const setting = data?.[keyname];
+
+				// Config not found in storage
+				if (!setting) {
+					console.warn("Failed to load config from storage for export.");
+
+					throw new Error("Could not find saved config.");
+				}
+
+				// Successfully retrieved
+				return setting;
 			};
 
-			const appName    = define.Information.name.replace(/\s/g, "-");
-			const appVersion = define.Information.version;
-			const datestr    = dayjs().format(timeFormat);
+			/**
+			 * Generates a filename for the export.
+			 * @returns {string} - The generated filename.
+			 */
+			const getFileName = (): string => {
+				const getFilenameExtension = (): string => {
+					const extensions     = MIME_TO_EXT_MAP[mimetype];
+					const firstCandidate = extensions?.[0];
+					const extension      = firstCandidate ?? "txt";
+					const result         = extension.replace(/^\./, "");
 
-			return `${appName}_v${appVersion}_${datestr}.${getFilenameExtension()}`;
-		};
-		/**
-		 * データ取得からエクスポート実行までの一連の処理をまとめた関数
-		 * @returns {Promise<ExportResult>}
-		 */
-		const performExport = async (): Promise<ExportResult> => {
-			const setting  = await getSetting();
-			const filename = getFileName();
-			const content  = JSON.stringify(setting, null, "\t");
+					if (!firstCandidate) {
+						console.warn(`exportConfig() >> getFilenameExtension: No extension found for mimetype: "${mimetype}". Defaulting to "txt".`, { availableMimeTypes: MIME_TO_EXT_MAP });
+					}
 
-			return ConfigManager.exportFile(content, filename, mimetype);
-		};
+					return result;
+				};
 
-		const define = currentStatus.define;
-		let   message;
+				const appName    = define.Information.name.replace(/\s/g, "-");
+				const appVersion = define.Information.version;
+				const datestr    = dayjs().format(timeFormat);
 
-		try {
-			// データ処理を実行
-			const result = await performExport();
+				return `${appName}_v${appVersion}_${datestr}.${getFilenameExtension()}`;
+			};
 
-			// 結果に基づいてUIメッセージを準備
-			const template = result.success ? define.Message.Setting_ExportConfig_Success : define.Message.Setting_ExportConfig_Error;
-			message = cloneObject(template);
+			/**
+			 * Aggregates the series of processes from data acquisition to export execution.
+			 * @returns {Promise<ExportResult>}
+			 */
+			const performExport = async (): Promise<ExportResult> => {
+				const setting  = await getSetting();
+				const filename = getFileName();
+				const content  = JSON.stringify(setting, null, "\t");
 
-			if (!result.success) {
-				message.message.push(result.message);
+				return ConfigManager.exportFile(content, filename, mimetype);
+
+			};
+
+			let message;
+
+			try {
+				// Execute data processing.
+				const result = await performExport();
+
+				// Prepare UI message based on the result.
+				const template = result.success ? define.Message.Setting_ExportConfig_Success : define.Message.Setting_ExportConfig_Error;
+				message = cloneObject(template);
+
+				if (!result.success) {
+					message.message.push(result.message);
+				}
+			} catch (error) {
+				// Prepare UI message for errors.
+				const err      = error as Error;
+				const template = define.Message.Setting_ExportConfig_Error;
+
+				message = cloneObject(template);
+				message.message.push(`Failed to export configuration: ${err.message}`);
+
+				console.error("Configuration export failed.", { error: err });
 			}
-		} catch (error) {
-			// エラー発生時のUIメッセージを準備
-			const err      = error as Error;
-			const template = define.Message.Setting_ExportConfig_Error;
 
-			message = cloneObject(template);
-			message.message.push(`Failed to export configuration: ${err.message}`);
+			PopoverMessage.create(message);
 		}
-
-		PopoverMessage.create(message);
-	}
 	// ---------------------------------------------------------------------------------------------
 </script>
 

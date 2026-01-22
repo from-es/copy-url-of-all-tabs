@@ -1,7 +1,7 @@
 {
   "name": "copy-url-of-all-tabs",
   "description": "Cross-browser extension supporting both Chrome and Firefox.",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "bowser": "^2.13.1",
+    "color-string": "^2.1.4",
     "dayjs": "^1.11.19",
     "dompurify": "^3.3.1",
     "lodash-es": "^4.17.22",
