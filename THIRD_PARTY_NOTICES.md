@@ -264,7 +264,7 @@ SOFTWARE.
   - GitHub: https://github.com/sindresorhus/p-queue
 - License:
   - Type: MIT License
-  - URL: https://raw.githubusercontent.com/sindresorhus/p-queue/main/license
+  - URL: https://github.com/sindresorhus/p-queue/blob/main/license
 
 ```
 Copyright (c) 2011 Heather Arthur <fayearthur@gmail.com>
