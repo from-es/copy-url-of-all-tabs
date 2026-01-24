@@ -1,9 +1,9 @@
 <script lang="ts">
-	// Import Module & Types
-	import { PopoverMessage, type MessageType } from "@/assets/js/lib/user/MessageManager/PopoverMessage";
-
 	// Import NPM Package
 	import { debounce } from "lodash-es";
+
+	// Import Module & Types
+	import { PopoverMessage, type MessageType } from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 
 	type Props = {
 		id          ?: string;
@@ -24,6 +24,26 @@
 		debounceTime = 500, // milliseconds
 		...rest             // Collects all other props into the 'rest' object.
 	}: Props = $props();
+
+	let handleInput = $state<ReturnType<typeof debounce> | null>(null);
+
+	// `debounceTime` プロパティが変更されるたびに、effect が再実行される
+	$effect(() => {
+		// 新しい debounce 関数を生成
+		const newHandleInput = debounce(processInput, debounceTime);
+
+		// この関数は、
+		//   - effect が再実行される（`debounceTime`が変更される）
+		//   - コンポーネントが破棄される
+		// のタイミングに呼び出される、クリーンアップ用関数である。
+		//
+		// このスコープの `newHandleInput` をキャプチャしてキャンセルする。
+		const cleanup = () => { newHandleInput.cancel(); };
+
+		handleInput = newHandleInput;
+
+		return cleanup;
+	});
 
 	/**
 	 * Processes the input event, validates the numeric value,
@@ -52,8 +72,6 @@
 			value = num;
 		}
 	}
-
-	const handleInput = $derived(debounce(processInput, debounceTime));
 </script>
 
 
