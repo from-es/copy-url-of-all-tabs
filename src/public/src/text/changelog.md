@@ -1,3 +1,10 @@
+#### [1.19.1] - 2026/01/24
+
+- fix
+	- Fixed a minor issue in the numeric input fields to improve stability.
+- improve
+	- Improved internal logic to prevent potential memory leaks, enhancing overall performance and stability.
+
 #### [1.19.0] - 2026/01/23
 
 - improve
