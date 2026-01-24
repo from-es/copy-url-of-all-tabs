@@ -10,12 +10,17 @@ class CountManager {
 	#listeners: Listener[] = []; // カウント数の変更を通知する購読者（リスナー関数）のリスト
 
 	/**
-	 * 通知を受け取る関数を購読者として登録
-	 * @param {Listener} listener - 新しいカウント数を受け取る関数
-	 * @returns {void}
+	 * 通知を受け取る関数を購読者として登録し、購読解除用の関数を返す
+	 * @param   {Listener}   listener - 新しいカウント数を受け取る関数
+	 * @returns {() => void}          - 購読を解除するための関数。この関数を実行すると、登録した特定のリスナーのみが通知リストから削除される
 	 */
-	public subscribe(listener: Listener): void {
+	public subscribe(listener: Listener): () => void {
 		this.#listeners.push(listener);
+
+		// 購読解除用の関数を返す
+		return () => {
+			this.#listeners = this.#listeners.filter(removeListener => removeListener !== listener);
+		};
 	}
 
 	/**
