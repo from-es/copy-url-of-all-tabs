@@ -3,6 +3,7 @@ import type { TabPosition, TaskMode, OpenMode } from "@/entrypoints/background/j
 import type { BrowserEnvironmentResult }        from "@/assets/js/lib/user/BrowserEnvironment/types";
 import type { MessageType }                     from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 import type { UrlDelayRule }                    from "@/assets/js/lib/user/UrlDelayCalculator";
+import type { LogLevel }                        from "@/assets/js/lib/user/ConsoleManager/types";
 
 type TimeZone         = "UTC" | "GMT";
 type PatternMatchType = "prefix" | "substring" | "exact" | "regex";
@@ -28,6 +29,8 @@ type Config_Common = {
 	};
 	Debug: {
 		logging       : boolean;
+		loglevel      : LogLevel;
+		methodLabel   : boolean;
 		timestamp     : boolean;
 		timecoordinate: TimeZone;
 	};

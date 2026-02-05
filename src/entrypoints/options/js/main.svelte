@@ -11,6 +11,9 @@
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
 	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
 
+	// Import Module
+	import { LOG_LEVELS } from "@/assets/js/lib/user/ConsoleManager/types";
+
 	// Import Svelte
 	import { onMount } from "svelte";
 
@@ -1072,15 +1075,39 @@
 
 					<div class="flex-main">
 						<fieldset>
-							<legend>Option</legend>
+							<legend>Enable Console Output</legend>
+
 							<form id="Debug-logging">
 								<input id="Debug-logging-input" type="checkbox" bind:checked={ status.config.Debug.logging }>
 								<label for="Debug-logging-input">Output debug log to the web console</label>
 							</form>
+						</fieldset>
+
+						<fieldset>
+							<legend>Add Label for Console Output</legend>
 
 							<form id="Debug-timestamp">
 								<input id="Debug-timestamp-input" type="checkbox" disabled={ !status.config.Debug.logging } bind:checked={ status.config.Debug.timestamp }>
 								<label for="Debug-timestamp-input">Add Timestamp to debug log</label>
+							</form>
+
+							<form id="Debug-methodLabel">
+								<input id="Debug-methodLabel-input" type="checkbox" disabled={ !status.config.Debug.logging } bind:checked={ status.config.Debug.methodLabel }>
+								<label for="Debug-methodLabel-input">Add Method Label to debug log</label>
+							</form>
+						</fieldset>
+
+
+						<fieldset disabled={ !status.config.Debug.logging }>
+							<legend>Log Level</legend>
+
+							<form id="Debug-loglevel">
+								<select id="Debug-loglevel-select" bind:value={ status.config.Debug.loglevel }>
+									{#each Object.keys(LOG_LEVELS).reverse() as level (level)}
+										<option value={ level }>{ level }</option>
+									{/each}
+								</select>
+								<label for="Debug-loglevel-select">Specifies the minimum level of logs to output.</label>
 							</form>
 						</fieldset>
 
