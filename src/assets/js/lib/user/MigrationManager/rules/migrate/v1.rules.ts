@@ -357,5 +357,67 @@ export const rules: MigrationRule<Config>[] = [
 
 			return newData;
 		}
+	},
+	{
+		meta: {
+			author  : "From E",
+			reason  : "v1.20.0 で追加された、デバッグ用のコンソール出力にログレベル（config.Debug.loglevel）を制御する機能の設定値が存在しない場合に追加する為",
+			target  : "config.Debug.loglevel",
+			action  : "config.Debug.loglevel が存在しない場合に、デフォルト値 `warn` を追加",
+			authored: "2026-02-01",
+			version : {
+				introduced: "1.20.0",
+				obsoleted : null
+			}
+		},
+		order: 10,
+		condition: (argument) => {
+			const { data } = argument;
+
+			return !Object.hasOwn(data?.Debug, "loglevel");
+		},
+		execute: (argument) => {
+			const { data, defaultValues } = argument;
+			const newData                 = cloneObject(data);
+
+			// プロパティ追加 & デフォルト値適応
+			newData.Debug.loglevel = defaultValues.Debug.loglevel;
+
+			// debug
+			console.log(`Report, Add "data.Debug.loglevel". data >>`, newData);
+
+			return newData;
+		}
+	},
+	{
+		meta: {
+			author  : "From E",
+			reason  : "v1.20.0 で追加された、デバッグ用のコンソール出力にメソッドラベル（config.Debug.methodLabel）を表示/非表示する機能の設定値が存在しない場合に追加する為",
+			target  : "config.Debug.methodLabel",
+			action  : "config.Debug.methodLabel が存在しない場合に、デフォルト値 `true` を追加",
+			authored: "2026-02-03",
+			version : {
+				introduced: "1.20.0",
+				obsoleted : null
+			}
+		},
+		order: 11,
+		condition: (argument) => {
+			const { data } = argument;
+
+			return !Object.hasOwn(data?.Debug, "methodLabel");
+		},
+		execute: (argument) => {
+			const { data, defaultValues } = argument;
+			const newData                 = cloneObject(data);
+
+			// プロパティ追加 & デフォルト値適応
+			newData.Debug.methodLabel = defaultValues.Debug.methodLabel;
+
+			// debug
+			console.log(`Report, Add "data.Debug.methodLabel". data >>`, newData);
+
+			return newData;
+		}
 	}
 ];

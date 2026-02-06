@@ -11,9 +11,11 @@ export const defaultConfig: Config = {
 		}
 	},
 	Debug : {
-		logging       : false,  // true >> console 出力を有効にする
-		timestamp     : true,   // true >> console 出力にタイムスタンプを付加する
-		timecoordinate: "UTC"   // "UTC" or "GMT"
+		logging       : true,   // true >> console 出力を有効にする
+		loglevel      : "warn",  // "all" | "trace" | "debug" | "info" | "warn" | "error" | "silent"
+		methodLabel   : true,    // true >> console 出力にメソッドラベルを付加する
+		timestamp     : true,    // true >> console 出力にタイムスタンプを付加する
+		timecoordinate: "UTC",   // "UTC" or "GMT"
 	},
 	OptionsPage: {
 		fontsize: 16  // 8 ~ 32 px

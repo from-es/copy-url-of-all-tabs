@@ -1,3 +1,10 @@
+#### [1.20.0] - 2026/02/06
+
+- feat
+	- Enhanced debug settings on the options page, including more granular control over log levels and timestamp configurations.
+- fix
+	- Addressed layout issues on the options page that occurred when resizing the window.
+
 #### [1.19.1] - 2026/01/24
 
 - fix

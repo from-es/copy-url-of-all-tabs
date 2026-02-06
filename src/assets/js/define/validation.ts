@@ -8,10 +8,11 @@ import v8n from "v8n";
 import { defaultConfig }           from "./config";
 import { ArrayOfObjectsValidator } from "@/assets/js/lib/user/ArrayOfObjectsValidator";
 import { ColorManager }            from "@/assets/js/lib/user/ColorManager";
+import { LOG_LEVELS }              from "@/assets/js/lib/user/ConsoleManager/types";
+import * as Constants              from "./constants";
 
 // Import Types
 import type { VerificationRule } from "./types";
-import * as Constants            from "./constants";
 
 // v8n Custom Rules
 declare module "v8n" {
@@ -612,6 +613,29 @@ export const VerificationRules: VerificationRule[] = [
 	{
 		property: "Debug.logging",
 		fail    : () => { return defaultConfig.Debug.logging; },
+		rule    : (value) => {
+			return v8n()
+				.not.undefined()
+				.not.null()
+				.boolean()
+				.test(value);
+		}
+	},
+	{
+		property: "Debug.loglevel",
+		fail    : () => { return defaultConfig.Debug.loglevel; },
+		rule    : (value) => {
+			return v8n()
+				.not.undefined()
+				.not.null()
+				.string()
+				.pattern(new RegExp(`^(${Object.keys(LOG_LEVELS).join("|")})$`))
+				.test(value);
+		}
+	},
+	{
+		property: "Debug.methodLabel",
+		fail    : () => { return defaultConfig.Debug.methodLabel; },
 		rule    : (value) => {
 			return v8n()
 				.not.undefined()

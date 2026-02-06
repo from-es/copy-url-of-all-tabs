@@ -90,6 +90,7 @@ textarea {
 	padding: 0.5rem;
 
 	width       : 100%;
+	max-width   : 100%;
 	field-sizing: content;
 	min-height  : 8rem;
 	max-height  : 32rem;
@@ -98,6 +99,8 @@ textarea {
 	tab-size   : 4;
 	font-family: monospace, serif;
 	font-size  : 0.85rem;
+
+	word-break : break-all;
 }
 
 input {
@@ -193,7 +196,7 @@ header, main, footer {
 }
 
 #sidebar {
-	width: 14rem;
+	flex: 0 0 14rem;
 }
 
 #sidebar > article, #contents > article,
