@@ -25,7 +25,7 @@ Log levels are hierarchical based on importance. Only logs with a level of impor
 | `info`     | `300`       | Outputs logs at `info` level and above       |
 | `warn`     | `400`       | Outputs logs at `warn` level and above       |
 | `error`    | `500`       | Outputs logs at `error` level and above      |
-| `silent`   | `1000`      | Suppresses all logs                          |
+| `silent`   | `Number.MAX_VALUE` | Suppresses all logs                   |
 
 `console.log` is treated as an `info` level log.
 
