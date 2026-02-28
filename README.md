@@ -92,6 +92,8 @@ To ensure code quality, maintainability, and collaborative development, we use t
 
 - **ESLint**: For consistent coding style and quality.
   - See the [Coding Style Guide](./docs/DeveloperGuide/eslint.md).
+- **Logging**: For standardized console output.
+  - See the [Logging Guidelines](./docs/DeveloperGuide/logging-guidelines.md).
 - **Vitest**: For efficient unit and integration testing.
   - See the [Test Writing Guide](./docs/DeveloperGuide/vitest.md).
 - **commitlint**: For standardized commit messages.
