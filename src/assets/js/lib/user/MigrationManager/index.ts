@@ -26,7 +26,8 @@ type MigrationExecutionState<T> = {
 /**
  * Manages the data migration process based on a provided set of rules.
  *
- * @template T The type of the data object to be migrated.
+ * @template     T The type of the data object to be migrated.
+ * @lastModified 2026-02-27
  */
 export class MigrationManager<T> {
 	/**
@@ -102,7 +103,7 @@ export class MigrationManager<T> {
 			};
 			state.errorReports.push(errorReport);
 
-			console.error("An error occurred while executing a migration rule.", errorReport);
+			console.error("ERROR(migration): Exception: failed to execute migration rule", errorReport);
 
 			// Rollback to the state before this rule
 			state.argument.data = cloneObject(dataBeforeRule);

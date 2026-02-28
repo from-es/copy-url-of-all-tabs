@@ -68,7 +68,7 @@ class UserCancelError extends Error {
  * designed to be independent of any UI framework.
  * For detailed specifications and usage examples, please refer to the documentation.
  *
- * @lastupdate 2025/10/03
+ * @lastModified 2026-02-27
  */
 export class ConfigManager {
 	private constructor() {
@@ -154,7 +154,7 @@ export class ConfigManager {
 				if (target.files && target.files.length > 0) {
 					resolve(target.files[0]);
 				} else {
-					reject(new Error("No file selected."));
+					reject(new Error("Failure: no file selected in ConfigManager.#showOpenFileDialog"));
 				}
 			};
 			input.oncancel = () => {
@@ -180,7 +180,7 @@ export class ConfigManager {
 
 		// MIMEタイプも拡張子も一致しない場合にエラーをスローする
 		if (!isMimeTypeMatch && !isExtensionMatch) {
-			const message = `A file with a different format (${file.type || "unknown"}) from "${mimetype}" was loaded, and the file extension does not match.`;
+			const message = `Invalid: a file with a different format (${file.type || "unknown"}) from "${mimetype}" was loaded, and the file extension does not match in ConfigManager.#readAsText`;
 			throw new Error(message);
 		}
 
@@ -191,11 +191,11 @@ export class ConfigManager {
 				if (typeof reader.result === "string") {
 					resolve(reader.result);
 				} else {
-					reject(new Error("Failed to read file as text."));
+					reject(new Error("Failure: failed to read file as text in ConfigManager.#readAsText"));
 				}
 			};
 			reader.onerror = () => {
-				reject(new Error("Error reading file."));
+				reject(new Error("Error: error reading file in ConfigManager.#readAsText"));
 			};
 			reader.readAsText(file);
 		});

@@ -2,7 +2,7 @@
  * HTML特殊文字をエスケープして、クロスサイトスクリプティング(XSS)を防ぐ
  * `&`, `'`, `` ` ``, `"`, `<`, `>` を対応するHTMLエンティティに変換
  *
- * @lastupdate 2025/10/15
+ * @lastModified 2026-02-27
  * @see https://aloerina01.github.io/blog/2017-04-28-1
  *
  * @param   {T}          target - エスケープする値。文字列でない場合はそのまま返す
@@ -10,7 +10,7 @@
  */
 export function escapeHTML<T>(target: T): T | string {
 	if (typeof target !== "string") {
-		console.error("Error, Invalid argument passed to escapeHTML(target). Expected a string but a non-string value was provided.", { typeof: typeof target, value: target });
+		console.error("ERROR(string): invalid argument passed to escapeHTML: expected string", { typeof: typeof target, value: target });
 
 		return target;
 	}

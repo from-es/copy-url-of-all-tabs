@@ -7,7 +7,7 @@
  * @example
  * const rule = getRuleBySelector('.my-class');
  * if (rule) {
- *   console.log(rule.style.color);
+ *   console.debug('DEBUG(dom): rule style color', { color: rule.style.color });
  * }
  */
 export function getRuleBySelector(selector: string): CSSRule | null {

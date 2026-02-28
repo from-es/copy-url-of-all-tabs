@@ -68,7 +68,7 @@ function applyUrlProcessingRules(urlList: string[], action: Action, config: Conf
 		filteredUrlList = toUniqueArray(filteredUrlList);
 
 		if (originalCount > filteredUrlList.length) {
-			console.log(`Deduplicated URLs on ${action}: ${originalCount} -> ${filteredUrlList.length}`);
+			console.info("INFO(filter): deduplicated urls", { action, originalCount, filteredCount: filteredUrlList.length });
 		}
 	}
 
@@ -102,8 +102,7 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 				}
 			);
 		}
-		// debug
-		console.log("Debug, Allow Protocol >>", allowProtocol);
+		console.debug("DEBUG(filter): allow protocol list", { allowProtocol });
 
 		if ( allowProtocol.length ) {
 			const str = allowProtocol.join("|");
@@ -121,8 +120,7 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 		// Filtering: is URL ?
 		const isURL = URL.canParse(url);
 		if ( !isURL ) {
-			// debug
-			console.log("Debug, Filtering : protocol. Cannot parse URL String >>", url);
+			console.debug("DEBUG(filter): filtering protocol: cannot parse url string", { url });
 
 			return false;
 		}
@@ -136,8 +134,7 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 		const protocol = (new URL(url)).protocol;
 		const isMatch  = (regex).test(protocol);
 		if ( !isMatch ) {
-			// debug
-			console.log("Debug, Filtering : protocol >> Deny URL >>", url);
+			console.debug("DEBUG(filter): filtering protocol: deny url", { url });
 
 			return false;
 		}
@@ -167,8 +164,8 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 	const result   = (filtered).map((url) => { return url.trim(); });
 	const diff     = getArrayDiff(urlList, result); // 配列 urlList と result の差分取得 >> デバック用
 
-	// debug
-	console.log(`Debug, Action ${action}. Filtering >>`,
+	console.debug(
+		"DEBUG(filter): filtering process details",
 		{
 			list: {
 				before : urlList, // 全タブのURLの配列
@@ -210,7 +207,7 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 	const patterns = (text.split("\n")).filter((elm) => { return (elm !== undefined && elm !== null && elm !== "" && !(/^[\\/]{2}\s/).test(elm)); });
 
 	if (!filtering || patterns.length === 0) {
-		console.debug("[Filter URLs By Pattern Match] Filtering disabled or no patterns.");
+		console.debug("DEBUG(filter): filtering by pattern match: disabled or no patterns");
 		return currentUrlList;
 	}
 
@@ -236,7 +233,7 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 						return pattern;
 					default: {
 						const exhaustiveCheck: never = matchType;
-						throw new Error(`Unknown matchType: ${exhaustiveCheck}`);
+						throw new Error(`Error: unknown matchType "${exhaustiveCheck}" in filterUrlsByPatternMatch`);
 					}
 				}
 			})
@@ -250,11 +247,11 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 		result = currentUrlList.filter(url => !combinedRegex.test(url));
 
 	} catch (error) {
-		console.error("Invalid regex pattern provided. Filtering is disabled.", error);
+		console.error("ERROR(filter): invalid regex pattern provided, filtering disabled", error);
 		return currentUrlList;
 	}
 
-	console.debug("[Filter URLs By Pattern Match]", { config, patterns, url: { before: urlList, after: result } });
+	console.debug("DEBUG(filter): filtering by pattern match results", { config, patterns, url: { before: urlList, after: result } });
 
 	return result;
 }

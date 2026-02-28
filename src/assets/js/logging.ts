@@ -19,8 +19,7 @@ export function logging(config: Config, define: Define): void {
 
 	// config
 	if (!isValidConfig) {
-		// debug
-		console.log("Error, Invalid value passed to logging(config, define). { config, define } >>", { config, define });
+		console.error("ERROR(config): invalid value passed to logging", { config, define });
 	}
 
 	ConsoleManager.option(loggingOptions);
@@ -44,7 +43,7 @@ function validConfig(config: Config, define: Define): boolean {
 
 	// 抽出したルールが一つもなければ検証できない為 false を返す
 	if (debugRules.length === 0) {
-		console.warn("No verification rules found for 'Debug' in define.Verification.");
+		console.warn("WARN(config): no verification rules found for debug in define.verification");
 		return false;
 	}
 

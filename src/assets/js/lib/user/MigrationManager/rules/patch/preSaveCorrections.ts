@@ -42,7 +42,7 @@ export const rules: MigrationRule<Config>[] = [
 				}
 			);
 
-			console.debug("[PreSave Corrections: config.Tab.customDelay.list]", { before: data, after: newData });
+			console.debug("DEBUG(migration): presave corrections: config.tab.customdelay.list", { before: data, after: newData });
 
 			return newData;
 		}

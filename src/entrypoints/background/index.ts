@@ -42,9 +42,9 @@ async function initializeLocalStorage(): Promise<void> {
 	try {
 		await initializeConfig(null, true);
 
-		console.info("[Initialize LocalStorage] Configuration successfully initialized on startup.");
+		console.info("INFO(init): Success: initialize configuration on startup");
 	} catch (error) {
-		console.error("[Initialize LocalStorage] Error during initial configuration on startup:", error);
+		console.error("ERROR(init): Failure: initial configuration on startup", error);
 	}
 }
 
@@ -52,7 +52,7 @@ async function initializeLocalStorage(): Promise<void> {
  * バッジカウンター機能間の連携設定
  */
 function initializeBadgeCounter() {
-	console.log("Initialize, Badge Counter setting.");
+	console.info("INFO(badge): initialize badge counter setting");
 
 	// カウント数の変更を監視し、バッジのテキストを更新
 	countManager.subscribe((newCount) => {
@@ -83,7 +83,7 @@ async function handleStorageOnChanged(changes: { [key: string]: Browser.storage.
 			}
 		}
 	} catch (error) {
-		console.error("Error in browser.storage.onChanged listener:", error);
+		console.error("ERROR(storage): error in browser.storage.onChanged listener", { error });
 	}
 }
 
@@ -100,8 +100,7 @@ async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime
 	// Set logging console
 	logging(config, define);
 
-	// debug
-	console.log("background.js received message >>", { message, sender });
+	console.info("INFO(messaging): receive message from sender", { message, sender });
 
 	switch (message.action) {
 		case define.Messaging.OpenURLs:
@@ -118,7 +117,8 @@ async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime
 */
 async function handleDoNotMatchAnySwitchStatement(message: ExtensionMessage, sender: Browser.runtime.MessageSender): Promise<object> {
 	const warningMessage = "Warning, Received a message with No Option";
-	console.warn(warningMessage, { message, sender });
+
+	console.warn("WARN(messaging): received message with no option", { message, sender });
 
 	return {
 		message  : warningMessage,

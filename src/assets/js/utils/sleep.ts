@@ -5,9 +5,9 @@
  * @returns {Promise<void>}      - 指定時間が経過した後に解決されるPromise
  * @example
  * async function example() {
- *   console.log('Start');
+ *   console.info('INFO(util): Sleep processing start');
  *   await sleep(2000); // 2秒待機
- *   console.log('End');
+ *   console.info('INFO(util): Sleep processing end');
  * }
  */
 export function sleep(msec: number): Promise<void> {

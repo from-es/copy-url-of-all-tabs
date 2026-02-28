@@ -5,11 +5,11 @@ type StorageGetKeys   = string | string[] | object | null;
 type StorageRemoveKey = string | string[];
 
 /*
-	@name        StorageManager
-	@description `browser.storage.local` API を介して、ローカルストレージにアクセス
-	@author      From E
-	@lastupdate  2025/09/04
-	@dependency  `browser.storage.local` API
+	@name         StorageManager
+	@description  `browser.storage.local` API を介して、ローカルストレージにアクセス
+	@author       From E
+	@lastModified 2026-02-27
+	@dependency   `browser.storage.local` API
 
 	@note
 		このクラスは `browser.storage.local` API に大きく依存しており、`get` / `set` の仕様は以下の通り
@@ -41,7 +41,7 @@ export class StorageManager {
 	 * テスト用メソッド
 	 */
 	static test(): void {
-		console.log("Call, class StorageManager() >> test()");
+		console.debug("DEBUG(storage): call StorageManager test method");
 	}
 
 	/**
@@ -63,7 +63,7 @@ export class StorageManager {
 		try {
 			return await operation();
 		} catch (error) {
-			console.error(errorMessage, errorDetails, error);
+			console.error("ERROR(storage): storage operation failed", { errorMessage, errorDetails, error });
 			return errorReturnValue;
 		}
 	}
@@ -78,7 +78,7 @@ export class StorageManager {
 		);
 
 		if (items) { // items が undefined でない場合のみログ出力
-			console.log("View Local Storage items >>", items);
+			console.debug("DEBUG(storage): view local storage items", { items });
 		}
 	}
 
@@ -105,7 +105,7 @@ export class StorageManager {
 	 */
 	static async save(items: object): Promise<boolean> {
 		if (!this.#isValidData(items) || !this.#isValidSecureKey(Object.keys(items))) {
-			console.error("Failed, Could not Save to Local Storage. Invalid argument. Argument must be a non-empty object with valid, non-empty string keys.", { items });
+			console.error("ERROR(storage): Failure: save to local storage, invalid argument", { items });
 			return false;
 		}
 
@@ -128,7 +128,7 @@ export class StorageManager {
 	 */
 	static async remove(key: StorageRemoveKey): Promise<boolean> {
 		if (!this.#isValidSecureKey(key)) {
-			console.error("Failed, Could not Remove from Local Storage. Invalid key.", { key });
+			console.error("ERROR(storage): Failure: remove from local storage, invalid key", { key });
 			return false;
 		}
 
@@ -155,7 +155,7 @@ export class StorageManager {
 		);
 
 		if (result !== false) {
-			console.log("Removed All Data from Local Storage.");
+			console.info("INFO(storage): removed all data from local storage");
 		}
 		return result !== false;
 	}
@@ -225,7 +225,7 @@ export class StorageManager {
 	 */
 	static async #getStorageData<T>(keys: StorageGetKeys): Promise<T> {
 		if (!this.#isValidKey(keys)) {
-			throw new Error(`Invalid key(s) provided.`);
+			throw new Error("Invalid: invalid key(s) provided in StorageManager.#getStorageData");
 		}
 
 		const items = await browser.storage.local.get(keys ?? null);

@@ -22,7 +22,7 @@ export function hasParentNode(elm: HTMLElement): ParentNodeInfo {
 		href: parent ? (parent as HTMLAnchorElement).href                     : undefined
 	};
 
-	console.log("Has parentNode ?", obj);
+	console.debug("DEBUG(dom): check parentNode existence", obj);
 
 	return obj;
 }

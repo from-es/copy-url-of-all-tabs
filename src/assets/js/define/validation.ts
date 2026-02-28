@@ -481,9 +481,9 @@ export const VerificationRules: VerificationRule[] = [
 			const result         = validator.validate(value, ValidationRules, option);
 			const { isAllValid } = result;
 
-			console.debug("Validation Data & v8n Custom Rule Object: Tab.customDelay.list >>", { value, ValidationRules });
+			console.debug("DEBUG(validation): validation data and v8n custom rule object: tab.customDelay.list", { value, ValidationRules });
 
-			// debug, Report the result to the console
+			// Report the result to the console
 			validator.reportToConsole();
 
 			return isAllValid;

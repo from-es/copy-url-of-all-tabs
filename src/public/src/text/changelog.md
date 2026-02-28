@@ -1,3 +1,8 @@
+#### [1.20.1] - 2026/02/28
+
+- improve
+	- Standardized internal logging processes to enhance extension stability and facilitate troubleshooting.
+
 #### [1.20.0] - 2026/02/06
 
 - feat

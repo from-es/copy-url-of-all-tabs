@@ -11,7 +11,7 @@ type AllowedPrimitive = string | number | bigint | symbol;
 export function toUniqueArray<T>(list: T[]): T[] {
 	if (!Array.isArray(list)) {
 		// 互換性のために、配列でない場合はエラーをスローする
-		throw new Error(`Invalid argument: Expected an array, but received ${typeof list}.`);
+		throw new Error(`Invalid: expected an array as argument, but received ${typeof list} in toUniqueArray`);
 	}
 
 	return Array.from(new Set(list));
@@ -27,7 +27,7 @@ export function toUniqueArray<T>(list: T[]): T[] {
  */
 export function validatePrimitiveArray<T extends AllowedPrimitive>(list: T[]): void {
 	if (!Array.isArray(list)) {
-		throw new Error(`Invalid argument: Expected an array, but received ${typeof list}.`);
+		throw new Error(`Invalid: expected an array as argument, but received ${typeof list} in validatePrimitiveArray`);
 	}
 
 	// 空の配列は有効とする
@@ -40,12 +40,12 @@ export function validatePrimitiveArray<T extends AllowedPrimitive>(list: T[]): v
 	const reg_PrimitiveType = /string|number|bigint|symbol/i;
 	const isPrimitiveType   = (reg_PrimitiveType).test(firstElementType);
 	if (!isPrimitiveType) {
-		throw new Error(`Invalid array element type: Expected a type (string, number, bigint, symbol), but received ${firstElementType}.`);
+		throw new Error(`Invalid: expected array element type (string, number, bigint, symbol), but received ${firstElementType} in validatePrimitiveArray`);
 	}
 
 	// 配列要素は全て同じ型か
 	const isAllSameType = list.every((elm) => typeof elm === firstElementType);
 	if (!isAllSameType) {
-		throw new Error(`Invalid array: All elements must be of the same type. Found mixed types.`);
+		throw new Error("Invalid: all elements in array must be of the same type in validatePrimitiveArray");
 	}
 }

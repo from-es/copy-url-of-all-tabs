@@ -21,8 +21,8 @@
 	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
 
 	onMount(() => {
-		console.info("The Component, On mount");
-		console.debug("status >>", cloneObject(status)); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
+		console.info("INFO(popup): Popup component mounted");
+		console.debug("DEBUG(popup): initial status object", { status: cloneObject(status) }); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
 
 		initialize();
 	});
@@ -35,7 +35,7 @@
 		const fontSize = status.config.PopupMenu.fontsize;
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 
-		console.info("The Component, Initialize");
+		console.info("INFO(popup): Popup component initialized");
 	}
 
 	/**
@@ -57,14 +57,12 @@
 		} catch (error) {
 			result = createErrorResult(action, error as Error);
 
-			// debug
-			console.error("Error, Action execution failed. { action, error } >>", { action, error });
+			console.error("ERROR(action): action execution failed", { action, error });
 		} finally {
 			// アクション完了を通知
 			actionStore.completeAction(result);
 
-			// debug
-			console.log("Debug, { action, result } >>", { action, result });
+			console.debug("DEBUG(action): action and result", { action, result });
 		}
 
 		// "paste" アクションの後処理
@@ -124,8 +122,7 @@
 			clipboard: { direction: null, text: null }
 		};
 
-		// debug
-		console.error(message);
+		console.error("ERROR(action): do not match any switch statement", { message });
 
 		return result;
 	}
@@ -227,8 +224,7 @@
 	 */
 	function createMessage(action: Action | null, result: EventOnClickActionResult | null): string | null {
 		if ( !result || !result?.message ) {
-			// debug
-			console.log('Debug, "result or result.message" is "null or undefined or empty"! >>', { action, result });
+			console.debug("DEBUG(ui): message is null, undefined, or empty", { action, result });
 
 			return null;
 		}
@@ -250,26 +246,22 @@
 	 */
 	function clearMessage(message: string, option: Config["PopupMenu"]["ClearMessage"]): void {
 		if ( !message || !(typeof message === "string") || !(message.length > 0) ) {
-			// debug
-			console.error("Error, Invalid argument passed to showMessage(message, option) >> message >>", message);
+			console.error("ERROR(ui): Invalid: argument passed to showMessage, message invalid", { message });
 
 			return;
 		}
 		if ( !option ) {
-			// debug
-			console.error("Error, Invalid argument passed to showMessage(message, option) >> option >>", { option });
+			console.error("ERROR(ui): Invalid: argument passed to showMessage, option invalid", { option });
 
 			return;
 		}
 		if ( !(Object.hasOwn(option, "enable") && typeof option?.enable === "boolean") ) {
-			// debug
-			console.error("Error, Invalid argument passed to showMessage(message, option) >> option >>", { enable: option?.enable });
+			console.error("ERROR(ui): Invalid: argument passed to showMessage, option enable invalid", { enable: option?.enable });
 
 			return;
 		}
 		if ( !(Object.hasOwn(option, "timeout") && typeof option.timeout === "number" && option.timeout >= 0) ) {
-			// debug
-			console.error("Error, Invalid argument passed to showMessage(message, option) >> option >>", { timeout: option?.timeout });
+			console.error("ERROR(ui): Invalid: argument passed to showMessage, option timeout invalid", { timeout: option?.timeout });
 
 			return;
 		}
@@ -289,8 +281,7 @@
 		const { enable: close, timeout: delay } = option;
 
 		if ( !(typeof close === "boolean") || !(typeof delay === "number" && delay >= 0) ) {
-			// debug
-			console.error("Error, Invalid argument passed to closePopupMenu(option) >>", option);
+			console.error("ERROR(ui): Invalid: argument passed to closePopupMenu, option invalid", { option });
 
 			return;
 		}
@@ -298,8 +289,7 @@
 		if ( close ) {
 			window.setTimeout(() => { window.close(); }, delay * 1000);
 
-			// debug
-			console.log("Debug, Close Popup Menu >>", { close, delay });
+			console.debug("DEBUG(ui): close popup menu", { close, delay });
 		}
 	}
 </script>
