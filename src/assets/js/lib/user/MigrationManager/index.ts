@@ -26,8 +26,8 @@ type MigrationExecutionState<T> = {
 /**
  * Manages the data migration process based on a provided set of rules.
  *
- * @template T The type of the data object to be migrated.
- * @lastupdate 2026/02/27
+ * @template     T The type of the data object to be migrated.
+ * @lastModified 2026-02-27
  */
 export class MigrationManager<T> {
 	/**

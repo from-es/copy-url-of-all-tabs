@@ -1,9 +1,9 @@
 /*
-	@lastupdate 2026/02/27
-	@dependency cloneDeep (lodash, https://lodash.com/)
-	@reference  隠ぺいされた console.log を無理やり復活させる対症療法 (https://clock-up.hateblo.jp/entry/2016/11/05/js-console-log-restore)
-	            Is it possible to bind a date/time to a console log? (https://stackoverflow.com/questions/18410119/is-it-possible-to-bind-a-date-time-to-a-console-log?answertab=active#tab-top)
-	            Restoring console.log() - Stack Overflow (https://stackoverflow.com/questions/7089443/restoring-console-log)
+	@lastModified 2026-02-27
+	@dependency   cloneDeep (lodash, https://lodash.com/)
+	@reference    隠ぺいされた console.log を無理やり復活させる対症療法 (https://clock-up.hateblo.jp/entry/2016/11/05/js-console-log-restore)
+	              Is it possible to bind a date/time to a console log? (https://stackoverflow.com/questions/18410119/is-it-possible-to-bind-a-date-time-to-a-console-log?answertab=active#tab-top)
+	              Restoring console.log() - Stack Overflow (https://stackoverflow.com/questions/7089443/restoring-console-log)
 
 */
 

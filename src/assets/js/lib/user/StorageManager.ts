@@ -5,11 +5,11 @@ type StorageGetKeys   = string | string[] | object | null;
 type StorageRemoveKey = string | string[];
 
 /*
-	@name        StorageManager
-	@description `browser.storage.local` API を介して、ローカルストレージにアクセス
-	@author      From E
-	@lastupdate  2026/02/27
-	@dependency  `browser.storage.local` API
+	@name         StorageManager
+	@description  `browser.storage.local` API を介して、ローカルストレージにアクセス
+	@author       From E
+	@lastModified 2026-02-27
+	@dependency   `browser.storage.local` API
 
 	@note
 		このクラスは `browser.storage.local` API に大きく依存しており、`get` / `set` の仕様は以下の通り

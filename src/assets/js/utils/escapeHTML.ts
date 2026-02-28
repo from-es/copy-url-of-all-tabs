@@ -2,7 +2,7 @@
  * HTML特殊文字をエスケープして、クロスサイトスクリプティング(XSS)を防ぐ
  * `&`, `'`, `` ` ``, `"`, `<`, `>` を対応するHTMLエンティティに変換
  *
- * @lastupdate 2026/02/27
+ * @lastModified 2026-02-27
  * @see https://aloerina01.github.io/blog/2017-04-28-1
  *
  * @param   {T}          target - エスケープする値。文字列でない場合はそのまま返す

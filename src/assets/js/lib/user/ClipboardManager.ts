@@ -1,6 +1,6 @@
 /**
  * Provides static methods to interact with the system clipboard.
- * @lastupdate 2026/02/27
+ * @lastModified 2026-02-27
  */
 export class ClipboardManager {
 	/**

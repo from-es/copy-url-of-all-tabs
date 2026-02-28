@@ -1,9 +1,9 @@
 /**
-	@name        CompareVersions
-	@description セマンティックバージョニング形式のバージョン文字列を比較するユーティリティ
-	@author      From E
-	@lastupdate  2026/02/27
-	@dependency  none
+	@name         CompareVersions
+	@description  セマンティックバージョニング形式のバージョン文字列を比較するユーティリティ
+	@author       From E
+	@lastModified 2026-02-27
+	@dependency   none
 */
 
 /**

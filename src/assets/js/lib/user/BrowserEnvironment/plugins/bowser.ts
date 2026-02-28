@@ -22,10 +22,10 @@ import { type UserAgentParserPlugin, type UserAgentParserPluginParseData } from 
  * Bowserライブラリを利用したUser-Agentパーサープラグインです。
  * プラグインに関するメタデータと、解析を実行するための実行関数を提供します。
  *
- * @type {UserAgentParserPlugin}
- * @version    1.0.0
- * @lastupdate 2025/07/19
- * @dependency bowser(https://github.com/bowser-js/bowser)
+ * @type         {UserAgentParserPlugin}
+ * @version      1.0.0
+ * @lastModified 2025-07-19
+ * @dependency   bowser(https://github.com/bowser-js/bowser)
  */
 const UserAgentParserPlugin: UserAgentParserPlugin = {
 	information: {

@@ -11,8 +11,8 @@ type FormatType = "text" | "json" | "custom";
 
 /**
  * Manages the formatting of tab data into various string formats.
- * @dependency escapeHTML
- * @lastupdate 2026/02/27
+ * @dependency   escapeHTML
+ * @lastModified 2026-02-27
  */
 export class FormatManager {
 	/**

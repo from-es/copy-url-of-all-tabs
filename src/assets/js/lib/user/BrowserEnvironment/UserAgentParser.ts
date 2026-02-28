@@ -11,8 +11,8 @@ import { type UserAgentParserPluginParseData } from "./types";
  * このクラスはライブラリへの依存をカプセル化し、他のライブラリへの移行を容易にします。
  *
  * @class
- * @version    1.0.0
- * @lastupdate 2025/07/21
+ * @version      1.0.0
+ * @lastModified 2025-07-21
  */
 class UserAgentParser {
 	/**

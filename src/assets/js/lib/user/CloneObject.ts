@@ -11,7 +11,7 @@ import cloneDeep from "lodash-es/cloneDeep";
  * 関数やDOMノードなど、`structuredClone()` がサポートしない非シリアライズ可能な値が含まれている場合、
  * `DataCloneError` が発生した場合、より広範なデータ型に対応する `lodash-es/cloneDeep` にフォールバックする。
  *
- * @lastupdate 2026/02/27
+ * @lastModified 2026-02-27
  * @see https://developer.mozilla.org/ja/docs/Web/API/structuredClone
  * @see https://lodash.com/docs/#cloneDeep
  *

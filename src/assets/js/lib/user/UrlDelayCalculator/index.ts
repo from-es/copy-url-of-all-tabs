@@ -1,9 +1,9 @@
 /*
-	@name        UrlDelayCalculator
-	@description URLリストの遅延時間を計算する為の静的メソッド
-	@author      From E
-	@lastupdate  2026/02/27
-	@dependency  none
+	@name         UrlDelayCalculator
+	@description  URLリストの遅延時間を計算する為の静的メソッド
+	@author       From E
+	@lastModified 2026-02-27
+	@dependency   none
 */
 
 

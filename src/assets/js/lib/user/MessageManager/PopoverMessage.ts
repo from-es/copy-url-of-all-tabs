@@ -33,9 +33,9 @@ customElements.define("component-popover-message", PopoverMessageElement, { exte
 /**
  * Popover API(https://developer.mozilla.org/en-US/docs/Web/API/Popover_API) を使ったメッセージ表示。
  * 複数のメッセージをスタック表示し、ダブルクリックで閉じる機能を持つ。
- * @lastupdate 2026/02/27
- * @support    Google Chrome 114+, Mozilla Firefox 125+ (dependent on Popover API compatibility)
- * @original   ポップオーバーの表示/非表示を手動で切り替える (https://ics.media/entry/230530/#ポップオーバーの表示/非表示を手動で切り替える)
+ * @lastModified 2026-02-27
+ * @support      Google Chrome 114+, Mozilla Firefox 125+ (dependent on Popover API compatibility)
+ * @original     ポップオーバーの表示/非表示を手動で切り替える (https://ics.media/entry/230530/#ポップオーバーの表示/非表示を手動で切り替える)
  */
 export class PopoverMessage {
 	constructor () {

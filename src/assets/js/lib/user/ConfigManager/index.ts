@@ -68,7 +68,7 @@ class UserCancelError extends Error {
  * designed to be independent of any UI framework.
  * For detailed specifications and usage examples, please refer to the documentation.
  *
- * @lastupdate 2026/02/27
+ * @lastModified 2026-02-27
  */
 export class ConfigManager {
 	private constructor() {

@@ -43,8 +43,8 @@ declare global {
  * User-Agent Client Hints API または従来の User-Agent 文字列からブラウザ環境情報を取得し、解析するクラスです。
  * ブラウザデータの取得、解析、および統合のロジックをカプセル化します。
  *
- * @version    1.0.0
- * @lastupdate 2026/02/27
+ * @version      1.0.0
+ * @lastModified 2026-02-27
  */
 class BrowserEnvironment {
 	/**
