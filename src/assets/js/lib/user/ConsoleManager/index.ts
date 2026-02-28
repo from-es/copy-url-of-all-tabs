@@ -1,5 +1,5 @@
 /*
-	@lastupdate 2026/02/03
+	@lastupdate 2026/02/27
 	@dependency cloneDeep (lodash, https://lodash.com/)
 	@reference  隠ぺいされた console.log を無理やり復活させる対症療法 (https://clock-up.hateblo.jp/entry/2016/11/05/js-console-log-restore)
 	            Is it possible to bind a date/time to a console log? (https://stackoverflow.com/questions/18410119/is-it-possible-to-bind-a-date-time-to-a-console-log?answertab=active#tab-top)
@@ -109,9 +109,10 @@ export class ConsoleManager {
 		} catch (error) {
 			// Log the original error to the original console to avoid loops
 			const originalConsole = ConsoleManager.#store.console || console;
+			const errorMessage    = "Failure: failed to update options due to invalid arguments in ConsoleManager.option";
 
-			originalConsole.error("Error in ConsoleManager.option():", error);
-			throw new Error("ConsoleManager.option() was terminated due to invalid arguments.");
+			originalConsole.error(errorMessage, { error });
+			throw new Error(errorMessage);
 		}
 	}
 
@@ -163,7 +164,7 @@ export class ConsoleManager {
 	 */
 	static #validateAndMergeOptions(newOptions: Partial<ConsoleManagerOptions>): ConsoleManagerOptions {
 		if (!newOptions || typeof newOptions !== "object") {
-			throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". Argument is not an Object!`);
+			throw new TypeError("Invalid: argument is not an object in ConsoleManager.option");
 		}
 
 		const currentOptions                                = ConsoleManager.#options;
@@ -171,19 +172,19 @@ export class ConsoleManager {
 
 		// Validate each property on the merged object
 		if (typeof mergedOptions.logging !== "boolean") {
-			throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.logging`);
+			throw new TypeError("Invalid: 'logging' property must be a boolean in ConsoleManager.#validateAndMergeOptions");
 		}
 		if (typeof mergedOptions.loglevel !== "string" || !Object.keys(LOG_LEVELS).includes(mergedOptions.loglevel)) {
-			throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.loglevel`);
+			throw new TypeError("Invalid: 'loglevel' property must be a valid LogLevel string in ConsoleManager.#validateAndMergeOptions");
 		}
 		if (typeof mergedOptions.methodLabel !== "boolean") {
-			throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.methodLabel`);
+			throw new TypeError("Invalid: 'methodLabel' property must be a boolean in ConsoleManager.#validateAndMergeOptions");
 		}
 		if (typeof mergedOptions.timestamp !== "boolean") {
-			throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timestamp`);
+			throw new TypeError("Invalid: 'timestamp' property must be a boolean in ConsoleManager.#validateAndMergeOptions");
 		}
 		if (typeof mergedOptions.timecoordinate !== "string" || ![ "UTC", "GMT" ].includes(mergedOptions.timecoordinate.toUpperCase())) {
-			throw new TypeError(`Invalid arguments passed for parameter to "ConsoleManager.option()". argument >> obj.timecoordinate`);
+			throw new TypeError("Invalid: 'timecoordinate' property must be 'UTC' or 'GMT' in ConsoleManager.#validateAndMergeOptions");
 		}
 
 		return mergedOptions as ConsoleManagerOptions;

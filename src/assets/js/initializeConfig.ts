@@ -139,7 +139,7 @@ async function saveConfig(config: Config, keyname: string): Promise<void> {
 
 		await StorageManager.save(item);
 	} catch (error) {
-		console.error("[Initialize Config] Failed to save config to storage.", error);
+		console.error("ERROR(config): Failure: save config to storage", { error });
 	}
 }
 
@@ -156,7 +156,7 @@ async function processConfig(config: Config, define: Define): Promise<{ processe
 	const processedConfig   = await configInitializer.initialize(config, define);
 	const migrationStatus   = configInitializer.getMigrationStatus();
 
-	console.info("[Initialize Config] Config processing finished. Migration Status:", { status: migrationStatus });
+	console.info("INFO(config): Config processing finished", { status: migrationStatus });
 
 	return { processedConfig, migrationStatus };
 }
@@ -248,7 +248,7 @@ export async function initializeConfig(config: Config | null, save: boolean = tr
 				loadedConfig = storageData[keyname];
 			}
 		} catch (error) {
-			console.error("[Initialize Config] Failed to load config from storage. Proceeding with default config.", error);
+			console.error("ERROR(config): Failure: load config from storage, proceeding with default", { error });
 		}
 	}
 

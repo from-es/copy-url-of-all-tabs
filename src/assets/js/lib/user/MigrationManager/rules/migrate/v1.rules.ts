@@ -42,8 +42,7 @@ export const rules: MigrationRule<Config>[] = [
 			// 削除
 			delete newData.Filtering.enable;
 
-			// debug
-			console.log(`Report, Migrate Config of Value. Change "data.Filtering.enable" to "data.Filtering.Copy.enable" & "data.Filtering.Paste.enable". data >>`, newData);
+			console.info("INFO(migration): migrate config of value: change data.filtering.enable to data.filtering.copy.enable and data.filtering.paste.enable", newData);
 
 			return newData;
 		}
@@ -76,8 +75,7 @@ export const rules: MigrationRule<Config>[] = [
 			// 削除
 			delete newData.Format.minetype;
 
-			// debug
-			console.log(`Report, Migrate Config of Value. Change "data.Format.minetype" to "data.Format.mimetype". data >>`, newData);
+			console.info("INFO(migration): migrate config of value: change data.format.minetype to data.format.mimetype", newData);
 
 			return newData;
 		}
@@ -107,8 +105,7 @@ export const rules: MigrationRule<Config>[] = [
 			// プロパティ追加 & デフォルト値適応
 			newData.Tab.customDelay = defaultValues.Tab.customDelay;
 
-			// debug
-			console.log(`Report, Add "data.Tab.customDelay". data >>`, newData);
+			console.info("INFO(migration): add data.tab.customdelay", newData);
 
 			return newData;
 		}
@@ -141,8 +138,7 @@ export const rules: MigrationRule<Config>[] = [
 			// 削除
 			delete (newData.Information.date as any).unixtime;
 
-			// debug
-			console.log(`Report, Migrate Config of Value. Change "data.Information.date.unixtime" to "data.Information.date.timestamp". data >>`, newData);
+			console.info("INFO(migration): migrate config of value: change data.information.date.unixtime to data.information.date.timestamp", newData);
 
 			return newData;
 		}
@@ -178,7 +174,7 @@ export const rules: MigrationRule<Config>[] = [
 
 				isTargetVersion = isSameOrEarlier(base, target);
 			} catch (error) {
-				console.error("Migration Rule Error: Failed to compare versions for custom delay rule.", {
+				console.error("ERROR(migration): migration rule error: failed to compare versions for custom delay rule", {
 					"Migration Rule": "v1.0.0 から v1.4.0 間で追加されていたカスタム遅延設定の `url` プロパティを削除",
 					baseVersion     : base,
 					targetVersion   : target,
@@ -203,8 +199,7 @@ export const rules: MigrationRule<Config>[] = [
 				});
 			}
 
-			// debug
-			console.log(`Report, Migrate Config of Value. Remove "data.Tab.customDelay.list[].url" property. data >>`, newData);
+			console.info("INFO(migration): migrate config of value: remove data.tab.customdelay.list.url property", newData);
 
 			return newData;
 		}
@@ -233,8 +228,7 @@ export const rules: MigrationRule<Config>[] = [
 			// プロパティ追加 & デフォルト値適応
 			newData.Tab.TaskControl = defaultValues.Tab.TaskControl;
 
-			// debug
-			console.log(`Report, Add "data.Tab.TaskControl". data >>`, newData);
+			console.info("INFO(migration): add data.tab.taskcontrol", newData);
 
 			return newData;
 		}
@@ -279,8 +273,7 @@ export const rules: MigrationRule<Config>[] = [
 				Object.assign(newData.Filtering.Protocol.type, oldProtocol);
 			}
 
-			// debug
-			console.log(`Report, Migrate Config of Value. Restructure "data.Filtering". data >>`, newData);
+			console.info("INFO(migration): migrate config of value: restructure data.filtering", newData);
 
 			return newData;
 		}
@@ -309,8 +302,7 @@ export const rules: MigrationRule<Config>[] = [
 			// プロパティ追加 & デフォルト値適応
 			newData.Badge = defaultValues.Badge;
 
-			// debug
-			console.log(`Report, Add "data.Badge". data >>`, newData);
+			console.info("INFO(migration): add data.badge", newData);
 
 			return newData;
 		}
@@ -353,7 +345,7 @@ export const rules: MigrationRule<Config>[] = [
 				});
 			}
 
-			console.log(`Report, Add "enable" property to "data.Tab.customDelay.list" items.`, newData);
+			console.info("INFO(migration): add enable property to data.tab.customdelay.list items", newData);
 
 			return newData;
 		}
@@ -383,8 +375,7 @@ export const rules: MigrationRule<Config>[] = [
 			// プロパティ追加 & デフォルト値適応
 			newData.Debug.loglevel = defaultValues.Debug.loglevel;
 
-			// debug
-			console.log(`Report, Add "data.Debug.loglevel". data >>`, newData);
+			console.info("INFO(migration): add data.debug.loglevel", newData);
 
 			return newData;
 		}
@@ -414,8 +405,7 @@ export const rules: MigrationRule<Config>[] = [
 			// プロパティ追加 & デフォルト値適応
 			newData.Debug.methodLabel = defaultValues.Debug.methodLabel;
 
-			// debug
-			console.log(`Report, Add "data.Debug.methodLabel". data >>`, newData);
+			console.info("INFO(migration): add data.debug.methodlabel", newData);
 
 			return newData;
 		}

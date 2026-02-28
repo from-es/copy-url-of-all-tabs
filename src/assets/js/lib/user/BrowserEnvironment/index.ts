@@ -44,7 +44,7 @@ declare global {
  * ブラウザデータの取得、解析、および統合のロジックをカプセル化します。
  *
  * @version    1.0.0
- * @lastupdate 2025/07/21
+ * @lastupdate 2026/02/27
  */
 class BrowserEnvironment {
 	/**
@@ -107,7 +107,7 @@ class BrowserEnvironment {
 				return this.#createErrorResult("This Browser cannot get Browser Environment Information. 'navigator.userAgent' & 'navigator.userAgentData' are not supported.");
 			}
 		} catch (error) {
-			console.error("An unexpected error occurred in #getBrowserEnvironment()", error);
+			console.error("ERROR(core): unexpected error in getBrowserEnvironment", { error });
 
 			return this.#createErrorResult("An unexpected error occurred while retrieving browser environment information.");
 		}

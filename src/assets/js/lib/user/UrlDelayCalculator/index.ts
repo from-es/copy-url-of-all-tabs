@@ -2,7 +2,7 @@
 	@name        UrlDelayCalculator
 	@description URLリストの遅延時間を計算する為の静的メソッド
 	@author      From E
-	@lastupdate  2025/08/09
+	@lastupdate  2026/02/27
 	@dependency  none
 */
 
@@ -90,7 +90,7 @@ export class UrlDelayCalculator {
 				}
 
 				if (typeof rule.pattern !== "string" || rule.pattern.length === 0) {
-					console.log("UrlDelayCalculator: An invalid or empty string pattern was detected in a custom delay rule. This rule will be ignored. Rule:", rule);
+					console.warn("WARN(tab): Invalid: invalid or empty string pattern in custom delay rule, rule ignored", { rule });
 
 					return { ...rule, compiledPattern: /(?!)/ };  // 無効な文字列パターンの場合は、どのURLにもマッチしない正規表現を返す
 				}

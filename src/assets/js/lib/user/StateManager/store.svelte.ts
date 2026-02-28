@@ -57,7 +57,7 @@ export function createStore<T extends StateObject>(initialStates: StateOption[] 
 
 			// Deny updates to properties that are already frozen.
 			if (freezeMap.get(name)) {
-				console.warn(`[StateManager] Attempted to update a frozen property "${name}". Operation denied.`);
+				console.warn("WARN(state): Invalid: attempted to update frozen property, operation denied", { name });
 				continue;
 			}
 
@@ -95,7 +95,7 @@ export function createStore<T extends StateObject>(initialStates: StateOption[] 
 
 			// Deny assignments to properties marked as frozen.
 			if (freezeMap.get(propName)) {
-				console.warn(`[StateManager] Attempted to write to a frozen property "${propName}". Operation denied.`);
+				console.warn("WARN(state): Invalid: attempted to write to frozen property, operation denied", { propName });
 				return false;
 			}
 

@@ -12,7 +12,7 @@ type FormatType = "text" | "json" | "custom";
 /**
  * Manages the formatting of tab data into various string formats.
  * @dependency escapeHTML
- * @lastupdate 2025/10/15
+ * @lastupdate 2026/02/27
  */
 export class FormatManager {
 	/**
@@ -39,15 +39,14 @@ export class FormatManager {
 				break;
 			default: {
 				// This block is unreachable because of the `FormatType` type guard, but kept for safety.
-				const message = "Error, No match switch case. class FormatManager() >> format():";
-				console.error(message, { tabs, format, template, sanitize });
+				const message = "Error: no match switch case in FormatManager.format";
+				console.error("ERROR(tab): Error: no match switch case in FormatManager.format", { tabs, format, template, sanitize });
 
 				throw new Error(message);
 			}
 		}
 
-		// debug
-		console.log(`Debug, ${format} >>`, result);
+		console.debug("DEBUG(tab): format manager output", { format, result });
 
 		return result;
 	}

@@ -41,7 +41,7 @@ const customLinkRenderer = {
 			// URLのパースに失敗した場合はローカルリンクではないと判断し、外部リンクとして処理
 			isLocalLink = false;
 
-			console.error("Failed to parse URL or determine link type:", href, error);
+			console.error("ERROR(main): Failure: parse url or determine link type", { href, error });
 		}
 
 		if (isLocalLink) {
@@ -79,7 +79,7 @@ async function setUpdateHistory() {
 		renderPastHistory(html);
 
 	} catch (error) {
-		console.error("Failed to display changelog:", error);
+		console.error("ERROR(main): Failure: display changelog", { error });
 
 		const elm          = document.querySelector(ERROR_NOTIFICATION_SELECTOR) || document.body;
 		const errorMessage = `<p>Failed to load changelog.</p><p>Error: ${error.message}</p>`;
@@ -111,7 +111,7 @@ async function getMarkdown(path) {
 	} catch (error) {
 		// fetch が Promise を reject した場合（ネットワークエラーなど）
 		if (error instanceof TypeError && error.message === "Failed to fetch") {
-			throw new Error(`Network error or file not accessible: ${url}. Original error: ${error.message}`);
+			throw new Error(`Network error or file not accessible: ${url}.`, { cause: error });
 		} else {
 			// その他の予期せぬエラー、または上記で throw されたカスタムエラー
 			throw error;

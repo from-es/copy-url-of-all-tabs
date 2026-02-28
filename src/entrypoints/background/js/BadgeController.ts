@@ -76,7 +76,7 @@ class BadgeController {
 
 		// PQueue のエラーハンドリング
 		this.#queue.on("error", (error) => {
-			console.error("PQueue error in BadgeController:", error);
+			console.error("ERROR(badge): pqueue error in BadgeController", error);
 		});
 
 		// 初期化もキュー経由で行う
@@ -94,7 +94,8 @@ class BadgeController {
 				this.updateColor(config.Badge);
 			}
 		} catch (error) {
-			console.error("Failed to initialize badge color from storage:", error);
+			console.error("ERROR(badge): Exception: failed to initialize badge color from storage", { error });
+
 			// ストレージから取得できなくても、デフォルト色で続行
 			await this.applyColor(this.#color);
 		}
@@ -108,7 +109,7 @@ class BadgeController {
 	public updateColor(badgeConfig: Config["Badge"]): void {
 		this.#queue.add(async () => {
 			if (!badgeConfig || typeof badgeConfig !== "object") {
-				console.error("Invalid badge config provided to updateColor:", badgeConfig);
+				console.error("ERROR(badge): Invalid: invalid badge config provided to updateColor", badgeConfig);
 				return;
 			}
 
@@ -133,13 +134,13 @@ class BadgeController {
 					newColor = badgeConfig.theme.color;
 					break;
 				default:
-					console.error("Unknown badge theme type:", badgeConfig.theme.type);
+					console.error("ERROR(badge): Error: unknown badge theme type", badgeConfig.theme.type);
 					return;
 			}
 
 			// 色設定が不正な場合は何もしない
 			if (!newColor || typeof newColor.text !== "string" || typeof newColor.background !== "string") {
-				console.error("Invalid color object derived from config:", newColor);
+				console.error("ERROR(badge): Invalid: invalid color object derived from config", newColor);
 				return;
 			}
 
@@ -158,7 +159,7 @@ class BadgeController {
 			await browser.action.setBadgeTextColor({ color: color.text });
 			await browser.action.setBadgeBackgroundColor({ color: color.background });
 		} catch (error) {
-			console.error("Failed to apply badge color:", { error, color });
+			console.error("ERROR(badge): Exception: failed to apply badge color", { error, color });
 		}
 	}
 
@@ -188,7 +189,7 @@ class BadgeController {
 				try {
 					await browser.action.setBadgeText({ text: String(count) });
 				} catch (error) {
-					console.error("Failed to set badge text:", { error, text: String(count) });
+					console.error("ERROR(badge): failed to set badge text", { error, text: String(count) });
 				}
 			});
 			return;
@@ -201,7 +202,7 @@ class BadgeController {
 				await sleep(this.#waitingTime);
 				await browser.action.setBadgeText({ text: "" });
 			} catch (error) {
-				console.error("Failed to clear badge text after delay:", { error });
+				console.error("ERROR(badge): failed to clear badge text after delay", { error });
 			}
 		});
 	}

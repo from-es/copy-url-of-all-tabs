@@ -8,7 +8,7 @@ import v8n from "v8n";
  * Validates each object in an array against a v8n schema.
  *
  * @author       From E
- * @lastModified 2025-07-29
+ * @lastModified 2026-02-27
  */
 class ArrayOfObjectsValidator {
 	#option = {
@@ -67,11 +67,11 @@ class ArrayOfObjectsValidator {
 				let args       = rule?.args;
 
 				if (methodName === undefined) {
-					console.warn("Warning: v8n rule object is missing 'name' property. Using 'unknownRule'. This might indicate a v8n internal structure change.");
+					console.warn("WARN(validation): Invalid: v8n rule object is missing 'name' property", { rule });
 					methodName = "unknownRule";
 				}
 				if (args === undefined) {
-					console.warn("Warning: v8n rule object is missing 'args' property. Using empty array. This might indicate a v8n internal structure change.");
+					console.warn("WARN(validation): Invalid: v8n rule object is missing 'args' property", { rule });
 					args = [];
 				}
 
@@ -94,7 +94,7 @@ class ArrayOfObjectsValidator {
 	 */
 	static stringifySchemaRules(schemaRules) {
 		if (typeof schemaRules !== "object" || schemaRules === null || Array.isArray(schemaRules)) {
-			throw new TypeError("The 'schemaRules' argument must be a non-null object.");
+			throw new TypeError("Invalid: the 'schemaRules' argument must be a non-null object in ArrayOfObjectsValidator.stringifySchemaRules");
 		}
 
 		const stringified = {};
@@ -152,7 +152,7 @@ class ArrayOfObjectsValidator {
 
 	#ensureDataValidOption(option) {
 		if (!(option && typeof option === "object")) {
-			throw new TypeError("The 'option' argument must be an object.");
+			throw new TypeError("Invalid: the 'option' argument must be an object in ArrayOfObjectsValidator.#ensureDataValidOption");
 		}
 
 		// Set default value
@@ -180,7 +180,7 @@ class ArrayOfObjectsValidator {
 		try {
 			return v8n().schema(schemaRules);
 		} catch (error) {
-			throw new Error(`The 'schemaRules' argument is not a valid v8n schema for v8n library: ${error.message}`, { cause: error });
+			throw new Error(`Invalid: the 'schemaRules' argument is not a valid v8n schema in ArrayOfObjectsValidator.#validateArguments`, { cause: error });
 		}
 	}
 
@@ -193,7 +193,7 @@ class ArrayOfObjectsValidator {
 			return [ { field: "(item)", rule: "non-object" } ];
 		}
 
-		throw new TypeError(`Element at index ${index} must be a non-null object.`);
+		throw new TypeError(`Invalid: element at index ${index} must be a non-null object in ArrayOfObjectsValidator.#checkObjectType`);
 	}
 
 	#checkMissingKeys(item, index, schemaKeys, option) {
@@ -206,7 +206,7 @@ class ArrayOfObjectsValidator {
 			return missingKeys.map(key => ({ field: key, rule: "missing" }));
 		}
 
-		throw new TypeError(`Object at index ${index} is missing required property(s): '${missingKeys.join(" ', '")}'.`);
+		throw new TypeError(`Invalid: object at index ${index} is missing required property(s) "${missingKeys.join(", ")}" in ArrayOfObjectsValidator.#checkMissingKeys`);
 	}
 
 	#validateSingleItem(item, index, schemaKeys, validation, option) {
@@ -266,14 +266,14 @@ class ArrayOfObjectsValidator {
 		try {
 			// 1. 引数の事前検証
 			if (!Array.isArray(data)) {
-				throw new TypeError("The 'data' argument must be an array.");
+				throw new TypeError("Invalid: the 'data' argument must be an array in ArrayOfObjectsValidator.validate");
 			}
 			this.#ensureDataValidOption(finalOption);
 			const validation = this.#validateArguments(schemaRules);
 
 			// 2. 空配列の早期リターン
 			if (data.length === 0) {
-				console.info("Validation skipped: The provided data array is empty. No violations found.");
+				console.info("INFO(validation): validation skipped: data array is empty");
 
 				return this.#setFinalResult(finalOption.allowEmptyArray, [], data, schemaRules);
 			}
@@ -292,7 +292,7 @@ class ArrayOfObjectsValidator {
 		} catch (error) {
 			this.#lastResult = null;
 
-			throw new Error(`An unexpected error occurred during the validation process: ${error.message}`, { cause: error });
+			throw new Error("Exception: an unexpected error occurred during the validation process in ArrayOfObjectsValidator.validate", { cause: error });
 		}
 	}
 
@@ -301,7 +301,7 @@ class ArrayOfObjectsValidator {
 	 */
 	reportToConsole() {
 		if (!this.#lastResult) {
-			console.error("Validation has not been run yet. Please call validate() first.");
+			console.error("ERROR(validation): Error: validation has not been run yet");
 			return;
 		}
 
@@ -309,12 +309,12 @@ class ArrayOfObjectsValidator {
 		let stringifiedRules = source?.rules?.stringified;
 
 		if (stringifiedRules === undefined || stringifiedRules === null) {
-			console.warn("Warning: 'source.rules.stringified' property is missing or null. This might indicate a change in the validation result structure.");
+			console.warn("WARN(validation): Invalid: 'source.rules.stringified' property is missing or null");
 			stringifiedRules = {}; // Fallback to empty object to prevent errors
 		}
 
 		if (isAllValid) {
-			console.log("Success: All data is valid.", source);
+			console.info("INFO(validation): Success: all data is valid", { source });
 		} else {
 			const errorGroupTitle = `Error: Validation errors found for ${invalidItems.length} invalid items.`;
 			console.groupCollapsed(errorGroupTitle);
@@ -324,7 +324,7 @@ class ArrayOfObjectsValidator {
 				console.groupCollapsed("Applied Validation Rules (Stringified)");
 				for (const key in stringifiedRules) {
 					if (Object.hasOwn(stringifiedRules, key)) {
-						console.log(`${key}: ${stringifiedRules[key]}`);
+						console.debug("DEBUG(validation): validation rule detail", { key, rule: stringifiedRules[key] });
 					}
 				}
 				console.groupEnd("Applied Validation Rules (Stringified)");
@@ -335,10 +335,10 @@ class ArrayOfObjectsValidator {
 				invalidItems.forEach(({ index, item, violations }) => {
 					const groupTitle = `Array[${index}]`;
 					console.group(groupTitle);
-					console.log("Invalid Item:", item);
+					console.warn("WARN(validation): Invalid: item validation failed", { item });
 
 					violations.forEach(({ field, rule }) => {
-						console.log(`Property "${field}" violated rule "${rule}".`);
+						console.warn("WARN(validation): Invalid: property violated rule", { field, rule });
 					});
 
 					console.groupEnd(groupTitle);

@@ -29,7 +29,7 @@ export function parseArrayOfCodeIntoUniqueID(array: CodeObject[]): CodeObject[] 
 			if (match.length > 1) {
 				const id = generateID(32);
 
-				console.log("Duplicate", index, match);
+				console.debug("DEBUG(string): duplicate id found, generating new unique id", { index, match });
 
 				flatArray[index]  = id;
 				(codes[index]).id = id;

@@ -11,7 +11,7 @@ import cloneDeep from "lodash-es/cloneDeep";
  * 関数やDOMノードなど、`structuredClone()` がサポートしない非シリアライズ可能な値が含まれている場合、
  * `DataCloneError` が発生した場合、より広範なデータ型に対応する `lodash-es/cloneDeep` にフォールバックする。
  *
- * @lastupdate 2026/01/03
+ * @lastupdate 2026/02/27
  * @see https://developer.mozilla.org/ja/docs/Web/API/structuredClone
  * @see https://lodash.com/docs/#cloneDeep
  *
@@ -22,7 +22,7 @@ import cloneDeep from "lodash-es/cloneDeep";
 export function cloneObject<T>(obj: T): T {
 	// `structuredClone()` が利用できない環境では、最初から `cloneDeep()` を使用
 	if (typeof structuredClone !== "function") {
-		// console.debug("structuredClone() is not available. Using cloneDeep() directly. obj >>", obj);
+		// console.debug("DEBUG(util): structuredClone is not available, using cloneDeep directly", { obj });
 		return cloneDeep(obj);
 	}
 
@@ -31,12 +31,12 @@ export function cloneObject<T>(obj: T): T {
 	} catch (error: unknown) {
 		// `structuredClone()` が失敗した場合、`DataCloneError` かどうかを判定
 		if (error instanceof DOMException && error.name === "DataCloneError") {
-			// console.debug("structuredClone() failed due to non-serializable data. Falling back to cloneDeep(). obj >>", obj);
+			// console.debug("DEBUG(util): structuredClone failed, falling back to cloneDeep", { obj });
 			return cloneDeep(obj);
 		}
 
 		// `DataCloneError` 以外は予期せぬエラーとして再スロー
-		console.error("Unexpected error occurred during object cloning.", { error, obj });
-		throw error;
+		console.error("ERROR(util): Exception: unexpected error occurred during object cloning", { error, obj });
+		throw new Error("Exception: unexpected error occurred during object cloning", { cause: error });
 	}
 }
