@@ -36,7 +36,7 @@ export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
 	if ( urlList && config ) {
 		openURLs(urlList, config);
 	} else {
-		console.error("Error, Cannot open URL List! urlList or option are missing in the message argument.", { argument });
+		console.error("ERROR(tab): Invalid: cannot open url list, urlList or option are missing", argument);
 	}
 }
 
@@ -49,7 +49,7 @@ export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
  */
 async function openURLs(urlList: string[], config: Config): Promise<void> {
 	if ( !urlList || !Array.isArray(urlList) || urlList.length === 0 ) {
-		console.warn("Warning, URL list is missing or empty. No tabs will be opened.", { received: urlList });
+		console.warn("WARN(tab): Invalid: url list is missing or empty, no tabs will be opened", { received: urlList });
 		return;
 	}
 
@@ -63,9 +63,8 @@ async function openURLs(urlList: string[], config: Config): Promise<void> {
 	const windowId        = await getCurrentWindowID();
 	const delayResults    = buildUrlListWithDelay(urlList, tabOption);
 
-	// debug
-	console.log(
-		"Debug, Open URLs >> Tab Option & URL List >>",
+	console.debug(
+		"DEBUG(tab): open urls: tab option and url list",
 		{
 			option: {
 				Filtering: {
@@ -81,7 +80,6 @@ async function openURLs(urlList: string[], config: Config): Promise<void> {
 			}
 		}
 	);
-
 	taskController(delayResults, windowId, tabOption);
 }
 
@@ -191,7 +189,7 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 		// 未知のモードが渡された場合はエラーをスローし、開発者に問題を通知
 		default: {
 			const exhaustiveCheck: never = taskMode;
-			throw new Error(`Unknown TaskMode: ${exhaustiveCheck}. This indicates a programming error.`);
+			throw new Error(`Error: unknown TaskMode "${exhaustiveCheck}" in createTasks`);
 		}
 	}
 }
@@ -246,7 +244,7 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 		default: {
 			// 未知のモードが渡された場合はエラーをスローし、開発者に問題を通知
 			const exhaustiveCheck: never = mode;
-			throw new Error(`Unknown OpenMode: ${exhaustiveCheck}. This indicates a programming error.`);
+			throw new Error(`Error: unknown OpenMode "${exhaustiveCheck}" in dispatchTasks`);
 		}
 	}
 }
@@ -260,7 +258,7 @@ async function getCurrentWindowID(): Promise<number | undefined> {
 		const window = await browser.windows.getCurrent({ windowTypes: [ "normal" ] });
 		return window?.id;
 	} catch (error) {
-		console.error("Failed to get current window:", { error });
+		console.error("ERROR(tab): Exception: failed to get current window", { error });
 		return undefined;
 	}
 }
@@ -282,12 +280,11 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 		const property         = { url, active, windowId };
 		const createProperties = (typeof tabIndex === "number") ? Object.assign(property, { index : tabIndex }) : property;
 
-		// debug
-		console.log("Debug, Open URLs >> createTab() >>", { position : position, ...createProperties });
+		console.debug("DEBUG(tab): open urls: create tab", { position : position, ...createProperties });
 
 		browser.tabs.create(createProperties);
 	} catch (error) {
-		console.error("Error, Can not Open URL >> createTab() >>", { error });
+		console.error("ERROR(tab): Exception: cannot open url, create tab failed", { error });
 	}
 }
 
@@ -323,8 +320,7 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 			  index のデフォルトの挙動: 新規タブは、指定されたウィンドウの一番右端（末尾）に作成される
 			*/
 
-			// debug
-			console.error("Error, Invalid argument passed to createTabPosition() >> position >>", position);
+			console.error("ERROR(tab): Invalid: invalid argument passed to createTabPosition", { position });
 			break;
 	}
 

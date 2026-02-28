@@ -1,6 +1,6 @@
 /**
  * Provides static methods to interact with the system clipboard.
- * @lastupdate 2025/10/15
+ * @lastupdate 2026/02/27
  */
 export class ClipboardManager {
 	/**
@@ -16,7 +16,7 @@ export class ClipboardManager {
 			// write operations resolve to undefined, so we return true for them on success.
 			return result === undefined ? true : result;
 		} catch (error) {
-			console.error(`Error in ClipboardManager.${methodName}():`, { error });
+			console.error(`ERROR(clipboard): Exception: failed to perform clipboard operation in ClipboardManager.${methodName}`, { error });
 			return failureValue;
 		}
 	}

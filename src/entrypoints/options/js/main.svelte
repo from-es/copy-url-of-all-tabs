@@ -42,8 +42,8 @@
 	const dynamicContent = new DynamicContent(status);
 
 	onMount(() => {
-		console.info("The Component, On mount");
-		console.debug("status >>", cloneObject(status)); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
+		console.info("INFO(options): Options page component mounted");
+		console.debug("DEBUG(options): initial status object", { status: cloneObject(status) }); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
 
 		initialize();
 	});
@@ -57,7 +57,7 @@
 
 		selectTab();
 
-		console.info("The Component, Initialize");
+		console.info("INFO(options): Options page component initialized");
 	}
 
 	async function reInitialize() {
@@ -145,7 +145,7 @@
 				await reInitialize();
 
 				PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
-				console.log("Save to Storage.", currentConfig);
+				console.info("INFO(storage): Success: save configuration", { config: currentConfig });
 			} else {
 				// 差分が発生したオブジェクトのキーを表示名に変換
 				const displayNames = diffKeys.map(key => {
@@ -158,7 +158,7 @@
 
 				// ユーザーに差分が発生した設定項目を通知
 				PopoverMessage.create(message);
-				console.warn("Save cancelled. Invalid values were auto-corrected.", { correctedKeys: diffKeys });
+				console.warn("WARN(config): save cancelled, invalid values auto-corrected", { correctedKeys: diffKeys });
 			}
 		} catch (error) {
 			const message = cloneObject(status.define.Message.Setting_UnexpectedError);
@@ -169,7 +169,7 @@
 
 			// エラーメッセージを追加
 			PopoverMessage.create(message);
-			console.error("An unexpected error occurred during the save process.", error);
+			console.error("ERROR(storage): Exception: unexpected error during save process", { error });
 		}
 	}
 
@@ -189,8 +189,7 @@
 		// Show, Message
 		PopoverMessage.create(status.define.Message.Setting_OnClick_ResetButton);
 
-		// debug
-		console.log("Reset Config Data.", status.config);
+		console.info("INFO(config): Success: reset configuration", { config: status.config });
 	}
 
 	/**
@@ -208,7 +207,7 @@
 		const migrationResult  = await migrationManager.migrate(date, defaultValues, { failFast: false });
 		const result           = migrationResult.isSucceeded ? migrationResult.data : cloneObject(config);
 
-		console.debug("[Apply, Pre Save Corrections]", migrationResult);
+		console.debug("DEBUG(migration): apply pre save corrections", { migrationResult });
 
 		return result;
 	}
@@ -281,8 +280,7 @@
 				message = cloneObject(template);
 				message.message.push(`Failed to process configuration: ${err.message}`);
 
-				// debug
-				console.log("Failed to load configuration:", { error });
+				console.error("ERROR(config): Failure: load configuration, parsing or initialization failed", { error });
 
 				// Add supplementary message if JSON.parse fails (SyntaxError)
 				if (err instanceof SyntaxError) {
@@ -326,16 +324,16 @@
 				// StorageManager.load returns null on I/O errors
 				if (data === null) {
 					// The details of the error have already been logged to the console by StorageManager.load
-					throw new Error("An error occurred while loading config from storage.");
+					throw new Error("Failure: an error occurred while loading config from storage in exportConfig.getSetting");
 				}
 
 				const setting = data?.[keyname];
 
 				// Config not found in storage
 				if (!setting) {
-					console.warn("Failed to load config from storage for export.");
+					console.warn("WARN(storage): Failure: load configuration from storage for export");
 
-					throw new Error("Could not find saved config.");
+					throw new Error("Failure: could not find saved config in exportConfig.getSetting");
 				}
 
 				// Successfully retrieved
@@ -354,7 +352,7 @@
 					const result         = extension.replace(/^\./, "");
 
 					if (!firstCandidate) {
-						console.warn(`exportConfig() >> getFilenameExtension: No extension found for mimetype: "${mimetype}". Defaulting to "txt".`, { availableMimeTypes: MIME_TO_EXT_MAP });
+						console.warn("WARN(config): export configuration: no extension found for mimetype, defaulting to txt", { mimetype, availableMimeTypes: MIME_TO_EXT_MAP });
 					}
 
 					return result;
@@ -401,7 +399,7 @@
 				message = cloneObject(template);
 				message.message.push(`Failed to export configuration: ${err.message}`);
 
-				console.error("Configuration export failed.", { error: err });
+				console.error("ERROR(config): Failure: configuration export failed", { error: err });
 			}
 
 			PopoverMessage.create(message);

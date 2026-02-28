@@ -26,17 +26,17 @@ export function sanitizeForSendMessage<T>(data: T, options: SanitizeOptions = { 
 		if (error.name === 'DataCloneError') {
 			if (checkOnly) {
 				// If only checking, throw an error to notify.
-				throw new Error("Data contains properties that cannot be structured cloned.", { cause: error, data });
+				throw new Error("Invalid: data contains properties that cannot be structured cloned in sanitizeForSendMessage", { cause: error, data });
 			}
 
 			// Execute sanitization.
 			if (debug) {
-				console.log("removeNonCloneableProperties(): Message contains non-cloneable data. Sanitizing... original:", data);
+				console.debug("DEBUG(util): removeNonCloneableProperties: message contains non-cloneable data, sanitizing", { original: data });
 			}
 			return removeNonCloneableProperties(data, debug);
 		}
 		// Re-throw any unexpected errors other than DataCloneError.
-		throw new Error("An unexpected error occurred during the sanitization process.", { cause: error, data });
+		throw new Error("Exception: an unexpected error occurred during the sanitization process in sanitizeForSendMessage", { cause: error, data });
 	}
 }
 
@@ -64,7 +64,7 @@ function removeNonCloneableProperties(obj: any, debug: boolean): any {
 			// Exclude functions, symbols, and DOM nodes as they cannot be structured-cloned.
 			if (type === "function" || type === "symbol" || (typeof Node !== "undefined" && value instanceof Node)) {
 				if (debug) {
-					console.log("removeNonCloneableProperties(): Exclude functions, symbols, and DOM nodes as they cannot be structured-cloned.", { key, value });
+					console.debug("DEBUG(util): removeNonCloneableProperties: exclude non-cloneable data types", { key, value });
 				}
 
 				continue;

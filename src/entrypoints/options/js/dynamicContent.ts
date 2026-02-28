@@ -29,8 +29,7 @@ export class DynamicContent {
 	private getBrowserType(): "chrome" | "firefox" | null {
 		const manifest = browser.runtime.getManifest();
 
-		// debug
-		// console.log("Debug, getBrowserType() >>", { manifest });
+		// console.debug("DEBUG(app): get browser type", { manifest });
 
 		// Firefox: "browser_specific_settings" のプロパティを持っているか
 		const isFirefox = Object.hasOwn(manifest, "browser_specific_settings");

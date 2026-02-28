@@ -10,10 +10,10 @@ import { type Config as DOMPurifyConfig } from "dompurify"; // Import Types
  */
 export function setSafeHTML(element: Element, htmlString: string | null | undefined, options?: DOMPurifyConfig): void {
 	if (!element) {
-		throw new TypeError("setSafeHTML: Target element is not provided.");
+		throw new TypeError("Invalid: target element is not provided in setSafeHTML");
 	}
 	if (!(element instanceof Element)) {
-		throw new TypeError("setSafeHTML: Target element must be an instance of Element.");
+		throw new TypeError("Invalid: target element must be an instance of Element in setSafeHTML");
 	}
 
 	if (!htmlString) {
@@ -69,12 +69,12 @@ export function createSafeHTML(htmlString: string, options?: DOMPurifyConfig): s
 function validateArguments(htmlString: unknown, options: unknown): void {
 	// htmlString: 文字列であるか
 	if (typeof htmlString !== "string") {
-		throw new TypeError(`Argument 'htmlString' must be a string, but received type ${typeof htmlString}.`);
+		throw new TypeError(`Invalid: argument "htmlString" must be a string, but received type ${typeof htmlString} in validateArguments`);
 	}
 
 	// options: DOMPurify の設定オプションとして有効か
 	// typeof [] は "object" となるため、Array.isArray で配列を除外するチェックが必須
 	if (options !== undefined && (typeof options !== "object" || options === null || Array.isArray(options))) {
-		throw new TypeError(`Argument 'options' must be an object, but received ${options === null ? "null" : `type ${typeof options}`}.`);
+		throw new TypeError(`Invalid: argument "options" must be an object, but received ${options === null ? "null" : `type ${typeof options}`} in validateArguments`);
 	}
 }

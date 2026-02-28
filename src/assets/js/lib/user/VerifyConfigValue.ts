@@ -21,7 +21,7 @@ export class VerifyConfigValue {
 
 	#verify(config: Config, define: Define) {
 		if ( !config || typeof config !== "object" || Object.keys(config).length === 0 ) {
-			console.log("Error : class VerifyConfigValue() >> #verify(), config", { type: typeof config, value: config });
+			console.error("ERROR(config): Invalid: invalid config object", { type: typeof config, value: config });
 
 			return define.Config;
 		}
@@ -42,7 +42,8 @@ export class VerifyConfigValue {
 				const value    = lodashGetValue(conf, property);
 
 				/* debug
-				console.log(
+				console.debug(
+					"DEBUG(config): verify config value details",
 					{
 						property : {
 							path    : elm["property"],
@@ -61,7 +62,7 @@ export class VerifyConfigValue {
 					// fail
 					const prop = `config.${property}`;
 
-					console.log(`Warning, Invalid value. Overwrite "${prop}" with default settings. ${prop} >>`, lodashGetValue(conf, property));
+					console.warn("WARN(config): Invalid: invalid value, overwrite with default settings", { property: prop, value: lodashGetValue(conf, property) });
 					lodashSetValue(conf, property, fail());
 				}
 			}

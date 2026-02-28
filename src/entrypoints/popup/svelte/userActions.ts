@@ -90,7 +90,7 @@ async function getAllTabs(): Promise<Browser.tabs.Tab[]> {
 
 		return tabs;
 	} catch (error) {
-		console.error("Error, Failed to get tabs >> getAllTabs() >>", { error });
+		console.error("ERROR(tab): Exception: failed to get tabs", { error });
 
 		return [];
 	}

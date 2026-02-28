@@ -2,7 +2,7 @@
 	@name        CompareVersions
 	@description セマンティックバージョニング形式のバージョン文字列を比較するユーティリティ
 	@author      From E
-	@lastupdate  2025/10/08
+	@lastupdate  2026/02/27
 	@dependency  none
 */
 
@@ -62,26 +62,26 @@ function validSemanticVersionsString(str: unknown, pattern: SEMVER_PATTERN): str
 
 	// 文字列であるか
 	if (!str || typeof str !== "string") {
-		console.error("Invalid version string: Input must be a string.", { str, typeof: typeof str });
+		console.error("ERROR(string): invalid version string: input must be a string", { str, typeof: typeof str });
 
 		return false;
 	}
 	// 文字列長の検証
 	if (str.length > pattern.length) {
-		console.error(`Invalid version string: The length (${str.length}) exceeds the maximum allowed length of ${pattern.length}.`, { str, length: str.length, maxLength: pattern.length });
+		console.error("ERROR(string): invalid version string: length exceeds maximum allowed", { str, length: str.length, maxLength: pattern.length });
 
 		return false;
 	}
 
 	// ReDoS 対策として、簡易的な正規表現で検証
 	if (!isValidString(str, pattern.simple)) {
-		console.error("Invalid version string: Failed basic format check.", { str, regex: pattern.simple });
+		console.error("ERROR(string): invalid version string: failed basic format check", { str, regex: pattern.simple });
 
 		return false;
 	}
 	// SemVer 2.0.0 の仕様に準拠した詳細な正規表現で検証
 	if (!isValidString(str, pattern.detail)) {
-		console.error("Invalid version string: Does not conform to SemVer 2.0.0 specification.", { str, regex: pattern.detail });
+		console.error("ERROR(string): invalid version string: does not conform to semver 2.0.0 specification", { str, regex: pattern.detail });
 
 		return false;
 	}
@@ -101,7 +101,7 @@ function parseVersion(version: SemVerString): ParsedVersion {
 	// ここでのisNaNチェックは、正規表現が数値部分を保証しているため、厳密には不要だが、
 	// 念のため残しておくことで、将来的な正規表現の変更などにも対応しやすくなる。
 	if (parts.some(isNaN) || parts.length !== 3) {
-		throw new Error(`Invalid version string: ${version}. Expected format MAJOR.MINOR.PATCH[-PRERELEASE][+BUILDMETADATA]`);
+		throw new Error(`Invalid: version string "${version}" does not conform to SemVer format in parseVersion`);
 	}
 
 	const prerelease = prereleaseParts.map(part => {
@@ -206,7 +206,7 @@ export function compareVersions(base: unknown, target: unknown): CompareVersions
 	const isValidStringTarget = validSemanticVersionsString(target, SEMVER_PATTERN);
 	const isValidStringBoth   = isValidStringBase && isValidStringTarget;
 	if (!isValidStringBoth) {
-		throw new Error("Invalid input: One or both of the provided version strings are not valid semantic versions.");
+		throw new Error("Invalid: one or both of the provided version strings are not valid semantic versions in compareVersions");
 	}
 
 	const parsedBase   = parseVersion(base);

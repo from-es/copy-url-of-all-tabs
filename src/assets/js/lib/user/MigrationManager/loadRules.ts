@@ -54,12 +54,12 @@ function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>
 		try {
 			if (!module || !Array.isArray(module.rules)) {
 				// モジュールがルールを正しくエクスポートしていない場合もエラーを投げる
-				throw new Error(`[Migration Rule Loader] Error: Module at '${path}' does not have a valid 'rules' export.`);
+				throw new Error(`Error: module at "${path}" does not have a valid "rules" export in extractRulesFromModules`);
 			}
 			allRules.push(...module.rules);
 		} catch (error) {
 			// ルールのロード中にエラーが発生した場合、即座にエラーを投げる
-			throw new Error(`[Migration Rule Loader] Error: Failed to load rules from '${path}'. Original error: ${error instanceof Error ? error.message : String(error)}`);
+			throw new Error(`Failure: failed to load rules from "${path}" in extractRulesFromModules`, { cause: error });
 		}
 	}
 
@@ -90,7 +90,7 @@ function partitionRules<T>(rules: MigrationRule<T>[]): PartitionedRules<T> {
 			report.warningReport.forEach(warning => {
 				// `meta` と `order` の欠損に関する警告を `console.warn` に出力
 				if (warning.reason.includes("this property is optional")) {
-					console.warn(warning.reason, rule);
+					console.warn("WARN(migration): optional property missing in migration rule", { reason: warning.reason, rule });
 				}
 			});
 		}
@@ -110,12 +110,12 @@ function partitionRules<T>(rules: MigrationRule<T>[]): PartitionedRules<T> {
 		}
 	});
 
-	console.debug("[Validate Migration Rules]", { validRules, invalidRules });
+	console.debug("DEBUG(migration): validate migration rules", { validRules, invalidRules });
 
 	// エラーの有無を確認し、Fail-Fast 処理
 	if (errorDetailsList.length > 0) {
 		const details = JSON.stringify(errorDetailsList, null, "\t");
-		throw new Error(`[Migration Rule Loader] Error: Invalid rules detected. Details:\n${details}`);
+		throw new Error(`Invalid: invalid rules detected in partitionRules. Details:\n${details}`);
 	}
 
 	// Fail-Fast 戦略により、この時点では invalidRules は常に空配列となる
@@ -196,7 +196,7 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			case VALIDATION_STATUS.SkipToNextValidateRule:
 				return `rule object is invalid. typeof: ${typeof property}.`;
 			default: {
-				throw new Error(`Code Error, Property '${target}': Unknown matchType: ${flag}.`);
+				throw new Error(`Error: unknown ValidationStatus "${flag}" for property "${target}" in validateRule.createMessage`);
 			}
 		}
 	};
@@ -512,7 +512,7 @@ function checkForDuplicateOrders<T>(rules: MigrationRule<T>[]): void {
 		if (entry.count > 1) {
 			// Fail-Fast: order の重複はエラーを投げる
 			throw new Error(
-				`[Migration Rule Loader] Error: Duplicate order value '${order}' found in ${entry.count} rules. This can lead to unpredictable execution order. Involved rules: [${entry.ruleIdentifiers.join(", ")}]. Please ensure all rule 'order' properties are unique.`
+				`Error: duplicate order value "${order}" found in ${entry.count} rules in checkForDuplicateOrders. This can lead to unpredictable execution order. Involved rules: [${entry.ruleIdentifiers.join(", ")}]. Please ensure all rule "order" properties are unique.`
 			);
 		}
 	});
@@ -578,7 +578,7 @@ export function loadRules<T>(modules: ImportModules<T>): MigrationRule<T>[] {
 
 	const allRules = sortAndCombineRules(validRules, invalidRules);
 
-	console.debug(`[Migration Rule Loader] Successfully loaded and sorted ${allRules.length} valid rules.`);
+	console.debug("DEBUG(migration): successfully loaded and sorted migration rules", { count: allRules.length });
 
 	return allRules;
 }
