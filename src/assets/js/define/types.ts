@@ -55,7 +55,7 @@ type Config_Delta = {
 	};
 	Filtering: {
 		Deduplicate: {
-			Copy:  {
+			Copy: {
 				enable: boolean;
 			};
 			Paste: {
@@ -70,16 +70,16 @@ type Config_Delta = {
 				enable: boolean;
 			};
 			type: {
-				http:       boolean;
-				https:      boolean;
-				file:       boolean;
-				ftp:        boolean;
-				data:       boolean;
-				blob:       boolean;
-				mailto:     boolean;
+				http      : boolean;
+				https     : boolean;
+				file      : boolean;
+				ftp       : boolean;
+				data      : boolean;
+				blob      : boolean;
+				mailto    : boolean;
 				javascript: boolean;
-				about:      boolean;
-				chrome:     boolean;
+				about     : boolean;
+				chrome    : boolean;
 			};
 		};
 		PatternMatch: {
@@ -114,8 +114,8 @@ type Config_Delta = {
 		}
 	};
 	Badge: {
-		enable : boolean;
-		theme: {
+		enable: boolean;
+		theme : {
 			type : BadgeThemeType;
 			color: {
 				text      : string;
@@ -129,8 +129,8 @@ type Config = Config_Common & Config_Delta;
 type Define_Delta = {
 	Regex: {
 		url: {
-			standard: RegExp;
-			RFC3986 : RegExp;
+			standard     : RegExp;
+			RFC3986      : RegExp;
 			[key: string]: RegExp
 		};
 		UUID: {
@@ -152,7 +152,7 @@ type Define_Delta = {
 	};
 	MimeType            : string[];
 	ChromiumBasedBrowser: string[];
-	Messaging: {
+	Messaging           : {
 		[key: string]: string
 	};
 	OptionsPageFontSizeValueMin          : number;
@@ -180,6 +180,7 @@ type Define_Delta = {
 	TaskControlChunkSizeValueMin         : number;
 	TaskControlChunkSizeValueMax         : number;
 	TaskControlChunkSizeValueStep        : number;
+
 	ConfigPropertyDisplayNames: {
 		readonly Information: "Extension Information";
 		readonly Debug      : "Debug Settings";
@@ -194,8 +195,9 @@ type Define_Delta = {
 }
 type VerificationRule = {
 	property: string;
-	fail    : () => any;
-	rule    : (value: any) => boolean;
+	fail    : () => unknown;
+	// eslint-disable-next-line no-unused-vars
+	rule    : (value: unknown) => boolean;
 };
 
 interface Define extends Define_Delta {
@@ -203,12 +205,12 @@ interface Define extends Define_Delta {
 		Browser: Partial<BrowserEnvironmentResult>;
 	};
 	Information: {
-		author     : string | { email: string; } | undefined;
-		name       : string;
-		description: string | undefined;
-		version    : string;
+		author               : string | { email: string; } | undefined;
+		name                 : string;
+		description          : string | undefined;
+		version              : string;
 		BrowserExtensionStore: {
-			[key: string]: { // "chrome", "firefox"
+			[key: string]: {  // "chrome", "firefox"
 				title  : string;
 				url    : string;
 				publish: number;

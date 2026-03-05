@@ -5,8 +5,7 @@ import { manifest }                           from "./src/manifest";
 
 // eslint-disable-next-line no-unused-vars
 const getViteConfig: (env: ConfigEnv) => WxtViteConfig | Promise<WxtViteConfig> = (env) => {
-	// debug
-	// console.log("Debug, arguments >>", env);
+	// console.debug("Debug: env:", env);
 
 	return {
 		build: {
@@ -15,7 +14,7 @@ const getViteConfig: (env: ConfigEnv) => WxtViteConfig | Promise<WxtViteConfig> 
 	};
 };
 const getManifest = (env: ConfigEnv): UserManifest => {
-	const obj: UserManifest = { ...manifest }; // 元の manifest を変更しないようにコピーを作成
+	const obj: UserManifest = { ...manifest };  // 元の manifest を変更しないようにコピーを作成
 	const browser           = env.browser;
 
 	switch (browser) {
@@ -29,8 +28,7 @@ const getManifest = (env: ConfigEnv): UserManifest => {
 			break;
 	}
 
-	// debug
-	// console.log("[wxt.config.ts] Generated manifest:", { browser, manifest: obj });
+	// console.debug("Debug: [wxt.config.ts] Generated manifest:", { browser, manifest: obj });
 
 	return obj;
 };

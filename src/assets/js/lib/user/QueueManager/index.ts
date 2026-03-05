@@ -1,4 +1,7 @@
+// Import NPM Package
 import PQueue from "p-queue";
+
+
 
 // `p-queue` のタスク直列実行を行う為、`1` を指定
 const CONCURRENCY: number = 1;
@@ -7,19 +10,19 @@ class QueueClass {
 	readonly #LOWEST_PRIORITY: number = 0;
 	readonly #empty          : number = 0;
 	readonly #queue          : PQueue;
-	#HighestPriority         : number = this.#LOWEST_PRIORITY + 1;
+	         #HighestPriority: number = this.#LOWEST_PRIORITY + 1;
 
 	constructor(concurrency: number) {
 		this.#queue = new PQueue({ concurrency });
 	}
 
-	addTask(task: () => Promise<any>): void {
+	addTask(task: () => Promise<unknown>): void {
 		this.#queue.add(task, { priority: this.#LOWEST_PRIORITY });
 	}
 
-	addPriorityTask(task: () => Promise<any>): void {
-		this.#HighestPriority++;                                    // 優先度を呼出し毎に上げる事で、追加タスクを先に処理させる
-		this.#queue.add(task, { priority: this.#HighestPriority }); // 新しい優先度を割り当てる
+	addPriorityTask(task: () => Promise<unknown>): void {
+		this.#HighestPriority++;                                     // 優先度を呼出し毎に上げる事で、追加タスクを先に処理させる
+		this.#queue.add(task, { priority: this.#HighestPriority });  // 新しい優先度を割り当てる
 	}
 	clear(): void {
 		this.#queue.clear();

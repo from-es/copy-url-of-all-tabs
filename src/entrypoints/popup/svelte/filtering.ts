@@ -1,12 +1,12 @@
 // WXT provided cross-browser Types.
-import { type Browser } from "wxt/browser";
+import type { Browser } from "wxt/browser";
+
+// Import Module
+import { toUniqueArray } from "@/assets/js/utils/toUniqueArray";
 
 // Import Types
 import type { Config, Define } from "@/assets/js/types/";
 import type { Action }         from "./types";
-
-// Import Module
-import { toUniqueArray } from "@/assets/js/utils/toUniqueArray";
 
 
 
@@ -60,7 +60,7 @@ function applyUrlProcessingRules(urlList: string[], action: Action, config: Conf
 	filteredUrlList = filterUrlsByProtocol(filteredUrlList, isProtocolFilteringEnabled, action, config, define);
 
 	// Filtering: URL Pattern match
-	filteredUrlList = filterUrlsByPatternMatch(filteredUrlList, isPatternMatchFilteringEnabled, action, config, define);
+	filteredUrlList = filterUrlsByPatternMatch(filteredUrlList, isPatternMatchFilteringEnabled, action, config);
 
 	// Filtering: Deduplicate
 	if (isDeduplicateEnabled) {
@@ -90,12 +90,12 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 		const allowProtocol = [];
 
 		for (const key in protocol) {
-			if ( protocol[key] ) {
+			if (protocol[key as keyof typeof protocol]) {
 				allowProtocol.push(key);
 			}
 		}
 		// Chrome 系ブラウザ対応の追加処理@2024/10/15
-		if ( config.Filtering.Protocol.type.chrome ) {
+		if (config.Filtering.Protocol.type.chrome) {
 			(define.ChromiumBasedBrowser).forEach(
 				(brows) => {
 					allowProtocol.push(brows);
@@ -104,7 +104,7 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 		}
 		console.debug("DEBUG(filter): allow protocol list", { allowProtocol });
 
-		if ( allowProtocol.length ) {
+		if (allowProtocol.length) {
 			const str = allowProtocol.join("|");
 			const reg = `(${str}):`;
 
@@ -119,21 +119,21 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 
 		// Filtering: is URL ?
 		const isURL = URL.canParse(url);
-		if ( !isURL ) {
+		if (!isURL) {
 			console.debug("DEBUG(filter): filtering protocol: cannot parse url string", { url });
 
 			return false;
 		}
 
 		// Filtering: Filtering by protocol ?
-		if ( !filtering ) {
+		if (!filtering) {
 			return true;
 		}
 
 		// Filtering: protocol
 		const protocol = (new URL(url)).protocol;
 		const isMatch  = (regex).test(protocol);
-		if ( !isMatch ) {
+		if (!isMatch) {
 			console.debug("DEBUG(filter): filtering protocol: deny url", { url });
 
 			return false;
@@ -162,18 +162,18 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 	const list     = structuredClone(urlList);
 	const filtered = (list).filter(filteringURL);
 	const result   = (filtered).map((url) => { return url.trim(); });
-	const diff     = getArrayDiff(urlList, result); // 配列 urlList と result の差分取得 >> デバック用
+	const diff     = getArrayDiff(urlList, result);  // 配列 urlList と result の差分取得 >> デバック用
 
 	console.debug(
 		"DEBUG(filter): filtering process details",
 		{
 			list: {
-				before : urlList, // 全タブのURLの配列
-				after  : result,  // フィルタリング済みURLの配列
-				diff   : diff     // 配列差分 >> 全タブのURLとフィルタリング済みURLとの比較
+				before: urlList,  // 全タブのURLの配列
+				after : result,   // フィルタリング済みURLの配列
+				diff  : diff      // 配列差分 >> 全タブのURLとフィルタリング済みURLとの比較
 			},
-			action    : action,
-			filtering : filtering,
+			action   : action,
+			filtering: filtering,
 			regex
 		}
 	);
@@ -187,10 +187,9 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
  * @param   {boolean}  filtering - フィルタリングを有効にするか
  * @param   {Action}   action    - フィルタリングを実行するアクションの文字列（例: "copy" or "paste"）
  * @param   {Config}   config    - ユーザー設定オブジェクト
- * @param   {Define}   define    - 定義済み定数オブジェクト
  * @returns {string[]}           - フィルタリング済みURLリストの配列
  */
-function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action: Action, config: Config, define: Define): string[] {
+function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action: Action, config: Config): string[] {
 	/**
 	 * 文字列を正規表現で使用できるように、特殊文字をエスケープ
 	 * @param   {string} str - エスケープする文字列
@@ -219,7 +218,7 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 		const regexParts = patterns.map(
 			(pattern) => {
 				if (pattern === "") {
-					return null; // 空のパターンは無視
+					return null;  // 空のパターンは無視
 				}
 
 				switch (matchType) {

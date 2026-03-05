@@ -1,9 +1,6 @@
 // WXT provided cross-browser compatible API and types.
 import { browser, type Browser } from "wxt/browser";
 
-// Import Types
-import { type ExtensionMessage } from "@/assets/js/types/";
-
 // Import Module
 import { define }           from "@/assets/js/define";  // メッセージング経由で define を受け取る場合、構造化複製不可能な型が含まれていると送信エラーが発生する為、事前にインポートする
 import { logging }          from "@/assets/js/logging";
@@ -11,6 +8,10 @@ import { initializeConfig } from "@/assets/js/initializeConfig";
 import { handleOpenURLs }   from "./js/openUrlsHandler";
 import { countManager }     from "./js/CountManager";
 import { badgeController }  from "./js/BadgeController";
+
+// Import Types
+import type { Config }           from "@/assets/js/define";
+import type { ExtensionMessage } from "@/assets/js/types/";
 
 export default defineBackground({
 	// Set manifest options
@@ -76,7 +77,7 @@ async function handleStorageOnChanged(changes: { [key: string]: Browser.storage.
 		if (areaName === "local" && changes.config) {
 			// initializeConfig を経由して最新の設定を取得。`initializeConfig` を用いて値の検証と移行処理を行う
 			// save: false を渡し、onChanged リスナー内で再度保存処理が走らないようにする
-			const { config: updatedConfig } = await initializeConfig(changes.config.newValue, false);
+			const { config: updatedConfig } = await initializeConfig(changes.config.newValue as Config | null, false);
 
 			if (updatedConfig && updatedConfig.Badge) {
 				badgeController.updateColor(updatedConfig.Badge);
@@ -97,7 +98,7 @@ async function handleStorageOnChanged(changes: { [key: string]: Browser.storage.
 async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime.MessageSender): Promise<void | object> {
 	const { config } = message.status;
 
-	// Set logging console
+	// Set logging console for debugging
 	logging(config, define);
 
 	console.info("INFO(messaging): receive message from sender", { message, sender });

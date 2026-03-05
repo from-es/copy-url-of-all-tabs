@@ -1,6 +1,6 @@
 /**
  * Provides static methods to interact with the system clipboard.
- * @lastModified 2026-02-27
+ * @lastModified 2026-03-05
  */
 export class ClipboardManager {
 	/**
@@ -10,6 +10,7 @@ export class ClipboardManager {
 	 * @param   {any}                failureValue - The value to return on failure.
 	 * @returns {Promise<any>}
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static async #withErrorHandling(methodName: string, fn: () => Promise<any>, failureValue: any): Promise<any> {
 		try {
 			const result = await fn();
@@ -33,14 +34,14 @@ export class ClipboardManager {
 
 	/**
 	 * Writes data to the clipboard with a specified MIME type.
-	 * @param   {any}              data     - The data to write to the clipboard.
+	 * @param   {unknown}          data     - The data to write to the clipboard.
 	 * @param   {string}           mimetype - The MIME type of the data.
 	 * @returns {Promise<boolean>}          - A promise that resolves with `true` on success, or `false` if an error occurs.
 	 */
-	static write(data: any, mimetype: string): Promise<boolean> {
+	static write(data: unknown, mimetype: string): Promise<boolean> {
 		const func = async () => {
-			const blob = new Blob([ data ], { type : mimetype });
-			const item = [ new ClipboardItem({ [ blob.type ]: blob }) ];
+			const blob = new Blob([ data as BlobPart ], { type: mimetype });
+			const item = [ new ClipboardItem({ [blob.type]: blob }) ];
 
 			await navigator.clipboard.write(item);
 		};

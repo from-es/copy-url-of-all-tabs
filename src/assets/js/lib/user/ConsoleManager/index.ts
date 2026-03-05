@@ -1,10 +1,9 @@
 /*
-	@lastModified 2026-02-27
+	@lastModified 2026-03-05
 	@dependency   cloneDeep (lodash, https://lodash.com/)
 	@reference    隠ぺいされた console.log を無理やり復活させる対症療法 (https://clock-up.hateblo.jp/entry/2016/11/05/js-console-log-restore)
 	              Is it possible to bind a date/time to a console log? (https://stackoverflow.com/questions/18410119/is-it-possible-to-bind-a-date-time-to-a-console-log?answertab=active#tab-top)
 	              Restoring console.log() - Stack Overflow (https://stackoverflow.com/questions/7089443/restoring-console-log)
-
 */
 
 // Import NPM Package
@@ -13,7 +12,6 @@ import { cloneDeep } from "lodash-es";
 // Import Types
 import {
 	ConsoleManagerOptions,
-	LogLevel,
 	LOG_LEVELS,
 	METHOD_TO_LEVEL,
 	ConsoleMethod,
@@ -52,7 +50,7 @@ export class ConsoleManager {
 	static readonly #methods: Record<ConsoleMethod | GroupConsoleMethod, string> = {
 		group         : "#996600",
 		groupCollapsed: "#996600",
-		groupEnd      : "#996600", // No styling applied, but listed for completeness
+		groupEnd      : "#996600",  // No styling applied, but listed for completeness
 
 		trace: "darkblue",
 		debug: "blue",
@@ -90,7 +88,7 @@ export class ConsoleManager {
 	 *   method: Record<ConsoleMethod | GroupConsoleMethod, string>;
 	 * }} An object containing the current state, with a clone of the options and a reference to the method styles.
 	 */
-	static state(): {	option: ConsoleManagerOptions; method: Record<ConsoleMethod | GroupConsoleMethod, string>; } {
+	static state(): { option: ConsoleManagerOptions; method: Record<ConsoleMethod | GroupConsoleMethod, string>; } {
 		return {
 			option: cloneDeep(ConsoleManager.#options),
 			method: ConsoleManager.#methods,
@@ -197,11 +195,12 @@ export class ConsoleManager {
 	static #applyCustomConsole(): void {
 		const { logging, loglevel } = ConsoleManager.#options;
 		const originalConsole       = ConsoleManager.#originalConsole;
-		const noop                  = () => {}; // No-operation function
+		const noop                  = () => { };  // No-operation function
 
 		// If logging is disabled or loglevel is silent, override all console methods with a no-op function.
 		if (!logging || loglevel === "silent") {
 			for (const key in originalConsole) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				if (typeof (originalConsole as any)[key] === "function") {
 					Object.defineProperty(
 						globalThis.console,
@@ -221,6 +220,7 @@ export class ConsoleManager {
 
 		// Override console methods based on log level and options.
 		for (const key in originalConsole) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			if (typeof (originalConsole as any)[key] !== "function") {
 				continue;
 			}
@@ -228,6 +228,7 @@ export class ConsoleManager {
 			const methodName = key as keyof Console;
 			const descriptor: PropertyDescriptor = {
 				get: () => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const originalMethod              = (originalConsole as any)[methodName];
 					const isLogLevelTarget            = (methodName in METHOD_TO_LEVEL);
 					const isStylingAndTimestampTarget = ConsoleManager.#isStylingTarget(methodName);
@@ -273,10 +274,13 @@ export class ConsoleManager {
 	 */
 	static #createConsoleMethodWrapper(
 		methodName: keyof Console,
-		originalMethod: (...args: any[]) => any,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, no-unused-vars
+		originalMethod: (..._args: any[]) => any,
 		originalConsole: Console,
 		isStylingAndTimestampTarget: boolean,
-	): (...args: any[]) => any {
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, no-unused-vars
+	): (..._args: any[]) => any {
 		const { timestamp, methodLabel } = ConsoleManager.#options;
 
 		// `groupEnd` takes no arguments and should not be styled.
@@ -369,14 +373,15 @@ export class ConsoleManager {
 	 * @see https://qiita.com/magnoliavine/items/05139982c6fd81212b08
 	 */
 	static #toISOStringWithTimezone(date: Date): string {
-		const pad      = (num: number, digits = 2) => num.toString().padStart(digits, "0");
-		const year     = date.getFullYear();
-		const month    = pad(date.getMonth() + 1);
-		const day      = pad(date.getDate());
-		const hour     = pad(date.getHours());
-		const min      = pad(date.getMinutes());
-		const sec      = pad(date.getSeconds());
-		const ms       = pad(date.getMilliseconds(), 3);
+		const pad = (num: number, digits = 2) => num.toString().padStart(digits, "0");
+
+		const year  = date.getFullYear();
+		const month = pad(date.getMonth() + 1);
+		const day   = pad(date.getDate());
+		const hour  = pad(date.getHours());
+		const min   = pad(date.getMinutes());
+		const sec   = pad(date.getSeconds());
+		const ms    = pad(date.getMilliseconds(), 3);
 
 		const tzOffset = date.getTimezoneOffset() * -1;
 		const sign     = tzOffset >= 0 ? "+" : "-";
@@ -392,16 +397,18 @@ export class ConsoleManager {
 	 * @returns {Console} A new object containing the original console methods.
 	 */
 	static #getOriginalConsoleObject(): Console {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const copiedConsole = {} as { [key: string]: any };
 
 		for (const key in globalThis.console) {
 			try {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const prop = (globalThis.console as any)[key];
 
 				if (typeof prop === "function") {
 					copiedConsole[key] = prop;
 				}
-			} catch (error) {
+			} catch {
 				// Ignore errors from accessing certain properties on the console object
 			}
 		}
