@@ -12,18 +12,20 @@
 		max         ?: number;
 		step        ?: number;
 		debounceTime?: number;
-		[key: string]: any;
+		[key: string]: unknown;
 	};
 
+	/* eslint-disable prefer-const */
 	let {
 		id,
 		value        = $bindable(),
 		min          = 0,
 		max          = 100,
 		step         = 1,
-		debounceTime = 500, // milliseconds
-		...rest             // Collects all other props into the 'rest' object.
+		debounceTime = 500,  // milliseconds
+		...rest              // Collects all other props into the 'rest' object.
 	}: Props = $props();
+	/* eslint-enable prefer-const */
 
 	let handleInput = $state<ReturnType<typeof debounce> | null>(null);
 
@@ -38,7 +40,9 @@
 		// のタイミングに呼び出される、クリーンアップ用関数である。
 		//
 		// このスコープの `newHandleInput` をキャプチャしてキャンセルする。
-		const cleanup = () => { newHandleInput.cancel(); };
+		const cleanup = () => {
+			newHandleInput.cancel();
+		};
 
 		handleInput = newHandleInput;
 
@@ -58,7 +62,10 @@
 		if (isNaN(num) || num < min || num > max) {
 			// If an invalid value is entered, display a warning message.
 			const message = {
-				message    : [	`The entered value "${target.value}" is invalid.`, `Please set a value in the range ${min} ~ ${max}.` ],
+				message: [
+					`The entered value "${target.value}" is invalid.`,
+					`Please set a value in the range ${min} ~ ${max}.`,
+				],
 				timeout    : 5000,
 				fontsize   : "1rem",
 				messagetype: "warning" as MessageType
@@ -74,12 +81,10 @@
 	}
 </script>
 
-
-
 <input
 	{id}
 	type="number"
-	value={value}
+	{value}
 	{min}
 	{max}
 	{step}

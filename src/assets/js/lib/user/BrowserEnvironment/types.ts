@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview
  * This file contains TypeScript type definitions for the BrowserEnvironment library.
@@ -22,12 +21,12 @@ export type CheckerInfo = {
 	 * Indicates whether the data retrieval was successful.
 	 * データ取得が成功したかどうかを示します。
 	 */
-	isSuccess  : boolean,
+	isSuccess: boolean,
 	/**
 	 * A message providing details about the retrieval process (e.g., success, failure, method used).
 	 * 取得プロセスに関する詳細を提供するメッセージ（例：成功、失敗、使用されたメソッド）。
 	 */
-	message    : string | undefined,
+	message: string | undefined,
 	/**
 	 * The sources from which the data was obtained.
 	 * データが取得されたソース。
@@ -37,7 +36,7 @@ export type CheckerInfo = {
 		 * The primary source of information (e.g., 'navigator.userAgentData' or 'bowser').
 		 * 情報の主要なソース（例：「navigator.userAgentData」または「bowser」）。
 		 */
-		primary  : string | undefined,
+		primary: string | undefined,
 		/**
 		 * The secondary source of information, used for supplementation.
 		 * 補足のために使用される情報のセカンダリソース。
@@ -55,7 +54,7 @@ export type UserAgentClientHintsInfo = {
 	 * Browser information.
 	 * ブラウザ情報。
 	 */
-	browser : {
+	browser: {
 		name   : string | undefined;
 		version: string | undefined;
 	};
@@ -73,7 +72,7 @@ export type UserAgentClientHintsInfo = {
 	 */
 	device: {
 		mobile: boolean | undefined;
-		model : string  | undefined;
+		model : string | undefined;
 	};
 	/**
 	 * CPU information.
@@ -103,7 +102,7 @@ export type BrowserEnvironmentResult = {
 	 * Metadata about the data retrieval process.
 	 * データ取得プロセスに関するメタデータ。
 	 */
-	checker    : CheckerInfo;
+	checker: CheckerInfo;
 	/**
 	 * The collected environment information, including both Client Hints and other navigator properties.
 	 * Client Hintsと他のナビゲータープロパティの両方を含む、収集された環境情報。
@@ -113,7 +112,7 @@ export type BrowserEnvironmentResult = {
 		 * The full User-Agent string from `navigator.userAgent`.
 		 * `navigator.userAgent` からの完全なUser-Agent文字列。
 		 */
-		ua      : string | undefined;
+		ua: string | undefined;
 		/**
 		 * The browser's configured language from `navigator.language`.
 		 * `navigator.language` からのブラウザの設定言語。
@@ -142,7 +141,7 @@ export type UserAgentDataValues = {
 	readonly bitness        ?: string;
 	readonly brands         ?: UserAgentDataBrand[];
 	readonly formFactor     ?: string;
-	readonly uaFullVersion  ?: string; // deprecated in favor of fullVersionList(https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/getHighEntropyValues#uafullversion)
+	readonly uaFullVersion  ?: string;  // deprecated in favor of fullVersionList(https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/getHighEntropyValues#uafullversion)
 	readonly fullVersionList?: UserAgentDataBrand[];
 	readonly model          ?: string;
 	readonly mobile         ?: boolean;
@@ -164,10 +163,11 @@ export type NavigatorUserAgentData = {
 	 * Asynchronously requests high-entropy values from the browser.
 	 * ブラウザから高エントロピー値を非同期に要求します。
 	 *
-	 * @param {string[]} hints - An array of strings specifying the high-entropy values to retrieve. / 取得する高エントロピー値を指定する文字列の配列。
+	 * @param {string[]} _hints - An array of strings specifying the high-entropy values to retrieve. / 取得する高エントロピー値を指定する文字列の配列。
 	 * @returns {Promise<UserAgentDataValues>} A promise that resolves with an object containing the requested values. / 要求された値を含むオブジェクトで解決されるPromise。
 	 */
-	getHighEntropyValues(hints: string[]): Promise<UserAgentDataValues>;
+	// eslint-disable-next-line no-unused-vars
+	getHighEntropyValues(_hints: string[]): Promise<UserAgentDataValues>;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 
@@ -195,7 +195,7 @@ type UserAgentParserPluginInformation = {  // Required fields
  * User-Agentパーサープラグインによって返されるデータの構造を定義します。
  * これは `UserAgentClientHintsInfo` の部分的な表現であり、追加のプロパティを許可します。
  */
-export type UserAgentParserPluginParseData = Partial<UserAgentClientHintsInfo> & { // Required fields, set to undefined if not needed or not obtainable
+export type UserAgentParserPluginParseData = Partial<UserAgentClientHintsInfo> & {  // Required fields, set to undefined if not needed or not obtainable
 	// Other properties (directly under the root) can also be overwritten by spread expansion due to operational specifications.
 	// 他のプロパティ（ルート直下）も運用仕様上、スプレッド展開によって上書きされる可能性がある。
 	[key: string]: unknown;
@@ -215,6 +215,6 @@ export type UserAgentParserPlugin = {
 	 * The function that executes the parsing logic of the plugin.
 	 * プラグインの解析ロジックを実行する関数。
 	 */
-	execute    : () => UserAgentParserPluginParseData | null;
+	execute: () => UserAgentParserPluginParseData | null;
 };
 // ----------------------------------------------------------------------------------------------------------------------------

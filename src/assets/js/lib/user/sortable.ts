@@ -8,6 +8,7 @@ import type { Attachment } from "svelte/attachments";
 
 type SortableOptions = Options & {
 	list         : object[],
+	// eslint-disable-next-line no-unused-vars
 	onSort       : (list: object[]) => void,
 	debounceTime?: number
 };
@@ -38,13 +39,14 @@ export function sortable(options: SortableOptions): Attachment {
 			options.debounceTime ?? 150
 		);
 
-		        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-		        const { list, onSort, debounceTime, ...restOptions } = options;
-		        const sortableInstance = new Sortable(node, {
-		            // Sortable オプションデフォルト値
-		            animation: 150,
-		            handle   : ".sortable",
-			 // 外部からのオプションで上書き
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+		const { list, onSort, debounceTime, ...restOptions } = options;
+		const sortableInstance = new Sortable(node, {
+			// Sortable オプションデフォルト値
+			animation: 150,
+			handle   : ".sortable",
+
+			// 外部からのオプションで上書き
 			...restOptions,
 
 			onEnd: (event) => {

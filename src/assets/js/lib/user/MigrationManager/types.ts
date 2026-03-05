@@ -6,7 +6,7 @@ export type MigrationRuleMeta = {
 	reason  : string;
 	target  : string;
 	action  : string;
-	authored: string; // YYYY-MM-DD format
+	authored: string;  // YYYY-MM-DD format
 	version : {
 		introduced: string;
 		obsoleted : string | null;
@@ -27,10 +27,12 @@ export type MigrationArgument<T> = {
  * @template T The type of the data being migrated.
  */
 export type MigrationRule<T> = {
-	meta     ?: MigrationRuleMeta;
-	order    ?: number; // Execution order of the rule.
-	condition : (argument: MigrationArgument<T>) => Promise<boolean> | boolean;
-	execute   : (argument: MigrationArgument<T>) => Promise<T> | T;
+	meta    ?: MigrationRuleMeta;
+	order   ?: number;  // Execution order of the rule.
+	// eslint-disable-next-line no-unused-vars
+	condition: (argument: MigrationArgument<T>) => Promise<boolean> | boolean;
+	// eslint-disable-next-line no-unused-vars
+	execute  : (argument: MigrationArgument<T>) => Promise<T> | T;
 };
 
 /**
@@ -40,7 +42,7 @@ export type MigrationRule<T> = {
 export type MigrationErrorReport<T> = {
 	rule : MigrationRuleMeta;
 	error: Error;
-	data : T; // The state of data before the failed rule was applied.
+	data : T;  // The state of data before the failed rule was applied.
 };
 
 /**
@@ -60,5 +62,5 @@ export type MigrationResult<T> = {
  * Options to configure the migration execution.
  */
 export type MigrationOptions = {
-	failFast?: boolean; // If true, the migration stops immediately on the first error.
+	failFast?: boolean;  // If true, the migration stops immediately on the first error.
 };

@@ -1,5 +1,5 @@
-// WXT provided cross-browser compatible API and types.
-import { browser, type Browser } from "wxt/browser";
+// WXT provided cross-browser compatible API.
+import { browser } from "wxt/browser";
 
 type StorageGetKeys   = string | string[] | object | null;
 type StorageRemoveKey = string | string[];
@@ -8,7 +8,7 @@ type StorageRemoveKey = string | string[];
 	@name         StorageManager
 	@description  `browser.storage.local` API を介して、ローカルストレージにアクセス
 	@author       From E
-	@lastModified 2026-02-27
+	@lastModified 2026-03-05
 	@dependency   `browser.storage.local` API
 
 	@note
@@ -48,11 +48,11 @@ export class StorageManager {
 	 * ストレージ操作をラップし、一元的なエラーハンドリングを提供
 	 * @template T 正常に完了した場合の操作の返り値の型
 	 * @template E エラーが発生した場合の返り値の型
-	 * @param operation          - 実行する Promise を返す関数
-	 * @param errorReturnValue   - エラー発生時に返す値
-	 * @param errorMessage       - エラー時に表示するメッセージ
-	 * @param errorDetails       - エラーログに含める追加情報
-	 * @returns {Promise<T | E>} - 成功時は操作の返り値、失敗時は errorReturnValue を返す
+	 * @param    operation        - 実行する Promise を返す関数
+	 * @param    errorReturnValue - エラー発生時に返す値
+	 * @param    errorMessage     - エラー時に表示するメッセージ
+	 * @param    errorDetails     - エラーログに含める追加情報
+	 * @returns  {Promise<T | E>} - 成功時は操作の返り値、失敗時は errorReturnValue を返す
 	 */
 	static async #handleStorageOperation<T, E>(
 		operation        : () => Promise<T>,
@@ -77,7 +77,7 @@ export class StorageManager {
 			{ keys }
 		);
 
-		if (items) { // items が undefined でない場合のみログ出力
+		if (items) {  // items が undefined でない場合のみログ出力
 			console.debug("DEBUG(storage): view local storage items", { items });
 		}
 	}
@@ -176,7 +176,7 @@ export class StorageManager {
 			return true;
 		}
 		if (Array.isArray(keys)) {
-			return keys.every(k => typeof k === "string"); // 空の配列は、この判定で true を返す
+			return keys.every(k => typeof k === "string");  // 空の配列は、この判定で true を返す
 		}
 		if (typeof keys === "string") {
 			return true;

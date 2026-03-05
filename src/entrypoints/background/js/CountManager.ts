@@ -1,4 +1,5 @@
 // 通知を受け取る関数の型定義、新しいカウント数を引数として受け取る
+// eslint-disable-next-line no-unused-vars
 type Listener = (count: number) => void;
 
 /**
@@ -6,8 +7,8 @@ type Listener = (count: number) => void;
  * UIの存在を知らず、純粋な状態管理に専念する。
  */
 class CountManager {
-	#count    : number     = 0;  // 現在のカウント数
-	#listeners: Listener[] = []; // カウント数の変更を通知する購読者（リスナー関数）のリスト
+	#count    : number     = 0;   // 現在のカウント数
+	#listeners: Listener[] = [];  // カウント数の変更を通知する購読者（リスナー関数）のリスト
 
 	/**
 	 * 通知を受け取る関数を購読者として登録し、購読解除用の関数を返す

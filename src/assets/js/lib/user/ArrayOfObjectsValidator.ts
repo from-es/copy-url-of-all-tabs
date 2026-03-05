@@ -4,19 +4,52 @@ import v8n from "v8n";
 
 
 /**
+ * Type definitions for validator options and results.
+ */
+interface ValidatorOption {
+	allowEmptyArray            : boolean;
+	continueOnArrayTypeMismatch: boolean;
+	continueOnMissingKeys      : boolean;
+}
+
+interface ValidationViolation {
+	field: string;
+	rule : string;
+}
+
+interface ValidationItemResult {
+	isValid   : boolean;
+	item      : unknown;
+	index     : number;
+	violations: ValidationViolation[];
+}
+
+interface ValidationFinalResult {
+	isAllValid  : boolean;
+	invalidItems: ValidationItemResult[];
+	source      : {
+		data : unknown[];
+		rules: {
+			original   : unknown;
+			stringified: Record<string, string>;
+		};
+	};
+}
+
+/**
  * Validator for objects in an array.
  * Validates each object in an array against a v8n schema.
  *
  * @author       From E
- * @lastModified 2026-02-27
+ * @lastModified 2026-03-05
  */
 class ArrayOfObjectsValidator {
-	#option = {
-		allowEmptyArray            : true, // 空の配列を許可する
-		continueOnArrayTypeMismatch: true, // デバック用、本番環境へのビルド時は false を指定推奨
-		continueOnMissingKeys      : true, // デバック用、本番環境へのビルド時は false を指定推奨
+	#option: ValidatorOption = {
+		allowEmptyArray            : true,  // 空の配列を許可する
+		continueOnArrayTypeMismatch: true,  // デバック用、本番環境へのビルド時は false を指定推奨
+		continueOnMissingKeys      : true,  // デバック用、本番環境へのビルド時は false を指定推奨
 	};
-	#lastResult = null;
+	#lastResult: ValidationFinalResult | null = null;
 
 	constructor() {
 		// nothing
@@ -25,10 +58,10 @@ class ArrayOfObjectsValidator {
 	/**
 	 * Helper for #stringifySingleV8nRule to recursively stringify arguments.
 	 * @private
-	 * @param {*} arg The argument to stringify.
+	 * @param {unknown} arg The argument to stringify.
 	 * @returns {string} The string representation of the argument.
 	 */
-	static #stringifySingleV8nRuleArg(arg) {
+	static #stringifySingleV8nRuleArg(arg: unknown): string {
 		if (typeof arg === "string") {
 			return `'${arg}'`;
 		} else if (arg instanceof RegExp) {
@@ -37,12 +70,12 @@ class ArrayOfObjectsValidator {
 			return "null";
 		} else if (arg === undefined) {
 			return "undefined";
-		} else if (typeof arg === "object" && !Array.isArray(arg)) {
-			// For plain objects, JSON.stringify is a reasonable fallback.
-			return JSON.stringify(arg);
 		} else if (Array.isArray(arg)) {
 			// Recursively handle arrays within arguments
 			return `[ ${arg.map(ArrayOfObjectsValidator.#stringifySingleV8nRuleArg).join(", ")} ]`;
+		} else if (typeof arg === "object") {
+			// For plain objects, JSON.stringify is a reasonable fallback.
+			return JSON.stringify(arg);
 		} else {
 			return String(arg);
 		}
@@ -51,28 +84,26 @@ class ArrayOfObjectsValidator {
 	/**
 	 * Converts a v8n rule object into its string representation.
 	 * @private
-	 * @param {object} ruleObject The internal v8n rule object (e.g., rules.url).
+	 * @param {unknown} ruleObject The internal v8n rule object (e.g., rules.url).
 	 * @returns {string} The string representation of the v8n rule chain.
 	 */
-	static #stringifySingleV8nRule(ruleObject) {
-		if (!ruleObject || !Array.isArray(ruleObject.chain)) {
+	static #stringifySingleV8nRule(ruleObject: unknown): string {
+		const ruleObj = ruleObject as { chain?: Array<{ name?: string; args?: unknown[] }> } | null;
+
+		if (!ruleObj || !Array.isArray(ruleObj.chain)) {
 			return "Invalid v8n rule object structure";
 		}
 
 		let result = "v8n()";
 
-		ruleObject.chain.forEach(
+		ruleObj.chain.forEach(
 			(rule) => {
 				let methodName = rule?.name;
-				let args       = rule?.args;
+				const args = rule?.args ?? [];
 
 				if (methodName === undefined) {
 					console.warn("WARN(validation): Invalid: v8n rule object is missing 'name' property", { rule });
 					methodName = "unknownRule";
-				}
-				if (args === undefined) {
-					console.warn("WARN(validation): Invalid: v8n rule object is missing 'args' property", { rule });
-					args = [];
 				}
 
 				if (args.length > 0) {
@@ -89,19 +120,20 @@ class ArrayOfObjectsValidator {
 
 	/**
 	 * Converts a schema rules object into an object with stringified v8n rule representations.
-	 * @param {object} schemaRules The v8n schema rules object (e.g., { url: v8n()..., delay: v8n()... }).
-	 * @returns {object} An object where keys are field names and values are stringified v8n rules.
+	 * @param {unknown} schemaRules The v8n schema rules object (e.g., { url: v8n()..., delay: v8n()... }).
+	 * @returns {Record<string, string>} An object where keys are field names and values are stringified v8n rules.
 	 */
-	static stringifySchemaRules(schemaRules) {
+	static stringifySchemaRules(schemaRules: unknown): Record<string, string> {
 		if (typeof schemaRules !== "object" || schemaRules === null || Array.isArray(schemaRules)) {
 			throw new TypeError("Invalid: the 'schemaRules' argument must be a non-null object in ArrayOfObjectsValidator.stringifySchemaRules");
 		}
 
-		const stringified = {};
+		const schemaRulesObj                      = schemaRules as Record<string, unknown>;
+		const stringified: Record<string, string> = {};
 
-		for (const key in schemaRules) {
-			if (Object.hasOwn(schemaRules, key)) {
-				stringified[key] = ArrayOfObjectsValidator.#stringifySingleV8nRule(schemaRules[key]);
+		for (const key in schemaRulesObj) {
+			if (Object.hasOwn(schemaRulesObj, key)) {
+				stringified[key] = ArrayOfObjectsValidator.#stringifySingleV8nRule(schemaRulesObj[key]);
 			}
 		}
 
@@ -111,30 +143,44 @@ class ArrayOfObjectsValidator {
 	/**
 	 * Flattens nested v8n error information into a single array.
 	 * @private
-	 * @param {Error} error The error object thrown by v8n.
-	 * @returns {{field: string, rule: string}[]} An array of violation information.
+	 * @param {unknown} error The error object thrown by v8n.
+	 * @returns {ValidationViolation[]} An array of violation information.
 	 */
-	#extractViolations(error) {
-		const result = [];
+	#extractViolations(error: unknown): ValidationViolation[] {
+		const result: ValidationViolation[] = [];
 
-		if (!error || !Array.isArray(error.violations)) {
-			let fieldName = error?.property;
-			const ruleName  = error?.rule?.name;
+		if (!error || typeof error !== "object") {
+			return result;
+		}
+
+		const err = error as {
+			violations?: Array<{
+				property?: string;
+				rule    ?: { name?: string };
+				param   ?: Record<string, unknown>;
+			}>;
+			property?: string;
+			rule    ?: { name?: string };
+		};
+
+		if (!Array.isArray(err.violations)) {
+			let   fieldName = err.property;
+			const ruleName  = err.rule?.name;
 
 			if (fieldName === undefined) {
 				fieldName = ruleName === "schema" ? "schema_validation_failed" : "unspecified_property";
 			}
 			if (fieldName || ruleName) {
-				result.push({ field: fieldName, rule: ruleName });
+				result.push({ field: fieldName, rule: ruleName ?? "unknown" });
 			}
 
 			return result;
 		}
 
-		error.violations.forEach(violation => {
+		err.violations.forEach((violation) => {
 			if (violation.rule?.name === "schema" && violation.param && typeof violation.param === "object") {
 				for (const key in violation.param) {
-					const nestedError = violation.param[key];
+					const nestedError      = violation.param[key];
 					const nestedViolations = this.#extractViolations(nestedError);
 
 					nestedViolations.forEach(nestedViolation => {
@@ -143,26 +189,26 @@ class ArrayOfObjectsValidator {
 					});
 				}
 			} else {
-				result.push({ field: violation.property ?? "unspecified_property", rule: violation.rule?.name });
+				result.push({ field: violation.property ?? "unspecified_property", rule: violation.rule?.name ?? "unknown" });
 			}
 		});
 
 		return result;
 	}
 
-	#ensureDataValidOption(option) {
+	#ensureDataValidOption(option: Partial<ValidatorOption>): void {
 		if (!(option && typeof option === "object")) {
 			throw new TypeError("Invalid: the 'option' argument must be an object in ArrayOfObjectsValidator.#ensureDataValidOption");
 		}
 
 		// Set default value
-		if (!Object.hasOwn(option, "allowEmptyArray")) {
+		if (option.allowEmptyArray === undefined) {
 			option.allowEmptyArray = true;
 		}
-		if (!Object.hasOwn(option, "continueOnArrayTypeMismatch")) {
+		if (option.continueOnArrayTypeMismatch === undefined) {
 			option.continueOnArrayTypeMismatch = true;
 		}
-		if (!Object.hasOwn(option, "continueOnMissingKeys")) {
+		if (option.continueOnMissingKeys === undefined) {
 			option.continueOnMissingKeys = true;
 		}
 	}
@@ -171,22 +217,23 @@ class ArrayOfObjectsValidator {
 	 * Validates the data and schemaRules arguments.
 	 *
 	 * @private
-	 * @param {object} schemaRules The v8n schema object.
-	 * @returns {object} The v8n validation object.
+	 * @param {unknown} schemaRules The v8n schema object.
+	 * @returns {unknown} The v8n validation object.
 	 * @throws {Error} If `schemaRules` is not a valid v8n schema.
 	 */
-	#validateArguments(schemaRules) {
+	#validateArguments(schemaRules: unknown): unknown {
 		// Validate 'schemaRules' argument
 		try {
+			// @ts-expect-error: v8n types may not be fully recognized
 			return v8n().schema(schemaRules);
 		} catch (error) {
 			throw new Error(`Invalid: the 'schemaRules' argument is not a valid v8n schema in ArrayOfObjectsValidator.#validateArguments`, { cause: error });
 		}
 	}
 
-	#checkObjectType(item, index, option) {
+	#checkObjectType(item: unknown, index: number, option: ValidatorOption): ValidationViolation[] | null {
 		if (typeof item === "object" && item !== null && !Array.isArray(item)) {
-			return null; // Valid
+			return null;  // Valid
 		}
 
 		if (option.continueOnArrayTypeMismatch) {
@@ -196,10 +243,10 @@ class ArrayOfObjectsValidator {
 		throw new TypeError(`Invalid: element at index ${index} must be a non-null object in ArrayOfObjectsValidator.#checkObjectType`);
 	}
 
-	#checkMissingKeys(item, index, schemaKeys, option) {
+	#checkMissingKeys(item: Record<string, unknown>, index: number, schemaKeys: string[], option: ValidatorOption): ValidationViolation[] | null {
 		const missingKeys = schemaKeys.filter(key => !(key in item));
 		if (missingKeys.length === 0) {
-			return null; // Valid
+			return null;  // Valid
 		}
 
 		if (option.continueOnMissingKeys) {
@@ -209,7 +256,8 @@ class ArrayOfObjectsValidator {
 		throw new TypeError(`Invalid: object at index ${index} is missing required property(s) "${missingKeys.join(", ")}" in ArrayOfObjectsValidator.#checkMissingKeys`);
 	}
 
-	#validateSingleItem(item, index, schemaKeys, validation, option) {
+	// eslint-disable-next-line no-unused-vars
+	#validateSingleItem(item: unknown, index: number, schemaKeys: string[], validation: { check: (value: unknown) => void }, option: ValidatorOption): ValidationItemResult {
 		// Step 1: Validate that the item is a non-null object.
 		const typeViolations = this.#checkObjectType(item, index, option);
 		if (typeViolations) {
@@ -217,7 +265,8 @@ class ArrayOfObjectsValidator {
 		}
 
 		// Step 2: Check for the presence of all required keys.
-		const missingKeyViolations = this.#checkMissingKeys(item, index, schemaKeys, option);
+		// Since we've confirmed 'item' is a non-null object, we can cast it.
+		const missingKeyViolations = this.#checkMissingKeys(item as Record<string, unknown>, index, schemaKeys, option);
 		if (missingKeyViolations) {
 			return { isValid: false, item, index, violations: missingKeyViolations };
 		}
@@ -231,14 +280,14 @@ class ArrayOfObjectsValidator {
 		}
 	}
 
-	#setFinalResult(isAllValid, invalidItems, data, schemaRules) {
-		const result = {
+	#setFinalResult(isAllValid: boolean, invalidItems: ValidationItemResult[], data: unknown[], schemaRules: unknown): ValidationFinalResult {
+		const result: ValidationFinalResult = {
 			isAllValid,
 			invalidItems,
 			source: {
-				data: data,
+				data,
 				rules: {
-					original: schemaRules,
+					original   : schemaRules,
 					stringified: ArrayOfObjectsValidator.stringifySchemaRules(schemaRules),
 				}
 			}
@@ -252,16 +301,20 @@ class ArrayOfObjectsValidator {
 	/**
 	 * Validates the data array against the provided rules and stores the result internally.
 	 *
-	 * @param {Array<object>} data The array of objects to validate. Must be an array.
-	 * @param {object} schemaRules The v8n schema object. Must be a valid v8n schema.
-	 * @param {object} option Override options
-	 * @returns {{isAllValid: boolean, invalidItems: Array<object>, source: {data: Array<object>, rules: object}}} The validation result.
+	 * @param {unknown[]} data The array of objects to validate. Must be an array.
+	 * @param {unknown} schemaRules The v8n schema object. Must be a valid v8n schema.
+	 * @param {Partial<ValidatorOption>} option Override options
+	 * @returns {ValidationFinalResult} The validation result.
 	 * @throws {TypeError} If `data` is not an array.
 	 * @throws {Error} If `schemaRules` is not a valid v8n schema.
 	 */
-	validate(data, schemaRules, option = {}) {
-		this.#lastResult  = null;
-		const finalOption = { ...this.#option, ...option };
+	validate(data: unknown[], schemaRules: unknown, option: Partial<ValidatorOption> = {}): ValidationFinalResult {
+		this.#lastResult = null;
+		const finalOption: ValidatorOption = {
+			allowEmptyArray            : option.allowEmptyArray             ?? this.#option.allowEmptyArray,
+			continueOnArrayTypeMismatch: option.continueOnArrayTypeMismatch ?? this.#option.continueOnArrayTypeMismatch,
+			continueOnMissingKeys      : option.continueOnMissingKeys       ?? this.#option.continueOnMissingKeys,
+		};
 
 		try {
 			// 1. 引数の事前検証
@@ -269,7 +322,8 @@ class ArrayOfObjectsValidator {
 				throw new TypeError("Invalid: the 'data' argument must be an array in ArrayOfObjectsValidator.validate");
 			}
 			this.#ensureDataValidOption(finalOption);
-			const validation = this.#validateArguments(schemaRules);
+			// eslint-disable-next-line no-unused-vars
+			const validation = this.#validateArguments(schemaRules) as { check: (value: unknown) => void };
 
 			// 2. 空配列の早期リターン
 			if (data.length === 0) {
@@ -279,7 +333,7 @@ class ArrayOfObjectsValidator {
 			}
 
 			// 3. メインの検証ループ
-			const schemaKeys        = Object.keys(schemaRules);
+			const schemaKeys        = Object.keys(schemaRules as Record<string, unknown>);
 			const validationResults = data.map((item, index) => {
 				return this.#validateSingleItem(item, index, schemaKeys, validation, finalOption);
 			});
@@ -299,18 +353,18 @@ class ArrayOfObjectsValidator {
 	/**
 	 * Reports the last validation result to the console.
 	 */
-	reportToConsole() {
+	reportToConsole(): void {
 		if (!this.#lastResult) {
 			console.error("ERROR(validation): Error: validation has not been run yet");
 			return;
 		}
 
 		const { isAllValid, invalidItems, source } = this.#lastResult;
-		let stringifiedRules = source?.rules?.stringified;
+		let stringifiedRules: Record<string, string> = source?.rules?.stringified;
 
 		if (stringifiedRules === undefined || stringifiedRules === null) {
 			console.warn("WARN(validation): Invalid: 'source.rules.stringified' property is missing or null");
-			stringifiedRules = {}; // Fallback to empty object to prevent errors
+			stringifiedRules = {};  // Fallback to empty object to prevent errors
 		}
 
 		if (isAllValid) {
@@ -327,13 +381,14 @@ class ArrayOfObjectsValidator {
 						console.debug("DEBUG(validation): validation rule detail", { key, rule: stringifiedRules[key] });
 					}
 				}
-				console.groupEnd("Applied Validation Rules (Stringified)");
+				console.groupEnd();
 			}
 
 			// display, error item
 			{
 				invalidItems.forEach(({ index, item, violations }) => {
-					const groupTitle = `Array[${index}]`;
+					const groupTitle = `Array[ ${index} ]`;
+
 					console.group(groupTitle);
 					console.warn("WARN(validation): Invalid: item validation failed", { item });
 
@@ -341,11 +396,11 @@ class ArrayOfObjectsValidator {
 						console.warn("WARN(validation): Invalid: property violated rule", { field, rule });
 					});
 
-					console.groupEnd(groupTitle);
+					console.groupEnd();
 				});
 			}
 
-			console.groupEnd(errorGroupTitle);
+			console.groupEnd();
 		}
 	}
 }

@@ -1,7 +1,7 @@
 // Type Definition
 interface SanitizeOptions {
 	checkOnly?: boolean;
-	debug?    : boolean;
+	debug    ?: boolean;
 }
 
 /**
@@ -21,32 +21,38 @@ export function sanitizeForSendMessage<T>(data: T, options: SanitizeOptions = { 
 
 		return data;
 	} catch (error) {
+		const err = error as Error;
+
 		// DataCloneError occurs if the object contains non-cloneable properties.
 		// eslint-disable-next-line quotes
-		if (error.name === 'DataCloneError') {
+		if (err.name === 'DataCloneError') {
 			if (checkOnly) {
 				// If only checking, throw an error to notify.
-				throw new Error("Invalid: data contains properties that cannot be structured cloned in sanitizeForSendMessage", { cause: error, data });
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				throw new Error("Invalid: data contains properties that cannot be structured cloned in sanitizeForSendMessage", { cause: error, data } as any);
 			}
 
 			// Execute sanitization.
 			if (debug) {
 				console.debug("DEBUG(util): removeNonCloneableProperties: message contains non-cloneable data, sanitizing", { original: data });
 			}
-			return removeNonCloneableProperties(data, debug);
+			return removeNonCloneableProperties(data, debug ?? false);
 		}
 		// Re-throw any unexpected errors other than DataCloneError.
-		throw new Error("Exception: an unexpected error occurred during the sanitization process in sanitizeForSendMessage", { cause: error, data });
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		throw new Error("Exception: an unexpected error occurred during the sanitization process in sanitizeForSendMessage", { cause: error, data } as any);
 	}
 }
 
 /**
  * Recursively traverses an object or array and returns a new object with properties that cannot be structured-cloned (e.g., functions, symbols, DOM nodes) removed.
  * (Used as a fallback for sanitizeForSendMessage)
- * @param   {any} obj - The target object or array.
- * @returns {any}     - A new object or array with non-cloneable properties removed.
+ * @param   {unknown} obj   - The target object or array.
+ * @param   {boolean} debug - If true, outputs debug logs.
+ * @returns {any}           - A new object or array with non-cloneable properties removed.
  */
-function removeNonCloneableProperties(obj: any, debug: boolean): any {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function removeNonCloneableProperties(obj: unknown, debug: boolean): any {
 	if (obj === null || typeof obj !== "object") {
 		return obj;
 	}
@@ -55,11 +61,13 @@ function removeNonCloneableProperties(obj: any, debug: boolean): any {
 		return obj.map(item => removeNonCloneableProperties(item, debug));
 	}
 
-	const newObj = {};
-	for (const key in obj) {
-		if (Object.prototype.hasOwnProperty.call(obj, key)) {
-			const value = obj[key];
-			const type = typeof value;
+	const newObj: Record<string, unknown> = {};
+	const targetObj                       = obj as Record<string, unknown>;
+
+	for (const key in targetObj) {
+		if (Object.prototype.hasOwnProperty.call(targetObj, key)) {
+			const value = targetObj[key];
+			const type  = typeof value;
 
 			// Exclude functions, symbols, and DOM nodes as they cannot be structured-cloned.
 			if (type === "function" || type === "symbol" || (typeof Node !== "undefined" && value instanceof Node)) {

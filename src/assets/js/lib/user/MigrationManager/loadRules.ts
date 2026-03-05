@@ -7,7 +7,7 @@
 import { get as lodashGetValue, set as lodashSetValue } from "lodash-es";
 
 // Import Types
-import type { MigrationRule, MigrationRuleMeta } from "./types";
+import type { MigrationRule } from "./types";
 
 // =================================================================================
 // ローカル型定義
@@ -32,8 +32,8 @@ type ImportModules<T> = Record<string, RuleModule<T>>;
  * @template T - 移行対象となるデータの型
  */
 type PartitionedRules<T> = {
-	 validRules  : MigrationRule<T>[];
-	 invalidRules: MigrationRule<T>[];
+	validRules  : MigrationRule<T>[];
+	invalidRules: MigrationRule<T>[];
 };
 
 // =================================================================================
@@ -51,11 +51,13 @@ function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>
 
 	for (const path in modules) {
 		const module = modules[path];
+
 		try {
 			if (!module || !Array.isArray(module.rules)) {
 				// モジュールがルールを正しくエクスポートしていない場合もエラーを投げる
 				throw new Error(`Error: module at "${path}" does not have a valid "rules" export in extractRulesFromModules`);
 			}
+
 			allRules.push(...module.rules);
 		} catch (error) {
 			// ルールのロード中にエラーが発生した場合、即座にエラーを投げる
@@ -79,7 +81,7 @@ function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>
 function partitionRules<T>(rules: MigrationRule<T>[]): PartitionedRules<T> {
 	const validRules      : MigrationRule<T>[] = [];
 	const invalidRules    : MigrationRule<T>[] = [];
-	const errorDetailsList: object[]           = []; // 各ルール検証中に検出されたエラーの詳細リスト
+	const errorDetailsList: object[]           = [];  // 各ルール検証中に検出されたエラーの詳細リスト
 
 	rules.forEach((rule) => {
 		// `validateRule` を用いてルールを検証し、結果（レポート）を取得
@@ -101,8 +103,8 @@ function partitionRules<T>(rules: MigrationRule<T>[]): PartitionedRules<T> {
 			invalidRules.push(rule);
 			// エラー詳細を `errorDetailsList` に追加
 			errorDetailsList.push({
-				rule, // エラーのあったルールオブジェクト全体を格納
-				errors: report.errorReport // `validateRule` からの詳細なエラーレポート
+				rule,                       // エラーのあったルールオブジェクト全体を格納
+				errors: report.errorReport  // `validateRule` からの詳細なエラーレポート
 			});
 		} else {
 			// エラーがない場合、有効なルールとして追加
@@ -154,19 +156,21 @@ function validateRule<T>(rule: MigrationRule<T>) {
 		 * 渡されたオブジェクトが期待される状態にあるかを評価し、`ValidationStatus` 型の値を返します。
 		 * 返される値によって、検証の成否や処理の継続が判断されます。
 		 */
-		validate: (obj: any) => ValidationStatus;
+		// eslint-disable-next-line no-unused-vars
+		validate: (_obj: unknown) => ValidationStatus;
 
 		/**
 		 * 検証結果のフラグ、プロパティパス、およびプロパティ情報に基づいて、人間が読めるメッセージを生成する関数です。
 		 * 主にエラーや警告の詳細を伝えるために使用されます。
 		 */
-		message: (flag: ValidationStatus, target: string, property: any) => string;
+		// eslint-disable-next-line no-unused-vars
+		message: (_flag: ValidationStatus, _target: string, _property: unknown) => string;
 
 		/**
 		 * (オプション) 特定の検証結果に基づいてカスタム例外処理や特殊なアクションを行うための情報。
 		 * 現在は未使用ですが、将来的な拡張のために残されています。
 		 */
-		except?: any;
+		except?: unknown;
 	};
 	type ValidationReport = {
 		target  : string;
@@ -178,12 +182,12 @@ function validateRule<T>(rule: MigrationRule<T>) {
 	 * 検証ステータスフラグに基づいて、人間が読めるメッセージ文字列を生成。
 	 *
 	 * @param   {ValidationStatus} flag
-	 * @param   {string}          target
-	 * @param   {any}             property
+	 * @param   {string}           target
+	 * @param   {unknown}          property
 	 * @returns {string}
 	 * @throws  実装レベルで発生する事はあっても、ルール検証ではスルーは投げない
 	 */
-	const createMessage = (flag: ValidationStatus, target: string, property: any): string => {
+	const createMessage = (flag: ValidationStatus, target: string, property: unknown): string => {
 		switch (flag) {
 			case VALIDATION_STATUS.OptionalProperty:
 				return `Property '${target}' does not exist in rule. But, this property is optional.`;
@@ -192,7 +196,7 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			case VALIDATION_STATUS.ValidProperty:
 				return `Property '${target}' is valid.`;
 			case VALIDATION_STATUS.InValidProperty:
-				return `Property '${target}' exist in rule. But, the property type is invalid. typeof: ${typeof property}, property: ${property.toString()}.`;
+				return `Property '${target}' exist in rule. But, the property type is invalid. typeof: ${typeof property}, property: ${String(property)}.`;
 			case VALIDATION_STATUS.SkipToNextValidateRule:
 				return `rule object is invalid. typeof: ${typeof property}.`;
 			default: {
@@ -209,10 +213,11 @@ function validateRule<T>(rule: MigrationRule<T>) {
 		PassThrough           : "Pass Through",
 		SkipToNextValidateRule: "Skip to Next Validate Rule"
 	};
-	const validationContext                  = {}; // 検証コンテキストの記録用
-	const warningReport : ValidationReport[] = [];
-	const errorReport   : ValidationReport[] = [];
-	const validationList: ValidationList[]   = [
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const validationContext: Record<string, any> = {};  // 検証コンテキストの記録用
+	const warningReport    : ValidationReport[]  = [];
+	const errorReport      : ValidationReport[]  = [];
+	const validationList   : ValidationList[]    = [
 		// meta: 'meta' プロパティの検証 (推奨)
 		// 'meta' は開発者向け情報であり、必須ではない。
 		// 存在する場合のみ構造を検証し、不正であればエラーとし、存在しない場合は警告のみで処理を続行。
@@ -221,27 +226,27 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			validate: (obj) => {
 				if (obj === undefined) {
 					lodashSetValue(validationContext, "meta.exist", false);
-					return VALIDATION_STATUS.OptionalProperty;
+					return VALIDATION_STATUS.OptionalProperty as ValidationStatus;
 				}
 
 				lodashSetValue(validationContext, "meta.exist", true);
-				return obj && obj !== null && typeof obj === "object" && Object.keys(obj).length > 0;
+				return (!!obj && obj !== null && typeof obj === "object" && Object.keys(obj).length > 0) as ValidationStatus;
 			},
 			message: (flag, target, property) => {
 				return createMessage(flag, target, property);
 			}
 		},
 		{
-			target : "meta.author",
+			target  : "meta.author",
 			validate: (obj) => {
 				if (!validationContext?.meta?.exist) {
-					return VALIDATION_STATUS.PassThrough;
+					return VALIDATION_STATUS.PassThrough as ValidationStatus;
 				}
 
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				} else {
-					return obj && obj !== null && typeof obj === "string";
+					return (!!obj && obj !== null && typeof obj === "string") as ValidationStatus;
 				}
 			},
 			message: (flag, target, property) => {
@@ -249,16 +254,16 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 		{
-			target : "meta.reason",
+			target  : "meta.reason",
 			validate: (obj) => {
 				if (!validationContext?.meta?.exist) {
-					return VALIDATION_STATUS.PassThrough;
+					return VALIDATION_STATUS.PassThrough as ValidationStatus;
 				}
 
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				} else {
-					return obj && obj !== null && typeof obj === "string";
+					return (!!obj && obj !== null && typeof obj === "string") as ValidationStatus;
 				}
 			},
 			message: (flag, target, property) => {
@@ -266,16 +271,16 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 		{
-			target : "meta.target",
+			target  : "meta.target",
 			validate: (obj) => {
 				if (!validationContext?.meta?.exist) {
-					return VALIDATION_STATUS.PassThrough;
+					return VALIDATION_STATUS.PassThrough as ValidationStatus;
 				}
 
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				} else {
-					return obj && obj !== null && typeof obj === "string";
+					return (!!obj && obj !== null && typeof obj === "string") as ValidationStatus;
 				}
 			},
 			message: (flag, target, property) => {
@@ -283,16 +288,16 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 		{
-			target : "meta.action",
+			target  : "meta.action",
 			validate: (obj) => {
 				if (!validationContext?.meta?.exist) {
-					return VALIDATION_STATUS.PassThrough;
+					return VALIDATION_STATUS.PassThrough as ValidationStatus;
 				}
 
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				} else {
-					return obj && obj !== null && typeof obj === "string";
+					return (!!obj && obj !== null && typeof obj === "string") as ValidationStatus;
 				}
 			},
 			message: (flag, target, property) => {
@@ -300,16 +305,16 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 		{
-			target : "meta.authored",
+			target  : "meta.authored",
 			validate: (obj) => {
 				if (!validationContext?.meta?.exist) {
-					return VALIDATION_STATUS.PassThrough;
+					return VALIDATION_STATUS.PassThrough as ValidationStatus;
 				}
 
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				} else {
-					return obj && obj !== null && typeof obj === "string" && /^(2[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(obj);
+					return (!!obj && obj !== null && typeof obj === "string" && /^(2[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(obj)) as ValidationStatus;
 				}
 			},
 			message: (flag, target, property) => {
@@ -317,15 +322,15 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 		{
-			target : "meta.version",
+			target  : "meta.version",
 			validate: (obj) => {
 				if (obj === undefined) {
 					lodashSetValue(validationContext, "meta.version.exist", false);
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				}
 
 				lodashSetValue(validationContext, "meta.version.exist", true);
-				return obj && obj !== null && typeof obj === "object"	&& Object.hasOwn(obj, "introduced") && Object.hasOwn(obj, "obsoleted");
+				return (!!obj && obj !== null && typeof obj === "object" && Object.hasOwn(obj, "introduced") && Object.hasOwn(obj, "obsoleted")) as ValidationStatus;
 			},
 			message: (flag, target, property) => {
 				return createMessage(flag, target, property);
@@ -335,13 +340,13 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			target  : "meta.version.introduced",
 			validate: (obj) => {
 				if (!validationContext.meta.version.exist) {
-					return VALIDATION_STATUS.PassThrough;
+					return VALIDATION_STATUS.PassThrough as ValidationStatus;
 				}
 
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				} else {
-					return obj && obj !== null && typeof obj === "string";
+					return (!!obj && obj !== null && typeof obj === "string") as ValidationStatus;
 				}
 			},
 			message: (flag, target, property) => {
@@ -352,13 +357,13 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			target  : "meta.version.obsoleted",
 			validate: (obj) => {
 				if (!validationContext.meta.version.exist) {
-					return VALIDATION_STATUS.PassThrough;
+					return VALIDATION_STATUS.PassThrough as ValidationStatus;
 				}
 
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				} else {
-					return (obj === null || typeof obj === "string") ? true : false;
+					return ((obj === null || typeof obj === "string") ? true : false) as ValidationStatus;
 				}
 			},
 			message: (flag, target, property) => {
@@ -373,10 +378,10 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			target  : "order",
 			validate: (obj) => {
 				if (obj === undefined) {
-					return VALIDATION_STATUS.OptionalProperty;
+					return VALIDATION_STATUS.OptionalProperty as ValidationStatus;
 				}
 
-				return (typeof obj === "number" && !isNaN(obj) && obj >= 0);
+				return (typeof obj === "number" && !isNaN(obj) && obj >= 0) as ValidationStatus;
 			},
 			message: (flag, target, property) => {
 				return createMessage(flag, target, property);
@@ -389,10 +394,10 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			target  : "condition",
 			validate: (obj) => {
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				}
 
-				return typeof obj === "function";
+				return (typeof obj === "function") as ValidationStatus;
 			},
 			message: (flag, target, property) => {
 				return createMessage(flag, target, property);
@@ -405,10 +410,10 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			target  : "execute",
 			validate: (obj) => {
 				if (obj === undefined) {
-					return VALIDATION_STATUS.NonExistentProperty;
+					return VALIDATION_STATUS.NonExistentProperty as ValidationStatus;
 				}
 
-				return typeof obj === "function";
+				return (typeof obj === "function") as ValidationStatus;
 			},
 			message: (flag, target, property) => {
 				return createMessage(flag, target, property);
@@ -535,12 +540,12 @@ function sortAndCombineRules<T>(validRules: MigrationRule<T>[], invalidRules: Mi
 			return a.order - b.order;
 		}
 		if (a.order !== undefined) {
-			return -1; // a を先に
+			return -1;  // a を先に
 		}
 		if (b.order !== undefined) {
-			return 1; // b を先に
+			return 1;  // b を先に
 		}
-		return 0; // 順序変更なし
+		return 0;  // 順序変更なし
 	});
 
 	// Fail-Fast のため invalidRules は常に空になるが、関数シグネチャのため結合を維持

@@ -33,10 +33,11 @@ export const rules: MigrationRule<Config>[] = [
 		},
 		execute: (argument) => {
 			const { data } = argument;
-			const newData  = cloneObject(data);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const newData = cloneObject(data) as any;
 
 			// 移行
-			newData.Filtering.Copy  = { enable: true };                     // デフォルト値をセット
+			newData.Filtering.Copy  = { enable: true };                      // デフォルト値をセット
 			newData.Filtering.Paste = { enable: newData.Filtering.enable };  // 動作互換性維持の為、以前の値をコピー
 
 			// 削除
@@ -67,7 +68,8 @@ export const rules: MigrationRule<Config>[] = [
 		},
 		execute: (argument) => {
 			const { data } = argument;
-			const newData  = cloneObject(data);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const newData = cloneObject(data) as any;
 
 			// 移行
 			newData.Format.mimetype = newData.Format.minetype;
@@ -103,7 +105,9 @@ export const rules: MigrationRule<Config>[] = [
 			const newData                 = cloneObject(data);
 
 			// プロパティ追加 & デフォルト値適応
-			newData.Tab.customDelay = defaultValues.Tab.customDelay;
+			if (defaultValues.Tab?.customDelay) {
+				newData.Tab.customDelay = defaultValues.Tab.customDelay;
+			}
 
 			console.info("INFO(migration): add data.tab.customdelay", newData);
 
@@ -133,10 +137,11 @@ export const rules: MigrationRule<Config>[] = [
 			const newData  = cloneObject(data);
 
 			// 移行
-			newData.Information.date.timestamp = (newData.Information.date as any).unixtime;
+			const infoDate = newData.Information.date as unknown as Record<string, unknown>;
+			newData.Information.date.timestamp = infoDate["unixtime"] as number;
 
 			// 削除
-			delete (newData.Information.date as any).unixtime;
+			delete infoDate["unixtime"];
 
 			console.info("INFO(migration): migrate config of value: change data.information.date.unixtime to data.information.date.timestamp", newData);
 
@@ -170,7 +175,7 @@ export const rules: MigrationRule<Config>[] = [
 			let   target          = null;
 			try {
 				// 設定保存時のバージョンが v1.4.0 以前であるか
-				target = data.Information?.version ?? "1.0.0"; // 設定保存時のバージョン
+				target = data.Information?.version ?? "1.0.0";  // 設定保存時のバージョン取得。存在しない場合は、最初のリリースバージョンを適応
 
 				isTargetVersion = isSameOrEarlier(base, target);
 			} catch (error) {
@@ -189,12 +194,16 @@ export const rules: MigrationRule<Config>[] = [
 		},
 		execute: (argument) => {
 			const { data } = argument;
-			const newData  = cloneObject(data);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const newData = cloneObject(data) as any;
 
 			if (newData.Tab?.customDelay?.list) {
-				newData.Tab.customDelay.list.forEach(item => {
-					if (Object.hasOwn(item, "url")) {
-						delete (item as any).url;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				newData.Tab.customDelay.list.forEach((item: any) => {
+					const legacyItem = item as unknown as Record<string, unknown>;
+
+					if (Object.hasOwn(legacyItem, "url")) {
+						delete legacyItem["url"];
 					}
 				});
 			}
@@ -226,7 +235,9 @@ export const rules: MigrationRule<Config>[] = [
 			const newData                 = cloneObject(data);
 
 			// プロパティ追加 & デフォルト値適応
-			newData.Tab.TaskControl = defaultValues.Tab.TaskControl;
+			if (defaultValues.Tab?.TaskControl) {
+				newData.Tab.TaskControl = defaultValues.Tab.TaskControl;
+			}
 
 			console.info("INFO(migration): add data.tab.taskcontrol", newData);
 
@@ -253,7 +264,8 @@ export const rules: MigrationRule<Config>[] = [
 		},
 		execute: (argument) => {
 			const { data, defaultValues } = argument;
-			const newData                 = cloneObject(data);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const newData = cloneObject(data) as any;
 
 			// 移行元の値を取得（存在しない場合は undefined）
 			const oldCopyEnable  = newData.Filtering?.Copy?.enable;
@@ -261,11 +273,17 @@ export const rules: MigrationRule<Config>[] = [
 			const oldProtocol    = newData.Filtering?.Protocol;
 
 			// 新しい構造を defaultValues からディープコピーして作成
-			newData.Filtering = cloneObject(defaultValues.Filtering);
+			if (defaultValues.Filtering) {
+				newData.Filtering = cloneObject(defaultValues.Filtering);
+			}
 
 			// 古い値が存在すれば、新しい構造に上書き
-			newData.Filtering.Protocol.Copy.enable  = (oldCopyEnable !== undefined) ? oldCopyEnable : defaultValues.Filtering.Protocol.Copy.enable;
-			newData.Filtering.Protocol.Paste.enable = (oldPasteEnable !== undefined) ? oldPasteEnable : defaultValues.Filtering.Protocol.Paste.enable;
+			if (newData.Filtering?.Protocol?.Copy && oldCopyEnable !== undefined) {
+				newData.Filtering.Protocol.Copy.enable = oldCopyEnable;
+			}
+			if (newData.Filtering?.Protocol?.Paste && oldPasteEnable !== undefined) {
+				newData.Filtering.Protocol.Paste.enable = oldPasteEnable;
+			}
 
 			// 古い Protocol がオブジェクトで、httpプロパティを持つ（プロトコル定義オブジェクトである）ことを確認
 			if (typeof oldProtocol === "object" && oldProtocol !== null && Object.hasOwn(oldProtocol, "http")) {
@@ -300,7 +318,9 @@ export const rules: MigrationRule<Config>[] = [
 			const newData                 = cloneObject(data);
 
 			// プロパティ追加 & デフォルト値適応
-			newData.Badge = defaultValues.Badge;
+			if (defaultValues.Badge) {
+				newData.Badge = defaultValues.Badge;
+			}
 
 			console.info("INFO(migration): add data.badge", newData);
 
@@ -373,7 +393,9 @@ export const rules: MigrationRule<Config>[] = [
 			const newData                 = cloneObject(data);
 
 			// プロパティ追加 & デフォルト値適応
-			newData.Debug.loglevel = defaultValues.Debug.loglevel;
+			if (defaultValues.Debug?.loglevel) {
+				newData.Debug.loglevel = defaultValues.Debug.loglevel;
+			}
 
 			console.info("INFO(migration): add data.debug.loglevel", newData);
 
@@ -400,10 +422,12 @@ export const rules: MigrationRule<Config>[] = [
 		},
 		execute: (argument) => {
 			const { data, defaultValues } = argument;
-			const newData                 = cloneObject(data);
+			const newData = cloneObject(data);
 
 			// プロパティ追加 & デフォルト値適応
-			newData.Debug.methodLabel = defaultValues.Debug.methodLabel;
+			if (defaultValues.Debug?.methodLabel) {
+				newData.Debug.methodLabel = defaultValues.Debug.methodLabel;
+			}
 
 			console.info("INFO(migration): add data.debug.methodlabel", newData);
 
