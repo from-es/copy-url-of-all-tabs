@@ -1,6 +1,6 @@
 # commitlint: Commit Message Guidelines
 
-**Last Updated:** August 26, 2025
+**Last Updated:** March 5, 2026
 
 To ensure that our commit history is readable, consistent, and easy to navigate, we adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
@@ -54,6 +54,8 @@ The scope is intended to specifically indicate the section of the codebase that 
 
 **Importantly, there is no fixed list of scopes defined by the convention.** The choice of scope is defined by each project or team. To maintain consistency, it is a good practice for the team to agree on a common list of scopes.
 
+Use the `project` scope for broad changes that affect the entire project or span multiple modules, such as project-wide refactoring, bulk type definition fixes, or ESLint corrections where a specific section cannot be identified. This clarifies that the change impacts the system as a whole rather than a specific module like `lib` or `utils`.
+
 Below are examples of commonly used scopes. Please use appropriate ones according to the project's structure.
 
 - **Page or screen names**
@@ -64,6 +66,8 @@ Below are examples of commonly used scopes. Please use appropriate ones accordin
   - `core`, `utils`, `components`, `shared`, `design-system`
 - **Configuration files, etc.**
   - `config`, `ci`, `build`, `deps`
+- **Project-wide / Common**
+  - `project`
 
 **Examples:**
 - `feat(login): add password reset functionality`
