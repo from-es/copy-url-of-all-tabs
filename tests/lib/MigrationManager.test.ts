@@ -51,7 +51,7 @@ describe("MigrationManager", () => {
 		// Define common test data
 		mockConfig = {
 			Information: { name: "Old Name", version: "1.0.0", date: { timestamp: 1678886400000, iso8601: "2023-03-15T00:00:00.000Z" } },
-			Debug: { logging: false, timestamp: false, timecoordinate: "UTC" },
+			Debug: { logging: false, loglevel: "info", methodLabel: true, timestamp: false, timecoordinate: "UTC" },
 			OptionsPage: { fontsize: 16 },
 			PopupMenu: { fontsize: 16, ClearMessage: { enable: true, timeout: 5 }, OnClickClose: { enable: true, timeout: 5 } },
 			Search: { regex: true },
@@ -95,7 +95,19 @@ describe("MigrationManager", () => {
 			DisabledTimeoutValue: 1000,
 			OptionsPageInputDebounceTime: 500,
 			OptionsPageSortListDebounceTime: 500,
-			TaskControlChunkSizeValue: 5, TaskControlChunkSizeValueMin: 1, TaskControlChunkSizeValueMax: 16, TaskControlChunkSizeValueStep: 1
+			TaskControlChunkSizeValue: 5, TaskControlChunkSizeValueMin: 1, TaskControlChunkSizeValueMax: 16, TaskControlChunkSizeValueStep: 1,
+
+			ConfigPropertyDisplayNames: {
+				Information: "Extension Information",
+				Debug      : "Debug Settings",
+				OptionsPage: "Options Page Settings",
+				PopupMenu  : "Popup Menu Settings",
+				Search     : "Search Settings",
+				Filtering  : "Filtering Settings",
+				Format     : "Format Settings",
+				Tab        : "Tab Settings",
+				Badge      : "Badge Settings"
+			}
 		};
 	});
 

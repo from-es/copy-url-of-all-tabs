@@ -477,11 +477,18 @@ export const VerificationRules: VerificationRule[] = [
 				continueOnMissingKeys      : true, // デバック用、本番環境へのビルド時は false を指定 >> 設定保存 or インポート時に厳重検証
 			};
 
-			const validator      = new ArrayOfObjectsValidator();
+			const validator = new ArrayOfObjectsValidator();
+
+			if (!Array.isArray(value)) {
+				console.warn("WARN(tab): Invalid: 'Tab.customDelay.list' must be an array", { value });
+
+				return false;
+			}
+
 			const result         = validator.validate(value, ValidationRules, option);
 			const { isAllValid } = result;
 
-			console.debug("DEBUG(validation): validation data and v8n custom rule object: tab.customDelay.list", { value, ValidationRules });
+			console.debug("DEBUG(tab): validation data and v8n custom rule object: tab.customDelay.list", { value, ValidationRules });
 
 			// Report the result to the console
 			validator.reportToConsole();
