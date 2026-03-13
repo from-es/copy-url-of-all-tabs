@@ -17,7 +17,7 @@ import type { MigrationRule } from "./types";
  * `import.meta.glob` によってインポートされるモジュールが持つべきエクスポートの型。
  * 各ルールファイルは `rules` という名前で `MigrationRule<T>[]` をエクスポートする必要があります。
  */
-type RuleModule<T> = {
+export type RuleModule<T> = {
 	rules: MigrationRule<T>[];
 };
 
@@ -25,7 +25,7 @@ type RuleModule<T> = {
  * `import.meta.glob` の結果として得られるモジュールの型。
  * `eager: true` のため、ここでは同期モジュールとして扱われます。
  */
-type ImportModules<T> = Record<string, RuleModule<T>>;
+export type ImportModules<T> = Record<string, RuleModule<T>>;
 
 /**
  * ルールが有効なものと無効なものに分割された結果の型定義。

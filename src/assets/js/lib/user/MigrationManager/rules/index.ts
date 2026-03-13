@@ -1,5 +1,5 @@
 // Import Module
-import { loadRules }   from "../loadRules";
+import { loadRules, type RuleModule } from "../loadRules";
 
 // Import Types
 import type { Config } from "@/assets/js/types";
@@ -16,6 +16,6 @@ import type { Config } from "@/assets/js/types";
  *
  * @returns {Promise<MigrationRule<Config>[]>} ソートおよび検証済みの移行ルールを含むプロミス
  */
-const modules = import.meta.glob("./migrate/*.rules.ts", { eager: true });
+const modules = import.meta.glob<RuleModule<Config>>("./migrate/*.rules.ts", { eager: true });
 
 export const migrationRules = loadRules<Config>(modules);
