@@ -89,8 +89,9 @@ class BadgeController {
 	 */
 	private async initializeColor(): Promise<void> {
 		try {
-			const { config } = await browser.storage.local.get("config");
-			if (config && config.Badge) {
+			const { config } = await browser.storage.local.get("config") as { config: Config };
+
+			if (config && Object.hasOwn(config, "Badge")) {
 				this.updateColor(config.Badge);
 			}
 		} catch (error) {
