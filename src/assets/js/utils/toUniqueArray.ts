@@ -1,5 +1,7 @@
 type AllowedPrimitive = string | number | bigint | symbol;
 
+
+
 /**
  * 配列から重複する要素を排除。
  * この関数はプリミティブ値の配列に対して最適に機能するが、オブジェクト参照を含む配列も使用可能。
@@ -8,7 +10,7 @@ type AllowedPrimitive = string | number | bigint | symbol;
  * @param    {T[]} list - 重複排除を行う元の配列
  * @returns  {T[]}      - 重複排除された新しい配列
  */
-export function toUniqueArray<T>(list: T[]): T[] {
+function toUniqueArray<T>(list: T[]): T[] {
 	if (!Array.isArray(list)) {
 		// 互換性のために、配列でない場合はエラーをスローする
 		throw new Error(`Invalid: expected an array as argument, but received ${typeof list} in toUniqueArray`);
@@ -25,7 +27,7 @@ export function toUniqueArray<T>(list: T[]): T[] {
  * @param    {T[]}   list - 検証する配列
  * @throws   {Error}      - 検証に失敗した場合
  */
-export function validatePrimitiveArray<T extends AllowedPrimitive>(list: T[]): void {
+function validatePrimitiveArray<T extends AllowedPrimitive>(list: T[]): void {
 	if (!Array.isArray(list)) {
 		throw new Error(`Invalid: expected an array as argument, but received ${typeof list} in validatePrimitiveArray`);
 	}
@@ -49,3 +51,10 @@ export function validatePrimitiveArray<T extends AllowedPrimitive>(list: T[]): v
 		throw new Error("Invalid: all elements in array must be of the same type in validatePrimitiveArray");
 	}
 }
+
+
+
+export {
+	toUniqueArray,
+	validatePrimitiveArray
+};

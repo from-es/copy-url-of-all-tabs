@@ -1,14 +1,14 @@
-// WXT provided cross-browser compatible API
+// WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
 // Import NPM Package
 import PQueue from "p-queue";
 
-// Import Types
-import type { Config } from "@/assets/js/types";
-
 // Import Module
 import { sleep } from "@/assets/js/utils/sleep";
+
+// Import Types
+import type { Config } from "@/assets/js/types";
 
 
 
@@ -211,4 +211,5 @@ class BadgeController {
 
 
 
+// Export as a singleton instance.
 export const badgeController = new BadgeController();

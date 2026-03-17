@@ -1,8 +1,10 @@
+// WXT provided cross-browser compatible Types.
 import type { UserManifest } from "wxt";
-import pkg                   from "../package.json";
 
-export const manifest: UserManifest =
-{
+// Import Object
+import pkg from "../package.json";
+
+export const manifest: UserManifest = {
 	"manifest_version": 3,
 
 	// @ts-expect-error: Chrome no longer supports the "author" key, but we keep it for legacy reasons.

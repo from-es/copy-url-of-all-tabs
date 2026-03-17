@@ -1,11 +1,16 @@
+// Import Module
 import { generateID } from "./generateID";
 
+
+
 interface CodeObject {
-	id           : string;
+	id: string;
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any;    // 渡されたオブジェクトの配列のプロパティが "id" 以外だった場合のフォールバック
 }
+
+
 
 /**
  * オブジェクトの配列内で重複したIDを検出し、重複している場合は新しいユニークIDを生成して置き換える

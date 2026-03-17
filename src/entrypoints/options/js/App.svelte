@@ -1,17 +1,19 @@
 <script lang="ts">
-	// WXT provided cross-browser compatible API and types.
+	// WXT provided cross-browser compatible API.
 	import { browser } from "wxt/browser";
 
-	// Import from Svelte
+	// Import Svelte
 	import { onMount } from "svelte";
 
-	// Import from Svelte(Component)
+	// Import Svelte Component
 	import Header from "./header.svelte";
 	import Main   from "./main.svelte";
 	import Footer from "./footer.svelte";
 
-	// Import Shared State Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
+	// Import Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";  // Shared State Object
+
+
 
 	onMount(() => {
 		setUILanguage();

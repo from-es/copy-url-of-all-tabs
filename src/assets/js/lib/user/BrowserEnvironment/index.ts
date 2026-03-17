@@ -11,14 +11,20 @@
  * 潜在的なエラーを適切に処理できるように、堅牢に設計されています。
  */
 
-// Import Package
+// Import Module
 import { UserAgentParser }       from "./UserAgentParser";
 import { UserAgentParserPlugin } from "./plugins/bowser";
 
 // Import Types
-import { type NavigatorUserAgentData }                                                                             from "./types";
-import { type BrowserEnvironmentResult, type CheckerInfo, type UserAgentClientHintsInfo, type UserAgentDataBrand } from "./types";
-import { type UserAgentParserPluginParseData }                                                                     from "./types";
+import type {
+	NavigatorUserAgentData,
+	BrowserEnvironmentResult,
+	CheckerInfo,
+	UserAgentClientHintsInfo,
+	UserAgentDataBrand,
+	UserAgentParserPluginParseData
+} from "./types";
+
 
 
 // Extend the Navigator interface to include userAgentData
@@ -36,6 +42,7 @@ declare global {
 }
 
 
+
 /**
  * A class to retrieve and parse browser environment information from either the User-Agent Client Hints API or the traditional User-Agent string.
  * It encapsulates the logic for fetching, parsing, and consolidating browser data.
@@ -46,7 +53,7 @@ declare global {
  * @version      1.0.0
  * @lastModified 2026-02-27
  */
-class BrowserEnvironment {
+export class BrowserEnvironment {
 	/**
 	 * A default, empty result object used as a template for all environment information results.
 	 *
@@ -380,7 +387,3 @@ class BrowserEnvironment {
 
 	}
 }
-
-
-
-export { BrowserEnvironment };

@@ -1,5 +1,5 @@
-// Import Package
-import { type UserAgentParserPluginParseData } from "./types";
+// Import Types
+import type { UserAgentParserPluginParseData } from "./types";
 
 
 
@@ -14,7 +14,7 @@ import { type UserAgentParserPluginParseData } from "./types";
  * @version      1.0.0
  * @lastModified 2025-07-21
  */
-class UserAgentParser {
+export class UserAgentParser {
 	/**
 	 * A function injected via Dependency Injection (DI) that executes the parsing process of a specific User-Agent parsing library.
 	 * 依存性注入（DI）によって注入される、特定のUser-Agent解析ライブラリの解析処理を実行する関数。
@@ -86,7 +86,3 @@ class UserAgentParser {
 		return this.#useLibrary;
 	}
 }
-
-
-
-export { UserAgentParser };

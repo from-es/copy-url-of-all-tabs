@@ -14,7 +14,7 @@ type SemVerString = string & { readonly __semVerBrand: unique symbol };
 
 type SEMVER_PATTERN = typeof SEMVER_PATTERN;
 
-export type CompareVersionsResult = -1 | 0 | 1;
+type CompareVersionsResult = -1 | 0 | 1;
 
 interface ParsedVersion {
 	major     : number;
@@ -22,6 +22,8 @@ interface ParsedVersion {
 	patch     : number;
 	prerelease: (string | number)[];
 }
+
+
 
 /**
  * セマンティックバージョニングの正規表現 (SemVer 2.0.0 準拠)
@@ -200,7 +202,7 @@ function comparePrerelease(parsedBase: ParsedVersion, parsedTarget: ParsedVersio
  * @returns {number}        - target が base より小さい場合は -1、等しい場合は 0、大きい場合は 1 を返す
  * @throws  {Error}         - 不正なバージョン文字列が渡された場合にスローする
  */
-export function compareVersions(base: unknown, target: unknown): CompareVersionsResult {
+function compareVersions(base: unknown, target: unknown): CompareVersionsResult {
 	// base と target が、共に SEMVER_PATTERN 準拠であるか検証
 	const isValidStringBase   = validSemanticVersionsString(base, SEMVER_PATTERN);
 	const isValidStringTarget = validSemanticVersionsString(target, SEMVER_PATTERN);
@@ -224,3 +226,12 @@ export function compareVersions(base: unknown, target: unknown): CompareVersions
 
 	return 0; // 全てが等しい
 }
+
+
+
+export {
+	compareVersions
+};
+export type {
+	CompareVersionsResult
+};

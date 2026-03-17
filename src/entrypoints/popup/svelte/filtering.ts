@@ -19,7 +19,7 @@ import type { Action }         from "./types";
  * @param   {Define}             define - 定義済み定数オブジェクト
  * @returns {Browser.tabs.Tab[]}        - 設定適応済みタブオブジェクトの配列
  */
-export function prepareForActionCopy(tabs: Browser.tabs.Tab[], action: Action, config: Config, define: Define): Browser.tabs.Tab[] {
+function prepareForActionCopy(tabs: Browser.tabs.Tab[], action: Action, config: Config, define: Define): Browser.tabs.Tab[] {
 	const urlList         = tabs.map(tab => tab.url).filter((url): url is string => !!url);
 	const filteredUrlList = applyUrlProcessingRules(urlList, action, config, define);
 	const filteredTabs    = rebuildTabsFromFilteredUrls(filteredUrlList, tabs);
@@ -36,7 +36,7 @@ export function prepareForActionCopy(tabs: Browser.tabs.Tab[], action: Action, c
  * @param   {Define}   define  - 定義済み定数オブジェクト
  * @returns {string[]}         - 設定適応済みURLリスト
  */
-export function prepareForActionPaste(urlList: string[], action: Action, config: Config, define: Define): string[] {
+function prepareForActionPaste(urlList: string[], action: Action, config: Config, define: Define): string[] {
 	const filteredUrlList = applyUrlProcessingRules(urlList, action, config, define);
 
 	return filteredUrlList;
@@ -275,4 +275,11 @@ function rebuildTabsFromFilteredUrls(urls: string[], originalTabs: Browser.tabs.
 	const resultTabs = urls.map(url => urlToTabMap.get(url)).filter((tab): tab is Browser.tabs.Tab => tab !== undefined);
 
 	return resultTabs;
+};
+
+
+
+export {
+	prepareForActionCopy,
+	prepareForActionPaste
 };

@@ -4,12 +4,15 @@ import { isEqual } from "lodash-es";
 // Import Types
 import type { Config } from "@/assets/js/define";
 
-// Types
+
+
 type KeyOfConfig   = Array<keyof Config>;
 type CompareResult = {
     isEqual : boolean;
     diffKeys: KeyOfConfig;
 };
+
+
 
 /**
  * 2つの設定オブジェクトのトップレベルプロパティを比較し、差分情報を返す。

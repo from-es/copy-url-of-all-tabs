@@ -6,6 +6,8 @@ interface ParentNodeInfo {
   href: string | undefined;
 }
 
+
+
 /**
  * 指定されたHTML要素の親ノードが存在するかどうかを判定し、親ノードに関する情報を返します。
  *

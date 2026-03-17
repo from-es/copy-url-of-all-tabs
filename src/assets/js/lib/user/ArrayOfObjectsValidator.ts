@@ -36,6 +36,8 @@ interface ValidationFinalResult {
 	};
 }
 
+
+
 /**
  * Validator for objects in an array.
  * Validates each object in an array against a v8n schema.
@@ -43,7 +45,7 @@ interface ValidationFinalResult {
  * @author       From E
  * @lastModified 2026-03-05
  */
-class ArrayOfObjectsValidator {
+export class ArrayOfObjectsValidator {
 	#option: ValidatorOption = {
 		allowEmptyArray            : true,  // 空の配列を許可する
 		continueOnArrayTypeMismatch: true,  // デバック用、本番環境へのビルド時は false を指定推奨
@@ -404,7 +406,3 @@ class ArrayOfObjectsValidator {
 		}
 	}
 }
-
-
-
-export { ArrayOfObjectsValidator };

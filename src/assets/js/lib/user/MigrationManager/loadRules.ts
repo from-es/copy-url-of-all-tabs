@@ -9,6 +9,8 @@ import { get as lodashGetValue, set as lodashSetValue } from "lodash-es";
 // Import Types
 import type { MigrationRule } from "./types";
 
+
+
 // =================================================================================
 // ローカル型定義
 // =================================================================================
@@ -17,7 +19,7 @@ import type { MigrationRule } from "./types";
  * `import.meta.glob` によってインポートされるモジュールが持つべきエクスポートの型。
  * 各ルールファイルは `rules` という名前で `MigrationRule<T>[]` をエクスポートする必要があります。
  */
-export type RuleModule<T> = {
+type RuleModule<T> = {
 	rules: MigrationRule<T>[];
 };
 
@@ -25,7 +27,7 @@ export type RuleModule<T> = {
  * `import.meta.glob` の結果として得られるモジュールの型。
  * `eager: true` のため、ここでは同期モジュールとして扱われます。
  */
-export type ImportModules<T> = Record<string, RuleModule<T>>;
+type ImportModules<T> = Record<string, RuleModule<T>>;
 
 /**
  * ルールが有効なものと無効なものに分割された結果の型定義。
@@ -35,6 +37,8 @@ type PartitionedRules<T> = {
 	validRules  : MigrationRule<T>[];
 	invalidRules: MigrationRule<T>[];
 };
+
+
 
 // =================================================================================
 // ヘルパー関数
@@ -575,7 +579,7 @@ function sortAndCombineRules<T>(validRules: MigrationRule<T>[], invalidRules: Mi
  * @param    {ImportModules<T>}   modules - `import.meta.glob` の結果 (`eager: true` のため同期モジュールマップ)
  * @returns  {MigrationRule<T>[]}         - `order` プロパティで昇順にソートされた移行ルールの配列
  */
-export function loadRules<T>(modules: ImportModules<T>): MigrationRule<T>[] {
+function loadRules<T>(modules: ImportModules<T>): MigrationRule<T>[] {
 	const allRulesRaw = extractRulesFromModules(modules);
 	const { validRules, invalidRules } = partitionRules<T>(allRulesRaw);
 
@@ -587,3 +591,13 @@ export function loadRules<T>(modules: ImportModules<T>): MigrationRule<T>[] {
 
 	return allRules;
 }
+
+
+
+export {
+	loadRules
+};
+export type {
+	RuleModule,
+	ImportModules
+};

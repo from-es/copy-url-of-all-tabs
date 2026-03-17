@@ -7,8 +7,6 @@
 // Import Module & Types
 import { createStore, type UpdateState } from "@/assets/js/lib/user/StateManager/store.svelte";
 
-
-
 // ----------------------------------------------------------------------------------------------------------------------------
 // IMPORTANT: Project-specific configurations are defined here.
 // This includes:
@@ -18,6 +16,8 @@ import { createStore, type UpdateState } from "@/assets/js/lib/user/StateManager
 
 // Import Types
 import type { Config, Define, Status } from "@/assets/js/types";
+
+
 
 // Create a store instance with the `Status` type.
 const { shareStatus, updateState }: {
@@ -44,4 +44,9 @@ function initializeSharedState(config: Config, define: Define): void {
 
 
 // Export the instantiated store for use in other components.
-export { shareStatus, updateState, initializeSharedState };
+export {
+	shareStatus,
+
+	updateState,
+	initializeSharedState
+};

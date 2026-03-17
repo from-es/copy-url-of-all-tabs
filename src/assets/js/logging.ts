@@ -1,8 +1,10 @@
-// Import Types
-import { type Config, type Define } from "@/assets/js/define";
-
-// Import from Script
+// Import Module
 import { ConsoleManager } from "@/assets/js/lib/user/ConsoleManager";
+
+// Import Types
+import type { Config, Define } from "@/assets/js/define";
+
+
 
 /**
  * デバッグロギングの有効/無効を切り替える
@@ -13,7 +15,7 @@ import { ConsoleManager } from "@/assets/js/lib/user/ConsoleManager";
  * @returns {void}
  * @see ConsoleManager
  */
-export function logging(config: Config, define: Define): void {
+function logging(config: Config, define: Define): void {
 	const isValidConfig  = validConfig(config, define);
 	const loggingOptions = isValidConfig ? config.Debug : define.Config.Debug;
 
@@ -75,3 +77,7 @@ function validConfig(config: Config, define: Define): boolean {
 function getRulesByPrefix<T extends { property: string }>(rules: T[], prefix: string): T[] {
 	return rules.filter(rule => rule.property.startsWith(prefix));
 }
+
+
+
+export { logging };

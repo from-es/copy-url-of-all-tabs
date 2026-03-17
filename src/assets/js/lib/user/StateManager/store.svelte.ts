@@ -4,14 +4,15 @@ import { SvelteMap } from "svelte/reactivity";
 // Import NPM Package
 import merge from "lodash-es/merge";
 
+
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type StateObject = Record<string, any>;
-
 
 /**
  * Defines the structure for initializing or updating a state property within the store.
  */
-export type StateOption = {
+type StateOption = {
 	/**
 	 * The name of the state property.
 	 */
@@ -33,7 +34,7 @@ export type StateOption = {
  * @param newStates - An array of {@link StateOption} objects used to update the store.
  */
 // eslint-disable-next-line no-unused-vars
-export type UpdateState = (newStates: StateOption[]) => void;
+type UpdateState = (newStates: StateOption[]) => void;
 
 /**
  * A factory function to create a type-safe, reactive store using Svelte 5 runes.
@@ -42,7 +43,7 @@ export type UpdateState = (newStates: StateOption[]) => void;
  * @param initialStates - An optional array of state options to initialize the store.
  * @returns A reactive `shareStatus` proxy object and an `updateState` function.
  */
-export function createStore<T extends StateObject>(initialStates: StateOption[] = []) {
+function createStore<T extends StateObject>(initialStates: StateOption[] = []) {
 	// Internal reactive state managed by a single $state object.
 	const internalState = $state<StateObject>({});
 	const freezeMap     = new SvelteMap<string, boolean>();
@@ -117,3 +118,13 @@ export function createStore<T extends StateObject>(initialStates: StateOption[] 
 		updateState,
 	};
 }
+
+
+
+export {
+	createStore
+};
+export type {
+	StateOption,
+	UpdateState
+};

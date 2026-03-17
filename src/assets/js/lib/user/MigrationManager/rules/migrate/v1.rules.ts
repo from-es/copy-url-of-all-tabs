@@ -6,6 +6,8 @@ import { compareVersions } from "@/assets/js/utils/CompareVersions";
 import type { Config }        from "@/assets/js/types";
 import type { MigrationRule } from "@/assets/js/lib/user/MigrationManager/types";
 
+
+
 /**
  * 設定移行ルールを定義する配列。
  * 各ルールは、特定の設定変更を適用するための条件と実行ロジックをカプセル化します。

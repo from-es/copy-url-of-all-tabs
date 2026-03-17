@@ -1,15 +1,17 @@
-// WXT provided cross-browser compatible API and types.
+// WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
+
+
 
 const manifest = browser.runtime.getManifest();
 
-export const Environment = {
+const Environment = {
 	Browser: {
 		// これは getInitDefine 関数で埋められる
 	}
 };
 
-export const Information = {
+const Information = {
 	author     : manifest.author,
 	name       : manifest.name,
 	description: manifest.description,
@@ -51,6 +53,14 @@ export const Information = {
 	}
 };
 
-export const Storage = {
+const Storage = {
 	keyname: "config"
+};
+
+
+
+export {
+	Environment,
+	Information,
+	Storage
 };

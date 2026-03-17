@@ -1,18 +1,6 @@
 <script lang="ts">
-	// WXT provided cross-browser compatible API and types.
+	// WXT provided cross-browser compatible API.
 	import { browser } from "wxt/browser";
-
-	// Import NPM Package
-	import dayjs from "dayjs";
-
-	// Import Types
-	import type { Config, Define, Status } from "@/assets/js/types/";
-	import type { CustomDelayInfo }        from "@/assets/js/define/types";
-	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
-	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
-
-	// Import Module
-	import { LOG_LEVELS } from "@/assets/js/lib/user/ConsoleManager/types";
 
 	// Import Svelte
 	import { onMount } from "svelte";
@@ -20,24 +8,36 @@
 	// Import Svelte Module
 	import DebouncedNumericInput from "./DebouncedNumericInput.svelte";
 
+	// Import NPM Package
+	import dayjs from "dayjs";
+
 	// Import Module
-	import { initializeConfig }                              from "@/assets/js/initializeConfig";
-	import { logging }                                       from "@/assets/js/logging";
-	import { selectTab }                                     from "@/assets/js/select-tab";
 	import { cloneObject }                                   from "@/assets/js/lib/user/CloneObject";
 	import { StorageManager }                                from "@/assets/js/lib/user/StorageManager";
 	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
-	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
 	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/user/ConfigManager";
 	import { MigrationManager }                              from "@/assets/js/lib/user/MigrationManager";
 	import { rules as PreSaveCorrections }                   from "@/assets/js/lib/user/MigrationManager/rules/patch/preSaveCorrections";
+	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
+	import { initializeConfig }                              from "@/assets/js/initializeConfig";
+	import { logging }                                       from "@/assets/js/logging";
+	import { selectTab }                                     from "@/assets/js/select-tab";
+	import { compareConfig }                                 from "./utils/configComparer";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
-	import { compareConfig }                                 from "./utils/configComparer";
 
-	// Import Shared State Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
+	// Import Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";    // Shared State Object
+	import { LOG_LEVELS }            from "@/assets/js/lib/user/ConsoleManager/types";
+
+	// Import Types
+	import type { Config, Define, Status } from "@/assets/js/types/";
+	import type { CustomDelayInfo }        from "@/assets/js/define/types";
+	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
+	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
+
+
 
 	const dynamicContent = new DynamicContent(status);
 
@@ -47,7 +47,6 @@
 
 		initialize();
 	});
-
 
 	// ---------------------------------------------------------------------------------------------
 	async function initialize() {

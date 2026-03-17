@@ -1,11 +1,8 @@
-// eslint.config.js
 import js from "@eslint/js";
-import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-
-// Comment out, Not used in this project
-// import svelteConfig from './svelte.config.js';
+import svelte from "eslint-plugin-svelte";
+import importPlugin from "eslint-plugin-import";
 
 
 
@@ -20,45 +17,91 @@ const customRules = [
 			"**/*.svelte",
 			"**/*.svelte.js"
 		],
+		plugins: {
+			import: importPlugin
+		},
+		settings: {
+			 // Import 関連
+			"import/internal-regex": "^@/"  // tsconfig.json で定義した "@/" エイリアスを "internal" グループとして識別する
+		},
 		rules: {
 			// File Rules
-			"eol-last": [ "error", "never" ],       // ファイル末尾に少なくとも 1つの改行 (または改行がない) を強制
-			"linebreak-style": [ "error", "unix" ], // 改行コードの指定
+			"eol-last": [ "error", "never" ],        // ファイル末尾に少なくとも 1つの改行 (または改行がない) を強制
+			"linebreak-style": [ "error", "unix" ],  // 改行コードの指定
 
 			// Possible Errors
-			"no-fallthrough": "error",   // case ステートメントのフォールスルーを禁止
-			"no-return-assign": "error", // return ステートメントで代入演算子を使用禁止
-			"no-unreachable": "error",   // return, throw, continue, break ステートメントの後に到達不能なコードは不許可
+			"no-fallthrough": "error",    // case ステートメントのフォールスルーを禁止
+			"no-return-assign": "error",  // return ステートメントで代入演算子を使用禁止
+			"no-unreachable": "error",    // return, throw, continue, break ステートメントの後に到達不能なコードは不許可
 
 			// Best Practices
-			"eqeqeq": "error",           // タイプセーフでない比較演算子の使用を禁止
-			"curly": "error",            // ブロック ステートメントの中括弧は省略禁止
-			"yoda": "error",             // 条件比較時、条件のリテラル値が最初に、変数が2番目に来る
-			"no-throw-literal": "error", // 例外をスローする際、リテラルやその他表現のスローは不許可
+			"eqeqeq": "error",            // タイプセーフでない比較演算子の使用を禁止
+			"curly": "error",             // ブロック ステートメントの中括弧は省略禁止
+			"yoda": "error",              // 条件比較時、条件のリテラル値が最初に、変数が2番目に来る
+			"no-throw-literal": "error",  // 例外をスローする際、リテラルやその他表現のスローは不許可
 
 			// Variable Declaration & Assignment
-			"no-unused-vars": "warn", // 宣言されているがコード内で未使用の変数がある場合に警告
-			"prefer-const": "warn",   // 「const ではないが再割り当てされない変数」に警告
+			"no-unused-vars": "warn",  // 宣言されているがコード内で未使用の変数がある場合に警告
+			"prefer-const": "warn",    // 「const ではないが再割り当てされない変数」に警告
 
 			// Stylistic Issues
-			"comma-style": [ "error", "last" ],                // 配列要素、オブジェクトプロパティ、または変数宣言と同じ行の後ろ or 上にカンマを置く
-			"semi": [ "error", "always" ],                     // ステートメントの末尾にセミコロンを置く
-			"no-inline-comments": "off",                       // コードと同じ行へのコメントを許可
-			"indent": [ "error", "tab", { "SwitchCase": 1 } ], // コードのインデントタイプとサイズを指定
-			"max-len": "off",                                  // コードの一行辺りの文字数制限を無効
+			"comma-style": [ "error", "last" ],                 // 配列要素、オブジェクトプロパティ、または変数宣言と同じ行の後ろ or 上にカンマを置く
+			"semi": [ "error", "always" ],                      // ステートメントの末尾にセミコロンを置く
+			"no-inline-comments": "off",                        // コードと同じ行へのコメントを許可
+			"indent": [ "error", "tab", { "SwitchCase": 1 } ],  // コードのインデントタイプとサイズを指定
+			"max-len": "off",                                   // コードの一行辺りの文字数制限を無効
 
 			// Spacing
-			"array-bracket-spacing": [ "error", "always" ], // 配列の括弧と他のトークンの間にスペースを入れる
-			"block-spacing": [ "error", "always" ],         // ブロックと同じ行上の次のトークンの内側にスペースを入れる
-			"func-call-spacing": [ "error", "never" ],      // 関数名とそれを呼び出すかっこの間のスペースは不許可
-			"no-trailing-spaces": "error",                  // 行末に空白文字 (スペース、タブ、その他の Unicode 空白文字) は不許可
-			"space-before-blocks": [ "error", "always" ],   // ブロックの前には常に少なくとも1つのスペースを入れる
+			"array-bracket-spacing": [ "error", "always" ],  // 配列の括弧と他のトークンの間にスペースを入れる
+			"block-spacing": [ "error", "always" ],          // ブロックと同じ行上の次のトークンの内側にスペースを入れる
+			"func-call-spacing": [ "error", "never" ],       // 関数名とそれを呼び出すかっこの間のスペースは不許可
+			"no-trailing-spaces": "error",                   // 行末に空白文字 (スペース、タブ、その他の Unicode 空白文字) は不許可
+			"space-before-blocks": [ "error", "always" ],    // ブロックの前には常に少なくとも1つのスペースを入れる
 			"spaced-comment": [ "error", "always" ],
-			"keyword-spacing": [ "error", { "before": true, "after": true } ], // キーワードの前後に一貫したスペースを入れる
-			"space-infix-ops": [ "error", { "int32Hint": false } ],            // 挿入演算子の周囲にスペースが必要
-			"comma-spacing": [ "error", { "before": false, "after": true } ],  // カンマ前後のスペース有無を指定
-			"semi-spacing": [ "error", { "before": false, "after": true } ],   // セミコロン前後のスペース有無を指定
-			"space-unary-ops": [ 2, { "words": true, "nonwords": false } ],    // words 単項演算子の後と nonwords 単項演算子の前後のスペースに関する一貫性を強制
+			"keyword-spacing": [ "error", { "before": true, "after": true } ],  // キーワードの前後に一貫したスペースを入れる
+			"space-infix-ops": [ "error", { "int32Hint": false } ],             // 挿入演算子の周囲にスペースが必要
+			"comma-spacing": [ "error", { "before": false, "after": true } ],   // カンマ前後のスペース有無を指定
+			"semi-spacing": [ "error", { "before": false, "after": true } ],    // セミコロン前後のスペース有無を指定
+			"space-unary-ops": [ 2, { "words": true, "nonwords": false } ],     // words 単項演算子の後と nonwords 単項演算子の前後のスペースに関する一貫性を強制
+
+			// Import 関連
+			"import/order": [
+				"error", {
+					"groups": [
+						"builtin",   // Node.js 組み込みモジュール
+						"external",  // 外部ライブラリ（npm package）
+						[  // "internal（lib > util） > parent > sibling > index" の順で手動配置
+							"internal",  // 内部モジュール（`@/` 等）
+							"parent",    // 親ディレクトリ
+							"sibling",   // 同じディレクトリ
+							"index",     // index ファイル
+						],
+						"object",  // 変数・オブジェクト・定数定義
+						"type",    // 型定義
+					],
+					pathGroups: [
+						// WXT 関連のインポートは builtin の次に配置
+						{
+							pattern: "wxt{,/**}",
+							group: "builtin",
+							position: "after",
+						},
+						// Svelte 関連のインポートは builtin の次に配置
+						{
+							pattern: "{svelte,**/*.svelte,**/*.svelte.*,./**/*.svelte,./**/*.svelte.*,../**/*.svelte,../**/*.svelte.*,@/**/*.svelte,@/**/*.svelte.*}",
+							group: "builtin",
+							position: "after",
+						}
+					],
+					pathGroupsExcludedImportTypes: [],  // builtin, external 等の特定グループが pathGroups から除外されるのを防ぐ（svelte 等を builtin グループとして扱う為に必要）
+					"newlines-between": "ignore"        // グループ毎の改行ルールは無効化（カテゴリ分けの為の空行を許可）
+				}
+			],
+			"import/newline-after-import": "error",  // 最後の import の後に空行を強制
+
+			// Export 関連
+			"import/group-exports": "error",  // export を一箇所にまとめる
+			"import/exports-last": "error",   // export をファイル末尾に配置する
 		}
 	},
 	{
@@ -74,7 +117,7 @@ const customRules = [
 		],
 		rules: {
 			// Stylistic Issues
-			"quotes": [ "error", "double", { avoidEscape: true, "allowTemplateLiterals": true } ] // 可能な限り二重引用符を使用
+			"quotes": [ "error", "double", { avoidEscape: true, "allowTemplateLiterals": true } ]  // 可能な限り二重引用符を使用
 		}
 	}
 ];
@@ -104,7 +147,10 @@ export default [
 
 	// Rules for TypeScript
 	{
-		files: [ "**/*.ts", "**/*.mts" ],
+		files: [
+			"**/*.ts",
+			"**/*.mts"
+		],
 		languageOptions: {
 			parser: tseslint.parser,
 			parserOptions: {
@@ -113,7 +159,9 @@ export default [
 		},
 	},
 	{
-		files: [ "**/*.d.ts" ], // .d.ts ファイル用の設定
+		files: [
+			"**/*.d.ts"  // .d.ts ファイル用の設定
+		],
 		languageOptions: {
 			// .d.ts ファイルには parser と parserOptions を指定しない
 		},
@@ -121,7 +169,9 @@ export default [
 
 	// Rules for Svelte
 	{
-		files: [ "**/*.svelte" ],
+		files: [
+			"**/*.svelte"
+		],
 		languageOptions: {
 			parserOptions: {
 				parser: tseslint.parser,
@@ -137,10 +187,20 @@ export default [
 
 	// Override or add specific rules for TypeScript after recommended configs
 	{
-		files: [ "**/*.ts", "**/*.mts", "**/*.svelte" ],
+		files: [
+			"**/*.ts",
+			"**/*.mts",
+			"**/*.svelte"
+		],
+		plugins: {
+			import: importPlugin
+		},
 		rules: {
-			"@typescript-eslint/no-unused-vars": "warn",  // 宣言されているがコード内で未使用の変数がある場合に警告
-			"@typescript-eslint/no-explicit-any": "warn", // any 型の使用を許可しない (例外的に警告)
+			"@typescript-eslint/no-unused-vars": "warn",   // 宣言されているがコード内で未使用の変数がある場合に警告
+			"@typescript-eslint/no-explicit-any": "warn",  // any 型の使用を許可しない (例外的に警告)
+
+			// TypeScript 用の import ルール設定
+			"import/no-unresolved": "off",  // TypeScript が解決するため無効化
 		}
 	}
 ];

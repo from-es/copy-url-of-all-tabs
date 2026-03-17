@@ -1,10 +1,11 @@
-// WXT provided cross-browser compatible Types
+// WXT provided cross-browser compatible Types.
 import type { Browser } from "wxt/browser";
 
-// Import Script
+// Import Module
 import { escapeHTML } from "@/assets/js/utils/escapeHTML";
 
-// Types
+
+
 type FormatType = "text" | "json" | "custom";
 
 

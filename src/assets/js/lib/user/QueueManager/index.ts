@@ -55,4 +55,5 @@ class QueueClass {
 
 
 
+// Export as a singleton instance.
 export const QueueManager = new QueueClass(CONCURRENCY);

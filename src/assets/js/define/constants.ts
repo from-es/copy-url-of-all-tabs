@@ -1,3 +1,5 @@
+/* eslint-disable import/group-exports */
+
 export const Regex = {
 	url: {
 		standard: /(https?):\/\/(?:[-\w.])+(?::[0-9]+)?(?:\/(?:[\w._~:/?#[\]@!$&"()*+,;=%-])*)?/gi,
@@ -108,7 +110,6 @@ export const ChromiumBasedBrowser = [
 	"edge",    // edge://
 	"vivaldi"  // vivaldi://
 ];
-
 
 // OptionsPage
 export const OptionsPageFontSizeValueMin           = 8;   // px

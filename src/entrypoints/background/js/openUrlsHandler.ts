@@ -1,9 +1,5 @@
-// WXT provided cross-browser compatible API and Types
+// WXT provided cross-browser compatible API and Types.
 import { browser, type Browser } from "wxt/browser";
-
-// Import Types
-import type { Config, ExtensionMessage }                from "@/assets/js/types/";
-import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
 // Import Module
 import { define }             from "@/assets/js/define";
@@ -12,11 +8,15 @@ import { sleep }              from "@/assets/js/utils/sleep";
 import { QueueManager }       from "@/assets/js/lib/user/QueueManager";
 import { countManager }       from "@/entrypoints/background/js/CountManager";
 
-// Types
-export type TabPosition = "default" | "first" | "left" | "right" | "last";
-export type TaskMode    = "unitary" | "batch" | "monolithic";
-export type OpenMode    = "parallel" | "append" | "prepend" | "insertNext";
+// Import Types
+import type { Config, ExtensionMessage }                from "@/assets/js/types/";
+import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
+
+
+type TabPosition     = "default" | "first" | "left" | "right" | "last";
+type TaskMode        = "unitary" | "batch" | "monolithic";
+type OpenMode        = "parallel" | "append" | "prepend" | "insertNext";
 type TabOption       = Config["Tab"];
 type CreateTabOption = TabOption & { windowId: number | undefined };
 
@@ -28,7 +28,7 @@ type CreateTabOption = TabOption & { windowId: number | undefined };
  * @param   {ExtensionMessage} message - 拡張機能メッセージ（前処理済みのURLリストと設定を含む）
  * @returns {Promise<void>}
  */
-export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
+async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
 	const { argument } = message;
 	const urlList      = argument?.urlList;
 	const config       = argument?.option;
@@ -330,3 +330,14 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 
 	return number;
 }
+
+
+
+export {
+	handleOpenURLs
+};
+export type {
+	TabPosition,
+	TaskMode,
+	OpenMode
+};

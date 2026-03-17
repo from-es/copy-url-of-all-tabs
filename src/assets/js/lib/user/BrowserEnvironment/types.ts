@@ -16,7 +16,7 @@
  * Defines the structure for metadata about the data retrieval process.
  * データ取得プロセスに関するメタデータの構造を定義します。
  */
-export type CheckerInfo = {
+type CheckerInfo = {
 	/**
 	 * Indicates whether the data retrieval was successful.
 	 * データ取得が成功したかどうかを示します。
@@ -49,7 +49,7 @@ export type CheckerInfo = {
  * Defines the structure for information obtained from the User-Agent Client Hints API.
  * User-Agent Client Hints APIから取得した情報の構造を定義します。
  */
-export type UserAgentClientHintsInfo = {
+type UserAgentClientHintsInfo = {
 	/**
 	 * Browser information.
 	 * ブラウザ情報。
@@ -97,7 +97,7 @@ export type UserAgentClientHintsInfo = {
  * Defines the final, consolidated result object for browser environment information.
  * ブラウザ環境情報の最終的な統合結果オブジェクトを定義します。
  */
-export type BrowserEnvironmentResult = {
+type BrowserEnvironmentResult = {
 	/**
 	 * Metadata about the data retrieval process.
 	 * データ取得プロセスに関するメタデータ。
@@ -125,7 +125,7 @@ export type BrowserEnvironmentResult = {
  * Represents a brand/version pair provided by the User-Agent Client Hints API.
  * User-Agent Client Hints APIによって提供されるブランド/バージョンのペアを表します。
  */
-export type UserAgentDataBrand = {
+type UserAgentDataBrand = {
 	readonly brand  : string;
 	readonly version: string;
 
@@ -136,7 +136,7 @@ export type UserAgentDataBrand = {
  * Defines the structure of high-entropy values that can be requested from the User-Agent Client Hints API.
  * User-Agent Client Hints APIから要求できる高エントロピー値の構造を定義します。
  */
-export type UserAgentDataValues = {
+type UserAgentDataValues = {
 	readonly architecture   ?: string;
 	readonly bitness        ?: string;
 	readonly brands         ?: UserAgentDataBrand[];
@@ -154,7 +154,7 @@ export type UserAgentDataValues = {
  * Extends the Navigator interface to include the `userAgentData` property from the Client Hints API.
  * Client Hints APIの `userAgentData` プロパティを含むようにNavigatorインターフェースを拡張します。
  */
-export type NavigatorUserAgentData = {
+type NavigatorUserAgentData = {
 	readonly brands  ?: UserAgentDataBrand[];
 	readonly mobile  ?: boolean;
 	readonly platform?: string;
@@ -195,7 +195,7 @@ type UserAgentParserPluginInformation = {  // Required fields
  * User-Agentパーサープラグインによって返されるデータの構造を定義します。
  * これは `UserAgentClientHintsInfo` の部分的な表現であり、追加のプロパティを許可します。
  */
-export type UserAgentParserPluginParseData = Partial<UserAgentClientHintsInfo> & {  // Required fields, set to undefined if not needed or not obtainable
+type UserAgentParserPluginParseData = Partial<UserAgentClientHintsInfo> & {  // Required fields, set to undefined if not needed or not obtainable
 	// Other properties (directly under the root) can also be overwritten by spread expansion due to operational specifications.
 	// 他のプロパティ（ルート直下）も運用仕様上、スプレッド展開によって上書きされる可能性がある。
 	[key: string]: unknown;
@@ -205,7 +205,7 @@ export type UserAgentParserPluginParseData = Partial<UserAgentClientHintsInfo> &
  * Defines the interface for a User-Agent parser plugin, including its metadata and execution function.
  * メタデータと実行関数を含む、User-Agentパーサープラグインのインターフェースを定義します。
  */
-export type UserAgentParserPlugin = {
+type UserAgentParserPlugin = {
 	/**
 	 * Metadata about the plugin.
 	 * プラグインに関するメタデータ。
@@ -218,3 +218,17 @@ export type UserAgentParserPlugin = {
 	execute: () => UserAgentParserPluginParseData | null;
 };
 // ----------------------------------------------------------------------------------------------------------------------------
+
+
+
+export type {
+	CheckerInfo,
+	UserAgentClientHintsInfo,
+	BrowserEnvironmentResult,
+	UserAgentDataBrand,
+	UserAgentDataValues,
+	NavigatorUserAgentData,
+
+	UserAgentParserPluginParseData,
+	UserAgentParserPlugin
+};

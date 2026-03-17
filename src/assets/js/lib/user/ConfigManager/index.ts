@@ -1,4 +1,3 @@
-// Types for Local File
 const FILE_TYPE_DEFINITIONS = {
 	csv : { mime: "text/csv",           extensions: [ ".csv" ] },
 	ini : { mime: "application/x-ini",  extensions: [ ".ini" ] },
@@ -9,7 +8,8 @@ const FILE_TYPE_DEFINITIONS = {
 } as const;
 
 // "FILE_TYPE_DEFINITIONS" から MIME_TYPES を動的に生成
-// 例: {
+// 例:
+// {
 //   csv : "text/csv",
 //   ini : "application/x-ini",
 //   json: "application/json",
@@ -17,7 +17,7 @@ const FILE_TYPE_DEFINITIONS = {
 //   toml: "application/toml",
 //   yaml: "application/x-yaml"
 // }
-export const MIME_TYPES = Object.fromEntries(
+const MIME_TYPES = Object.fromEntries(
 	Object.entries(FILE_TYPE_DEFINITIONS).map(([ key, value ]) => [ key, value.mime ])
 ) as { [K in keyof typeof FILE_TYPE_DEFINITIONS]: typeof FILE_TYPE_DEFINITIONS[K]["mime"] };
 
@@ -30,25 +30,29 @@ export const MIME_TYPES = Object.fromEntries(
 //   "application/toml"  : [ ".toml" ],
 //   "application/x-yaml": [ ".yaml", ".yml" ]
 // }
-export const MIME_TO_EXT_MAP = Object.fromEntries(
+const MIME_TO_EXT_MAP = Object.fromEntries(
 	Object.values(FILE_TYPE_DEFINITIONS).map(value => [ value.mime, value.extensions ])
 ) as Record<string, readonly string[]> as Record<MimeType, readonly string[]>;
 
-export type MimeType = (typeof MIME_TYPES)[keyof typeof MIME_TYPES];
+
+
+type MimeType = (typeof MIME_TYPES)[keyof typeof MIME_TYPES];
 
 type BaseResult = {
 	success: boolean;
 	message: string;
 	error? : Error;
 };
-export type ImportResult = BaseResult & {
+type ImportResult = BaseResult & {
 	action       : "import";
 	content?     : string;
 	isUserCancel?: boolean;
 };
-export type ExportResult = BaseResult & {
+type ExportResult = BaseResult & {
 	action: "export";
 };
+
+
 
 /**
  * Represents an error thrown when the user cancels a file selection dialog.
@@ -60,7 +64,6 @@ class UserCancelError extends Error {
 	}
 }
 
-
 /**
  * Manages the import and export processes for application settings.
  *
@@ -70,7 +73,7 @@ class UserCancelError extends Error {
  *
  * @lastModified 2026-02-27
  */
-export class ConfigManager {
+class ConfigManager {
 	private constructor() {
 		// This is a static utility class and should not be instantiated.
 	}
@@ -201,3 +204,18 @@ export class ConfigManager {
 		});
 	}
 }
+
+
+
+export {
+	MIME_TYPES,
+	MIME_TO_EXT_MAP,
+
+	ConfigManager
+};
+export type {
+	MimeType,
+	BaseResult,
+	ImportResult,
+	ExportResult
+};

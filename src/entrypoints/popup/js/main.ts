@@ -6,14 +6,16 @@ import App          from "../svelte/App.svelte";
 import type AppType from "../svelte/App.svelte";
 
 // Import Module
-import { initializeConfig }      from "@/assets/js/initializeConfig";
 import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state";
+import { initializeConfig }      from "@/assets/js/initializeConfig";
 import { logging }               from "@/assets/js/logging";
 
 // Import CSS
 import "../css/popup.css";
 
-export let app: ReturnType<typeof mount> | AppType | null = null;
+
+
+let app: ReturnType<typeof mount> | AppType | null = null;
 
 window.addEventListener("load", main);
 
@@ -33,3 +35,7 @@ async function main() {
 	const target = document.body;
 	app = mount(App, { target });
 }
+
+
+
+export { app };

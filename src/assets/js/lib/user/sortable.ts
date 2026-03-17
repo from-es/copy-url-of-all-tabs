@@ -6,12 +6,16 @@ import { debounce } from "lodash-es";
 import type { Options }    from "sortablejs";
 import type { Attachment } from "svelte/attachments";
 
+
+
 type SortableOptions = Options & {
 	list         : object[],
 	// eslint-disable-next-line no-unused-vars
 	onSort       : (list: object[]) => void,
 	debounceTime?: number
 };
+
+
 
 /**
  * SortableJS ライブラリを使用して、指定されたDOM要素にソート機能を追加

@@ -10,10 +10,6 @@
  *   5. 移行が成功した場合の設定の保存
  */
 
-// Import Types
-import type { Config, Define, Status, EmptyObject } from "@/assets/js/types/";
-import type { MigrationResult }                     from "@/assets/js/lib/user/MigrationManager/types";
-
 // Import Module
 import { define }             from "@/assets/js/define";
 import { MigrationManager }   from "@/assets/js/lib/user/MigrationManager";
@@ -22,6 +18,12 @@ import { cloneObject }        from "./lib/user/CloneObject";
 import { StorageManager }     from "./lib/user/StorageManager";
 import { VerifyConfigValue  } from "./lib/user/VerifyConfigValue";
 import { BrowserEnvironment } from "./lib/user/BrowserEnvironment";
+
+// Import Types
+import type { Config, Define, Status, EmptyObject } from "@/assets/js/types/";
+import type { MigrationResult }                     from "@/assets/js/lib/user/MigrationManager/types";
+
+
 
 /**
  * 設定の初期化、移行、検証を行う責務を持つクラス
@@ -234,7 +236,7 @@ async function processAndSaveConfig(initialConfig: Config | null, _define: Defin
  * @param   {boolean}         [save=true] - 移行や初期化が行われた場合に設定をストレージに保存するかどうか
  * @returns {Promise<Status>}             - 初期化された設定と define を含む Status オブジェクト
  */
-export async function initializeConfig(config: Config | null, save: boolean = true): Promise<Status> {
+async function initializeConfig(config: Config | null, save: boolean = true): Promise<Status> {
 	const _define                    = cloneObject(define);
 	let  loadedConfig: Config | null = config ? cloneObject(config) : null;
 
@@ -255,3 +257,7 @@ export async function initializeConfig(config: Config | null, save: boolean = tr
 	// ローカルストレージから読み込んだ設定 or null を元に、後続処理を実行
 	return await processAndSaveConfig(loadedConfig, _define, save);
 }
+
+
+
+export { initializeConfig };

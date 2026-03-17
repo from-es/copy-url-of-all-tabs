@@ -1,4 +1,4 @@
-// WXT provided cross-browser compatible API and types.
+// WXT provided cross-browser compatible API and Types.
 import { browser, type Browser } from "wxt/browser";
 
 // Import Module
@@ -13,6 +13,7 @@ import { badgeController }  from "./js/BadgeController";
 import type { Config }           from "@/assets/js/define";
 import type { ExtensionMessage } from "@/assets/js/types/";
 
+// eslint-disable-next-line import/exports-last
 export default defineBackground({
 	// Set manifest options
 	persistent: false,
@@ -21,6 +22,7 @@ export default defineBackground({
 	// Executed when background is loaded
 	main
 });
+
 
 
 function main() {

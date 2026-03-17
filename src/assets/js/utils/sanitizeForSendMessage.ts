@@ -1,8 +1,9 @@
-// Type Definition
 interface SanitizeOptions {
 	checkOnly?: boolean;
 	debug    ?: boolean;
 }
+
+
 
 /**
  * Sanitizes an object to be safely sent as a message.
@@ -12,7 +13,7 @@ interface SanitizeOptions {
  * @returns {T}               - The sanitized data. Also returns the original data if validation succeeds with checkOnly=true.
  * @throws  {Error} If the data is not structured-cloneable when checkOnly is true, or if an unexpected error occurs during sanitization.
  */
-export function sanitizeForSendMessage<T>(data: T, options: SanitizeOptions = { checkOnly: false, debug: false }): T {
+function sanitizeForSendMessage<T>(data: T, options: SanitizeOptions = { checkOnly: false, debug: false }): T {
 	const { checkOnly, debug } = options;
 
 	try {
@@ -83,3 +84,7 @@ function removeNonCloneableProperties(obj: unknown, debug: boolean): any {
 	}
 	return newObj;
 }
+
+
+
+export { sanitizeForSendMessage };

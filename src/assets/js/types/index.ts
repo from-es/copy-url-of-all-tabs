@@ -1,4 +1,7 @@
-import { type Config, type Define } from "@/assets/js/define";
+// Import Object
+import type { Config, Define } from "@/assets/js/define";
+
+
 
 type EmptyObject = Record<string, never>;
 
@@ -24,5 +27,12 @@ type ExtensionMessage = {
 
 
 
-export { type Status, type ExtensionMessage, type EmptyObject };
-export { type Config, type Define } from "@/assets/js/define";
+export type {
+	Status,
+	ExtensionMessage,
+	EmptyObject
+};
+export type {
+	Config,
+	Define
+} from "@/assets/js/define";

@@ -6,9 +6,7 @@
 	@dependency   none
 */
 
-
-
-export interface UrlDelayRule {
+interface UrlDelayRule {
 	/**
 	 * マッチさせるURLパターン。
 	*/
@@ -27,7 +25,7 @@ export interface UrlDelayRule {
 	delay: number;
 }
 
-export interface UrlDelayCalculationResult {
+interface UrlDelayCalculationResult {
 	/**
 	 * URL
 	 */
@@ -62,7 +60,7 @@ interface CompiledUrlDelayRule extends UrlDelayRule {
  * @class UrlDelayCalculator
  * @description URLリストの遅延時間を計算するための静的メソッドを提供するユーティリティクラス
  */
-export class UrlDelayCalculator {
+class UrlDelayCalculator {
 	/**
 	 * このクラスはステートレスであり、インスタンス化の必要は無い。全ての機能は静的メソッド `calculateDelays` を通じて提供
 	 */
@@ -177,3 +175,13 @@ export class UrlDelayCalculator {
 		return results;
 	}
 }
+
+
+
+export {
+	UrlDelayCalculator
+};
+export type {
+	UrlDelayRule,
+	UrlDelayCalculationResult
+};

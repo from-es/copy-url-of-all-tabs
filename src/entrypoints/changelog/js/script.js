@@ -2,15 +2,17 @@
 	Convert Markdown to HTML for "Update history"
 */
 
-// WXT provided cross-browser compatible API and types.
+// WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
-
-// Import from Script
-import { initializeConfig }           from "@/assets/js/initializeConfig";
-import { setSafeHTML, createSafeDOM } from "@/assets/js/utils/setSafeHTML";
 
 // Import NPM Package
 import { marked } from "marked";
+
+// Import Module
+import { initializeConfig }           from "@/assets/js/initializeConfig";
+import { setSafeHTML, createSafeDOM } from "@/assets/js/utils/setSafeHTML";
+
+
 
 // 設定値
 const CHANGELOG_PATH              = "src/text/changelog.md"; // 変更履歴ファイルのパス、静的ファイル用のディレクトリィ内に設置
@@ -53,8 +55,6 @@ const customLinkRenderer = {
 };
 
 window.addEventListener("load", main);
-
-
 
 async function main() {
 	await initialize();

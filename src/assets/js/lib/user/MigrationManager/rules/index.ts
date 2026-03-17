@@ -4,6 +4,8 @@ import { loadRules, type RuleModule } from "../loadRules";
 // Import Types
 import type { Config } from "@/assets/js/types";
 
+
+
 /**
  * v1系列の移行ルールを動的にインポートし、単一の配列に集約します。
  *
@@ -18,4 +20,8 @@ import type { Config } from "@/assets/js/types";
  */
 const modules = import.meta.glob<RuleModule<Config>>("./migrate/*.rules.ts", { eager: true });
 
-export const migrationRules = loadRules<Config>(modules);
+const migrationRules = loadRules<Config>(modules);
+
+
+
+export { migrationRules };

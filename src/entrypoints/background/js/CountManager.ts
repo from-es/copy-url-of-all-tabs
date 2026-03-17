@@ -2,6 +2,8 @@
 // eslint-disable-next-line no-unused-vars
 type Listener = (count: number) => void;
 
+
+
 /**
  * 待機中URLのカウント数を管理し、変更を購読者に通知するクラス。
  * UIの存在を知らず、純粋な状態管理に専念する。
@@ -90,4 +92,5 @@ class CountManager {
 
 
 
+// Export as a singleton instance.
 export const countManager = new CountManager();

@@ -2,14 +2,16 @@
 import { cloneObject } from "@/assets/js/lib/user/CloneObject";
 
 // Import Types
-import {
-	type MigrationArgument,
-	type MigrationRule,
-	type MigrationResult,
-	type MigrationOptions,
-	type MigrationErrorReport,
-	type MigrationRuleMeta
+import type {
+	MigrationArgument,
+	MigrationRule,
+	MigrationResult,
+	MigrationOptions,
+	MigrationErrorReport,
+	MigrationRuleMeta
 } from "./types";
+
+
 
 /**
  * Represents the internal state during a migration process.
@@ -22,6 +24,8 @@ type MigrationExecutionState<T> = {
 	appliedRules: MigrationRuleMeta[];
 	errorReports: MigrationErrorReport<T>[];
 };
+
+
 
 /**
  * Manages the data migration process based on a provided set of rules.

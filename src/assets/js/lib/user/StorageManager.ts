@@ -1,8 +1,12 @@
 // WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
+
+
 type StorageGetKeys   = string | string[] | object | null;
 type StorageRemoveKey = string | string[];
+
+
 
 /*
 	@name         StorageManager

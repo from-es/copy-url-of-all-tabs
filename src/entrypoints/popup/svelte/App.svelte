@@ -1,24 +1,26 @@
 <script lang="ts">
-	// WXT provided cross-browser compatible API and types.
+	// WXT provided cross-browser compatible API.
 	import { browser } from "wxt/browser";
-
-	// Import Types
-	import type { Config, Define, ExtensionMessage } from "@/assets/js/types/";
-	import type { Action, EventOnClickActionResult } from "./types";
 
 	// Import Svelte
 	import { onMount } from "svelte";
 
 	// Import Module
-	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
-	import { eventActionCopy, eventActionPaste }                            from "./userActions";
 	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
 	import { cloneObject }                                                  from "@/assets/js/lib/user/CloneObject";
 	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                                               from "@/assets/js/utils/setSafeHTML";
+	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
+	import { eventActionCopy, eventActionPaste }                            from "./userActions";
 
-	// Import Shared State Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
+	// Import Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";  // Shared State Object
+
+	// Import Types
+	import type { Config, Define, ExtensionMessage } from "@/assets/js/types/";
+	import type { Action, EventOnClickActionResult } from "./types";
+
+
 
 	onMount(() => {
 		console.info("INFO(popup): Popup component mounted");

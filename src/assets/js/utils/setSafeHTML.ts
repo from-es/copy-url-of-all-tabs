@@ -1,5 +1,10 @@
-import DOMPurify                          from "dompurify"; // Import NPM Package
-import { type Config as DOMPurifyConfig } from "dompurify"; // Import Types
+// Import NPM Package
+import DOMPurify from "dompurify";
+
+// Import Types
+import type { Config as DOMPurifyConfig } from "dompurify";
+
+
 
 /**
  * innerHTML の代わりに、サニタイズ処理と replaceChildren を使って安全にHTML文字列を要素にセットする
@@ -8,7 +13,7 @@ import { type Config as DOMPurifyConfig } from "dompurify"; // Import Types
  * @param {string | null | undefined} htmlString - 描画したいHTML文字列。null, undefined, 空文字の場合、要素内はクリアされる
  * @param {DOMPurifyConfig}           options    - DOMPurify の設定オプション
  */
-export function setSafeHTML(element: Element, htmlString: string | null | undefined, options?: DOMPurifyConfig): void {
+function setSafeHTML(element: Element, htmlString: string | null | undefined, options?: DOMPurifyConfig): void {
 	if (!element) {
 		throw new TypeError("Invalid: target element is not provided in setSafeHTML");
 	}
@@ -37,7 +42,7 @@ export function setSafeHTML(element: Element, htmlString: string | null | undefi
  * @param   {DOMPurifyConfig}           options    - DOMPurify の設定オプション
  * @returns {Document}                             - サニタイズされたドキュメントオブジェクト
  */
-export function createSafeDOM(htmlString: string | null | undefined, options?: DOMPurifyConfig): Document {
+function createSafeDOM(htmlString: string | null | undefined, options?: DOMPurifyConfig): Document {
 	const sanitizedHTML = createSafeHTML(htmlString, options);
 	const parser        = new DOMParser();
 	const doc           = parser.parseFromString(sanitizedHTML, "text/html");
@@ -52,7 +57,7 @@ export function createSafeDOM(htmlString: string | null | undefined, options?: D
  * @param   {DOMPurifyConfig}           options    - DOMPurify の設定オプション
  * @returns {string}                               - サニタイズされたHTML文字列
  */
-export function createSafeHTML(htmlString: string | null | undefined, options?: DOMPurifyConfig): string {
+function createSafeHTML(htmlString: string | null | undefined, options?: DOMPurifyConfig): string {
 	const isEmpty = isEmptyString(htmlString);
 
 	if (isEmpty) {
@@ -99,3 +104,11 @@ function validateArguments(htmlString: unknown, options: unknown): void {
 		throw new TypeError(`Invalid: argument "options" must be an object, but received ${options === null ? "null" : `type ${typeof options}`} in validateArguments`);
 	}
 }
+
+
+
+export {
+	setSafeHTML,
+	createSafeDOM,
+	createSafeHTML
+};

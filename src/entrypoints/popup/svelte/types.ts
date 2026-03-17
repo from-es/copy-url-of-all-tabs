@@ -12,8 +12,8 @@ type EventOnClickActionResult = ResultCore & {
   action: Action | null;
   status: string | boolean;
   clipboard: {
-    direction: string | null;
-    text: string | null;
+	 direction: string | null;
+	 text: string | null;
   };
 };
 
@@ -21,8 +21,8 @@ type EventOnClickActionResult = ResultCore & {
 type ConcreteResult = ResultCore & {
   action: Action;
   clipboard: {
-    direction: string;
-    text: string;
+	 direction: string;
+	 text: string;
   };
 };
 
@@ -38,4 +38,9 @@ type EventActionPasteResult = ConcreteResult & {
 
 
 
-export { Action, EventOnClickActionResult, EventActionCopyResult, EventActionPasteResult };
+export {
+	Action,
+	EventOnClickActionResult,
+	EventActionCopyResult,
+	EventActionPasteResult
+};

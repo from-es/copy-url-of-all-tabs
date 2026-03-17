@@ -1,18 +1,22 @@
-// WXT provided cross-browser compatible API and types.
+// WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
 // Import NPM Package
 import v8n from "v8n";
 
 // Import Module
-import { defaultConfig }           from "./config";
 import { ArrayOfObjectsValidator } from "@/assets/js/lib/user/ArrayOfObjectsValidator";
 import { ColorManager }            from "@/assets/js/lib/user/ColorManager";
-import { LOG_LEVELS }              from "@/assets/js/lib/user/ConsoleManager/types";
-import * as Constants              from "./constants";
+
+// Import Object
+import { LOG_LEVELS }    from "@/assets/js/lib/user/ConsoleManager/types";
+import { defaultConfig } from "./config";
+import * as Constants    from "./constants";
 
 // Import Types
 import type { VerificationRule } from "./types";
+
+
 
 // v8n Custom Rules
 declare module "v8n" {
@@ -31,7 +35,7 @@ v8n.extend({
 
 const manifest = browser.runtime.getManifest();
 
-export const VerificationRules: VerificationRule[] = [
+const VerificationRules: VerificationRule[] = [
 	// Information
 	{
 		property: "Information.name",
@@ -675,3 +679,7 @@ export const VerificationRules: VerificationRule[] = [
 		}
 	}
 ];
+
+
+
+export { VerificationRules };

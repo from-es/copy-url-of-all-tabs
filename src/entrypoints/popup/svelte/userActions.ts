@@ -1,14 +1,14 @@
-// WXT provided cross-browser compatible API and types.
+// WXT provided cross-browser compatible API and Types.
 import { browser, type Browser } from "wxt/browser";
-
-// Import Types
-import type { Config, Define }                                        from "@/assets/js/types/";
-import type { Action, EventActionCopyResult, EventActionPasteResult } from "./types";
 
 // Import Module
 import { ClipboardManager }                            from "@/assets/js/lib/user/ClipboardManager";
 import { FormatManager }                               from "../js/FormatManager";
 import { prepareForActionCopy, prepareForActionPaste } from "./filtering";
+
+// Import Types
+import type { Config, Define }                                        from "@/assets/js/types/";
+import type { Action, EventActionCopyResult, EventActionPasteResult } from "./types";
 
 
 
@@ -19,7 +19,7 @@ import { prepareForActionCopy, prepareForActionPaste } from "./filtering";
  * @param   {Define}                         define - 定義済み定数オブジェクト
  * @returns {Promise<EventActionCopyResult>}        - コピー結果とステータスを含むオブジェクト
  */
-export async function eventActionCopy(action: Action, config: Config, define: Define): Promise<EventActionCopyResult> {
+async function eventActionCopy(action: Action, config: Config, define: Define): Promise<EventActionCopyResult> {
 	const rawTabs  = await getAllTabs();
 	const tabs     = prepareForActionCopy(rawTabs, action, config, define);
 	const type     = config.Format.type;
@@ -54,7 +54,7 @@ export async function eventActionCopy(action: Action, config: Config, define: De
  * @param   {Define}                         define - 定義済み定数オブジェクト
  * @returns {Promise<EventActionPasteResult>}       - ペースト結果とステータスを含むオブジェクト
  */
-export async function eventActionPaste(action: Action, config: Config, define: Define): Promise<EventActionPasteResult> {
+async function eventActionPaste(action: Action, config: Config, define: Define): Promise<EventActionPasteResult> {
 	const regexSearch     = config.Search.regex;
 	const regexUrlPattern = define.Regex.url.RFC3986LooseWithAuth;
 
@@ -131,3 +131,10 @@ function getUrlList(text: string, regexSearch: boolean, regexUrlPattern: RegExp)
 
 	return result;
 }
+
+
+
+export {
+	eventActionCopy,
+	eventActionPaste
+};

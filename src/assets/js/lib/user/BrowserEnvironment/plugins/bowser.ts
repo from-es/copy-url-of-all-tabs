@@ -11,7 +11,7 @@
 import Bowser from "bowser";
 
 // Import Types
-import { type UserAgentParserPlugin, type UserAgentParserPluginParseData } from "../types";
+import type { UserAgentParserPlugin, UserAgentParserPluginParseData } from "../types";
 
 
 

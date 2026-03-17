@@ -1,8 +1,10 @@
+// Import Svelte
+import { writable, derived } from "svelte/store";
+
 // Import Types
 import type { Action, EventOnClickActionResult } from "./types";
 
-// Import Svelte
-import { writable, derived } from "svelte/store";
+
 
 // AppStateの型定義
 type AppState = {
@@ -11,6 +13,8 @@ type AppState = {
 	result       : EventOnClickActionResult | null;
 	message      : string | null;
 };
+
+
 
 // PopupMenu の状態管理用変数の初期化
 const appState = writable<AppState>(getDefaultValueOfAppState());
@@ -118,4 +122,9 @@ const shouldShowMessage = derived(
 
 
 
-export { appState, actionStore, isActionInProgress, shouldShowMessage };
+export {
+	appState,
+	actionStore,
+	isActionInProgress,
+	shouldShowMessage
+};

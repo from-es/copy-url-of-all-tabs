@@ -1,8 +1,8 @@
-// Import Types
-import { type Config, type Define } from "@/assets/js/types/";
-
 // Import NPM Package
 import { get as lodashGetValue, set as lodashSetValue, has as lodashHasValue } from "lodash-es";
+
+// Import Types
+import type { Config, Define } from "@/assets/js/types/";
 
 
 

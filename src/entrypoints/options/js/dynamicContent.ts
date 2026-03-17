@@ -1,8 +1,10 @@
-// WXT provided cross-browser compatible API and types
+// WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
 // Import Types
-import { type Config, type Define } from "@/assets/js/types/index";
+import type { Config, Define } from "@/assets/js/types/index";
+
+
 
 // statusの型をmain.svelteから受け取るため、必要な部分だけを定義
 // NOTE: main.svelte の `$props()` の型が変更された場合は、それに合わせた変更が必要
@@ -10,6 +12,8 @@ type Status = {
 	define: Define;
 	config: Config;
 };
+
+
 
 export class DynamicContent {
 	private status   : Status;
