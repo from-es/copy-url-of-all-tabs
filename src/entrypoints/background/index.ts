@@ -1,8 +1,15 @@
-// WXT provided cross-browser compatible API and types.
+/**
+ * Main entry point for the background script.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+// WXT provided cross-browser compatible API and Types.
 import { browser, type Browser } from "wxt/browser";
 
 // Import Module
-import { define }           from "@/assets/js/define";  // メッセージング経由で define を受け取る場合、構造化複製不可能な型が含まれていると送信エラーが発生する為、事前にインポートする
+import { define }           from "@/assets/js/define";  // Pre-import define to avoid messaging errors when it contains non-serializable types.
 import { logging }          from "@/assets/js/logging";
 import { initializeConfig } from "@/assets/js/initializeConfig";
 import { handleOpenURLs }   from "./js/openUrlsHandler";
@@ -13,6 +20,7 @@ import { badgeController }  from "./js/BadgeController";
 import type { Config }           from "@/assets/js/define";
 import type { ExtensionMessage } from "@/assets/js/types/";
 
+// eslint-disable-next-line import/exports-last
 export default defineBackground({
 	// Set manifest options
 	persistent: false,
@@ -23,10 +31,21 @@ export default defineBackground({
 });
 
 
+
+/**
+ * Main entry point for the background script.
+ */
 function main() {
 	initialize();
 }
 
+/**
+ * Initialize the background script.
+ *
+ * Registers message listeners and initializes storage and badge counters.
+ *
+ * @returns {Promise<void>} Promise that resolves when initialization is complete.
+ */
 async function initialize(): Promise<void> {
 	browser.runtime.onMessage.addListener(eventOnMessage);
 
@@ -36,8 +55,11 @@ async function initialize(): Promise<void> {
 }
 
 /**
- * 拡張機能起動時にローカルストレージを初期化する。
- * ストレージが空の場合、デフォルト設定が保存される。既に設定が保存されている場合は、何も行われない。
+ * Initialize local storage when the extension starts.
+ *
+ * If storage is empty, default settings are saved. If settings already exist, no action is taken.
+ *
+ * @returns {Promise<void>} Promise that resolves when the local storage has been initialized.
  */
 async function initializeLocalStorage(): Promise<void> {
 	try {
@@ -50,33 +72,35 @@ async function initializeLocalStorage(): Promise<void> {
 }
 
 /**
- * バッジカウンター機能間の連携設定
+ * Set up coordination between badge counter functions.
  */
 function initializeBadgeCounter() {
 	console.info("INFO(badge): initialize badge counter setting");
 
-	// カウント数の変更を監視し、バッジのテキストを更新
+	// Monitor changes in the count and update the badge text.
 	countManager.subscribe((newCount) => {
 		badgeController.updateText(String(newCount));
 	});
 
-	// ストレージの変更を監視し、バッジの色を更新
+	// Monitor changes in storage and update the badge color.
 	browser.storage.onChanged.addListener(handleStorageOnChanged);
 }
 
 /**
- * `browser.storage.onChanged` イベントのリスナーとして、ストレージの変更を処理。
- * 特に、`local` ストレージエリアの `config` オブジェクトの変更を監視し、
- * バッジの色を更新するために `badgeController.updateColor` を呼び出す。
- * @param   {object} changes  - 変更されたストレージアイテムのオブジェクト。`key` はストレージアイテムの名前、値は `StorageChange` オブジェクト
- * @param   {string} areaName - 変更が発生したストレージエリアの名前（例: "local", "sync"）
- * @returns {void}
+ * Handle storage changes as a listener for `browser.storage.onChanged`.
+ *
+ * Specifically monitors changes to the `config` object in the `local` storage area
+ * and calls `badgeController.updateColor` to update the badge color.
+ *
+ * @param   {object} changes  - The object containing the changed storage items.
+ * @param   {string} areaName - The name of the storage area where the change occurred (e.g., "local", "sync").
+ * @returns {Promise<void>}     Promise that resolves when the change has been handled.
  */
 async function handleStorageOnChanged(changes: { [key: string]: Browser.storage.StorageChange }, areaName: string): Promise<void> {
 	try {
 		if (areaName === "local" && changes.config) {
-			// initializeConfig を経由して最新の設定を取得。`initializeConfig` を用いて値の検証と移行処理を行う
-			// save: false を渡し、onChanged リスナー内で再度保存処理が走らないようにする
+			// Retrieve the latest configuration via initializeConfig, which handles validation and migration.
+			// Pass save: false to prevent redundant save operations within the onChanged listener.
 			const { config: updatedConfig } = await initializeConfig(changes.config.newValue as Config | null, false);
 
 			if (updatedConfig && updatedConfig.Badge) {
@@ -89,11 +113,13 @@ async function handleStorageOnChanged(changes: { [key: string]: Browser.storage.
 }
 
 /**
- * `browser.runtime.onMessage` に登録されたイベントハンドラ。
- * Promise を返すことで、非同期に応答を処理します。
- * @param   {object}                        message - ポップアップなどから受信したメッセージ
- * @param   {Browser.Runtime.MessageSender} sender  - メッセージの送信者情報
- * @returns {Promise<void | object>}                - 応答内容、または応答がないことを示す Promise
+ * Event handler for `browser.runtime.onMessage`.
+ *
+ * Handles asynchronous responses by returning a Promise.
+ *
+ * @param   {ExtensionMessage}              message - Message received from popups or other parts of the extension.
+ * @param   {Browser.Runtime.MessageSender} sender  - Information about the sender of the message.
+ * @returns {Promise<void | object>}                  The response content or a Promise indicating no response.
  */
 async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime.MessageSender): Promise<void | object> {
 	const { config } = message.status;
@@ -112,10 +138,12 @@ async function eventOnMessage(message: ExtensionMessage, sender: Browser.runtime
 }
 
 /**
- * @param   {ExtensionMessage}              message
- * @param   {Browser.Runtime.MessageSender} sender
- * @returns {Promise<object>}
-*/
+ * Handle cases where the received message action does not match any switch statement.
+ *
+ * @param   {ExtensionMessage}              message - The received message object.
+ * @param   {Browser.Runtime.MessageSender} sender  - Information about the sender of the message.
+ * @returns {Promise<object>}                         Promise that resolves to a warning response object.
+ */
 async function handleDoNotMatchAnySwitchStatement(message: ExtensionMessage, sender: Browser.runtime.MessageSender): Promise<object> {
 	const warningMessage = "Warning, Received a message with No Option";
 

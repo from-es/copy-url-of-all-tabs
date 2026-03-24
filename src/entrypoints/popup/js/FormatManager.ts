@@ -1,28 +1,44 @@
-// WXT provided cross-browser compatible Types
+/**
+ * Manages the formatting of tab data into various string formats.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+// WXT provided cross-browser compatible Types.
 import type { Browser } from "wxt/browser";
 
-// Import Script
+// Import Module
 import { escapeHTML } from "@/assets/js/utils/escapeHTML";
 
-// Types
+
+
+/**
+ * Represents the target format for tab data.
+ */
 type FormatType = "text" | "json" | "custom";
 
 
 
 /**
  * Manages the formatting of tab data into various string formats.
- * @dependency   escapeHTML
- * @lastModified 2026-02-27
+ *
+ * @lastModified 2026-03-24
+ *
+ * @dependency escapeHTML
  */
 export class FormatManager {
 	/**
 	 * Formats an array of tabs into a specified string format.
+	 *
+	 * @static
+	 *
 	 * @param   {Browser.tabs.Tab[]} tabs             - The array of tabs to format.
 	 * @param   {FormatType}         format           - The target format (e.g., "text", "json", "custom").
 	 * @param   {string | null}      [template=null]  - The template string for custom formatting.
 	 * @param   {boolean}            [sanitize=false] - Whether to HTML-escape content in custom formats.
-	 * @returns {string}                              - The formatted string.
-	 * @throws  {Error}                               - If an unknown format is specified.
+	 * @returns {string}                                The formatted string.
+	 * @throws  {Error}                                 If an unknown format is specified.
 	 */
 	static format(tabs: Browser.tabs.Tab[], format: FormatType, template: string | null = null, sanitize: boolean = false): string {
 		let result: string;
@@ -53,9 +69,11 @@ export class FormatManager {
 
 	/**
 	 * Formats tab URLs into a newline-separated string.
-	 * @private
+	 *
+	 * @static
+	 *
 	 * @param   {Browser.tabs.Tab[]} tabs - The array of tabs.
-	 * @returns {string}                  - A string of URLs.
+	 * @returns {string}                    A string of URLs.
 	 */
 	static #text(tabs: Browser.tabs.Tab[]): string {
 		const array  = tabs.map((tab) => tab.url);
@@ -66,9 +84,11 @@ export class FormatManager {
 
 	/**
 	 * Formats tab titles and URLs into a JSON string.
-	 * @private
+	 *
+	 * @static
+	 *
 	 * @param   {Browser.tabs.Tab[]} tabs - The array of tabs.
-	 * @returns {string}                  - A JSON string representing the tabs.
+	 * @returns {string}                    A JSON string representing the tabs.
 	 */
 	static #json(tabs: Browser.tabs.Tab[]): string {
 		const array  = tabs.map((tab) => ({ title: tab.title, url: tab.url }));
@@ -79,11 +99,13 @@ export class FormatManager {
 
 	/**
 	 * Formats tabs using a custom user-defined template.
-	 * @private
+	 *
+	 * @static
+	 *
 	 * @param   {Browser.tabs.Tab[]} tabs     - The array of tabs.
 	 * @param   {string | null}      template - The template string, using $title and $url placeholders.
 	 * @param   {boolean}            sanitize - Whether to HTML-escape the tab titles.
-	 * @returns {string}                      - The formatted string.
+	 * @returns {string}                        The formatted string.
 	 */
 	static #custom(tabs: Browser.tabs.Tab[], template: string | null, sanitize: boolean): string {
 		if ( !template ) {

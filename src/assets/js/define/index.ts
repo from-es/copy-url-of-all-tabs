@@ -7,6 +7,8 @@ import * as Constants        from "./constants";
 // Import Types
 import type { Define, Config } from "./types";
 
+
+
 const {
 	Environment,
 	Information,
@@ -20,7 +22,7 @@ const {
 	...restConstants
 } = Constants;
 
-export const define: Define = {
+const define: Define = {
 	Environment,
 	Information,
 	Storage,
@@ -34,4 +36,12 @@ export const define: Define = {
 	...restConstants,
 };
 
-export { Define, Config };
+
+
+export {
+	define
+};
+export type {
+	Define,
+	Config
+};

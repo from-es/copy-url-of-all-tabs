@@ -1,8 +1,16 @@
 /**
- * 文字列の表示幅を算出。半角文字を1、全角文字を2としてカウント、改行はカウントしない
+ * Calculates the display width of a string. Counts half-width characters as 1 and full-width characters as 2. Line breaks are not counted.
  *
- * @param   {string} str - 幅を計算する文字列。
- * @returns {number}     - 計算された文字列の表示幅。
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+/**
+ * Calculates the display width of a string. Counts half-width characters as 1 and full-width characters as 2. Line breaks are not counted.
+ *
+ * @param   {string} str - The string whose width is to be calculated
+ * @returns {number}       The calculated display width of the string
+ *
  * @see https://zenn.dev/koojy/articles/javascript-2byte-length
  */
 export function getWidthOfStringLength(str: string): number {
@@ -12,11 +20,11 @@ export function getWidthOfStringLength(str: string): number {
 	for (let i = 0; i < loop; i++) {
 		const char = str.charCodeAt(i);
 
-		if (!str[i].match(/\r?\n/g)) { // 改行コード判定
-			if (char >= 0x0 && char <= 0x7f) { // 全角半角判定
-				count += 1; // 半角 = 1 >> 表示幅換算
+		if (!str[i].match(/\r?\n/g)) {  // Skip line break characters
+			if (char >= 0x0 && char <= 0x7f) {  // Distinguish between half-width and full-width
+				count += 1;  // Half-width = 1 (display width)
 			} else {
-				count += 2; // 全角 = 2 >> 表示幅換算
+				count += 2;  // Full-width = 2 (display width)
 			}
 		}
 	}

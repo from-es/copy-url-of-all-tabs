@@ -1,3 +1,10 @@
+/**
+ * Generates a cryptographically secure random ID based on the specified number of digits and character types.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 interface CharacterOptions {
 	number?: boolean;
 	alphabet?: {
@@ -7,13 +14,15 @@ interface CharacterOptions {
 	symbol?: boolean;
 }
 
+
+
 /**
- * 指定された桁数と文字タイプに基づき、暗号学的に安全なランダムIDを生成
+ * Generates a cryptographically secure random ID based on the specified number of digits and character types.
  *
- * @param   {number} [digit=8]                                                                                             - 生成するIDの桁数。デフォルトは8
- * @param   {CharacterOptions} [character={ number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }] - 使用する文字の種類を指定するオプション
- * @returns {string}                                                                                                       - 生成されたランダムなID文字列
- * @throws {TypeError} - digitまたはcharacter引数が無効な場合にスローする
+ * @param   {number}           [digit=8]                                                                                   - The number of digits for the generated ID. Defaults to 8
+ * @param   {CharacterOptions} [character={ number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }] - Options specifying the types of characters to use
+ * @returns {string}                                                                                                         The generated random ID string
+ * @throws  {TypeError}                                                                                                      Thrown if the digit or character arguments are invalid
  */
 export function generateID(digit: number = 8, character: CharacterOptions = { number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }): string {
 	const validate = (digit && typeof digit === "number" && Number.isInteger(digit));

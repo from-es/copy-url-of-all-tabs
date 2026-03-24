@@ -1,23 +1,39 @@
 <script lang="ts">
-	// WXT provided cross-browser compatible API and types.
+	/**
+	 * Main Svelte component for the options page.
+	 *
+	 * @file
+	 * @lastModified 2026-03-24
+	 */
+
+	// WXT provided cross-browser compatible API.
 	import { browser } from "wxt/browser";
 
-	// Import from Svelte
+	// Import Svelte
 	import { onMount } from "svelte";
 
-	// Import from Svelte(Component)
+	// Import Svelte Component
 	import Header from "./header.svelte";
 	import Main   from "./main.svelte";
 	import Footer from "./footer.svelte";
 
-	// Import Shared State Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
+	// Import Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";  // Shared State Object
+
+
 
 	onMount(() => {
 		setUILanguage();
 	});
 
-	function setUILanguage() {
+	/**
+	 * Set the language attribute of the HTML element based on the browser's UI language.
+	 *
+	 * Supports "ja" and defaults to "en".
+	 *
+	 * @returns {void}
+	 */
+	function setUILanguage(): void {
 		const lang = browser.i18n.getUILanguage();
 		const elm  = document.querySelector("html");
 

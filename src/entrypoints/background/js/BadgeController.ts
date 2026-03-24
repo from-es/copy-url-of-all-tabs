@@ -1,14 +1,21 @@
-// WXT provided cross-browser compatible API
+/**
+ * Controller class for managing the extension's badge display.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+// WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
 // Import NPM Package
 import PQueue from "p-queue";
 
-// Import Types
-import type { Config } from "@/assets/js/types";
-
 // Import Module
 import { sleep } from "@/assets/js/utils/sleep";
+
+// Import Types
+import type { Config } from "@/assets/js/types";
 
 
 
@@ -25,18 +32,19 @@ type BadgeThemeTemplate = {
 
 
 /**
- * 拡張機能のバッジ表示を制御するクラス。
- * バッジのテキストと色の更新を管理し、非同期操作の競合を回避するためにキューを使用。
+ * Class that controls the badge display of the extension.
+ *
+ * Manages updates to badge text and colors, using a queue to avoid conflicts between asynchronous operations.
  */
 class BadgeController {
-	#isEnabled: boolean = false; // enable状態を保持
+	#isEnabled: boolean = false;  // Keeps track of whether the badge is enabled.
 	#color: BadgeColor = {
 		text      : "",
 		background: ""
 	};
 	/**
-	 * 定義済みのバッジテーマ（色設定）を保持するテンプレート。
-	 * light, dark, default の各テーマの色情報を含む。
+	 * Template for predefined badge themes (color settings).
+	 * Includes color information for light, dark, and default themes.
 	 */
 	#template: BadgeThemeTemplate = {
 		default: {
@@ -53,39 +61,41 @@ class BadgeController {
 		}
 	};
 	/**
-	 * カウントが 0 になった際にバッジをクリアするまでの待機時間（ミリ秒）。
+	 * Waiting time (in milliseconds) before clearing the badge when the count becomes 0.
 	 */
-	#waitingTime: number = 3000; // millisecond
+	#waitingTime: number = 3000;  // millisecond
 	/**
-	 * バッジのUI操作（テキスト、色更新）を直列化するためのキュー。
-	 * 非同期API呼び出しの競合状態を回避。
+	 * Queue for serializing badge UI operations (text, color updates).
+	 * Avoids race conditions between asynchronous API calls.
 	 */
 	readonly #queue: PQueue;
 
 	/**
-	 * BadgeController のコンストラクタ。
-	 * デフォルトのバッジ色を設定し、UI操作キューを初期化。
-	 * 初期化処理はキュー経由で実行。
+	 * Constructor for BadgeController.
+	 *
+	 * Sets default badge colors and initializes the UI operation queue.
+	 * Initialization is performed via the queue.
 	 */
 	constructor() {
-		// バッジテーマの初期化
+		// Initialize the badge theme.
 		this.#color = structuredClone(this.#template.default);
 
-		// UI操作を直列化するためのキュー
+		// Queue for serializing UI operations.
 		this.#queue = new PQueue({ concurrency: 1 });
 
-		// PQueue のエラーハンドリング
+		// PQueue error handling.
 		this.#queue.on("error", (error) => {
 			console.error("ERROR(badge): pqueue error in BadgeController", error);
 		});
 
-		// 初期化もキュー経由で行う
+		// Perform initialization via the queue.
 		this.#queue.add(() => this.initializeColor());
 	}
 
 	/**
-	 * ストレージから設定を読み込み、バッジの色を初期化。
-	 * @returns {Promise<void>}
+	 * Load settings from storage and initialize badge colors.
+	 *
+	 * @returns {Promise<void>} Promise that resolves when the color has been initialized.
 	 */
 	private async initializeColor(): Promise<void> {
 		try {
@@ -97,15 +107,15 @@ class BadgeController {
 		} catch (error) {
 			console.error("ERROR(badge): Exception: failed to initialize badge color from storage", { error });
 
-			// ストレージから取得できなくても、デフォルト色で続行
+			// Continue with the default color even if retrieval from storage fails.
 			await this.applyColor(this.#color);
 		}
 	}
 
 	/**
-	 * バッジの色を更新。
-	 * @param {Config["Badge"]} badgeConfig - Badge設定オブジェクト
-	 * @returns {void}
+	 * Update badge colors.
+	 *
+	 * @param {Config["Badge"]} badgeConfig - Badge configuration object.
 	 */
 	public updateColor(badgeConfig: Config["Badge"]): void {
 		this.#queue.add(async () => {
@@ -114,10 +124,10 @@ class BadgeController {
 				return;
 			}
 
-			this.#isEnabled = badgeConfig.enable; // バッジカウンター表示の「有効/無効」状態を更新
+			this.#isEnabled = badgeConfig.enable;  // Update the "enabled/disabled" state of the badge counter display.
 
 			if (!this.#isEnabled) {
-				// 無効ならバッジをクリアして終了
+				// If disabled, clear the badge and exit.
 				await browser.action.setBadgeText({ text: "" });
 				return;
 			}
@@ -139,7 +149,7 @@ class BadgeController {
 					return;
 			}
 
-			// 色設定が不正な場合は何もしない
+			// Do nothing if the color settings are invalid.
 			if (!newColor || typeof newColor.text !== "string" || typeof newColor.background !== "string") {
 				console.error("ERROR(badge): Invalid: invalid color object derived from config", newColor);
 				return;
@@ -151,9 +161,10 @@ class BadgeController {
 	}
 
 	/**
-	 * 実際にブラウザAPIを呼び出して色を適用。
-	 * @param {BadgeColor} color - 適用する色
-	 * @returns {Promise<void>}
+	 * Apply colors by calling the browser API.
+	 *
+	 * @param   {BadgeColor}    color - The color settings to apply.
+	 * @returns {Promise<void>}         Promise that resolves when the color has been applied.
 	 */
 	private async applyColor(color: BadgeColor): Promise<void> {
 		try {
@@ -165,26 +176,27 @@ class BadgeController {
 	}
 
 	/**
-	 * バッジのテキストを更新。
-	 * カウントが 0 の場合、'0' を一時的に表示した後、バッジをクリア。
-	 * @param {string} text - 表示テキスト（数値の文字列）
-	 * @returns {void}
+	 * Update badge text.
+	 *
+	 * If the count is 0, "0" is displayed temporarily before the badge is cleared.
+	 *
+	 * @param {string} text - The display text (numeric string).
 	 */
 	public updateText(text: string): void {
 		if (!this.#isEnabled) {
-			// そもそも無効なら何もしない
+			// Do nothing if it's already disabled.
 			return;
 		}
 
 		const count = parseInt(text, 10);
 
-		// 不正な値の場合はバッジをクリア
+		// Clear the badge if the value is invalid.
 		if (typeof count !== "number" || isNaN(count) || count < 0) {
 			this.#queue.add(() => browser.action.setBadgeText({ text: "" }));
 			return;
 		}
 
-		// カウントが 0 より大きい場合は数値を表示
+		// If the count is greater than 0, display the number.
 		if (count > 0) {
 			this.#queue.add(async () => {
 				try {
@@ -196,7 +208,7 @@ class BadgeController {
 			return;
 		}
 
-		// カウントが 0 の場合は '0' を指定時間(#waitingTime)表示後、クリア
+		// If the count is 0, display "0" for a specified time (#waitingTime) and then clear it.
 		this.#queue.add(async () => {
 			try {
 				await browser.action.setBadgeText({ text: "0" });
@@ -211,4 +223,5 @@ class BadgeController {
 
 
 
+// Export as a singleton instance.
 export const badgeController = new BadgeController();

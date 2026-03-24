@@ -1,3 +1,10 @@
+/**
+ * Determines whether the specified HTML element has a parent node and returns information about the parent node.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 interface ParentNodeInfo {
   elm : ParentNode | null;
   hasP: boolean;
@@ -6,11 +13,13 @@ interface ParentNodeInfo {
   href: string | undefined;
 }
 
+
+
 /**
- * 指定されたHTML要素の親ノードが存在するかどうかを判定し、親ノードに関する情報を返します。
+ * Determines whether the specified HTML element has a parent node and returns information about the parent node.
  *
- * @param   {HTMLElement}    elm - 親ノードを調査する対象のHTML要素。
- * @returns {ParentNodeInfo}     - 親ノードの要素、存在有無、ノード名、Aタグかどうかの真偽値、およびhref属性を含むオブジェクト。
+ * @param   {HTMLElement}    elm - The HTML element whose parent node is to be investigated
+ * @returns {ParentNodeInfo}       An object containing the parent node element, existence flag, node name, boolean whether it's an A tag, and its href attribute
  */
 export function hasParentNode(elm: HTMLElement): ParentNodeInfo {
 	const parent              = elm.parentNode;

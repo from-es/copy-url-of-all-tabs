@@ -1,3 +1,11 @@
+/**
+ * Utility to add sort functionality to DOM elements using SortableJS.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 // Import NPM Package
 import Sortable     from "sortablejs";
 import { debounce } from "lodash-es";
@@ -6,23 +14,41 @@ import { debounce } from "lodash-es";
 import type { Options }    from "sortablejs";
 import type { Attachment } from "svelte/attachments";
 
+
+
+/**
+ * Options for the sortable action.
+ */
 type SortableOptions = Options & {
-	list         : object[],
+	/**
+	 * The list of objects to sort.
+	 */
+	list: object[],
+	/**
+	 * Callback function called after a sort operation.
+	 *
+	 * @param {object[]} list - The sorted list.
+	 */
 	// eslint-disable-next-line no-unused-vars
-	onSort       : (list: object[]) => void,
+	onSort: (list: object[]) => void,
+	/**
+	 * The debounce time (in milliseconds) for the sort operation.
+	 */
 	debounceTime?: number
 };
 
+
+
 /**
- * SortableJS ライブラリを使用して、指定されたDOM要素にソート機能を追加
- * ソート操作後、指定されたコールバックをデバウンスして実行し、リストの更新を通知する。
+ * Adds sort functionality to the specified DOM element using the SortableJS library.
+ * After a sort operation, it executes the specified callback with a debounce to notify of the list update.
  *
- * @param   {SortableOptions} options - ソート機能の設定オプション
- * @returns {Attachment}              - Svelte の Action インターフェースに準拠オブジェクト。DOM要素が破棄される際に SortableJS インスタンスをクリーンアップする destroy 関数を返す
+ * @param   {SortableOptions} options - Configuration options for the sort functionality.
+ * @returns {Attachment}                Object conforming to the Svelte Action interface. Returns a destroy function to clean up the SortableJS instance when the DOM element is destroyed.
  */
 export function sortable(options: SortableOptions): Attachment {
 	return (node: Element) => {
-		// SortableJS は HTMLElement を要求するため、型ガードで検証
+		// SortableJS requires an HTMLElement, so verify it using a type guard.
 		if (!(node instanceof HTMLElement)) {
 			return;
 		}
@@ -33,7 +59,8 @@ export function sortable(options: SortableOptions): Attachment {
 		};
 		const debouncedOnSort = debounce(
 			() => {
-				// デバウンス中にリストが変更されても、実行時の最新リストを参照することで「データ先祖返り」の問題を回避
+				// Referencing the latest list at the time of execution avoids "stale data" issues,
+				// even if the list changes during the debounce period.
 				options.onSort(options.list);
 			},
 			options.debounceTime ?? 150
@@ -42,11 +69,11 @@ export function sortable(options: SortableOptions): Attachment {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 		const { list, onSort, debounceTime, ...restOptions } = options;
 		const sortableInstance = new Sortable(node, {
-			// Sortable オプションデフォルト値
+			// Default Sortable options
 			animation: 150,
 			handle   : ".sortable",
 
-			// 外部からのオプションで上書き
+			// Override with external options
 			...restOptions,
 
 			onEnd: (event) => {

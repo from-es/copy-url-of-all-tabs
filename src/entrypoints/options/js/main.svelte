@@ -1,18 +1,13 @@
 <script lang="ts">
-	// WXT provided cross-browser compatible API and types.
+	/**
+	 * Main Svelte component for the options page content.
+	 *
+	 * @file
+	 * @lastModified 2026-03-24
+	 */
+
+	// WXT provided cross-browser compatible API.
 	import { browser } from "wxt/browser";
-
-	// Import NPM Package
-	import dayjs from "dayjs";
-
-	// Import Types
-	import type { Config, Define, Status } from "@/assets/js/types/";
-	import type { CustomDelayInfo }        from "@/assets/js/define/types";
-	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
-	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
-
-	// Import Module
-	import { LOG_LEVELS } from "@/assets/js/lib/user/ConsoleManager/types";
 
 	// Import Svelte
 	import { onMount } from "svelte";
@@ -20,37 +15,53 @@
 	// Import Svelte Module
 	import DebouncedNumericInput from "./DebouncedNumericInput.svelte";
 
+	// Import NPM Package
+	import dayjs from "dayjs";
+
 	// Import Module
-	import { initializeConfig }                              from "@/assets/js/initializeConfig";
-	import { logging }                                       from "@/assets/js/logging";
-	import { selectTab }                                     from "@/assets/js/select-tab";
 	import { cloneObject }                                   from "@/assets/js/lib/user/CloneObject";
 	import { StorageManager }                                from "@/assets/js/lib/user/StorageManager";
 	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 	import { sortable }                                      from "@/assets/js/lib/user/sortable";
-	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
 	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/user/ConfigManager";
 	import { MigrationManager }                              from "@/assets/js/lib/user/MigrationManager";
 	import { rules as PreSaveCorrections }                   from "@/assets/js/lib/user/MigrationManager/rules/patch/preSaveCorrections";
+	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
+	import { initializeConfig }                              from "@/assets/js/initializeConfig";
+	import { logging }                                       from "@/assets/js/logging";
+	import { selectTab }                                     from "@/assets/js/select-tab";
+	import { compareConfig }                                 from "./utils/configComparer";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
-	import { compareConfig }                                 from "./utils/configComparer";
 
-	// Import Shared State Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";
+	// Import Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";    // Shared State Object
+	import { LOG_LEVELS }            from "@/assets/js/lib/user/ConsoleManager/types";
+
+	// Import Types
+	import type { Config, Define, Status } from "@/assets/js/types/";
+	import type { CustomDelayInfo }        from "@/assets/js/define/types";
+	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
+	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
+
+
 
 	const dynamicContent = new DynamicContent(status);
 
 	onMount(() => {
 		console.info("INFO(options): Options page component mounted");
-		console.debug("DEBUG(options): initial status object", { status: cloneObject(status) }); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
+		console.debug("DEBUG(options): initial status object", { status: cloneObject(status) }); // Deep copy the status object to avoid Svelte errors caused by non-cloneable types (functions) within the status structure
 
 		initialize();
 	});
 
-
 	// ---------------------------------------------------------------------------------------------
-	async function initialize() {
+	/**
+	 * Initializes the options page component.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async function initialize(): Promise<void> {
 		document.title = `Options - ${status.define.Information.name}`;
 
 		setFontSizeForOptionsPage();
@@ -60,7 +71,12 @@
 		console.info("INFO(options): Options page component initialized");
 	}
 
-	async function reInitialize() {
+	/**
+	 * Re-initializes the component. Re-applies logging settings and font size.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async function reInitialize(): Promise<void> {
 		const { config, define } = status;
 
 		logging(config, define);
@@ -68,14 +84,24 @@
 		setFontSizeForOptionsPage();
 	}
 
-	function setFontSizeForOptionsPage() {
-		// スタイル(options.css >> :root要素)の動的書き換え
+	/**
+	 * Dynamically applies the base font size of the options page based on settings.
+	 *
+	 * @returns {void}
+	 */
+	function setFontSizeForOptionsPage(): void {
+		// Dynamic update of styles (options.css >> :root element)
 		const fontSize = status.config.OptionsPage.fontsize;
 
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 	}
 
-	function getInformationOfConfig() {
+	/**
+	 * Generates meta-information (name, version, timestamp) about the current configuration.
+	 *
+	 * @returns {{ name: string | null; version: string | null; date: { timestamp: number | null; iso8601: string | null; } }} Meta-information object.
+	 */
+	function getInformationOfConfig(): { name: string | null; version: string | null; date: { timestamp: number | null; iso8601: string | null; } } {
 		const manifest = browser.runtime.getManifest();
 		const now      = Date.now();
 
@@ -91,7 +117,12 @@
 		return result;
 	}
 
-	function getChromiumBasedBrowserList() {
+	/**
+	 * Gets a comma-separated list of supported Chromium-based browser names.
+	 *
+	 * @returns {string} String containing the list of browser names.
+	 */
+	function getChromiumBasedBrowserList(): string {
 		const list = status.define.ChromiumBasedBrowser;
 		const text = (list).join(", ");
 
@@ -99,12 +130,14 @@
 	}
 
 	/**
-	 * 渡されたHTML要素を一定時間無効化、主に連打防止対策用として使用
-	 * @param {HTMLElement} element  - 無効化するHTML要素
-	 * @param {number}      duration - 無効化する時間 (milliseconds)
+	 * Temporarily disables the specified HTML element, primarily used for anti-spam (preventing repeated clicks).
+	 *
+	 * @param   {HTMLElement} element  - The HTML element to disable.
+	 * @param   {number}      duration - Duration of disablement in milliseconds.
+	 * @returns {void}
 	 */
 	function disableElementTemporarily(element: HTMLElement, duration: number): void {
-		const hasDisabledProperty = (element instanceof HTMLElement && "disabled" in element); // "disabled" プロパティがあるHTML要素のみ無効化 >> (HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement)
+		const hasDisabledProperty = (element instanceof HTMLElement && "disabled" in element); // Only disable HTML elements that have a "disabled" property >> (HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement)
 		const isValidNumber       = (typeof duration === "number" && duration > 0);
 
 		if ( !(hasDisabledProperty && isValidNumber) ) {
@@ -119,21 +152,26 @@
 	// ---------------------------------------------------------------------------------------------
 	// Save & Reset
 
-	async function eventSettingSave() {
+	/**
+	 * Click event for the Save Settings button. Validates input values and saves to storage if no issues are found.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async function eventSettingSave(): Promise<void> {
 		try {
 			const currentStatus = cloneObject(status);
-			const currentConfig = await applyPreSaveCorrections(currentStatus.config, currentStatus.define, PreSaveCorrections); // 設定保存の前処理として軽微な修正を行う
-			const { config: validatedConfig } = await initializeConfig(currentConfig, false);  // 検証・正規化された設定を取得（検証目的の為、ストレージへの保存はしない）
-			const { isEqual, diffKeys }       = compareConfig(currentConfig, validatedConfig); // 検証前後で差分があるかを確認（差分発生で、不正な入力が有ったとみなす）
+			const currentConfig = await applyPreSaveCorrections(currentStatus.config, currentStatus.define, PreSaveCorrections); // Apply minor corrections as pre-processing before saving settings
+			const { config: validatedConfig } = await initializeConfig(currentConfig, false);  // Gets validated and normalized settings (for validation purposes, does not save to storage)
+			const { isEqual, diffKeys }       = compareConfig(currentConfig, validatedConfig); // Checks for differences before and after validation (differences indicate invalid input)
 
 			/*
-				差分が無い場合:
-					`config.Information` を更新後、設定を保存する
-				差分が有る場合:
-					`差分発生 → 不正な入力があった` と判断し、差分が発生した設定項目をユーザーに通知する。設定の保存は行わない
+				If no differences:
+					Update `config.Information` and save settings
+				If differences:
+					Determine that invalid input occurred, and notify the user of the affected settings. Do not save settings.
 			*/
 			if (isEqual) {
-				// Update, Information Of Config
+				// Update Information of Config
 				currentConfig.Information = getInformationOfConfig();
 
 				// Save to Local Storage
@@ -141,13 +179,13 @@
 				const item    = { [keyname]: currentConfig };
 				StorageManager.save(item);
 
-				// 設定保存時のみ UI を再初期化
+				// Re-initialize UI only upon successful save
 				await reInitialize();
 
 				PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
 				console.info("INFO(storage): Success: save configuration", { config: currentConfig });
 			} else {
-				// 差分が発生したオブジェクトのキーを表示名に変換
+				// Convert object keys with differences to display names
 				const displayNames = diffKeys.map(key => {
 					const displayNameMap = status.define.ConfigPropertyDisplayNames as Record<string, string | undefined>;
 					return displayNameMap[String(key)] ?? String(key);
@@ -156,7 +194,7 @@
 				const message = cloneObject(status.define.Message.Setting_AutoCorrect);
 				message.message.push(displayNames);
 
-				// ユーザーに差分が発生した設定項目を通知
+				// Notify user of the settings where differences occurred
 				PopoverMessage.create(message);
 				console.warn("WARN(config): save cancelled, invalid values auto-corrected", { correctedKeys: diffKeys });
 			}
@@ -167,14 +205,20 @@
 				message.message.push(error.message);
 			}
 
-			// エラーメッセージを追加
+			// Add error message
 			PopoverMessage.create(message);
 			console.error("ERROR(storage): Exception: unexpected error during save process", { error });
 		}
 	}
 
-	async function eventSettingReset(event: MouseEvent) {
-		// ボタンの連打防止対策
+	/**
+	 * Click event for the Reset Settings button. Resets all settings to their initial values.
+	 *
+	 * @param   {MouseEvent}    event - Click event object.
+	 * @returns {Promise<void>}
+	 */
+	async function eventSettingReset(event: MouseEvent): Promise<void> {
+		// Measure to prevent repeated button clicks
 		const element = event.currentTarget as HTMLElement;
 		disableElementTemporarily(element, status.define.DisabledTimeoutValue);
 
@@ -183,22 +227,23 @@
 		// Update config.Information with current values to prevent validation warnings on save.
 		status.config.Information = getInformationOfConfig();
 
-		// Reinitialize, List of User Script
+		// Re-initialize, List of User Script
 		await reInitialize();
 
-		// Show, Message
+		// Show UI message
 		PopoverMessage.create(status.define.Message.Setting_OnClick_ResetButton);
 
 		console.info("INFO(config): Success: reset configuration", { config: status.config });
 	}
 
 	/**
-	 * 設定保存前にコンフィグに修正を適用する。
-	 * この関数は、設定が保存される前にデータの整合性と完全性を確保するために、一連の移行ルールを適用します。
-	 * @param   {Config}                  config - 修正対象の現在の設定オブジェクト
-	 * @param   {Define}                  define - デフォルト設定値を含む定義オブジェクト
-	 * @param   {MigrationRule<Config>[]} rule   - 適用する移行ルールの配列
-	 * @returns {Promise<Config>}                - 修正された設定オブジェクトで解決される Promise
+	 * Applies corrections to the config before saving.
+	 * This function applies a series of migration rules to ensure data integrity and completeness before settings are saved.
+	 *
+	 * @param   {Config}                  config - Current configuration object to be corrected.
+	 * @param   {Define}                  define - Definition object containing default settings.
+	 * @param   {MigrationRule<Config>[]} rule   - Array of migration rules to apply.
+	 * @returns {Promise<Config>}                  A Promise that resolves to the corrected configuration object.
 	 */
 	async function applyPreSaveCorrections(config: Config, define: Define, rule: MigrationRule<Config>[]): Promise<Config> {
 		const date             = cloneObject(config);
@@ -217,7 +262,12 @@
 	// ---------------------------------------------------------------------------------------------
 	// Filtering
 
-	function showNoticeMessageForPaste() {
+	/**
+	 * Gets the notification message (HTML) regarding filtering restrictions during paste.
+	 *
+	 * @returns {string} HTML string of the notification message.
+	 */
+	function showNoticeMessageForPaste(): string {
 		const message = `<p class="notice-paste"><span class="notice-highlight">Notice</span>: If <b>Search URL of the text in the clipboard</b> option is enabled, filtering is only valid for "http & https" items.</p>`;
 
 		return message;
@@ -225,20 +275,32 @@
 	// ---------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------------------------------------------------
-	async function eventImportConfig() {
+	/**
+	 * Click event for the Import Settings button. Reads settings from a JSON file.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async function eventImportConfig(): Promise<void> {
 		await importConfig(status, "application/json");
 	}
 
-	async function eventExportConfig() {
+	/**
+	 * Click event for the Export Settings button. Exports current settings to a JSON file.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async function eventExportConfig(): Promise<void> {
 		await exportConfig(status, "application/json", "YYYY-MM-DD_HH-mm-ss");
 	}
 
 	/**
 	 * Imports a configuration file, updates the application's state, and displays a status message.
-	 * @param {Status} currentStatus - The current status object of the application, containing config and define.
-	 * @param {string} mimetype      - The expected MIME type of the file to import.
+	 *
+	 * @param   {Status} currentStatus - The current status object of the application, containing config and define.
+	 * @param   {string} mimetype      - The expected MIME type of the file to import.
+	 * @returns {Promise<void>}
 	 */
-	async function importConfig(currentStatus: Status, mimetype: MimeType) {
+	async function importConfig(currentStatus: Status, mimetype: MimeType): Promise<void> {
 		const result = await ConfigManager.importFile(mimetype);
 		let   message;
 
@@ -301,109 +363,115 @@
 
 		PopoverMessage.create(message);
 	}
+
+	/**
+	 * Exports the current application config to a JSON file and initiates a download.
+	 * This function now explicitly loads saved config from storage and will fail if it
+	 * cannot be retrieved, preventing the accidental export of unsaved UI config.
+	 *
+	 * @param   {Status}        currentStatus - The current status object of the application, containing config and define.
+	 * @param   {string}        mimetype      - The MIME type for the exported file.
+	 * @param   {string}        timeFormat    - The `dayjs` format string to use for the timestamp in the filename.
+	 * @returns {Promise<void>}
+	 */
+	async function exportConfig(currentStatus: Status, mimetype: MimeType, timeFormat: string): Promise<void> {
+		const define = currentStatus.define;
+
 		/**
-		 * Exports the current application config to a JSON file and initiates a download.
-		 * This function now explicitly loads saved config from storage and will fail if it
-		 * cannot be retrieved, preventing the accidental export of unsaved UI config.
-		 * @param {Status} currentStatus - The current status object of the application, containing config and define.
-		 * @param {string} mimetype      - The MIME type for the exported file.
-		 * @param {string} timeFormat    - The `dayjs` format string to use for the timestamp in the filename.
+		 * Loads config from storage. Throws an error if config does not exist.
+		 *
+		 * @returns {Promise<Config>} The loaded config object.
+		 * @throws  {Error}           If loading fails or config is not found.
 		 */
-		async function exportConfig(currentStatus: Status, mimetype: MimeType, timeFormat: string) {
-			const define = currentStatus.define;
+		const getSetting = async (): Promise<Config> => {
+			const keyname = define.Storage.keyname;
+			const data    = await StorageManager.load<{ [key: string]: Config }>(keyname);
 
-			/**
-			 * Loads config from storage. Throws an error if config does not exist.
-			 * @returns {Promise<Config>} - The loaded config object.
-			 * @throws {Error}            - If loading fails or config is not found.
-			 */
-			const getSetting = async (): Promise<Config> => {
-				const keyname = define.Storage.keyname;
-				const data    = await StorageManager.load<{ [key: string]: Config }>(keyname);
-
-				// StorageManager.load returns null on I/O errors
-				if (data === null) {
-					// The details of the error have already been logged to the console by StorageManager.load
-					throw new Error("Failure: an error occurred while loading config from storage in exportConfig.getSetting");
-				}
-
-				const setting = data?.[keyname];
-
-				// Config not found in storage
-				if (!setting) {
-					console.warn("WARN(storage): Failure: load configuration from storage for export");
-
-					throw new Error("Failure: could not find saved config in exportConfig.getSetting");
-				}
-
-				// Successfully retrieved
-				return setting;
-			};
-
-			/**
-			 * Generates a filename for the export.
-			 * @returns {string} - The generated filename.
-			 */
-			const getFileName = (): string => {
-				const getFilenameExtension = (): string => {
-					const extensions     = MIME_TO_EXT_MAP[mimetype];
-					const firstCandidate = extensions?.[0];
-					const extension      = firstCandidate ?? "txt";
-					const result         = extension.replace(/^\./, "");
-
-					if (!firstCandidate) {
-						console.warn("WARN(config): export configuration: no extension found for mimetype, defaulting to txt", { mimetype, availableMimeTypes: MIME_TO_EXT_MAP });
-					}
-
-					return result;
-				};
-
-				const appName    = define.Information.name.replace(/\s/g, "-");
-				const appVersion = define.Information.version;
-				const datestr    = dayjs().format(timeFormat);
-
-				return `${appName}_v${appVersion}_${datestr}.${getFilenameExtension()}`;
-			};
-
-			/**
-			 * Aggregates the series of processes from data acquisition to export execution.
-			 * @returns {Promise<ExportResult>}
-			 */
-			const performExport = async (): Promise<ExportResult> => {
-				const setting  = await getSetting();
-				const filename = getFileName();
-				const content  = JSON.stringify(setting, null, "\t");
-
-				return ConfigManager.exportFile(content, filename, mimetype);
-
-			};
-
-			let message;
-
-			try {
-				// Execute data processing.
-				const result = await performExport();
-
-				// Prepare UI message based on the result.
-				const template = result.success ? define.Message.Setting_ExportConfig_Success : define.Message.Setting_ExportConfig_Error;
-				message = cloneObject(template);
-
-				if (!result.success) {
-					message.message.push(result.message);
-				}
-			} catch (error) {
-				// Prepare UI message for errors.
-				const err      = error as Error;
-				const template = define.Message.Setting_ExportConfig_Error;
-
-				message = cloneObject(template);
-				message.message.push(`Failed to export configuration: ${err.message}`);
-
-				console.error("ERROR(config): Failure: configuration export failed", { error: err });
+			// StorageManager.load returns null on I/O errors
+			if (data === null) {
+				// The details of the error have already been logged to the console by StorageManager.load
+				throw new Error("Failure: an error occurred while loading config from storage in exportConfig.getSetting");
 			}
 
-			PopoverMessage.create(message);
+			const setting = data?.[keyname];
+
+			// Config not found in storage
+			if (!setting) {
+				console.warn("WARN(storage): Failure: load configuration from storage for export");
+
+				throw new Error("Failure: could not find saved config in exportConfig.getSetting");
+			}
+
+			// Successfully retrieved
+			return setting;
+		};
+
+		/**
+		 * Generates a filename for the export.
+		 *
+		 * @returns {string} The generated filename.
+		 */
+		const getFileName = (): string => {
+			const getFilenameExtension = (): string => {
+				const extensions     = MIME_TO_EXT_MAP[mimetype];
+				const firstCandidate = extensions?.[0];
+				const extension      = firstCandidate ?? "txt";
+				const result         = extension.replace(/^\./, "");
+
+				if (!firstCandidate) {
+					console.warn("WARN(config): export configuration: no extension found for mimetype, defaulting to txt", { mimetype, availableMimeTypes: MIME_TO_EXT_MAP });
+				}
+
+				return result;
+			};
+
+			const appName    = define.Information.name.replace(/\s/g, "-");
+			const appVersion = define.Information.version;
+			const datestr    = dayjs().format(timeFormat);
+
+			return `${appName}_v${appVersion}_${datestr}.${getFilenameExtension()}`;
+		};
+
+		/**
+		 * Aggregates the series of processes from data acquisition to export execution.
+		 *
+		 * @returns {Promise<ExportResult>}
+		 */
+		const performExport = async (): Promise<ExportResult> => {
+			const setting  = await getSetting();
+			const filename = getFileName();
+			const content  = JSON.stringify(setting, null, "\t");
+
+			return ConfigManager.exportFile(content, filename, mimetype);
+
+		};
+
+		let message;
+
+		try {
+			// Execute data processing.
+			const result = await performExport();
+
+			// Prepare UI message based on the result.
+			const template = result.success ? define.Message.Setting_ExportConfig_Success : define.Message.Setting_ExportConfig_Error;
+			message = cloneObject(template);
+
+			if (!result.success) {
+				message.message.push(result.message);
+			}
+		} catch (error) {
+			// Prepare UI message for errors.
+			const err      = error as Error;
+			const template = define.Message.Setting_ExportConfig_Error;
+
+			message = cloneObject(template);
+			message.message.push(`Failed to export configuration: ${err.message}`);
+
+			console.error("ERROR(config): Failure: configuration export failed", { error: err });
 		}
+
+		PopoverMessage.create(message);
+	}
 	// ---------------------------------------------------------------------------------------------
 </script>
 
@@ -421,7 +489,7 @@
 		</article>
 
 		<article>
-			<!-- Setting : Save & Reset, AdvancedSettings : Change to Settings(Basic ⇔ Advanced) -->
+			<!-- Setting : Save & Reset -->
 			<ul id="setting-action">
 				<li><button id="SaveButton"  title="Save Extension Settings."              onclick={ eventSettingSave  }>Save</button></li>
 				<li><button id="ResetButton" title="Reset, Extension Settings to Default." onclick={ eventSettingReset }>Reset</button></li>
@@ -524,7 +592,7 @@
 
 						<fieldset>
 							<legend>Custom Template</legend>
-							<!-- イベント経由で変更を即反映 -->
+							<!-- Reflect changes immediately via events -->
 							<p>You can specify a template with your own format. Use <b>$title</b> &amp; <b>$url</b> variables.</p>
 							<textarea id="Format-template" spellcheck="false" bind:value={ status.config.Format.template }></textarea>
 						</fieldset>

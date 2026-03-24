@@ -1,3 +1,11 @@
+/**
+ * Utility for validating color strings.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 // Import NPM Package
 import ColorString from "color-string";
 
@@ -9,7 +17,11 @@ interface ColorManager {
 	isValidColor(color: string): boolean;
 }
 
-// This class is responsible for handling the implementation differences arising from external libraries.
+
+
+/**
+ * A class that validates the validity of color strings using an external library (color-string).
+ */
 class Implementation implements ColorManager {
 	/**
 	 * Determines whether a given string represents a valid color.
@@ -19,7 +31,7 @@ class Implementation implements ColorManager {
 	 * getColorString (e.g., named colors, hex, rgb/rgba, hsl/hsla, etc.).
 	 *
 	 * @param   {string}  color - The input string to validate as a color.
-	 * @returns {boolean}       - True if the string can be parsed as a color by getColorString; otherwise false.
+	 * @returns {boolean}         True if the string can be parsed as a color by getColorString; otherwise false.
 	 */
 	isValidColor(color: string): boolean {
 		return !!ColorString.get(color);

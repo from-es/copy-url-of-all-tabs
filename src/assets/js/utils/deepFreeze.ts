@@ -1,16 +1,24 @@
 /**
- * オブジェクトとそのすべてのネストされたプロパティを再帰的に凍結し、不変にします。
+ * Recursively freezes an object and all its nested properties, making it immutable.
  *
- * @template T - 凍結するオブジェクトの型。
- * @param   {T}           obj - 凍結するオブジェクト。
- * @returns {Readonly<T>}     - すべてのプロパティが読み取り専用になったオブジェクト。
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+/**
+ * Recursively freezes an object and all its nested properties, making it immutable.
+ *
+ * @template T                   The type of the object to freeze
+ * @param    {T}           obj - The object to freeze
+ * @returns  {Readonly<T>}       The object with all its properties made read-only
+ *
  * @see https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
  */
 export function deepFreeze<T extends object>(obj: T): Readonly<T> {
-	// オブジェクトで定義されたプロパティ名を取得
+	// Get property names defined on the object
 	const propNames = Object.getOwnPropertyNames(obj);
 
-	// 自分自身を凍結する前にプロパティを凍結
+	// Freeze properties before freezing the object itself
 	for (const name of propNames) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const value = (obj as any)[name];

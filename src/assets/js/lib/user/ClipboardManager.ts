@@ -1,10 +1,18 @@
 /**
+ * Utility for interacting with the system clipboard.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
+/**
  * Provides static methods to interact with the system clipboard.
- * @lastModified 2026-03-05
  */
 export class ClipboardManager {
 	/**
 	 * A private wrapper for handling errors in clipboard operations.
+	 *
 	 * @param   {string}             methodName   - The name of the calling method for logging.
 	 * @param   {() => Promise<any>} fn           - The async function to execute.
 	 * @param   {any}                failureValue - The value to return on failure.
@@ -24,7 +32,8 @@ export class ClipboardManager {
 
 	/**
 	 * Reads text from the clipboard.
-	 * @returns {Promise<string | false>} - A promise that resolves with the text from the clipboard, or `false` if an error occurs.
+	 *
+	 * @returns {Promise<string | false>} A promise that resolves with the text from the clipboard, or `false` if an error occurs.
 	 */
 	static readText(): Promise<string | false> {
 		const func = () => navigator.clipboard.readText();
@@ -34,9 +43,10 @@ export class ClipboardManager {
 
 	/**
 	 * Writes data to the clipboard with a specified MIME type.
+	 *
 	 * @param   {unknown}          data     - The data to write to the clipboard.
 	 * @param   {string}           mimetype - The MIME type of the data.
-	 * @returns {Promise<boolean>}          - A promise that resolves with `true` on success, or `false` if an error occurs.
+	 * @returns {Promise<boolean>}            A promise that resolves with `true` on success, or `false` if an error occurs.
 	 */
 	static write(data: unknown, mimetype: string): Promise<boolean> {
 		const func = async () => {
@@ -51,8 +61,9 @@ export class ClipboardManager {
 
 	/**
 	 * Writes text to the clipboard.
+	 *
 	 * @param   {string}           text - The text to write to the clipboard.
-	 * @returns {Promise<boolean>}      - A promise that resolves with `true` on success, or `false` if an error occurs.
+	 * @returns {Promise<boolean>}        A promise that resolves with `true` on success, or `false` if an error occurs.
 	 */
 	static writeText(text: string): Promise<boolean> {
 		const func = () => navigator.clipboard.writeText(text);
@@ -62,7 +73,8 @@ export class ClipboardManager {
 
 	/**
 	 * Clears the clipboard content.
-	 * @returns {Promise<boolean>} - A promise that resolves with `true` on success, or `false` if an error occurs.
+	 *
+	 * @returns {Promise<boolean>} A promise that resolves with `true` on success, or `false` if an error occurs.
 	 */
 	static clear(): Promise<boolean> {
 		const func = () => navigator.clipboard.writeText("");

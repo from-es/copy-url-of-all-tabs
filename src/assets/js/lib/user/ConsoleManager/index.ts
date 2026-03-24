@@ -1,10 +1,16 @@
-/*
-	@lastModified 2026-03-05
-	@dependency   cloneDeep (lodash, https://lodash.com/)
-	@reference    隠ぺいされた console.log を無理やり復活させる対症療法 (https://clock-up.hateblo.jp/entry/2016/11/05/js-console-log-restore)
-	              Is it possible to bind a date/time to a console log? (https://stackoverflow.com/questions/18410119/is-it-possible-to-bind-a-date-time-to-a-console-log?answertab=active#tab-top)
-	              Restoring console.log() - Stack Overflow (https://stackoverflow.com/questions/7089443/restoring-console-log)
-*/
+/**
+ * Utility for managing log output filtering and styling.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ *
+ * @dependency lodash-es (https://www.npmjs.com/package/lodash-es)
+ *
+ * @see Symptomatic treatment to forcibly restore hidden console.log (https://clock-up.hateblo.jp/entry/2016/11/05/js-console-log-restore)
+ * @see Is it possible to bind a date/time to a console log? (https://stackoverflow.com/questions/18410119/is-it-possible-to-bind-a-date-time-to-a-console-log?answertab=active#tab-top)
+ * @see Restoring console.log() (https://stackoverflow.com/questions/7089443/restoring-console-log)
+ */
 
 // Import NPM Package
 import { cloneDeep } from "lodash-es";
@@ -19,6 +25,14 @@ import {
 	TimeCoordinate,
 } from "./types";
 
+/**
+ * Manages the global `console` object to provide filtered and styled logging.
+ *
+ * It allows enabling/disabling logging, setting log levels, and prepending
+ * timestamps and method labels to console output.
+ *
+ * @dependency lodash-es (https://www.npmjs.com/package/lodash-es)
+ */
 export class ConsoleManager {
 	// -------------------------------------------------------------------------------------------------------------------------
 	// Private Static Properties
@@ -64,8 +78,8 @@ export class ConsoleManager {
 	 * Determines if a given method name is a console method that supports custom styling.
 	 * This method acts as a type guard, narrowing the type of `method`.
 	 *
-	 * @param   {string} method - The method name to check.
-	 * @returns {method is ConsoleMethod | GroupConsoleMethod} `true` if the method is a target for styling, `false` otherwise.
+	 * @param   {string}                                       method - The method name to check.
+	 * @returns {method is ConsoleMethod | GroupConsoleMethod}          `true` if the method is a target for styling, `false` otherwise.
 	 */
 	static #isStylingTarget(method: string): method is ConsoleMethod | GroupConsoleMethod {
 		return method in ConsoleManager.#methods;
@@ -99,7 +113,7 @@ export class ConsoleManager {
 	 * Sets new options, merging them with the existing ones.
 	 *
 	 * @param  {Partial<ConsoleManagerOptions>} newOptions - An object with options to update.
-	 * @throws {TypeError}                                 - If `newOptions` is not a valid object or contains properties of the wrong type.
+	 * @throws {TypeError}                                   If `newOptions` is not a valid object or contains properties of the wrong type.
 	 */
 	static option(newOptions: Partial<ConsoleManagerOptions>): void {
 		try {
@@ -157,8 +171,8 @@ export class ConsoleManager {
 	 * Validates and merges new options with the current options.
 	 *
 	 * @param   {Partial<ConsoleManagerOptions>} newOptions - The new options to validate and merge.
-	 * @returns {ConsoleManagerOptions}                     - The fully validated, merged options object.
-	 * @throws  {TypeError}                                 - If any of the provided options are of an invalid type.
+	 * @returns {ConsoleManagerOptions}                       The fully validated, merged options object.
+	 * @throws  {TypeError}                                   If any of the provided options are of an invalid type.
 	 */
 	static #validateAndMergeOptions(newOptions: Partial<ConsoleManagerOptions>): ConsoleManagerOptions {
 		if (!newOptions || typeof newOptions !== "object") {
@@ -266,11 +280,11 @@ export class ConsoleManager {
 	 * The `groupEnd` method is returned unmodified as it takes no arguments.
 	 * If timestamps are disabled, the original method is also returned directly.
 	 *
-	 * @param {keyof Console}             methodName                  - The name of the console method to wrap (e.g., "log", "warn").
-	 * @param {(...args: any[]) => any}   originalMethod              - The original console method function.
-	 * @param {Console}                   originalConsole             - The original console object, used as the `this` context for the method.
-	 * @param {boolean}                   isStylingAndTimestampTarget - A flag indicating if the method is a target for styling.
-	 * @returns {(...args: any[]) => any}                             - A new function that wraps the original console method.
+	 * @param   {keyof Console}           methodName                  - The name of the console method to wrap (e.g., "log", "warn").
+	 * @param   {(...args: any[]) => any} originalMethod              - The original console method function.
+	 * @param   {Console}                 originalConsole             - The original console object, used as the `this` context for the method.
+	 * @param   {boolean}                 isStylingAndTimestampTarget - A flag indicating if the method is a target for styling.
+	 * @returns {(...args: any[]) => any}                               A new function that wraps the original console method.
 	 */
 	static #createConsoleMethodWrapper(
 		methodName: keyof Console,
@@ -312,7 +326,7 @@ export class ConsoleManager {
 	 *
 	 * @param   {keyof Console}                               methodName                  - The name of the console method being wrapped (e.g., "log", "warn").
 	 * @param   {boolean}                                     isStylingAndTimestampTarget - A flag indicating if the method is a target for styling.
-	 * @returns {{formatString: string, styleArgs: string[]}}                             - An object containing the formatted string and an array of style arguments.
+	 * @returns {{formatString: string, styleArgs: string[]}}                               An object containing the formatted string and an array of style arguments.
 	 */
 	static #formatConsoleArguments(
 		methodName: keyof Console,
@@ -352,7 +366,7 @@ export class ConsoleManager {
 	 * Creates a factory function that returns a timestamp string based on the specified time coordinate.
 	 *
 	 * @param   {TimeCoordinate} timecoordinate - The time coordinate system to use ('UTC' or 'GMT').
-	 * @returns {() => string}                  - A function that generates a timestamp string.
+	 * @returns {() => string}                    A function that generates a timestamp string.
 	 */
 	static #createTimestampFactory(timecoordinate: TimeCoordinate): () => string {
 		const coordinate = timecoordinate.toUpperCase();
@@ -369,7 +383,8 @@ export class ConsoleManager {
 	 * Creates an ISO string with timezone information (e.g., "2023-10-27T10:00:00.000+09:00").
 	 *
 	 * @param   {Date}   date - The date object to format.
-	 * @returns {string}      - A formatted date-time string.
+	 * @returns {string}        A formatted date-time string.
+	 *
 	 * @see https://qiita.com/magnoliavine/items/05139982c6fd81212b08
 	 */
 	static #toISOStringWithTimezone(date: Date): string {

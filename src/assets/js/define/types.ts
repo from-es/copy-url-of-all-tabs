@@ -5,6 +5,8 @@ import type { MessageType }                     from "@/assets/js/lib/user/Messa
 import type { UrlDelayRule }                    from "@/assets/js/lib/user/UrlDelayCalculator";
 import type { LogLevel }                        from "@/assets/js/lib/user/ConsoleManager/types";
 
+
+
 type TimeZone         = "UTC" | "GMT";
 type PatternMatchType = "prefix" | "substring" | "exact" | "regex";
 type FormatType       = "text" | "json" | "custom";
@@ -16,7 +18,6 @@ type CustomDelayInfo  = {
 	pattern: string;
 	delay  : number;
 };
-
 
 type Config_Common = {
 	Information: {
@@ -241,6 +242,8 @@ interface Define extends Define_Delta {
 	Config      : Config;
 	Verification: VerificationRule[];
 };
+
+
 
 export type {
 	CustomDelayInfo,

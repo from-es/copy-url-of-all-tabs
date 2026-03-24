@@ -1,3 +1,11 @@
+/**
+ * Rule definitions for data correction before saving.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 // Import Module
 import { cloneObject } from "@/assets/js/lib/user/CloneObject";
 
@@ -5,19 +13,22 @@ import { cloneObject } from "@/assets/js/lib/user/CloneObject";
 import type { Config }        from "@/assets/js/types";
 import type { MigrationRule } from "@/assets/js/lib/user/MigrationManager/types";
 
+
+
 /**
- * 設定移行ルールを定義する配列。
- * 各ルールは、特定の設定変更を適用するための条件と実行ロジックをカプセル化します。
- * ルールの詳細な定義方法については、MigrationRuleDefinition.md を参照してください。
- * @see {@link ../../doc/MigrationRule.ja.md}
+ * An array that defines the configuration migration rules.
+ * Each rule encapsulates the conditions and execution logic for applying specific configuration changes.
+ * For details on how to define rules, refer to MigrationRule.md.
+ *
+ * @see {@link ../../doc/MigrationRule.md}
  */
 export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "`config.Tab.customDelay.list` 配列内オブジェクトの `pattern` プロパティに空文字列や空白のみの文字列が含まれると、設定保存時の検証で不要な警告を発生させる為。",
+			reason  : "To prevent unnecessary warnings during configuration saving validation when the `pattern` property of objects in the `config.Tab.customDelay.list` array contains an empty string or a whitespace-only string.",
 			target  : "config.Tab.customDelay.list",
-			action  : "`config.Tab.customDelay.list` から、`pattern` プロパティが空文字列や空白のみのオブジェクトを除去する。",
+			action  : "Remove objects from `config.Tab.customDelay.list` where the `pattern` property is an empty or whitespace-only string.",
 			authored: "2025-12-05",
 			version : {
 				introduced: "1.14.0",
