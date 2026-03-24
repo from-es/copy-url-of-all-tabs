@@ -1,18 +1,26 @@
+/**
+ * Removes duplicate elements from an array.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 type AllowedPrimitive = string | number | bigint | symbol;
 
 
 
 /**
- * 配列から重複する要素を排除。
- * この関数はプリミティブ値の配列に対して最適に機能するが、オブジェクト参照を含む配列も使用可能。
+ * Removes duplicate elements from an array.
  *
- * @template T          - 配列の要素の型
- * @param    {T[]} list - 重複排除を行う元の配列
- * @returns  {T[]}      - 重複排除された新しい配列
+ * This function works optimally for arrays of primitive values, but can also be used for arrays containing object references.
+ *
+ * @template T            The type of elements in the array
+ * @param    {T[]} list - The original array to remove duplicates from
+ * @returns  {T[]}        A new array with duplicates removed
  */
 function toUniqueArray<T>(list: T[]): T[] {
 	if (!Array.isArray(list)) {
-		// 互換性のために、配列でない場合はエラーをスローする
+		// For compatibility, throw an error if not an array
 		throw new Error(`Invalid: expected an array as argument, but received ${typeof list} in toUniqueArray`);
 	}
 
@@ -20,24 +28,26 @@ function toUniqueArray<T>(list: T[]): T[] {
 }
 
 /**
- * 渡された配列が任意の型(string, number, bigint, symbol)のみで構成されているかを検証。
- * 配列でない場合、または任意の型以外の要素が含まれる場合、または型が混在している場合にエラーをスローする。
+ * Validates whether the provided array consists only of allowed primitive types (string, number, bigint, symbol).
  *
- * @template T            - 配列の要素の型 (AllowedPrimitive)
- * @param    {T[]}   list - 検証する配列
- * @throws   {Error}      - 検証に失敗した場合
+ * Throws an error if the argument is not an array, contains elements of an unallowed type, or if the types are mixed.
+ *
+ * @template T              The type of elements in the array (AllowedPrimitive)
+ * @param    {T[]}   list - The array to validate
+ * @returns  {void}
+ * @throws   {Error}        If validation fails
  */
 function validatePrimitiveArray<T extends AllowedPrimitive>(list: T[]): void {
 	if (!Array.isArray(list)) {
 		throw new Error(`Invalid: expected an array as argument, but received ${typeof list} in validatePrimitiveArray`);
 	}
 
-	// 空の配列は有効とする
+	// Allow empty arrays
 	if (list.length === 0) {
 		return;
 	}
 
-	// 任意の型(string, number, bigint, symbol)以外の型が渡されていないか
+	// Check if any type other than allowed primitives (string, number, bigint, symbol) is passed
 	const firstElementType  = typeof list[0];
 	const reg_PrimitiveType = /string|number|bigint|symbol/i;
 	const isPrimitiveType   = (reg_PrimitiveType).test(firstElementType);
@@ -45,7 +55,7 @@ function validatePrimitiveArray<T extends AllowedPrimitive>(list: T[]): void {
 		throw new Error(`Invalid: expected array element type (string, number, bigint, symbol), but received ${firstElementType} in validatePrimitiveArray`);
 	}
 
-	// 配列要素は全て同じ型か
+	// Check if all array elements are of the same type
 	const isAllSameType = list.every((elm) => typeof elm === firstElementType);
 	if (!isAllSameType) {
 		throw new Error("Invalid: all elements in array must be of the same type in validatePrimitiveArray");

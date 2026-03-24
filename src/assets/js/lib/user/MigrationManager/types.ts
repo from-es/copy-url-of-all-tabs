@@ -1,7 +1,14 @@
 /**
- * Metadata for a migration rule, intended for developer information. Not used in processing.
+ * Type definitions used by the Migration Manager.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
  */
 
+/**
+ * Metadata for a migration rule, intended for developer information. Not used in processing.
+ */
 type MigrationRuleMeta = {
 	author  : string;
 	reason  : string;
@@ -16,7 +23,8 @@ type MigrationRuleMeta = {
 
 /**
  * Arguments passed to the execution context of a migration rule.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
 type MigrationArgument<T> = {
 	data         : T;
@@ -25,7 +33,8 @@ type MigrationArgument<T> = {
 
 /**
  * Defines a single migration rule.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
 type MigrationRule<T> = {
 	meta    ?: MigrationRuleMeta;
@@ -38,7 +47,8 @@ type MigrationRule<T> = {
 
 /**
  * A report for an error that occurred during a migration.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
 type MigrationErrorReport<T> = {
 	rule : MigrationRuleMeta;
@@ -48,7 +58,8 @@ type MigrationErrorReport<T> = {
 
 /**
  * The overall result of the migration process.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
 type MigrationResult<T> = {
 	isSucceeded : boolean;

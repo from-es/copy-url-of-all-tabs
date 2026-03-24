@@ -1,3 +1,10 @@
+/**
+ * User-initiated action handlers for the popup menu.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 // WXT provided cross-browser compatible API and Types.
 import { browser, type Browser } from "wxt/browser";
 
@@ -13,11 +20,12 @@ import type { Action, EventActionCopyResult, EventActionPasteResult } from "./ty
 
 
 /**
- * 全タブのURLを取得し、設定に基づいてフィルタリングとフォーマットを行った後、クリップボードに送ります。
- * @param   {Action}                         action - 実行するアクションの文字列（例: "copy"）
- * @param   {Config}                         config - ユーザー設定オブジェクト
- * @param   {Define}                         define - 定義済み定数オブジェクト
- * @returns {Promise<EventActionCopyResult>}        - コピー結果とステータスを含むオブジェクト
+ * Gets URLs of all tabs, filters and formats them based on settings, and then sends them to the clipboard.
+ *
+ * @param   {Action}                         action - Action string to execute (e.g., "copy").
+ * @param   {Config}                         config - User configuration object.
+ * @param   {Define}                         define - Predefined constant object.
+ * @returns {Promise<EventActionCopyResult>}          Object containing the copy result and status.
  */
 async function eventActionCopy(action: Action, config: Config, define: Define): Promise<EventActionCopyResult> {
 	const rawTabs  = await getAllTabs();
@@ -48,11 +56,12 @@ async function eventActionCopy(action: Action, config: Config, define: Define): 
 }
 
 /**
- * クリップボードからURLを抽出し、設定に基づいてフィルタリングを行う前処理です。
- * @param   {Action}                         action - 実行するアクションの文字列（例: "paste"）
- * @param   {Config}                         config - ユーザー設定オブジェクト
- * @param   {Define}                         define - 定義済み定数オブジェクト
- * @returns {Promise<EventActionPasteResult>}       - ペースト結果とステータスを含むオブジェクト
+ * Pre-processing that extracts URLs from the clipboard and filters them based on settings.
+ *
+ * @param   {Action}                         action - Action string to execute (e.g., "paste").
+ * @param   {Config}                         config - User configuration object.
+ * @param   {Define}                         define - Predefined constant object.
+ * @returns {Promise<EventActionPasteResult>}         Object containing the paste result and status.
  */
 async function eventActionPaste(action: Action, config: Config, define: Define): Promise<EventActionPasteResult> {
 	const regexSearch     = config.Search.regex;
@@ -80,13 +89,14 @@ async function eventActionPaste(action: Action, config: Config, define: Define):
 }
 
 /**
- * 全てのタブ情報を取得
- * @return {Promise<Browser.tabs.Tab[]>}
+ * Gets all tab information from the current window.
+ *
+ * @returns {Promise<Browser.tabs.Tab[]>} - An array of tab objects.
  */
 async function getAllTabs(): Promise<Browser.tabs.Tab[]> {
 	try {
-		const queryInfo = { currentWindow : true };            // 取得対象をカレントウインドウのタブに限定
-		const tabs      = await browser.tabs.query(queryInfo); // tabs.query() : https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query
+		const queryInfo = { currentWindow : true };             // Limit acquisition target to tabs in the current window.
+		const tabs      = await browser.tabs.query(queryInfo);  // tabs.query() (https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query)
 
 		return tabs;
 	} catch (error) {
@@ -97,11 +107,12 @@ async function getAllTabs(): Promise<Browser.tabs.Tab[]> {
 }
 
 /**
- * 文字列からURLのリストを取得
- * @param   {string}  text            - クリップボードなどから取得したテキスト
- * @param   {boolean} regexSearch     - 正規表現でURLを検索するか
- * @param   {RegExp}  regexUrlPattern - 正規表現のURL抽出パターン
- * @returns {string[]}                - URLリストの配列
+ * Gets a list of URLs from a string.
+ *
+ * @param   {string}  text            - Text obtained from the clipboard, etc.
+ * @param   {boolean} regexSearch     - Whether to search for URLs using regular expressions.
+ * @param   {RegExp}  regexUrlPattern - Regular expression pattern for URL extraction.
+ * @returns {string[]}                  Array of URL strings.
  */
 function getUrlList(text: string, regexSearch: boolean, regexUrlPattern: RegExp): string[] {
 	const isValidUrlString = (str: string) => {
@@ -124,7 +135,7 @@ function getUrlList(text: string, regexSearch: boolean, regexUrlPattern: RegExp)
 		return [];
 	}
 
-	// 空配列 or 非URL文字列の除去
+	// Removal of empty arrays or non-URL strings.
 	const result = (array).filter(
 		(elm) => { return  isValidUrlString(elm); }
 	);

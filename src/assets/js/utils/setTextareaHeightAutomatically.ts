@@ -1,9 +1,17 @@
 /**
- * `textarea`要素の高さを、その内容に合わせて自動的に調整
- * `input`または`change`イベントのイベントリスナーとして使用することを想定
+ * Automatically adjusts the height of a `textarea` element to fit its content.
  *
- * @param   {Event} event - `textarea`要素から発火したイベントオブジェクト
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+/**
+ * Automatically adjusts the height of a `textarea` element to fit its content.
+ * Intended to be used as an event listener for `input` or `change` events.
+ *
+ * @param   {Event} event - The event object dispatched from the `textarea` element
  * @returns {void}
+ *
  * @see https://web-dev.tech/front-end/javascript/textarea-auto-height/
  */
 export function setTextareaHeightAutomatically(event: Event): void {

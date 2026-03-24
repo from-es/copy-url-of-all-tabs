@@ -1,3 +1,10 @@
+/**
+ * Sanitizes an object to be safely sent as a message.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 interface SanitizeOptions {
 	checkOnly?: boolean;
 	debug    ?: boolean;
@@ -7,11 +14,14 @@ interface SanitizeOptions {
 
 /**
  * Sanitizes an object to be safely sent as a message.
+ *
  * It attempts to structuredClone the object internally and removes non-serializable properties upon failure.
- * @param   {T}       data    - The data to be sanitized.
- * @param   {object}  options - If true, performs only validation of whether the data is structured-cloneable, without sanitizing. Throws an error if it's not cloneable.
- * @returns {T}               - The sanitized data. Also returns the original data if validation succeeds with checkOnly=true.
- * @throws  {Error} If the data is not structured-cloneable when checkOnly is true, or if an unexpected error occurs during sanitization.
+ *
+ * @template T                  The type of the data to be sanitized
+ * @param    {T}      data    - The data to be sanitized.
+ * @param    {object} options - If true, performs only validation of whether the data is structured-cloneable, without sanitizing. Throws an error if it's not cloneable.
+ * @returns  {T}                The sanitized data. Also returns the original data if validation succeeds with checkOnly=true.
+ * @throws   {Error}            If the data is not structured-cloneable when checkOnly is true, or if an unexpected error occurs during sanitization.
  */
 function sanitizeForSendMessage<T>(data: T, options: SanitizeOptions = { checkOnly: false, debug: false }): T {
 	const { checkOnly, debug } = options;
@@ -48,9 +58,10 @@ function sanitizeForSendMessage<T>(data: T, options: SanitizeOptions = { checkOn
 /**
  * Recursively traverses an object or array and returns a new object with properties that cannot be structured-cloned (e.g., functions, symbols, DOM nodes) removed.
  * (Used as a fallback for sanitizeForSendMessage)
+ *
  * @param   {unknown} obj   - The target object or array.
  * @param   {boolean} debug - If true, outputs debug logs.
- * @returns {any}           - A new object or array with non-cloneable properties removed.
+ * @returns {any}             A new object or array with non-cloneable properties removed.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function removeNonCloneableProperties(obj: unknown, debug: boolean): any {

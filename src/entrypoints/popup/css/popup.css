@@ -48,7 +48,7 @@ li {
 }
 
 /*
-	疑似要素で表示した画像のサイズを調整する方法(https://webcreatetips.com/coding/3855/)
+	Adjusting the size of replacement images displayed via pseudo-elements (https://webcreatetips.com/coding/3855/)
 */
 li:not(:has(.separator))::before {
 	text-align    : center;
@@ -86,7 +86,7 @@ button {
 
 	display: inline-block;
 
-	width : calc(100% - 1rem - 0.5rem * 2 - 0.25rem); /* 100% - (li::before の画像幅) - (li::before の左右マージン) - (安全用の予備マージン) */
+	width : calc(100% - 1rem - 0.5rem * 2 - 0.25rem); /* 100% - (li::before image width) - (li::before horizontal margins) - (safety margin) */
 	height: 2rem;
 
 	border: solid 1px transparent;

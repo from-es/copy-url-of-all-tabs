@@ -1,3 +1,11 @@
+/**
+ * Migration rule definitions for the v1 series of settings.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 // Import Module
 import { cloneObject }     from "@/assets/js/lib/user/CloneObject";
 import { compareVersions } from "@/assets/js/utils/CompareVersions";
@@ -9,18 +17,19 @@ import type { MigrationRule } from "@/assets/js/lib/user/MigrationManager/types"
 
 
 /**
- * 設定移行ルールを定義する配列。
- * 各ルールは、特定の設定変更を適用するための条件と実行ロジックをカプセル化します。
- * ルールの詳細な定義方法については、MigrationRuleDefinition.md を参照してください。
- * @see {@link ../../doc/MigrationRule.ja.md}
+ * An array that defines the configuration migration rules.
+ * Each rule encapsulates the conditions and execution logic for applying specific configuration changes.
+ * For details on how to define rules, refer to MigrationRule.md.
+ *
+ * @see {@link ../../doc/MigrationRule.md}
  */
 export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v0.6.1.1 から v0.7.0 へのアップデート時の設定追加（Copy & Paste, それぞれ別個にURLフィルタリングを適応可能に）に伴うプロパティ名の変更、それに伴う動作互換性維持の為",
+			reason  : "To maintain backward compatibility after renaming properties following the addition of Copy & Paste settings (allowing URL filtering to be applied individually to each) in the v0.7.0 update.",
 			target  : "config.Filtering.enable",
-			action  : "config.Filtering.enable の値を config.Filtering.Copy.enable と config.Filtering.Paste.enable を作成後、コピー。その後 config.Filtering.enable は削除",
+			action  : "Copy the value of config.Filtering.enable to new config.Filtering.Copy.enable and config.Filtering.Paste.enable properties, then delete config.Filtering.enable.",
 			authored: "2025-01-29",
 			version : {
 				introduced: "0.7.0",
@@ -38,11 +47,11 @@ export const rules: MigrationRule<Config>[] = [
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const newData = cloneObject(data) as any;
 
-			// 移行
-			newData.Filtering.Copy  = { enable: true };                      // デフォルト値をセット
-			newData.Filtering.Paste = { enable: newData.Filtering.enable };  // 動作互換性維持の為、以前の値をコピー
+			// Migration
+			newData.Filtering.Copy  = { enable: true };                      // Set default value
+			newData.Filtering.Paste = { enable: newData.Filtering.enable };  // Copy previous value for compatibility
 
-			// 削除
+			// Delete
 			delete newData.Filtering.enable;
 
 			console.info("INFO(migration): migrate config of value: change data.filtering.enable to data.filtering.copy.enable and data.filtering.paste.enable", newData);
@@ -53,9 +62,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "config.Format.mimetype のプロパティ名を config.Format.minetype とタイポ",
+			reason  : "Typo in the property name config.Format.mimetype as config.Format.minetype.",
 			target  : "config.Format.minetype",
-			action  : "プロパティ名を minetype から mimetype に修正後、minetype の値をコピー。その後 minetype は削除",
+			action  : "Fix the property name from minetype to mimetype, copy the value of minetype, and then delete minetype.",
 			authored: "2025-07-11",
 			version : {
 				introduced: "1.0.0",
@@ -73,10 +82,10 @@ export const rules: MigrationRule<Config>[] = [
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const newData = cloneObject(data) as any;
 
-			// 移行
+			// Migration
 			newData.Format.mimetype = newData.Format.minetype;
 
-			// 削除
+			// Delete
 			delete newData.Format.minetype;
 
 			console.info("INFO(migration): migrate config of value: change data.format.minetype to data.format.mimetype", newData);
@@ -87,9 +96,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v1.0.0 で追加された、タブを個別に遅延させる機能（Tab.customDelay）の設定値が存在しない場合に追加する",
+			reason  : "To add default values for the feature to delay individual tabs (Tab.customDelay) introduced in v1.0.0 if they do not exist.",
 			target  : "config.Tab.customDelay",
-			action  : "config.Tab.customDelay が存在しない場合に、デフォルト値を追加する",
+			action  : "Add default values if config.Tab.customDelay does not exist.",
 			authored: "2025-08-01",
 			version : {
 				introduced: "1.0.0",
@@ -106,7 +115,7 @@ export const rules: MigrationRule<Config>[] = [
 			const { data, defaultValues } = argument;
 			const newData                 = cloneObject(data);
 
-			// プロパティ追加 & デフォルト値適応
+			// Add property & apply default value
 			if (defaultValues.Tab?.customDelay) {
 				newData.Tab.customDelay = defaultValues.Tab.customDelay;
 			}
@@ -119,9 +128,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "config.Information.date.unixtime で管理している値が 'UNIXエポック * 1000' とプロパティ名に即していない為、プロパティ名を config.Information.date.timestamp に変更",
+			reason  : "The value managed in config.Information.date.unixtime is actually 'UNIX epoch * 1000', which does not match the property name. Therefore, renaming it to config.Information.date.timestamp.",
 			target  : "config.Information.date.unixtime",
-			action  : "プロパティ unixtime の値 timestamp にコピー。その後、プロパティ unixtime を削除する",
+			action  : "Copy the value of the unixtime property to timestamp, then delete the unixtime property.",
 			authored: "2025-10-04",
 			version : {
 				introduced: "1.4.0",
@@ -138,11 +147,11 @@ export const rules: MigrationRule<Config>[] = [
 			const { data } = argument;
 			const newData  = cloneObject(data);
 
-			// 移行
+			// Migration
 			const infoDate = newData.Information.date as unknown as Record<string, unknown>;
 			newData.Information.date.timestamp = infoDate["unixtime"] as number;
 
-			// 削除
+			// Delete
 			delete infoDate["unixtime"];
 
 			console.info("INFO(migration): migrate config of value: change data.information.date.unixtime to data.information.date.timestamp", newData);
@@ -153,9 +162,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "オプションページ側の実装不具合が原因で v1.0.0 から v1.4.0 間のカスタム遅延設定追加時に発生した、データ構造の不整合による不要な `url` プロパティを削除する為",
+			reason  : "To remove unnecessary `url` properties caused by data structure inconsistencies when adding custom delay settings between v1.0.0 and v1.4.0, due to an implementation bug on the options page.",
 			target  : "config.Information.version, config.Tab.customDelay.list[].url",
-			action  : "設定バージョンが v1.4.0 以前で、カスタム遅延リストに `url` プロパティが存在する場合、その `url` プロパティを削除",
+			action  : "Delete the `url` property if the configuration version is v1.4.0 or earlier and the custom delay list contains it.",
 			authored: "2025-10-07",
 			version : {
 				introduced: "1.5.0",
@@ -176,20 +185,20 @@ export const rules: MigrationRule<Config>[] = [
 			const base            = "1.4.0";
 			let   target          = null;
 			try {
-				// 設定保存時のバージョンが v1.4.0 以前であるか
-				target = data.Information?.version ?? "1.0.0";  // 設定保存時のバージョン取得。存在しない場合は、最初のリリースバージョンを適応
+				// Check if the version when settings were saved is v1.4.0 or earlier
+				target = data.Information?.version ?? "1.0.0";  // Get version at save time. If not present, apply first release version.
 
 				isTargetVersion = isSameOrEarlier(base, target);
 			} catch (error) {
 				console.error("ERROR(migration): migration rule error: failed to compare versions for custom delay rule", {
-					"Migration Rule": "v1.0.0 から v1.4.0 間で追加されていたカスタム遅延設定の `url` プロパティを削除",
+					"Migration Rule": "Remove the `url` property from the custom delay setting added between v1.0.0 and v1.4.0",
 					baseVersion     : base,
 					targetVersion   : target,
 					originalError   : error
 				});
 			}
 
-			// customDelay.list 配列内に、一つでも 'url' プロパティを持つオブジェクトが存在するか
+			// Check if any object in the customDelay.list array has a 'url' property
 			const hasUrlPropertyInList = data.Tab?.customDelay?.list?.some(item => Object.hasOwn(item, "url")) ?? false;
 
 			return isTargetVersion && hasUrlPropertyInList;
@@ -218,9 +227,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v1.7.0 で追加された、タブ展開の動作を制御する機能（Tab.TaskControl）の設定値が存在しない場合に追加",
+			reason  : "To add default values for the feature to control tab expansion behavior (Tab.TaskControl) introduced in v1.7.0 if they do not exist.",
 			target  : "config.Tab.TaskControl",
-			action  : "config.Tab.TaskControl が存在しない場合に、デフォルト値を追加",
+			action  : "Add default values if config.Tab.TaskControl does not exist.",
 			authored: "2025-10-18",
 			version : {
 				introduced: "1.8.0",
@@ -236,7 +245,7 @@ export const rules: MigrationRule<Config>[] = [
 			const { data, defaultValues } = argument;
 			const newData                 = cloneObject(data);
 
-			// プロパティ追加 & デフォルト値適応
+			// Add property & apply default value
 			if (defaultValues.Tab?.TaskControl) {
 				newData.Tab.TaskControl = defaultValues.Tab.TaskControl;
 			}
@@ -249,9 +258,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v1.11.0 で追加された、URLの重複除去の設定追加に伴う `config.Filtering 構造変更` への対応",
+			reason  : "To handle the structural change of `config.Filtering` following the addition of URL deduplication settings in v1.11.0.",
 			target  : "config.Filtering",
-			action  : "Filtering 設定を新しい構造（Deduplicate と Protocol）に再構成し、Deduplicate 設定を初期化",
+			action  : "Restructure Filtering settings into the new structure (Deduplicate and Protocol) and initialize Deduplicate settings.",
 			authored: "2025-11-01",
 			version : {
 				introduced: "1.12.0",
@@ -269,17 +278,17 @@ export const rules: MigrationRule<Config>[] = [
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const newData = cloneObject(data) as any;
 
-			// 移行元の値を取得（存在しない場合は undefined）
+			// Get values from source (undefined if not present)
 			const oldCopyEnable  = newData.Filtering?.Copy?.enable;
 			const oldPasteEnable = newData.Filtering?.Paste?.enable;
 			const oldProtocol    = newData.Filtering?.Protocol;
 
-			// 新しい構造を defaultValues からディープコピーして作成
+			// Create new structure by deep copying from defaultValues
 			if (defaultValues.Filtering) {
 				newData.Filtering = cloneObject(defaultValues.Filtering);
 			}
 
-			// 古い値が存在すれば、新しい構造に上書き
+			// If old values exist, overwrite the new structure
 			if (newData.Filtering?.Protocol?.Copy && oldCopyEnable !== undefined) {
 				newData.Filtering.Protocol.Copy.enable = oldCopyEnable;
 			}
@@ -287,9 +296,9 @@ export const rules: MigrationRule<Config>[] = [
 				newData.Filtering.Protocol.Paste.enable = oldPasteEnable;
 			}
 
-			// 古い Protocol がオブジェクトで、httpプロパティを持つ（プロトコル定義オブジェクトである）ことを確認
+			// Verify that the old Protocol is an object and has an http property (is a protocol definition object)
 			if (typeof oldProtocol === "object" && oldProtocol !== null && Object.hasOwn(oldProtocol, "http")) {
-				// 古いプロトコル設定で新しい `type` オブジェクトを上書き（設定を移行）
+				// Overwrite the new `type` object with the old protocol settings (migrate settings)
 				Object.assign(newData.Filtering.Protocol.type, oldProtocol);
 			}
 
@@ -301,9 +310,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v1.12.0 で追加された、拡張機能アイコンに「待機中URL数」を表示するバッジ機能（Badge）の設定値が存在しない場合に追加",
-			target  : "config.Badge",
-			action  : "config.Badge が存在しない場合、プロパティ追加し、デフォルト値を適応",
+			reason  : "To add default values for the badge feature (Badge) that displays the 'number of pending URLs' on the extension icon, introduced in v1.12.0, if they do not exist.",
+			target: "config.Badge",
+			action  : "If config.Badge does not exist, add the property and apply default values.",
 			authored: "2025-11-10",
 			version : {
 				introduced: "1.12.0",
@@ -319,7 +328,7 @@ export const rules: MigrationRule<Config>[] = [
 			const { data, defaultValues } = argument;
 			const newData                 = cloneObject(data);
 
-			// プロパティ追加 & デフォルト値適応
+			// Add property & apply default value
 			if (defaultValues.Badge) {
 				newData.Badge = defaultValues.Badge;
 			}
@@ -332,9 +341,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v1.18.0 で CustomDelay の各項目に有効/無効フラグを追加する為",
+			reason  : "To add an enable/disable flag to each item in CustomDelay in v1.18.0.",
 			target  : "config.Tab.customDelay.list[].enable",
-			action  : "config.Tab.customDelay.list の各項目に `enable: true` を追加する（プロパティが存在しない場合）",
+			action  : "Add `enable: true` to each item in config.Tab.customDelay.list if the property is missing.",
 			authored: "2026-01-16",
 			version : {
 				introduced: "1.18.0",
@@ -346,12 +355,12 @@ export const rules: MigrationRule<Config>[] = [
 			const { data }      = argument;
 			const configVersion = data.Information?.version ?? "0.0.0";
 
-			// configVersion が "1.18.0" より小さい場合でなければ、移行対象外
+			// Not a migration target if configVersion is not less than "1.18.0"
 			if (compareVersions("1.18.0", configVersion) !== -1) {
 				return false;
 			}
 
-			// `customDelay.list` が配列として存在し、かつその中に「`enable` プロパティを持ち、その値は boolean 値である（不正書き換え対策）」ではない項目が1つでもあれば移行対象とする
+			// Target for migration if `customDelay.list` exists as an array and contains at least one item that does not have a boolean `enable` property (countermeasure against invalid overwrites)
 			return data.Tab?.customDelay?.list?.some(item => !(Object.hasOwn(item, "enable") && typeof item.enable === "boolean")) ?? false;
 		},
 		execute: (argument) => {
@@ -360,7 +369,7 @@ export const rules: MigrationRule<Config>[] = [
 
 			if (newData.Tab?.customDelay?.list) {
 				newData.Tab.customDelay.list.forEach(item => {
-					// 「`enable` プロパティを持ち、その値は boolean 値である」ではない項目にデフォルト値 `true` を設定
+					// Set default value `true` for items that do not have a boolean `enable` property
 					if (!(Object.hasOwn(item, "enable") && typeof item.enable === "boolean")) {
 						item.enable = true;
 					}
@@ -375,9 +384,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v1.20.0 で追加された、デバッグ用のコンソール出力にログレベル（config.Debug.loglevel）を制御する機能の設定値が存在しない場合に追加する為",
+			reason  : "To add default values for the feature to control the log level (config.Debug.loglevel) in the debug console output, introduced in v1.20.0, if they do not exist.",
 			target  : "config.Debug.loglevel",
-			action  : "config.Debug.loglevel が存在しない場合に、デフォルト値 `warn` を追加",
+			action  : "Add the default value `warn` if config.Debug.loglevel does not exist.",
 			authored: "2026-02-01",
 			version : {
 				introduced: "1.20.0",
@@ -394,7 +403,7 @@ export const rules: MigrationRule<Config>[] = [
 			const { data, defaultValues } = argument;
 			const newData                 = cloneObject(data);
 
-			// プロパティ追加 & デフォルト値適応
+			// Add property & apply default value
 			if (defaultValues.Debug?.loglevel) {
 				newData.Debug.loglevel = defaultValues.Debug.loglevel;
 			}
@@ -407,9 +416,9 @@ export const rules: MigrationRule<Config>[] = [
 	{
 		meta: {
 			author  : "From E",
-			reason  : "v1.20.0 で追加された、デバッグ用のコンソール出力にメソッドラベル（config.Debug.methodLabel）を表示/非表示する機能の設定値が存在しない場合に追加する為",
+			reason  : "To add default values for the feature to show/hide method labels (config.Debug.methodLabel) in the debug console output, introduced in v1.20.0, if they do not exist.",
 			target  : "config.Debug.methodLabel",
-			action  : "config.Debug.methodLabel が存在しない場合に、デフォルト値 `true` を追加",
+			action  : "Add the default value `true` if config.Debug.methodLabel does not exist.",
 			authored: "2026-02-03",
 			version : {
 				introduced: "1.20.0",
@@ -426,7 +435,7 @@ export const rules: MigrationRule<Config>[] = [
 			const { data, defaultValues } = argument;
 			const newData = cloneObject(data);
 
-			// プロパティ追加 & デフォルト値適応
+			// Add property & apply default value
 			if (defaultValues.Debug?.methodLabel) {
 				newData.Debug.methodLabel = defaultValues.Debug.methodLabel;
 			}

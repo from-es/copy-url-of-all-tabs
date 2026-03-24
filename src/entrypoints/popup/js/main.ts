@@ -1,3 +1,10 @@
+/**
+ * Main entry point for the popup page.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 // Import Svelte
 import { mount } from "svelte";
 
@@ -15,11 +22,21 @@ import "../css/popup.css";
 
 
 
+/**
+ * The Svelte application instance.
+ */
 let app: ReturnType<typeof mount> | AppType | null = null;
 
 window.addEventListener("load", main);
 
-async function main() {
+/**
+ * Initializes and mounts the Svelte application.
+ *
+ * Initializes the configuration, logging, and shared state, then mounts the Svelte application to the document body.
+ *
+ * @returns {Promise<void>}
+ */
+async function main(): Promise<void> {
 	console.clear();
 
 	// Initialize settings

@@ -1,54 +1,61 @@
-/*
-	@name         UrlDelayCalculator
-	@description  URLリストの遅延時間を計算する為の静的メソッド
-	@author       From E
-	@lastModified 2026-02-27
-	@dependency   none
-*/
+/**
+ * Utility for calculating delay times for a list of URLs.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
 
+/**
+ * Rule for defining delay time for a specific URL pattern.
+ */
 interface UrlDelayRule {
 	/**
-	 * マッチさせるURLパターン。
-	*/
+	 * URL pattern to match.
+	 */
 	pattern: string | RegExp;
 	/**
-	 * パターンが文字列の場合のマッチングタイプ。
-	 * 'prefix': 前方一致 (例: "https://example.com/" にマッチ)
-	 * 'substring': 部分一致 (例: "example" にマッチ)
-	 * 'exact': 完全一致 (例: "https://example.com/page" に完全に一致)
-	 * RegExpオブジェクトの場合はこのプロパティは無視されます。
+	 * Matching type when the pattern is a string.
+	 * - 'prefix'   : Prefix match (e.g., matches "https://example.com/")
+	 * - 'substring': Substring match (e.g., matches "example")
+	 * - 'exact'    : Exact match (e.g., matches "https://example.com/page" exactly)
+	 * This property is ignored if the pattern is a RegExp object.
 	 */
 	matchType?: "prefix" | "substring" | "exact";
 	/**
-	 * パターンがマッチした場合に適用する遅延（ミリ秒）。
+	 * Delay (in milliseconds) to apply when the pattern matches.
 	 */
 	delay: number;
 }
 
+/**
+ * Result object for URL list delay calculation.
+ */
 interface UrlDelayCalculationResult {
 	/**
-	 * URL
+	 * The URL.
 	 */
 	url: string;
 	/**
-	 * URLの遅延情報
+	 * Delay information for the URL.
 	 */
 	delay: {
 		/**
-		 * シーケンスの開始からの累積遅延（ミリ秒）。setTimeoutなどに使用
-		*/
+		 * Cumulative delay (in milliseconds) from the start of the sequence. Used for setTimeout, etc.
+		 */
 		cumulative: number;
 		/**
-		 * この特定のURLを処理する前の個別の遅延（ミリ秒）。非同期処理の次のステップへの待ち時間などに使用
-		*/
+		 * Individual delay (in milliseconds) before processing this specific URL. Used for wait times between asynchronous steps.
+		 */
 		individual: number;
 	};
 }
 
 /**
+ * Internal interface that extends UrlDelayRule to hold the compiled RegExp object.
+ *
  * @interface CompiledUrlDelayRule
- * @description UrlDelayRuleを拡張し、コンパイル済みのRegExpオブジェクトを保持する内部使用のインターフェース
- * @property {RegExp} compiledPattern - コンパイル済みの正規表現オブジェクト
+ * @property  {RegExp} compiledPattern - Compiled regular expression object.
  */
 interface CompiledUrlDelayRule extends UrlDelayRule {
 	compiledPattern: RegExp;
@@ -57,28 +64,30 @@ interface CompiledUrlDelayRule extends UrlDelayRule {
 
 
 /**
- * @class UrlDelayCalculator
- * @description URLリストの遅延時間を計算するための静的メソッドを提供するユーティリティクラス
+ * Utility class providing static methods to calculate delay times for a list of URLs.
  */
 class UrlDelayCalculator {
 	/**
-	 * このクラスはステートレスであり、インスタンス化の必要は無い。全ての機能は静的メソッド `calculateDelays` を通じて提供
+	 * This class is stateless and does not need to be instantiated.
+	 * All functionality is provided through the static method `calculate`.
 	 */
 	private constructor() { /* private constructor to prevent instantiation */ }
 
 	/**
-	 * 文字列を正規表現で使用できるように、特殊文字をエスケープ
-	 * @param   {string} str - エスケープする文字列
-	 * @returns {string}     - エスケープされた文字列
+	 * Escapes special characters in a string for use in a regular expression.
+	 *
+	 * @param   {string} str - The string to escape.
+	 * @returns {string}     - The escaped string.
 	 */
 	static #escapeRegExp(str: string): string {
 		return str.replace(/[.*+?^${}()|[\\][\\]\\]/g, "\\$&");
 	}
 
 	/**
-	 * UrlDelayRuleの配列を、事前にコンパイルされた正規表現を持つ内部用のルール配列に変換
-	 * @param   {UrlDelayRule[]}         customRules - ユーザーが定義したカスタム遅延ルールの配列
-	 * @returns {CompiledUrlDelayRule[]}             - コンパイル済みのルール配列
+	 * Converts an array of UrlDelayRule into an internal array of rules with pre-compiled regular expressions.
+	 *
+	 * @param   {UrlDelayRule[]}         customRules - An array of custom delay rules defined by the user.
+	 * @returns {CompiledUrlDelayRule[]}             - An array of compiled rules.
 	 */
 	static #compileRules(customRules: UrlDelayRule[]): CompiledUrlDelayRule[] {
 		return customRules.map(
@@ -90,7 +99,7 @@ class UrlDelayCalculator {
 				if (typeof rule.pattern !== "string" || rule.pattern.length === 0) {
 					console.warn("WARN(tab): Invalid: invalid or empty string pattern in custom delay rule, rule ignored", { rule });
 
-					return { ...rule, compiledPattern: /(?!)/ };  // 無効な文字列パターンの場合は、どのURLにもマッチしない正規表現を返す
+					return { ...rule, compiledPattern: /(?!)/ };  // Returns a regular expression that matches nothing for invalid patterns.
 				}
 
 				const escapedPattern = UrlDelayCalculator.#escapeRegExp(rule.pattern);
@@ -104,7 +113,7 @@ class UrlDelayCalculator {
 						regex = new RegExp(`^${escapedPattern}$`, "i");
 						break;
 					case "prefix":
-						// 'prefix' は 'default' と同じ処理の為、フォールスルーする
+						// 'prefix' matches 'default' behavior, so fall through.
 						// eslint-disable-next-line no-fallthrough
 					default:
 						regex = new RegExp(`^${escapedPattern}`, "i");
@@ -117,12 +126,13 @@ class UrlDelayCalculator {
 	}
 
 	/**
-	 * コンパイル済みルールを元に、URLリストの遅延計算を実行します。
-	 * @param   {string[]}               urls          - 処理するURLのリスト
-	 * @param   {CompiledUrlDelayRule[]} compiledRules - コンパイル済みのルール配列
-	 * @param   {number}                 defaultDelay  - デフォルトの遅延時間（ミリ秒）
-	 * @param   {number}                 applyFrom     - カスタム遅延を適用し始めるマッチ回数
-	 * @returns {UrlDelayCalculationResult[]}          - 計算結果オブジェクトの配列
+	 * Executes the delay calculation for a list of URLs based on compiled rules.
+	 *
+	 * @param   {string[]}                    urls          - List of URLs to process.
+	 * @param   {CompiledUrlDelayRule[]}      compiledRules - An array of compiled rules.
+	 * @param   {number}                      defaultDelay  - Default delay time (in milliseconds).
+	 * @param   {number}                      applyFrom     - The match count at which to start applying custom delays.
+	 * @returns {UrlDelayCalculationResult[]}               - An array of calculation result objects.
 	 */
 	static #processDelayCalculation(urls: string[], compiledRules: CompiledUrlDelayRule[], defaultDelay: number, applyFrom: number): UrlDelayCalculationResult[] {
 		const results: UrlDelayCalculationResult[] = [];
@@ -161,12 +171,13 @@ class UrlDelayCalculator {
 	}
 
 	/**
-	 * デフォルトの遅延とカスタムルールに基づいて、リスト内の各URLの累積遅延と個別遅延を計算します。
-	 * @param   {string[]}         urls         - 処理するURLのリスト
-	 * @param   {number}           defaultDelay - URLを開く間のデフォルト遅延（ミリ秒）
-	 * @param   {UrlDelayRule[]}   customRules  - (オプション) カスタム遅延ルールの配列
-	 * @param   {number}           applyFrom    - (オプション) 何回目のマッチからカスタム遅延を適用するか。`2`を指定すると2回目から適用。デフォルトは`1`（初回から）。
-	 * @returns {UrlDelayCalculationResult[]}   - 各URLとその遅延情報を含むオブジェクトのリスト
+	 * Calculates the cumulative and individual delays for each URL in the list based on a default delay and custom rules.
+	 *
+	 * @param   {string[]}                    urls         - List of URLs to process.
+	 * @param   {number}                      defaultDelay - Default delay (in milliseconds) between opening URLs.
+	 * @param   {UrlDelayRule[]}              customRules  - (Optional) An array of custom delay rules.
+	 * @param   {number}                      applyFrom    - (Optional) The match count from which to apply custom delays. e.g., specifying 2 applies it from the second match. Default is 1.
+	 * @returns {UrlDelayCalculationResult[]}              - A list of objects containing each URL and its delay information.
 	 */
 	static calculate(urls: string[], defaultDelay: number, customRules: UrlDelayRule[] = [], applyFrom: number = 1): UrlDelayCalculationResult[] {
 		const compiledRules = UrlDelayCalculator.#compileRules(customRules);

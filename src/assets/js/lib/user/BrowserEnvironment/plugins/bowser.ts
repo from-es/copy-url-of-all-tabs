@@ -1,10 +1,11 @@
 /**
- * @fileoverview
- * This file defines a plugin for the UserAgentParser that uses the 'bowser' library to parse User-Agent strings.
- * It encapsulates the functionality of the bowser library, making it easy to integrate with the main BrowserEnvironment class.
+ * Plugin for UserAgentParser that parses User-Agent strings using the Bowser library.
  *
- * このファイルは、'bowser'ライブラリを使用してUser-Agent文字列を解析するUserAgentParser用プラグインを定義します。
- * bowserライブラリの機能をカプセル化し、メインのBrowserEnvironmentクラスとの統合を容易にします。
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ *
+ * @dependency bowser (https://github.com/bowser-js/bowser)
  */
 
 // Import NPM Package
@@ -19,13 +20,7 @@ import type { UserAgentParserPlugin, UserAgentParserPluginParseData } from "../t
  * A User-Agent parser plugin that utilizes the Bowser library.
  * It provides metadata about the plugin and an execution function to perform the parsing.
  *
- * Bowserライブラリを利用したUser-Agentパーサープラグインです。
- * プラグインに関するメタデータと、解析を実行するための実行関数を提供します。
- *
- * @type         {UserAgentParserPlugin}
- * @version      1.0.0
- * @lastModified 2025-07-19
- * @dependency   bowser(https://github.com/bowser-js/bowser)
+ * @dependency bowser (https://github.com/bowser-js/bowser)
  */
 const UserAgentParserPlugin: UserAgentParserPlugin = {
 	information: {
@@ -40,12 +35,9 @@ const UserAgentParserPlugin: UserAgentParserPlugin = {
 	 * The main execution function for the plugin.
 	 * It calls the internal `parseInformation` function to perform the parsing.
 	 *
-	 * プラグインのメイン実行関数です。
-	 * 内部の `parseInformation` 関数を呼び出して解析を実行します。
-	 *
-	 * @returns {UserAgentParserPluginParseData | null} The parsed user agent data, or null if parsing fails. / 解析されたユーザーエージェントデータ。解析に失敗した場合はnull。
+	 * @returns {UserAgentParserPluginParseData | null} The parsed user agent data, or null if parsing fails.
 	 */
-	execute: () => {
+	execute: (): UserAgentParserPluginParseData | null => {
 		return parseInformation();
 	}
 };
@@ -54,10 +46,7 @@ const UserAgentParserPlugin: UserAgentParserPlugin = {
  * This function is responsible for retrieving information from the library and parsing it.
  * The processing within this function is tightly coupled with the library.
  *
- * この関数は、ライブラリから情報を取得して解析する役割を担います。
- * この関数内の処理は、ライブラリと密結合しています。
- *
- * @returns {UserAgentParserPluginParseData | null} The parsed data from the User-Agent string, or null if it cannot be parsed. / User-Agent文字列から解析されたデータ。解析できない場合はnull。
+ * @returns {UserAgentParserPluginParseData | null} The parsed data from the User-Agent string, or null if it cannot be parsed.
  */
 function parseInformation(): UserAgentParserPluginParseData | null {
 	const userAgent = ("userAgent" in globalThis.navigator) ? globalThis.navigator.userAgent : undefined;

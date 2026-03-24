@@ -1,3 +1,11 @@
+/**
+ * Utility for managing the import and export of application settings.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 const FILE_TYPE_DEFINITIONS = {
 	csv : { mime: "text/csv",           extensions: [ ".csv" ] },
 	ini : { mime: "application/x-ini",  extensions: [ ".ini" ] },
@@ -7,29 +15,36 @@ const FILE_TYPE_DEFINITIONS = {
 	yaml: { mime: "application/x-yaml", extensions: [ ".yaml", ".yml" ] }
 } as const;
 
-// "FILE_TYPE_DEFINITIONS" から MIME_TYPES を動的に生成
-// 例:
-// {
-//   csv : "text/csv",
-//   ini : "application/x-ini",
-//   json: "application/json",
-//   txt : "text/plain",
-//   toml: "application/toml",
-//   yaml: "application/x-yaml"
-// }
+/**
+ * Dynamically generate MIME_TYPES from "FILE_TYPE_DEFINITIONS"
+ *
+ * @example
+ * {
+ *   csv : "text/csv",
+ *   ini : "application/x-ini",
+ *   json: "application/json",
+ *   txt : "text/plain",
+ *   toml: "application/toml",
+ *   yaml: "application/x-yaml"
+ * }
+ */
 const MIME_TYPES = Object.fromEntries(
 	Object.entries(FILE_TYPE_DEFINITIONS).map(([ key, value ]) => [ key, value.mime ])
 ) as { [K in keyof typeof FILE_TYPE_DEFINITIONS]: typeof FILE_TYPE_DEFINITIONS[K]["mime"] };
 
-// "FILE_TYPE_DEFINITIONS" から拡張子へのマッピングを動的に生成
-// 例: {
-//   "text/csv"          : [ ".csv" ],
-//   "application/x-ini" : [ ".ini" ],
-//   "application/json"  : [ ".json" ],
-//   "text/plain"        : [ ".txt" ],
-//   "application/toml"  : [ ".toml" ],
-//   "application/x-yaml": [ ".yaml", ".yml" ]
-// }
+/**
+ * Dynamically generate extension mapping from "FILE_TYPE_DEFINITIONS"
+ *
+ * @example
+ * {
+ *   "text/csv"          : [ ".csv" ],
+ *   "application/x-ini" : [ ".ini" ],
+ *   "application/json"  : [ ".json" ],
+ *   "text/plain"        : [ ".txt" ],
+ *   "application/toml"  : [ ".toml" ],
+ *   "application/x-yaml": [ ".yaml", ".yml" ]
+ * }
+ */
 const MIME_TO_EXT_MAP = Object.fromEntries(
 	Object.values(FILE_TYPE_DEFINITIONS).map(value => [ value.mime, value.extensions ])
 ) as Record<string, readonly string[]> as Record<MimeType, readonly string[]>;
@@ -58,7 +73,10 @@ type ExportResult = BaseResult & {
  * Represents an error thrown when the user cancels a file selection dialog.
  */
 class UserCancelError extends Error {
-	constructor(message = "File selection was canceled by the user.") {
+	/**
+	 * @param {string} [message] - Error message for cancellation.
+	 */
+	constructor(message: string = "File selection was canceled by the user.") {
 		super(message);
 		this.name = "UserCancelError";
 	}
@@ -70,8 +88,6 @@ class UserCancelError extends Error {
  * This class provides static methods for file import and export operations,
  * designed to be independent of any UI framework.
  * For detailed specifications and usage examples, please refer to the documentation.
- *
- * @lastModified 2026-02-27
  */
 class ConfigManager {
 	private constructor() {
@@ -80,8 +96,9 @@ class ConfigManager {
 
 	/**
 	 * Imports a configuration file from the user's local machine.
-	 * @param   {MimeType} mimetype     - The expected MIME type of the file.
-	 * @returns {Promise<ImportResult>} - A promise that resolves to an object containing the import result.
+	 *
+	 * @param   {MimeType}              mimetype - The expected MIME type of the file.
+	 * @returns {Promise<ImportResult>}            A promise that resolves to an object containing the import result.
 	 */
 	public static async importFile(mimetype: MimeType): Promise<ImportResult> {
 		try {
@@ -111,10 +128,11 @@ class ConfigManager {
 
 	/**
 	 * Exports a configuration string to a file and triggers a download.
+	 *
 	 * @param   {string}       content  - The string content to be saved to the file.
 	 * @param   {string}       filename - The name of the file to be downloaded.
 	 * @param   {MimeType}     mimetype - The MIME type of the file.
-	 * @returns {ExportResult}          - An object containing the export result.
+	 * @returns {ExportResult}            An object containing the export result.
 	 */
 	public static exportFile(content: string, filename: string, mimetype: MimeType): ExportResult {
 		try {
@@ -140,9 +158,9 @@ class ConfigManager {
 
 	/**
 	 * Displays a file open dialog to the user.
-	 * @param   {MimeType} mimetype - The accepted MIME type for the file dialog.
-	 * @returns {Promise<File>}     - A promise that resolves with the selected file or rejects if canceled.
-	 * @private
+	 *
+	 * @param   {MimeType}      mimetype - The accepted MIME type for the file dialog.
+	 * @returns {Promise<File>}            A promise that resolves with the selected file or rejects if canceled.
 	 */
 	static #showOpenFileDialog(mimetype: MimeType): Promise<File> {
 		return new Promise((resolve, reject) => {
@@ -170,18 +188,18 @@ class ConfigManager {
 
 	/**
 	 * Reads the content of a file as text.
+	 *
 	 * @param   {File}            file     - The file to read.
 	 * @param   {MimeType}        mimetype - The expected MIME type for validation.
-	 * @returns {Promise<string>}          - A promise that resolves with the text content of the file.
-	 * @throws  {Error}                    - If the file's MIME type does not match the expected type.
-	 * @private
+	 * @returns {Promise<string>}            A promise that resolves with the text content of the file.
+	 * @throws  {Error}                      If the file's MIME type does not match the expected type.
 	 */
 	static async #readAsText(file: File, mimetype: MimeType): Promise<string> {
 		const expectedExtensions = MIME_TO_EXT_MAP[mimetype];
 		const isMimeTypeMatch    = (mimetype === file.type);
 		const isExtensionMatch   = expectedExtensions ? expectedExtensions.some(ext => file.name.endsWith(ext)) : false;
 
-		// MIMEタイプも拡張子も一致しない場合にエラーをスローする
+		// Throw an error if neither the MIME type nor the file extension matches.
 		if (!isMimeTypeMatch && !isExtensionMatch) {
 			const message = `Invalid: a file with a different format (${file.type || "unknown"}) from "${mimetype}" was loaded, and the file extension does not match in ConfigManager.#readAsText`;
 			throw new Error(message);

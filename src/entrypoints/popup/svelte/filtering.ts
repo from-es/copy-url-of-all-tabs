@@ -1,3 +1,10 @@
+/**
+ * Logic for filtering tabs and URLs based on user settings.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 // WXT provided cross-browser Types.
 import type { Browser } from "wxt/browser";
 
@@ -11,13 +18,14 @@ import type { Action }         from "./types";
 
 
 /**
- * コピーアクションのためにタブ情報を前処理
- * 設定に基づいてURLの重複排除とプロトコルフィルタリングを行う。
- * @param   {Browser.tabs.Tab[]} tabs   - 元のタブ配列
- * @param   {Action}             action - 実行するアクションの文字列（例: "copy"）
- * @param   {Config}             config - ユーザー設定オブジェクト
- * @param   {Define}             define - 定義済み定数オブジェクト
- * @returns {Browser.tabs.Tab[]}        - 設定適応済みタブオブジェクトの配列
+ * Pre-processes tab information for the copy action.
+ * Performs URL deduplication and protocol filtering based on settings.
+ *
+ * @param   {Browser.tabs.Tab[]} tabs   - Original tab array.
+ * @param   {Action}             action - Action string to execute (e.g., "copy").
+ * @param   {Config}             config - User configuration object.
+ * @param   {Define}             define - Predefined constant object.
+ * @returns {Browser.tabs.Tab[]}          Array of tab objects with settings applied.
  */
 function prepareForActionCopy(tabs: Browser.tabs.Tab[], action: Action, config: Config, define: Define): Browser.tabs.Tab[] {
 	const urlList         = tabs.map(tab => tab.url).filter((url): url is string => !!url);
@@ -28,13 +36,14 @@ function prepareForActionCopy(tabs: Browser.tabs.Tab[], action: Action, config: 
 }
 
 /**
- * ペーストアクションのためにURLリストを前処理
- * クリップボードから取得したURLリストに対し、設定に基づいて、プロトコルフィルタリング、重複排除を行う。
- * @param   {string[]} urlList - 開く対象のURLリスト
- * @param   {Action}   action  - 実行するアクションの文字列（例: "paste"）
- * @param   {Config}   config  - ユーザー設定オブジェクト
- * @param   {Define}   define  - 定義済み定数オブジェクト
- * @returns {string[]}         - 設定適応済みURLリスト
+ * Pre-processes the URL list for the paste action.
+ * Performs protocol filtering and deduplication on the URL list obtained from the clipboard based on settings.
+ *
+ * @param   {string[]} urlList - List of URLs to open.
+ * @param   {Action}   action  - Action string to execute (e.g., "paste").
+ * @param   {Config}   config  - User configuration object.
+ * @param   {Define}   define  - Predefined constant object.
+ * @returns {string[]}           List of URLs with settings applied.
  */
 function prepareForActionPaste(urlList: string[], action: Action, config: Config, define: Define): string[] {
 	const filteredUrlList = applyUrlProcessingRules(urlList, action, config, define);
@@ -43,12 +52,13 @@ function prepareForActionPaste(urlList: string[], action: Action, config: Config
 }
 
 /**
- * 設定に基づき、プロトコルフィルタリング、重複排除を行う。
- * @param   {string[]} urlList - 処理対象のURLリスト
- * @param   {Action}   action  - 実行するアクションの文字列（例: "copy" or "paste"）
- * @param   {Config}   config  - ユーザー設定オブジェクト
- * @param   {Define}   define  - 定義済み定数オブジェクト
- * @returns {string[]}         - 設定適応済みURLリスト
+ * Performs protocol filtering and deduplication based on settings.
+ *
+ * @param   {string[]} urlList - List of URLs to process.
+ * @param   {Action}   action  - Action string to execute (e.g., "copy" or "paste").
+ * @param   {Config}   config  - User configuration object.
+ * @param   {Define}   define  - Predefined constant object.
+ * @returns {string[]}           List of URLs with settings applied.
  */
 function applyUrlProcessingRules(urlList: string[], action: Action, config: Config, define: Define): string[] {
 	const isProtocolFilteringEnabled     = (action === "copy") ? config.Filtering.Protocol.Copy.enable     : config.Filtering.Protocol.Paste.enable;
@@ -76,13 +86,14 @@ function applyUrlProcessingRules(urlList: string[], action: Action, config: Conf
 }
 
 /**
- * URLリストをプロトコルに基づいてフィルタリング
- * @param   {string[]} urlList   - フィルタリング対象のURLリスト
- * @param   {boolean}  filtering - フィルタリングを有効にするか
- * @param   {Action}   action    - フィルタリングを実行するアクションの文字列（例: "copy" or "paste"）
- * @param   {Config}   config    - ユーザー設定オブジェクト
- * @param   {Define}   define    - 定義済み定数オブジェクト
- * @returns {string[]}           - フィルタリング済みURLリストの配列
+ * Filters the URL list based on protocols.
+ *
+ * @param   {string[]} urlList   - List of URLs to filter.
+ * @param   {boolean}  filtering - Whether to enable filtering.
+ * @param   {Action}   action    - Action string executing the filtering (e.g., "copy" or "paste").
+ * @param   {Config}   config    - User configuration object.
+ * @param   {Define}   define    - Predefined constant object.
+ * @returns {string[]}             Array of filtered URLs.
  */
 function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Action, config: Config, define: Define): string[] {
 	const getRegexForProtocol = (config: Config, define: Define): RegExp => {
@@ -94,7 +105,7 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 				allowProtocol.push(key);
 			}
 		}
-		// Chrome 系ブラウザ対応の追加処理@2024/10/15
+		// Additional processing for Chrome-based browsers @2024/10/15
 		if (config.Filtering.Protocol.type.chrome) {
 			(define.ChromiumBasedBrowser).forEach(
 				(brows) => {
@@ -111,7 +122,7 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 			return (new RegExp(reg, "i"));
 		}
 
-		// 何にも一致しない正規表現を返す
+		// Returns a regular expression that never matches.
 		return define.Regex.NeverMatch;
 	};
 	const filteringURL = (url: string) => {
@@ -162,15 +173,15 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 	const list     = structuredClone(urlList);
 	const filtered = (list).filter(filteringURL);
 	const result   = (filtered).map((url) => { return url.trim(); });
-	const diff     = getArrayDiff(urlList, result);  // 配列 urlList と result の差分取得 >> デバック用
+	const diff     = getArrayDiff(urlList, result);  // Gets the difference between urlList and result arrays >> for debugging.
 
 	console.debug(
 		"DEBUG(filter): filtering process details",
 		{
 			list: {
-				before: urlList,  // 全タブのURLの配列
-				after : result,   // フィルタリング済みURLの配列
-				diff  : diff      // 配列差分 >> 全タブのURLとフィルタリング済みURLとの比較
+				before: urlList,  // Array of URLs from all tabs
+				after : result,   // Array of filtered URLs
+				diff  : diff      // Array difference >> comparison between all tab URLs and filtered URLs
 			},
 			action   : action,
 			filtering: filtering,
@@ -182,18 +193,20 @@ function filterUrlsByProtocol(urlList: string[], filtering: boolean, action: Act
 }
 
 /**
- * URLリストをフィルタリングリストに基づいてフィルタリング
- * @param   {string[]} urlList   - フィルタリング対象のURLリスト
- * @param   {boolean}  filtering - フィルタリングを有効にするか
- * @param   {Action}   action    - フィルタリングを実行するアクションの文字列（例: "copy" or "paste"）
- * @param   {Config}   config    - ユーザー設定オブジェクト
- * @returns {string[]}           - フィルタリング済みURLリストの配列
+ * Filters the URL list based on a filtering list.
+ *
+ * @param   {string[]} urlList   - List of URLs to filter.
+ * @param   {boolean}  filtering - Whether to enable filtering.
+ * @param   {Action}   action    - Action string executing the filtering (e.g., "copy" or "paste").
+ * @param   {Config}   config    - User configuration object.
+ * @returns {string[]}             Array of filtered URLs.
  */
 function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action: Action, config: Config): string[] {
 	/**
-	 * 文字列を正規表現で使用できるように、特殊文字をエスケープ
-	 * @param   {string} str - エスケープする文字列
-	 * @returns {string}     - エスケープされた文字列
+	 * Escapes special characters so the string can be used in a regular expression.
+	 *
+	 * @param   {string} str - The string to escape.
+	 * @returns {string}       The escaped string.
 	 */
 	const escapeRegExp = (str: string): string => {
 		return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -201,7 +214,7 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 
 	const currentUrlList = structuredClone(urlList);
 
-	// Step 01: パターンを取得し、空行やコメント行(`// `)を除外
+	// Step 01: Gets patterns and excludes empty lines and comment lines (// ).
 	const text     = (config.Filtering.PatternMatch.pattern).replace(/\r\n|\r/g, "\n").replace(/\n+$/, "");
 	const patterns = (text.split("\n")).filter((elm) => { return (elm !== undefined && elm !== null && elm !== "" && !(/^[\\/]{2}\s/).test(elm)); });
 
@@ -210,7 +223,7 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 		return currentUrlList;
 	}
 
-	// Step 02: matchType に応じてURLをフィルタリング
+	// Step 02: Filter URLs according to matchType
 	const matchType = config.Filtering.PatternMatch.type;
 	let   result: string[];
 
@@ -218,7 +231,7 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 		const regexParts = patterns.map(
 			(pattern) => {
 				if (pattern === "") {
-					return null;  // 空のパターンは無視
+					return null;  // Ignore empty patterns
 				}
 
 				switch (matchType) {
@@ -256,13 +269,14 @@ function filterUrlsByPatternMatch(urlList: string[], filtering: boolean, action:
 }
 
 /**
- * フィルタリング済みのURLリストと元のタブ配列を元に、順序を維持したタブの配列を効率的に再構築
- * @param   {string[]}           urls         - フィルタリング済みのURLリスト
- * @param   {Browser.tabs.Tab[]} originalTabs - 元のタブの完全なリスト
- * @returns {Browser.tabs.Tab[]}              - 再構築されたタブの配列
+ * Efficiently reconstructs a tab array maintaining order based on the filtered URL list and the original tab array.
+ *
+ * @param   {string[]}           urls         - Filtered list of URLs.
+ * @param   {Browser.tabs.Tab[]} originalTabs - Complete list of original tabs.
+ * @returns {Browser.tabs.Tab[]}                Reconstructed tab array.
  */
 function rebuildTabsFromFilteredUrls(urls: string[], originalTabs: Browser.tabs.Tab[]): Browser.tabs.Tab[] {
-	// ループ数削減の為、URLをキー、タブを値とする Map オブジェクトを作成し、O(1) でのアクセスを可能にする
+	// Creates a Map object with URLs as keys and tabs as values to enable O(1) access and reduce the number of loops.
 	const urlToTabMap = new Map<string, Browser.tabs.Tab>();
 
 	for (const tab of originalTabs) {
@@ -271,7 +285,7 @@ function rebuildTabsFromFilteredUrls(urls: string[], originalTabs: Browser.tabs.
 		}
 	}
 
-	// フィルタリング済み、かつ順序が維持されたURLリストを元に、タブ配列を再構築
+	// Reconstructs the tab array based on the filtered and ordered URL list.
 	const resultTabs = urls.map(url => urlToTabMap.get(url)).filter((tab): tab is Browser.tabs.Tab => tab !== undefined);
 
 	return resultTabs;

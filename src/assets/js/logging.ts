@@ -1,3 +1,9 @@
+/**
+ * Utility for logging
+ *
+ * @file
+ */
+
 // Import Module
 import { ConsoleManager } from "@/assets/js/lib/user/ConsoleManager";
 
@@ -7,12 +13,14 @@ import type { Config, Define } from "@/assets/js/define";
 
 
 /**
- * デバッグロギングの有効/無効を切り替える
- * ConsoleManagerを使用し、設定に基づいてコンソール出力の有効/無効を切り替え
+ * Enables or disables debug logging
  *
- * @param   {Config} config
- * @param   {Define} define
+ * Uses ConsoleManager to enable/disable console output based on settings
+ *
+ * @param   {Config} config - User configuration object
+ * @param   {Define} define - Predefined constant object
  * @returns {void}
+ *
  * @see ConsoleManager
  */
 function logging(config: Config, define: Define): void {
@@ -29,50 +37,52 @@ function logging(config: Config, define: Define): void {
 }
 
 /**
- * define.Verification のルールに基づき、config.Debug オブジェクトの有効性を検証
- * @param   {Config}  config - 検証対象の config オブジェクト
- * @param   {Define}  define - 検証ルールを含む define オブジェクト
- * @returns {boolean}        - config.Debug が有効な場合は true, それ以外は false
+ * Validates the effectiveness of the config.Debug object based on rules in define.Verification
+ *
+ * @param   {Config}  config - The config object to validate
+ * @param   {Define}  define - The define object containing validation rules
+ * @returns {boolean}          true if config.Debug is valid, false otherwise
  */
 function validConfig(config: Config, define: Define): boolean {
-	// config.Debug の存在と型を基本チェック
+	// Basic check for existence and type of config.Debug
 	if (!config?.Debug || typeof config.Debug !== "object") {
 		return false;
 	}
 
-	// "Debug." で始まるルールを抽出
+	// Extract rules starting with "Debug."
 	const debugRules = getRulesByPrefix(define.Verification, "Debug.");
 
-	// 抽出したルールが一つもなければ検証できない為 false を返す
+	// If no rules extracted, validation is not possible, so return false
 	if (debugRules.length === 0) {
 		console.warn("WARN(config): no verification rules found for debug in define.verification");
 		return false;
 	}
 
-	// すべてのルールを適用し、一つでも失敗したら false を返す
+	// Apply all rules; return false if even one fails
 	return debugRules.every(verificationRule => {
-		// "Debug.logging" から "logging" を取り出す
+		// Extract "logging" from "Debug.logging"
 		const propName = verificationRule.property.substring("Debug.".length);
 
-		// config.Debug にプロパティが存在するかチェック
+		// Check if property exists in config.Debug
 		if (!Object.hasOwn(config.Debug, propName)) {
 			return false;
 		}
 
-		// config.Debug オブジェクトから実際の値を取得
+		// Get actual value from config.Debug object
 		const value = config.Debug[propName as keyof Config["Debug"]];
 
-		// v8n のルールを実行
+		// Execute v8n rule
 		return verificationRule.rule(value);
 	});
 }
 
 /**
- * `property` キーを持つオブジェクトの配列から、指定されたプロパティプレフィックスに一致するルールを抽出
+ * Extracts rules matching the specified property prefix from an array of objects having a `property` key
+ *
  * @template T
- * @param   {T[]}    rules  - { property: string } を満たすオブジェクトが存在する配列
- * @param   {string} prefix - 検索するプロパティのプレフィックス (例: "Debug.")
- * @returns {T[]}           - フィルタリングされたオブジェクトの配列
+ * @param    {T[]}    rules  - Array containing objects that satisfy { property: string }
+ * @param    {string} prefix - The property prefix to search for (e.g., "Debug.")
+ * @returns  {T[]}             Filtered array of objects
  */
 function getRulesByPrefix<T extends { property: string }>(rules: T[], prefix: string): T[] {
 	return rules.filter(rule => rule.property.startsWith(prefix));

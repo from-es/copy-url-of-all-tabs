@@ -13,10 +13,10 @@ export const manifest: UserManifest = {
 	"name"       : "Copy URL of All Tabs",
 	"description": "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
 
-	// package.json から取得
+	// Obtained from package.json
 	"version": pkg.version,
 
-	/**
+	/*
 		CSS
 			:has() (https://developer.mozilla.org/en-US/docs/Web/CSS/:has)
 				- Chrome : 105 & later

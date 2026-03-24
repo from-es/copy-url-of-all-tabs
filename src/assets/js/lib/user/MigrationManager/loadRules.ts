@@ -1,6 +1,9 @@
 /**
- * @file        ルールローダーユーティリティ
- * @description 指定されたglobパターンに一致するルールファイルを動的にインポートし、ルールを処理・ソートする機能を提供。
+ * Rule loader utility that provides functionality to dynamically import, process, and sort rule files matching a specified glob pattern.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
  */
 
 // Import NPM Package
@@ -12,26 +15,31 @@ import type { MigrationRule } from "./types";
 
 
 // =================================================================================
-// ローカル型定義
+// Local Type Definitions
 // =================================================================================
 
 /**
- * `import.meta.glob` によってインポートされるモジュールが持つべきエクスポートの型。
- * 各ルールファイルは `rules` という名前で `MigrationRule<T>[]` をエクスポートする必要があります。
+ * Type for the exports that modules imported by `import.meta.glob` should have.
+ * Each rule file must export an array of `MigrationRule<T>[]` under the name `rules`.
+ *
+ * @template T - The type of the data object being migrated.
  */
 type RuleModule<T> = {
 	rules: MigrationRule<T>[];
 };
 
 /**
- * `import.meta.glob` の結果として得られるモジュールの型。
- * `eager: true` のため、ここでは同期モジュールとして扱われます。
+ * Type for the modules obtained as a result of `import.meta.glob`.
+ * Since `eager: true` is used, these are treated as synchronous modules here.
+ *
+ * @template T - The type of the data object being migrated.
  */
 type ImportModules<T> = Record<string, RuleModule<T>>;
 
 /**
- * ルールが有効なものと無効なものに分割された結果の型定義。
- * @template T - 移行対象となるデータの型
+ * Type definition for the result of partitioning rules into valid and invalid sets.
+ *
+ * @template T - The type of the data object being migrated.
  */
 type PartitionedRules<T> = {
 	validRules  : MigrationRule<T>[];
@@ -41,14 +49,15 @@ type PartitionedRules<T> = {
 
 
 // =================================================================================
-// ヘルパー関数
+// Helper Functions
 // =================================================================================
 
 /**
- * モジュールマップからすべてのルールを抽出し、単一の配列にフラット化する。
- * @template T                         - 移行対象となるデータの型
- * @param   {ImportModules<T>} modules - `import.meta.glob` の結果 (eager: true)
- * @returns {MigrationRule<T>[]}       - 抽出されたルールの配列
+ * Extracts all rules from a module map and flattens them into a single array.
+ *
+ * @template T                          - The type of the data object being migrated.
+ * @param    {ImportModules<T>} modules - The result of `import.meta.glob` (eager: true).
+ * @returns  {MigrationRule<T>[]}         An array of extracted rules.
  */
 function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>[] {
 	const allRules: MigrationRule<T>[] = [];
@@ -58,13 +67,13 @@ function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>
 
 		try {
 			if (!module || !Array.isArray(module.rules)) {
-				// モジュールがルールを正しくエクスポートしていない場合もエラーを投げる
+				// Throw an error if the module does not export rules correctly.
 				throw new Error(`Error: module at "${path}" does not have a valid "rules" export in extractRulesFromModules`);
 			}
 
 			allRules.push(...module.rules);
 		} catch (error) {
-			// ルールのロード中にエラーが発生した場合、即座にエラーを投げる
+			// Throw an error immediately if one occurs while loading rules.
 			throw new Error(`Failure: failed to load rules from "${path}" in extractRulesFromModules`, { cause: error });
 		}
 	}
@@ -73,106 +82,106 @@ function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>
 }
 
 /**
- * 移行ルール配列を検証し、有効なルールと無効なルールに振り分ける。
- * 各ルールの必須プロパティ（`condition`, `execute`）および推奨プロパティ（`meta`, `order`）の有効性を検査する。
- * 無効なルールが一つでも存在する場合、または`order`プロパティが重複している場合は、即座にエラーをスローする（Fail-Fast）。
- * これにより、後続処理に渡されるルールは常に有効性が保証される。
+ * Validates an array of migration rules and partitions them into valid and invalid sets.
+ * Inspects the validity of required properties (`condition`, `execute`) and recommended properties (`meta`, `order`) for each rule.
+ * Throws an error immediately (Fail-Fast) if any invalid rule is found or if the `order` property is duplicated.
+ * This ensures that rules passed to subsequent processes are always guaranteed to be valid.
  *
- * @template T                          - 移行対象となるデータの型
- * @param    {MigrationRule<T>[]} rules - 検証および振り分け対象のルール配列
- * @returns  {PartitionedRules<T>}      - 有効なルール配列 (`validRules`) と、Fail-Fast のため通常は空となる無効なルール配列 (`invalidRules`) を含むオブジェクト
+ * @template T                          - The type of the data object being migrated.
+ * @param    {MigrationRule<T>[]} rules - The array of rules to be validated and partitioned.
+ * @returns  {PartitionedRules<T>}        An object containing an array of valid rules (`validRules`) and an array of invalid rules (`invalidRules`), which is typically empty due to Fail-Fast.
  */
 function partitionRules<T>(rules: MigrationRule<T>[]): PartitionedRules<T> {
 	const validRules      : MigrationRule<T>[] = [];
 	const invalidRules    : MigrationRule<T>[] = [];
-	const errorDetailsList: object[]           = [];  // 各ルール検証中に検出されたエラーの詳細リスト
+	const errorDetailsList: object[]           = [];  // Detailed list of errors detected during validation of each rule.
 
 	rules.forEach((rule) => {
-		// `validateRule` を用いてルールを検証し、結果（レポート）を取得
+		// Validate the rule using `validateRule` and get the result (report).
 		const { report } = validateRule(rule);
 
-		// `warningReport` があればコンソールに出力 (既存の振る舞いを踏襲)
+		// Log any `warningReport` items to the console (following existing behavior).
 		if (report.warningReport.length > 0) {
 			report.warningReport.forEach(warning => {
-				// `meta` と `order` の欠損に関する警告を `console.warn` に出力
+				// Log warnings regarding missing `meta` and `order` properties as `console.warn`.
 				if (warning.reason.includes("this property is optional")) {
 					console.warn("WARN(migration): optional property missing in migration rule", { reason: warning.reason, rule });
 				}
 			});
 		}
 
-		// `errorReport` にエラーが含まれているかチェック
+		// Check if `errorReport` contains any errors.
 		if (report.errorReport.length > 0) {
-			// エラーがある場合、無効なルールとして処理
+			// Process as an invalid rule if errors exist.
 			invalidRules.push(rule);
-			// エラー詳細を `errorDetailsList` に追加
+			// Add error details to `errorDetailsList`.
 			errorDetailsList.push({
-				rule,                       // エラーのあったルールオブジェクト全体を格納
-				errors: report.errorReport  // `validateRule` からの詳細なエラーレポート
+				rule,                       // Store the entire rule object where the error occurred.
+				errors: report.errorReport  // Detailed error report from `validateRule`.
 			});
 		} else {
-			// エラーがない場合、有効なルールとして追加
+			// Add as a valid rule if no errors exist.
 			validRules.push(rule);
 		}
 	});
 
 	console.debug("DEBUG(migration): validate migration rules", { validRules, invalidRules });
 
-	// エラーの有無を確認し、Fail-Fast 処理
+	// Check for errors and handle Fail-Fast.
 	if (errorDetailsList.length > 0) {
 		const details = JSON.stringify(errorDetailsList, null, "\t");
 		throw new Error(`Invalid: invalid rules detected in partitionRules. Details:\n${details}`);
 	}
 
-	// Fail-Fast 戦略により、この時点では invalidRules は常に空配列となる
+	// Due to the Fail-Fast strategy, invalidRules will always be an empty array at this point.
 	return { validRules, invalidRules };
 }
 
 /**
- * 単一の移行ルールオブジェクトの構造と型を検証。
- * この関数は `partitionRules` から内部的に呼び出されることを想定しています。
+ * Validates the structure and type of a single migration rule object.
+ * This function is intended to be called internally from `partitionRules`.
  *
- * @template T                      - 移行対象となるデータの型
- * @param   {MigrationRule<T>} rule - 検証対象の単一移行ルール
- * @returns {{ rule: MigrationRule<T>, report: { warningReport: Report[], errorReport: Report[] } }} - 検証結果のレポートを含むオブジェクト
+ * @template T                                                                                        - The type of the data object being migrated.
+ * @param    {MigrationRule<T>} rule                                                                  - The single migration rule to be validated.
+ * @returns  {{ rule: MigrationRule<T>, report: { warningReport: Report[], errorReport: Report[] } }}   An object containing the validation report.
  */
-function validateRule<T>(rule: MigrationRule<T>) {
+function validateRule<T>(rule: MigrationRule<T>): { rule: MigrationRule<T>; report: { warningReport: Report[]; errorReport: Report[]; }; } {
 	/**
-	 * 検証ロジックが返す多値論理の状態を定義します。
-	 * 各値は検証結果の特定の状態を示し、後続処理のフロー制御に利用されます。
+	 * Defines the multi-valued logic states returned by the validation logic.
+	 * Each value indicates a specific state of the validation result and is used for flow control in subsequent processes.
 	 *
-	 * true                        : 対象のプロパティが存在し、かつ正規の型である
-	 * false                       : 対象のプロパティが存在するが、不正な型である
-	 * undefined                   : 対象のプロパティが存在しない
-	 * "Optional Property"         : 対象のプロパティは存在しなくとも良い（存在しない場合は警告とする）
-	 * "Pass Through"              : `true` 判定と同じ扱い。特定の条件で検証をスキップし、結果を通過させる場合に使用
-	 * "Skip to Next Validate Rule": 現在のルールオブジェクトに対するそれ以降の検証処理を中断し、次のルールオブジェクトの検証へ移行する
+	 * true                        : The target property exists and has a valid type.
+	 * false                       : The target property exists but has an invalid type.
+	 * undefined                   : The target property does not exist.
+	 * "Optional Property"         : The target property does not need to exist (warn if it doesn't).
+	 * "Pass Through"              : Treated the same as `true`. Used to skip validation under certain conditions and let the result pass.
+	 * "Skip to Next Validate Rule": Interrupts subsequent validation for the current rule object and moves to validation of the next rule object.
 	 */
 	type ValidationStatus = boolean | "Optional Property" | undefined | "Pass Through" | "Skip to Next Validate Rule";
 	type ValidationList = {
 		/**
-		 * 検証対象プロパティへのパス文字列。`lodash.get` メソッドに渡す形式です。
+		 * Path string to the property being validated. Format passed to `lodash.get`.
 		 */
 		target: string;
 
 		/**
-		 * 検証ロジックを実装した関数。
-		 * 渡されたオブジェクトが期待される状態にあるかを評価し、`ValidationStatus` 型の値を返します。
-		 * 返される値によって、検証の成否や処理の継続が判断されます。
+		 * Function implementing the validation logic.
+		 * Evaluates if the passed object is in the expected state and returns a `ValidationStatus` value.
+		 * The returned value determines the success or failure of validation and whether to continue processing.
 		 */
 		// eslint-disable-next-line no-unused-vars
 		validate: (_obj: unknown) => ValidationStatus;
 
 		/**
-		 * 検証結果のフラグ、プロパティパス、およびプロパティ情報に基づいて、人間が読めるメッセージを生成する関数です。
-		 * 主にエラーや警告の詳細を伝えるために使用されます。
+		 * Function that generates a human-readable message based on the validation flag, property path, and property information.
+		 * Primarily used to communicate details about errors and warnings.
 		 */
 		// eslint-disable-next-line no-unused-vars
 		message: (_flag: ValidationStatus, _target: string, _property: unknown) => string;
 
 		/**
-		 * (オプション) 特定の検証結果に基づいてカスタム例外処理や特殊なアクションを行うための情報。
-		 * 現在は未使用ですが、将来的な拡張のために残されています。
+		 * (Optional) Information for performing custom exception handling or special actions based on specific validation results.
+		 * Currently unused, but remains for future extension.
 		 */
 		except?: unknown;
 	};
@@ -183,13 +192,13 @@ function validateRule<T>(rule: MigrationRule<T>) {
 	};
 
 	/**
-	 * 検証ステータスフラグに基づいて、人間が読めるメッセージ文字列を生成。
+	 * Generates a human-readable message string based on the validation status flag.
 	 *
-	 * @param   {ValidationStatus} flag
-	 * @param   {string}           target
-	 * @param   {unknown}          property
-	 * @returns {string}
-	 * @throws  実装レベルで発生する事はあっても、ルール検証ではスルーは投げない
+	 * @param   {ValidationStatus} flag     - Validation status flag.
+	 * @param   {string}           target   - Property name or target being validated.
+	 * @param   {unknown}          property - Property value.
+	 * @returns {string}                      Message string.
+	 * @throws                                Although it may occur at the implementation level, no error is thrown during rule validation.
 	 */
 	const createMessage = (flag: ValidationStatus, target: string, property: unknown): string => {
 		switch (flag) {
@@ -218,13 +227,13 @@ function validateRule<T>(rule: MigrationRule<T>) {
 		SkipToNextValidateRule: "Skip to Next Validate Rule"
 	};
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const validationContext: Record<string, any> = {};  // 検証コンテキストの記録用
+	const validationContext: Record<string, any> = {};  // For recording validation context.
 	const warningReport    : ValidationReport[]  = [];
 	const errorReport      : ValidationReport[]  = [];
 	const validationList   : ValidationList[]    = [
-		// meta: 'meta' プロパティの検証 (推奨)
-		// 'meta' は開発者向け情報であり、必須ではない。
-		// 存在する場合のみ構造を検証し、不正であればエラーとし、存在しない場合は警告のみで処理を続行。
+		// meta: Validate 'meta' property (Recommended)
+		// 'meta' is information for developers and is not mandatory.
+		// Validate the structure only if it exists; treat as error if invalid, but continue if non-existent (warn only).
 		{
 			target  : "meta",
 			validate: (obj) => {
@@ -375,9 +384,10 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 
-		// order: 'order' プロパティの検証 (任意)
-		// 'order' はルールの適用順序を制御し、必須ではない。存在する場合のみ型を検証し、不正であればエラーとする。
-		// 存在しない場合は警告のみで処理を続行。
+		// order: Validate 'order' property (Optional)
+		// 'order' controls the sequence of rule application and is not mandatory.
+		// Validate the type only if it exists; treat as error if invalid.
+		// Continue with a warning only if non-existent.
 		{
 			target  : "order",
 			validate: (obj) => {
@@ -392,8 +402,8 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 
-		// condition: 'condition' プロパティの検証 (必須)
-		// 'condition' はルールの適用条件を定義するため、必須。
+		// condition: Validate 'condition' property (Required)
+		// 'condition' is mandatory as it defines the conditions for applying the rule.
 		{
 			target  : "condition",
 			validate: (obj) => {
@@ -408,8 +418,8 @@ function validateRule<T>(rule: MigrationRule<T>) {
 			}
 		},
 
-		// validate: 'execute' プロパティの検証 (必須)
-		// 'execute' はルールが適用された際の処理を定義するため、必須。
+		// validate: Validate 'execute' property (Required)
+		// 'execute' is mandatory as it defines the process when a rule is applied.
 		{
 			target  : "execute",
 			validate: (obj) => {
@@ -426,9 +436,9 @@ function validateRule<T>(rule: MigrationRule<T>) {
 	];
 
 	for (const validation of validationList) {
-		// rule: ルールオブジェクト自体の妥当性を検証
+		// rule: Validate validity of the rule object itself.
 		if (!rule || typeof rule !== "object" || Object.keys(rule).length === 0) {
-			// エラーレポートに追加し、これ以降の検証処理は中断する（早期リターン）
+			// Add to error report and interrupt subsequent validation (Early Return).
 			errorReport.push({
 				target  : "rule",
 				property: rule,
@@ -445,7 +455,7 @@ function validateRule<T>(rule: MigrationRule<T>) {
 		}
 
 		/*
-			rule.*: ルールオブジェクト配下のプロパティについて検証
+			rule.*: Validate properties under the rule object.
 		*/
 		const propertyValue = lodashGetValue(rule, validation.target);
 		const validate      = validation.validate(propertyValue);
@@ -492,15 +502,15 @@ function validateRule<T>(rule: MigrationRule<T>) {
 }
 
 /**
- * 有効なルールセット内で 'order' プロパティの一意性を検証し、重複が見つかった場合はエラーを投げる（Fail-Fast）。
+ * Validates the uniqueness of the `order` property within a valid set of rules and throws an error if duplicates are found (Fail-Fast).
  *
- * @template T                          - 移行対象となるデータの型
- * @param    {MigrationRule<T>[]} rules - 一意性チェック対象のルール配列
+ * @template T                          - The type of the data object being migrated.
+ * @param    {MigrationRule<T>[]} rules - The array of rules to check for uniqueness.
  */
 function checkForDuplicateOrders<T>(rules: MigrationRule<T>[]): void {
 	const orders = new Map<number, { count: number, ruleIdentifiers: string[] }>();
 	rules.forEach((rule, index) => {
-		// order プロパティが存在しないルールはチェック対象外
+		// Rules without an order property are not checked.
 		if (rule.order === undefined) {
 			return;
 		}
@@ -519,7 +529,7 @@ function checkForDuplicateOrders<T>(rules: MigrationRule<T>[]): void {
 
 	orders.forEach((entry, order) => {
 		if (entry.count > 1) {
-			// Fail-Fast: order の重複はエラーを投げる
+			// Fail-Fast: throw error for duplicate orders.
 			throw new Error(
 				`Error: duplicate order value "${order}" found in ${entry.count} rules in checkForDuplicateOrders. This can lead to unpredictable execution order. Involved rules: [${entry.ruleIdentifiers.join(", ")}]. Please ensure all rule "order" properties are unique.`
 			);
@@ -528,45 +538,48 @@ function checkForDuplicateOrders<T>(rules: MigrationRule<T>[]): void {
 }
 
 /**
- * 有効なルールをソートし、無効なルールと結合する。
- * (Fail-Fast の場合、invalidRules は常に空配列になる)
+ * Sorts valid rules and combines them with invalid rules.
+ * (In the case of Fail-Fast, invalidRules will always be an empty array).
  *
- * @template T                                - 移行対象となるデータの型
- * @param   {MigrationRule<T>[]} validRules   - ソート対象の有効なルール配列
- * @param   {MigrationRule<T>[]} invalidRules - 結合対象の無効なルール配列
- * @returns {MigrationRule<T>[]}              - 最終的なルールの配列
+ * @template T                                 - The type of the data object being migrated.
+ * @param    {MigrationRule<T>[]} validRules   - The array of valid rules to be sorted.
+ * @param    {MigrationRule<T>[]} invalidRules - The array of invalid rules to be combined.
+ * @returns  {MigrationRule<T>[]}                The final array of rules.
  */
 function sortAndCombineRules<T>(validRules: MigrationRule<T>[], invalidRules: MigrationRule<T>[]): MigrationRule<T>[] {
-	// 'order' プロパティに基づいて有効なルールを昇順にソート
-	// 'order' プロパティを持たないルールは、持つルールの後に配置する
+	// Sort valid rules in ascending order based on the `order` property.
+	// Rules without an `order` property are placed after those with one.
 	validRules.sort((a, b) => {
 		if (a.order !== undefined && b.order !== undefined) {
 			return a.order - b.order;
 		}
 		if (a.order !== undefined) {
-			return -1;  // a を先に
+			return -1;  // a first
 		}
 		if (b.order !== undefined) {
-			return 1;  // b を先に
+			return 1;  // b first
 		}
-		return 0;  // 順序変更なし
+		return 0;  // No change in order
 	});
 
-	// Fail-Fast のため invalidRules は常に空になるが、関数シグネチャのため結合を維持
+	// Although invalidRules will always be empty due to Fail-Fast, keep combining for the function signature.
 	return [ ...validRules, ...invalidRules ];
 }
 
 // =================================================================================
-// ルールローダー: loadRules
+// Rule Loader: loadRules
 // =================================================================================
 
 /**
- * 指定されたモジュールマップから移行ルールを動的に読み込み、ソートして返す。
- * 不正なルールや重複する order 値が見つかった場合、エラーを投げる（Fail-Fast）。
+ * Dynamically loads migration rules from a specified module map, sorts them, and returns the result.
+ * Throws an error if invalid rules or duplicate order values are found (Fail-Fast).
  *
- * 注意: この関数は `import.meta.glob` と組み合わせて使用することを想定。
- * `eager: true` オプションと組み合わせて使用し、Service Workerなどの環境での
- * 非同期読み込みの問題を回避することを目的としています。
+ * Note: This function is intended to be used in conjunction with `import.meta.glob`.
+ * Use with the `eager: true` option to avoid asynchronous loading issues in environments such as Service Workers.
+ *
+ * @template T                            - The type of the data object being migrated.
+ * @param    {ImportModules<T>}   modules - Result of `import.meta.glob` (synchronous module map due to `eager: true`).
+ * @returns  {MigrationRule<T>[]}           An array of migration rules sorted in ascending order by the `order` property.
  *
  * @example
  * // rules/index.ts
@@ -574,10 +587,6 @@ function sortAndCombineRules<T>(validRules: MigrationRule<T>[], invalidRules: Mi
  *
  * const modules = import.meta.glob('./v1/*.rule.ts', { eager: true });
  * const migrationRules = loadRules(modules);
- *
- * @template T                            - 移行対象となるデータの型
- * @param    {ImportModules<T>}   modules - `import.meta.glob` の結果 (`eager: true` のため同期モジュールマップ)
- * @returns  {MigrationRule<T>[]}         - `order` プロパティで昇順にソートされた移行ルールの配列
  */
 function loadRules<T>(modules: ImportModules<T>): MigrationRule<T>[] {
 	const allRulesRaw = extractRulesFromModules(modules);

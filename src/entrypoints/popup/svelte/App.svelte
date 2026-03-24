@@ -1,4 +1,11 @@
 <script lang="ts">
+	/**
+	 * Main Svelte component for the popup menu.
+	 *
+	 * @file
+	 * @lastModified 2026-03-24
+	 */
+
 	// WXT provided cross-browser compatible API.
 	import { browser } from "wxt/browser";
 
@@ -24,16 +31,16 @@
 
 	onMount(() => {
 		console.info("INFO(popup): Popup component mounted");
-		console.debug("DEBUG(popup): initial status object", { status: cloneObject(status) }); // status 配下に構造化複製対応外の型（関数）が含まれている事が原因による Svelte のエラーを避ける為、ディープコピーした値を返す
+		console.debug("DEBUG(popup): initial status object", { status: cloneObject(status) }); // Deep copy the status object to avoid Svelte errors caused by non-cloneable types (functions) within the status structure
 
 		initialize();
 	});
 
 	/**
-	 * ポップアップメニューの初期化処理を行う。
+	 * Initializes the popup menu.
 	 */
 	function initialize(): void {
-		// スタイル (popup.css >> :root要素) の動的書き換え
+		// Dynamic update of styles (popup.css >> :root element)
 		const fontSize = status.config.PopupMenu.fontsize;
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 
@@ -41,17 +48,19 @@
 	}
 
 	/**
-	 * ボタンクリックイベントを処理するハンドラ。
-	 * data-action属性に基づいて、対応するアクションを実行。
-	 * @param {MouseEvent} event - マウスクリックイベントオブジェクト
+	 * Handler for button click events.
+	 * Executes the corresponding action based on the data-action attribute.
+	 *
+	 * @param {MouseEvent} event - Mouse click event object.
+	 * @returns {Promise<void>}
 	 */
 	async function eventOnClick(event: MouseEvent): Promise<void> {
 		const self               = event.currentTarget;
-		const { config, define } = await initializeConfig(null);                                              // 「ポップアップメニュー呼び出した状態でオプション変更 → 再度、ポップアップメニューから呼び出し」時の対策@2024/10/18
-		const action             = self ? (self as HTMLElement).getAttribute("data-action") as Action : null; // 実行するアクション >> "copy" or "paste" or "options"
+		const { config, define } = await initializeConfig(null);                                               // Measure for when options are changed while the popup menu is open -> calling again from the popup menu @2024/10/18
+		const action             = self ? (self as HTMLElement).getAttribute("data-action") as Action : null;  // Action to execute >> "copy" or "paste" or "options"
 		let   result: EventOnClickActionResult | null = null;
 
-		// 状態管理を appState に委譲
+		// Delegate state management to appState
 		actionStore.startAction(action);
 
 		try {
@@ -61,13 +70,13 @@
 
 			console.error("ERROR(action): action execution failed", { action, error });
 		} finally {
-			// アクション完了を通知
+			// Notify action completion
 			actionStore.completeAction(result);
 
 			console.debug("DEBUG(action): action and result", { action, result });
 		}
 
-		// "paste" アクションの後処理
+		// Post-processing for "paste" action
 		if ( action === "paste" && result && result.judgment && result.urlList?.length > 0 ) {
 			const urlList          = result.urlList;
 			const extensionMessage = {
@@ -89,16 +98,18 @@
 			openURLs(extensionMessage);
 		}
 
-		// メッセージの表示
+		// Display message
 		showMessage(action, result, config);
 
-		// ポップアップメニューを閉じる
+		// Close popup menu
 		closePopupMenu(config.PopupMenu.OnClickClose);
 	}
 
 	/**
-	 * 拡張機能のオプションページを開く。
-	 * ページを開いた後、少し遅れてポップアップメニューを閉じる。
+	 * Opens the extension's options page.
+	 * Closes the popup menu shortly after opening the page.
+	 *
+	 * @returns {Promise<void>}
 	 */
 	async function eventOpenOptionsPage(): Promise<void> {
 		browser.runtime.openOptionsPage();
@@ -108,10 +119,11 @@
 	}
 
 	/**
-	 * いずれのアクションにも一致しない場合のフォールバック処理。
-	 * エラーメッセージを含む結果オブジェクトを生成。
-	 * @param   {Action | null}            action - 実行されなかったアクション
-	 * @returns {EventOnClickActionResult}        - エラー情報を含む結果オブジェクト
+	 * Fallback processing when no action matches.
+	 * Generates a result object containing an error message.
+	 *
+	 * @param   {Action | null}            action - The action that was not executed.
+	 * @returns {EventOnClickActionResult}          Result object containing error information.
 	 */
 	function eventDoNotMatch(action: Action | null): EventOnClickActionResult {
 		const message = `Error, Do not match any switch statement. >> eventOnClick() >> ${action}`;
@@ -130,11 +142,12 @@
 	}
 
 	/**
-	 * 渡されたアクションに応じて、対応するイベント処理関数を呼び出す。
-	 * @param   {Action | null}                            action - 実行するアクション
-	 * @param   {Config}                                   config - 拡張機能の設定オブジェクト
-	 * @param   {Define}                                   define - 拡張機能の定義オブジェクト
-	 * @returns {Promise<EventOnClickActionResult | null>}        - アクションの実行結果。'options'アクションの場合は null を返す
+	 * Calls the corresponding event processing function based on the passed action.
+	 *
+	 * @param   {Action | null}                            action - The action to execute.
+	 * @param   {Config}                                   config - Extension configuration object.
+	 * @param   {Define}                                   define - Extension definition object.
+	 * @returns {Promise<EventOnClickActionResult | null>}          Execution result of the action. Returns null for the 'options' action.
 	 */
 	async function handleAction(action: Action | null, config: Config, define: Define): Promise<EventOnClickActionResult | null> {
 		let result: EventOnClickActionResult | null = null;
@@ -157,10 +170,11 @@
 	}
 
 	/**
-	 * アクション実行中にエラーが発生した場合に、エラー結果オブジェクトを生成。
-	 * @param   {Action | null}            action - エラーが発生したアクション
-	 * @param   {Error}                    error  - 発生したエラーオブジェクト
-	 * @returns {EventOnClickActionResult}        - エラー情報を含む結果オブジェクト
+	 * Generates an error result object if an error occurs during action execution.
+	 *
+	 * @param   {Action | null}            action - The action where the error occurred.
+	 * @param   {Error}                    error  - The error object that occurred.
+	 * @returns {EventOnClickActionResult}          Result object containing error information.
 	 */
 	function createErrorResult(action: Action | null, error: Error): EventOnClickActionResult {
 		let message = "An error occurred during the operation.";
@@ -180,26 +194,28 @@
 	}
 
 	/**
-	 * 指定されたURLリストを新しいタブで開くよう、バックグラウンドスクリプトにメッセージを送信。
-	 * @param {ExtensionMessage} message - 開くURLリストと設定を含むメッセージオブジェクト
+	 * Sends a message to the background script to open the specified list of URLs in new tabs.
+	 *
+	 * @param {ExtensionMessage} message - Message object containing the list of URLs to open and settings.
 	 */
 	function openURLs(message: ExtensionMessage): void {
-		// Firefoxとの互換性と安全性のために、送信前にオブジェクトをサニタイズ >> 構造化複製アルゴリズム不可なプロパティを除去
+		// Sanitize the object before sending for Firefox compatibility and safety >> remove properties not supported by the structured clone algorithm
 		const options = {
 			checkOnly: false,
 			debug    : false
 		};
 		const sanitizedMessage = sanitizeForSendMessage(message, options);
 
-		// アクティブなタブで開くとフォーカスが移動してポップアップメニューが閉じ、処理途中でも終了する為、background.js 側でタブを開く@2024/10/13
+		// Open tabs in background.js because opening in the active tab moves focus and closes the popup menu, which might terminate the process prematurely @2024/10/13
 		browser.runtime.sendMessage(sanitizedMessage);
 	}
 
 	/**
-	 * アクションの結果に基づいたメッセージをUIに表示。
-	 * @param {Action | null}                   action - 実行されたアクション
-	 * @param {EventOnClickActionResult | null} result - アクションの結果オブジェクト
-	 * @param {Config}                          config - 拡張機能の設定オブジェクト
+	 * Displays a message in the UI based on the action result.
+	 *
+	 * @param {Action | null}                   action - The action that was executed.
+	 * @param {EventOnClickActionResult | null} result - Action result object.
+	 * @param {Config}                          config - Extension configuration object.
 	 */
 	function showMessage(action: Action | null, result: EventOnClickActionResult | null, config: Config): void {
 		const message = createMessage(action, result);
@@ -219,10 +235,11 @@
 	}
 
 	/**
-	 * アクション結果から、UIに表示するためのHTMLメッセージ文字列を生成。
-	 * @param   {Action | null}                   action - 実行されたアクション
-	 * @param   {EventOnClickActionResult | null} result - アクションの結果オブジェクト
-	 * @returns {string | null}                          - 生成されたHTML文字列。結果がない場合は null を返す
+	 * Generates an HTML message string for display in the UI from the action result.
+	 *
+	 * @param   {Action | null}                   action - The action that was executed.
+	 * @param   {EventOnClickActionResult | null} result - Action result object.
+	 * @returns {string | null}                            Generated HTML string. Returns null if there is no result.
 	 */
 	function createMessage(action: Action | null, result: EventOnClickActionResult | null): string | null {
 		if ( !result || !result?.message ) {
@@ -242,9 +259,10 @@
 	}
 
 	/**
-	 * 表示されているメッセージを、設定されたタイムアウト後に消去。
-	 * @param {string}                              message - 表示されているメッセージ文字列
-	 * @param {Config["PopupMenu"]["ClearMessage"]} option  - メッセージクリアに関する設定
+	 * Clears the displayed message after the configured timeout.
+	 *
+	 * @param {string}                              message - The displayed message string.
+	 * @param {Config["PopupMenu"]["ClearMessage"]} option  - Settings regarding message clearing.
 	 */
 	function clearMessage(message: string, option: Config["PopupMenu"]["ClearMessage"]): void {
 		if ( !message || !(typeof message === "string") || !(message.length > 0) ) {
@@ -276,8 +294,9 @@
 	}
 
 	/**
-	 * ポップアップメニューを、設定されたタイムアウト後に閉じる。
-	 * @param {Config["PopupMenu"]["OnClickClose"]} option - ポップアップメニューを閉じる動作に関する設定
+	 * Closes the popup menu after the configured timeout.
+	 *
+	 * @param {Config["PopupMenu"]["OnClickClose"]} option - Settings regarding the behavior of closing the popup menu.
 	 */
 	function closePopupMenu(option: Config["PopupMenu"]["OnClickClose"]): void {
 		const { enable: close, timeout: delay } = option;

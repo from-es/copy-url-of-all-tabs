@@ -1,12 +1,20 @@
 /**
- * HTML特殊文字をエスケープして、クロスサイトスクリプティング(XSS)を防ぐ
- * `&`, `'`, `` ` ``, `"`, `<`, `>` を対応するHTMLエンティティに変換
+ * Escapes HTML special characters to prevent Cross-Site Scripting (XSS).
  *
- * @lastModified 2026-02-27
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+/**
+ * Escapes HTML special characters to prevent Cross-Site Scripting (XSS).
+ *
+ * Converts `&`, `'`, `` ` ``, `"`, `<`, `>` to their corresponding HTML entities.
+ *
+ * @template T                     The type of the value to escape
+ * @param    {T}          target - The value to escape. If not a string, it is returned as is
+ * @returns  {T | string}          The escaped safe HTML string, or the original value
+ *
  * @see https://aloerina01.github.io/blog/2017-04-28-1
- *
- * @param   {T}          target - エスケープする値。文字列でない場合はそのまま返す
- * @returns {T | string}        - エスケープされた安全なHTML文字列、または元の値
  */
 export function escapeHTML<T>(target: T): T | string {
 	if (typeof target !== "string") {

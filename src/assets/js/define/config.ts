@@ -2,7 +2,7 @@
 import type { Config } from "./types";
 
 export const defaultConfig: Config = {
-	Information : {
+	Information: {
 		name   : null,  // manifest.name,
 		version: null,  // manifest.version
 		date   : {
@@ -10,18 +10,18 @@ export const defaultConfig: Config = {
 			iso8601  : null   // new Date().toISOString()
 		}
 	},
-	Debug : {
-		logging       : true,   // true >> console 出力を有効にする
-		loglevel      : "warn",  // "all" | "trace" | "debug" | "info" | "warn" | "error" | "silent"
-		methodLabel   : true,    // true >> console 出力にメソッドラベルを付加する
-		timestamp     : true,    // true >> console 出力にタイムスタンプを付加する
-		timecoordinate: "UTC",   // "UTC" or "GMT"
+	Debug: {
+		logging       : true,   // true >> Enables console output
+		loglevel      : "warn", // "all" | "trace" | "debug" | "info" | "warn" | "error" | "silent"
+		methodLabel   : true,   // true >> Appends method labels to console output
+		timestamp     : true,   // true >> Appends timestamps to console output
+		timecoordinate: "UTC",  // "UTC" or "GMT"
 	},
 	OptionsPage: {
 		fontsize: 16  // 8 ~ 32 px
 	},
-	PopupMenu : {
-		fontsize    : 16,  // 8 ~ 32 px
+	PopupMenu: {
+		fontsize    : 16, // 8 ~ 32 px
 		ClearMessage: {
 			enable : true,
 			timeout: 5  // 0 ~ 60 seconds
@@ -34,7 +34,7 @@ export const defaultConfig: Config = {
 	Search: {
 		regex: true  // true >> search regex, false >> clipboard text split "\n" → test URL.canParse(line text)
 	},
-	Filtering : {
+	Filtering: {
 		Deduplicate: {
 			Copy: {
 				enable: false
@@ -53,8 +53,8 @@ export const defaultConfig: Config = {
 			type: {
 				/*
 					Chrome         : FTP Protocol support ends Google Chrome 95 and later
-					Firefox        : セキュリティの仕様から 特権URL は開けない (https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
-					privileged URLs: "about:*****" (e.x. about:config, about:addons, about:debugging)。ただし非特権URL (about:blank) は使用可
+					Firefox        : Privileged URLs cannot be opened due to security specifications (https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
+					privileged URLs: "about:*****" (e.g., about:config, about:addons, about:debugging). Unprivileged URLs (about:blank) can still be used.
 				*/
 				http      : true,
 				https     : true,
@@ -86,7 +86,7 @@ export const defaultConfig: Config = {
 	},
 	Tab: {
 		reverse    : false,  // true >> reverse, false >> normal
-		active     : false,  // タブをアクティブで開くか
+		active     : false,  // Whether to open tabs as active
 		delay      : 250,    // 0 ~ 1000 ms,
 		customDelay: {
 			enable: false,
@@ -123,7 +123,7 @@ export const defaultConfig: Config = {
 		enable: false,
 		theme : {
 			type : "light",  // "light", "dark", "custom"
-			color: {         // "custom" 時のみ、オプション画面から任意色を設定可能
+			color: {         // In "custom" mode, arbitrary colors can be set from the options screen
 				text      : "#ffffff",
 				background: "#767676"
 			}

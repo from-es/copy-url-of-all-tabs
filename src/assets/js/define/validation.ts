@@ -477,8 +477,8 @@ const VerificationRules: VerificationRule[] = [
 			};
 			const option = {
 				allowEmptyArray            : true,
-				continueOnArrayTypeMismatch: true, // デバック用、本番環境へのビルド時は false を指定 >> 設定保存 or インポート時に厳重検証
-				continueOnMissingKeys      : true, // デバック用、本番環境へのビルド時は false を指定 >> 設定保存 or インポート時に厳重検証
+				continueOnArrayTypeMismatch: true, // For debugging; specify false for production builds >> Strict validation during settings save or import
+				continueOnMissingKeys      : true, // For debugging; specify false for production builds >> Strict validation during settings save or import
 			};
 
 			const validator = new ArrayOfObjectsValidator();

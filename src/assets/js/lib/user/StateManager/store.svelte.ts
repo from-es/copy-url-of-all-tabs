@@ -1,3 +1,13 @@
+/**
+ * A factory function for creating a reactive, type-safe store using Svelte 5 runes.
+ *
+ * Supports property-level write protection and dynamic state merging.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 // Import Svelte
 import { SvelteMap } from "svelte/reactivity";
 
@@ -31,7 +41,8 @@ type StateOption = {
 
 /**
  * Defines the type for the function that updates the store's state.
- * @param newStates - An array of {@link StateOption} objects used to update the store.
+ *
+ * @param {StateOption[]} newStates - An array of {@link StateOption} objects used to update the store.
  */
 // eslint-disable-next-line no-unused-vars
 type UpdateState = (newStates: StateOption[]) => void;
@@ -40,17 +51,19 @@ type UpdateState = (newStates: StateOption[]) => void;
  * A factory function to create a type-safe, reactive store using Svelte 5 runes.
  * The store supports dynamic properties and property-level write protection.
  *
- * @param initialStates - An optional array of state options to initialize the store.
- * @returns A reactive `shareStatus` proxy object and an `updateState` function.
+ * @template T                                               - The type of the state object.
+ * @param    {StateOption[]} [initialStates]                 - An optional array of state options to initialize the store.
+ * @returns  {{ shareStatus: T; updateState: UpdateState; }} - A reactive `shareStatus` proxy object and an `updateState` function.
  */
-function createStore<T extends StateObject>(initialStates: StateOption[] = []) {
+function createStore<T extends StateObject>(initialStates: StateOption[] = []): { shareStatus: T; updateState: UpdateState; } {
 	// Internal reactive state managed by a single $state object.
 	const internalState = $state<StateObject>({});
 	const freezeMap     = new SvelteMap<string, boolean>();
 
 	/**
 	 * An internal function to initialize or merge new state options into the store.
-	 * @param states - An array of state options.
+	 *
+	 * @param {StateOption[]} states - An array of state options.
 	 */
 	function upsertStates(states: StateOption[]): void {
 		for (const option of states) {
@@ -107,7 +120,8 @@ function createStore<T extends StateObject>(initialStates: StateOption[] = []) {
 
 	/**
 	 * Updates the reactive store by merging the new state.
-	 * @param newStates - An array of state options to update.
+	 *
+	 * @param {StateOption[]} newStates - An array of state options to update.
 	 */
 	function updateState(newStates: StateOption[]): void {
 		upsertStates(newStates);

@@ -1,14 +1,14 @@
 /**
-	@name         CompareVersions
-	@description  セマンティックバージョニング形式のバージョン文字列を比較するユーティリティ
-	@author       From E
-	@lastModified 2026-02-27
-	@dependency   none
-*/
+ * Utility for comparing version strings in Semantic Versioning format.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-24
+ */
 
 /**
- * セマンティックバージョニング形式の文字列であることを示す Branded Type
- * この型はコンパイル時にのみ有効で、実行時には通常の `string` として扱う
+ * Branded Type indicating a string in Semantic Versioning format.
+ * This type is only effective at compile-time and is treated as a regular `string` at runtime.
  */
 type SemVerString = string & { readonly __semVerBrand: unique symbol };
 
@@ -17,16 +17,17 @@ type SEMVER_PATTERN = typeof SEMVER_PATTERN;
 type CompareVersionsResult = -1 | 0 | 1;
 
 interface ParsedVersion {
-	major     : number;
-	minor     : number;
-	patch     : number;
+	major: number;
+	minor: number;
+	patch: number;
 	prerelease: (string | number)[];
 }
 
 
 
 /**
- * セマンティックバージョニングの正規表現 (SemVer 2.0.0 準拠)
+ * Regular expression for Semantic Versioning (SemVer 2.0.0 compliant)
+ *
  * @see https://semver.org/#spec-item-2
  * @example
  *   "1.0.0"
@@ -40,48 +41,49 @@ interface ParsedVersion {
  *   "1.0.0-rc.1+build.123"
  */
 const SEMVER_PATTERN = {
-	// バージョン情報の文字列長の上限を指定
+	// Specify the maximum length of the version info string
 	// Does SemVer have a size limit on the version string? (https://semver.org/#does-semver-have-a-size-limit-on-the-version-string)
 	length: 128,
 
-	// ReDoS対策として、簡易的な正規表現で基本的な構造と文字種を検証
-	// MAJOR.MINOR.PATCH の後に、オプションでプレリリース部とビルドメタデータ部を許可
+	// As a countermeasure against ReDoS, validate basic structure and character types with a simple regular expression
+	// MAJOR.MINOR.PATCH followed by optional prerelease and build metadata parts
 	simple: /^\d{1,4}\.\d{1,4}\.\d{1,4}(?:-[0-9A-Za-z-.]+)?(?:\+[0-9A-Za-z-.]+)?$/,
-	// SemVer 2.0.0 の仕様に準拠した詳細な正規表現
+	// Detailed regular expression compliant with SemVer 2.0.0 specification
 	detail: /^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?:-(?<prerelease>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+(?<buildmetadata>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/
 };
 
 /**
- * セマンティックバージョニング形式に準じた文字列であるか検証
- * @param   {unknown} str
- * @param   {object}  pattern - SEMVER_PATTERN
- * @returns {boolean}
+ * Validates whether a string conforms to the Semantic Versioning format.
+ *
+ * @param   {unknown}        str     - The version string to validate
+ * @param   {SEMVER_PATTERN} pattern - The SEMVER_PATTERN to use for validation
+ * @returns {boolean}                  true if the string is compliant with Semantic Versioning format, otherwise false
  */
 function validSemanticVersionsString(str: unknown, pattern: SEMVER_PATTERN): str is SemVerString {
 	const isValidString = (str: string, reg: RegExp): boolean => {
 		return reg.test(str);
 	};
 
-	// 文字列であるか
+	// Check if it is a string
 	if (!str || typeof str !== "string") {
 		console.error("ERROR(string): invalid version string: input must be a string", { str, typeof: typeof str });
 
 		return false;
 	}
-	// 文字列長の検証
+	// Validate string length
 	if (str.length > pattern.length) {
 		console.error("ERROR(string): invalid version string: length exceeds maximum allowed", { str, length: str.length, maxLength: pattern.length });
 
 		return false;
 	}
 
-	// ReDoS 対策として、簡易的な正規表現で検証
+	// Validate with a simple regular expression as a countermeasure against ReDoS
 	if (!isValidString(str, pattern.simple)) {
 		console.error("ERROR(string): invalid version string: failed basic format check", { str, regex: pattern.simple });
 
 		return false;
 	}
-	// SemVer 2.0.0 の仕様に準拠した詳細な正規表現で検証
+	// Validate with a detailed regular expression compliant with SemVer 2.0.0 specification
 	if (!isValidString(str, pattern.detail)) {
 		console.error("ERROR(string): invalid version string: does not conform to semver 2.0.0 specification", { str, regex: pattern.detail });
 
@@ -91,39 +93,47 @@ function validSemanticVersionsString(str: unknown, pattern: SEMVER_PATTERN): str
 	return true;
 }
 
+/**
+ * Parses a string in Semantic Versioning format and generates an object that holds the values for each section.
+ *
+ * @param   {SemVerString} version - The version string to parse
+ * @returns {ParsedVersion}          A parsed version object
+ * @throws  {Error}                  Throws if the format is invalid
+ */
 function parseVersion(version: SemVerString): ParsedVersion {
 	const buildMetadataIndex = version.indexOf("+");
-	const mainVersion        = buildMetadataIndex !== -1 ? version.substring(0, buildMetadataIndex) : version;
+	const mainVersion = buildMetadataIndex !== -1 ? version.substring(0, buildMetadataIndex) : version;
 
 	const prereleaseIndex = mainVersion.indexOf("-");
-	const versionParts    = prereleaseIndex !== -1 ? mainVersion.substring(0, prereleaseIndex) : mainVersion;
+	const versionParts = prereleaseIndex !== -1 ? mainVersion.substring(0, prereleaseIndex) : mainVersion;
 	const prereleaseParts = prereleaseIndex !== -1 ? mainVersion.substring(prereleaseIndex + 1).split(".") : [];
 
 	const parts = versionParts.split(".").map(Number);
-	// ここでのisNaNチェックは、正規表現が数値部分を保証しているため、厳密には不要だが、
-	// 念のため残しておくことで、将来的な正規表現の変更などにも対応しやすくなる。
+	// The isNaN check here is strictly unnecessary because the regular expression guarantees
+	// the numeric parts, but keeping it ensures stability for future changes in the regular Expression.
 	if (parts.some(isNaN) || parts.length !== 3) {
 		throw new Error(`Invalid: version string "${version}" does not conform to SemVer format in parseVersion`);
 	}
 
 	const prerelease = prereleaseParts.map(part => {
-		// 数値として解釈できる場合は数値、そうでない場合は文字列
+		// Numeric if it can be interpreted as a number, string otherwise
 		return /^\d+$/.test(part) ? Number(part) : part;
 	});
 
 	return {
-		major     : parts[0],
-		minor     : parts[1],
-		patch     : parts[2],
+		major: parts[0],
+		minor: parts[1],
+		patch: parts[2],
 		prerelease: prerelease,
 	};
 };
 
 /**
- * MAJOR.MINOR.PATCH 部分を比較します。
- * @param   {ParsedVersion} parsedBase   - 比較の基準となるパース済みバージョン
- * @param   {ParsedVersion} parsedTarget - 比較対象のパース済みバージョン
- * @returns {number}                     - target が base より小さい場合は -1、等しい場合は 0、大きい場合は 1 を返す
+ * Compares the MAJOR.MINOR.PATCH sections.
+ *
+ * @param   {ParsedVersion} parsedBase   - The parsed version to serve as the baseline for comparison
+ * @param   {ParsedVersion} parsedTarget - The parsed version to be compared
+ * @returns {number}                       Returns -1 if target is less than base, 0 if equal, and 1 if target is greater than base
  */
 function compareMajorMinorPatch(parsedBase: ParsedVersion, parsedTarget: ParsedVersion): CompareVersionsResult {
 	if (parsedBase.major > parsedTarget.major) { return -1; }
@@ -139,21 +149,22 @@ function compareMajorMinorPatch(parsedBase: ParsedVersion, parsedTarget: ParsedV
 }
 
 /**
- * プレリリース識別子部分を比較
- * @param   {ParsedVersion} parsedBase   - 比較の基準となるパース済みバージョン
- * @param   {ParsedVersion} parsedTarget - 比較対象のパース済みバージョン
- * @returns {number}                     - target が base より小さい場合は -1、等しい場合は 0、大きい場合は 1 を返す
+ * Compares the prerelease identifier sections.
+ *
+ * @param   {ParsedVersion} parsedBase   - The parsed version to serve as the baseline for comparison
+ * @param   {ParsedVersion} parsedTarget - The parsed version to be compared
+ * @returns {number}                       Returns -1 if target is less than base, 0 if equal, and 1 if target is greater than base
  */
 function comparePrerelease(parsedBase: ParsedVersion, parsedTarget: ParsedVersion): CompareVersionsResult {
-	// プレリリース識別子がない方が優先度が高い
+	// Versions without prerelease identifiers have higher precedence
 	if (parsedBase.prerelease.length === 0 && parsedTarget.prerelease.length > 0) {
-		return -1; // base はプレリリースなし、target はプレリリースあり -> base の方が優先度が高い
+		return -1; // base has no prerelease, target has prerelease -> base has higher precedence
 	}
 	if (parsedBase.prerelease.length > 0 && parsedTarget.prerelease.length === 0) {
-		return 1; // base はプレリリースあり、target はプレリリースなし -> target の方が優先度が高い
+		return 1; // base has prerelease, target has no prerelease -> target has higher precedence
 	}
 
-	// 両方にプレリリース識別子がある場合
+	// If both have prerelease identifiers
 	if (parsedBase.prerelease.length > 0 && parsedTarget.prerelease.length > 0) {
 		const len = Math.min(parsedBase.prerelease.length, parsedTarget.prerelease.length);
 
@@ -166,52 +177,52 @@ function comparePrerelease(parsedBase: ParsedVersion, parsedTarget: ParsedVersio
 			const typeBase = typeof idBase;
 			const typeTarget = typeof idTarget;
 
-			// 型が異なる場合、数値は文字列より優先度が低い
+			// If types differ, numeric identifiers have lower precedence than string identifiers
 			if (typeBase !== typeTarget) {
 				return typeBase === "number" ? 1 : -1;
 			}
 
-			// 型が同じ場合は、それぞれの方法で比較
+			// If types are the same, compare them using their respective methods
 			if (typeBase === "number") {
 				return (idBase as number) > (idTarget as number) ? -1 : 1;
 			} else {
 				const cmp = (idBase as string).localeCompare(idTarget as string);
 
-				// istanbul ignore else: cmp が 0 の場合はループの先頭で continue されるため、この分岐は到達不能
+				// istanbul ignore else: reaching this branch is impossible as cmp = 0 is handled at the loop start
 				if (cmp !== 0) {
 					return cmp > 0 ? -1 : 1;
 				}
 			}
 		}
 
-		// 識別子のフィールド数が異なる場合、多い方が優先度が高い
+		// If identifiers differ in length, the one with more fields has higher precedence
 		if (parsedBase.prerelease.length > parsedTarget.prerelease.length) { return -1; }
-		if (parsedBase.prerelease.length < parsedTarget.prerelease.length) { return  1; }
+		if (parsedBase.prerelease.length < parsedTarget.prerelease.length) { return 1; }
 	}
 
 	return 0;
 }
 
 /**
- * セマンティックバージョニング形式のバージョン文字列からバージョンの大小を比較
- * MAJOR.MINOR.PATCH[-PRERELEASE][+BUILDMETADATA] 形式をサポートし、
- * プレリリース版の比較ルール（SemVer 2.0.0）に従います。ビルドメタデータは比較に影響しない
+ * Compares two version strings in Semantic Versioning format to determine their relative order.
+ * Supports MAJOR.MINOR.PATCH[-PRERELEASE][+BUILDMETADATA] format and follows the comparison rules for prerelease versions (SemVer 2.0.0).
+ * Build metadata is ignored for comparison purposes.
  *
- * @param   {string} base   - 比較の基準となるバージョン文字列。SemVer 2.0.0 準拠でない場合、エラーがスローされます。
- * @param   {string} target - 比較対象のバージョン文字列。SemVer 2.0.0 準拠でない場合、エラーがスローされます。
- * @returns {number}        - target が base より小さい場合は -1、等しい場合は 0、大きい場合は 1 を返す
- * @throws  {Error}         - 不正なバージョン文字列が渡された場合にスローする
+ * @param   {string} base   - The version string to serve as the baseline for comparison. Throws an error if not SemVer 2.0.0 compliant
+ * @param   {string} target - The version string to be compared. Throws an error if not SemVer 2.0.0 compliant
+ * @returns {number}          Returns -1 if target is less than base, 0 if equal, and 1 if target is greater than base
+ * @throws  {Error}           Thrown if an invalid version string is provided
  */
 function compareVersions(base: unknown, target: unknown): CompareVersionsResult {
-	// base と target が、共に SEMVER_PATTERN 準拠であるか検証
-	const isValidStringBase   = validSemanticVersionsString(base, SEMVER_PATTERN);
+	// Validate that both base and target are compliant with SEMVER_PATTERN
+	const isValidStringBase = validSemanticVersionsString(base, SEMVER_PATTERN);
 	const isValidStringTarget = validSemanticVersionsString(target, SEMVER_PATTERN);
-	const isValidStringBoth   = isValidStringBase && isValidStringTarget;
+	const isValidStringBoth = isValidStringBase && isValidStringTarget;
 	if (!isValidStringBoth) {
 		throw new Error("Invalid: one or both of the provided version strings are not valid semantic versions in compareVersions");
 	}
 
-	const parsedBase   = parseVersion(base);
+	const parsedBase = parseVersion(base);
 	const parsedTarget = parseVersion(target);
 
 	const coreVersionComparison = compareMajorMinorPatch(parsedBase, parsedTarget);
@@ -224,7 +235,7 @@ function compareVersions(base: unknown, target: unknown): CompareVersionsResult 
 		return prereleaseComparison;
 	}
 
-	return 0; // 全てが等しい
+	return 0; // All are equal
 }
 
 
