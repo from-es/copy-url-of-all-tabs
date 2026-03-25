@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-03-25
  */
 
 // Import NPM Package
@@ -46,6 +46,15 @@ type PartitionedRules<T> = {
 	invalidRules: MigrationRule<T>[];
 };
 
+/**
+ * Type for a single entry in a validation report.
+ */
+type ValidationReport = {
+	target  : string;
+	property: unknown;
+	reason  : string;
+};
+
 
 
 // =================================================================================
@@ -55,9 +64,10 @@ type PartitionedRules<T> = {
 /**
  * Extracts all rules from a module map and flattens them into a single array.
  *
- * @template T                          - The type of the data object being migrated.
- * @param    {ImportModules<T>} modules - The result of `import.meta.glob` (eager: true).
- * @returns  {MigrationRule<T>[]}         An array of extracted rules.
+ * @template T                            - The type of the data object being migrated.
+ * @param    {ImportModules<T>}   modules - The result of `import.meta.glob` (eager: true).
+ * @returns  {MigrationRule<T>[]}           An array of extracted rules.
+ * @throws   {Error}                        Thrown if a module lacks a valid "rules" export or fails to load.
  */
 function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>[] {
 	const allRules: MigrationRule<T>[] = [];
@@ -84,12 +94,13 @@ function extractRulesFromModules<T>(modules: ImportModules<T>): MigrationRule<T>
 /**
  * Validates an array of migration rules and partitions them into valid and invalid sets.
  * Inspects the validity of required properties (`condition`, `execute`) and recommended properties (`meta`, `order`) for each rule.
- * Throws an error immediately (Fail-Fast) if any invalid rule is found or if the `order` property is duplicated.
+ * Throws an error immediately (Fail-Fast) if any invalid rule is found.
  * This ensures that rules passed to subsequent processes are always guaranteed to be valid.
  *
- * @template T                          - The type of the data object being migrated.
- * @param    {MigrationRule<T>[]} rules - The array of rules to be validated and partitioned.
- * @returns  {PartitionedRules<T>}        An object containing an array of valid rules (`validRules`) and an array of invalid rules (`invalidRules`), which is typically empty due to Fail-Fast.
+ * @template T                           - The type of the data object being migrated.
+ * @param    {MigrationRule<T>[]}  rules - The array of rules to be validated and partitioned.
+ * @returns  {PartitionedRules<T>}         An object containing an array of valid rules (`validRules`) and an array of invalid rules (`invalidRules`), which is typically empty due to Fail-Fast.
+ * @throws   {Error}                       Thrown if any invalid rules are detected.
  */
 function partitionRules<T>(rules: MigrationRule<T>[]): PartitionedRules<T> {
 	const validRules      : MigrationRule<T>[] = [];
@@ -141,11 +152,12 @@ function partitionRules<T>(rules: MigrationRule<T>[]): PartitionedRules<T> {
  * Validates the structure and type of a single migration rule object.
  * This function is intended to be called internally from `partitionRules`.
  *
- * @template T                                                                                        - The type of the data object being migrated.
- * @param    {MigrationRule<T>} rule                                                                  - The single migration rule to be validated.
- * @returns  {{ rule: MigrationRule<T>, report: { warningReport: Report[], errorReport: Report[] } }}   An object containing the validation report.
+ * @template T                       - The type of the data object being migrated.
+ * @param    {MigrationRule<T>} rule - The single migration rule to be validated.
+ * @returns  {object}                  An object containing the validation report, including the rule and its status.
+ * @throws   {Error}                   Thrown if an unknown validation status is encountered during message creation.
  */
-function validateRule<T>(rule: MigrationRule<T>): { rule: MigrationRule<T>; report: { warningReport: Report[]; errorReport: Report[]; }; } {
+function validateRule<T>(rule: MigrationRule<T>): { rule: MigrationRule<T>; report: { warningReport: ValidationReport[]; errorReport: ValidationReport[]; }; } {
 	/**
 	 * Defines the multi-valued logic states returned by the validation logic.
 	 * Each value indicates a specific state of the validation result and is used for flow control in subsequent processes.
@@ -185,11 +197,6 @@ function validateRule<T>(rule: MigrationRule<T>): { rule: MigrationRule<T>; repo
 		 */
 		except?: unknown;
 	};
-	type ValidationReport = {
-		target  : string;
-		property: unknown;
-		reason  : string;
-	};
 
 	/**
 	 * Generates a human-readable message string based on the validation status flag.
@@ -198,7 +205,7 @@ function validateRule<T>(rule: MigrationRule<T>): { rule: MigrationRule<T>; repo
 	 * @param   {string}           target   - Property name or target being validated.
 	 * @param   {unknown}          property - Property value.
 	 * @returns {string}                      Message string.
-	 * @throws                                Although it may occur at the implementation level, no error is thrown during rule validation.
+	 * @throws  {Error}                       Thrown if an unknown validation status is encountered.
 	 */
 	const createMessage = (flag: ValidationStatus, target: string, property: unknown): string => {
 		switch (flag) {
@@ -506,6 +513,8 @@ function validateRule<T>(rule: MigrationRule<T>): { rule: MigrationRule<T>; repo
  *
  * @template T                          - The type of the data object being migrated.
  * @param    {MigrationRule<T>[]} rules - The array of rules to check for uniqueness.
+ * @returns  {void}                       Indicates the check was successful.
+ * @throws   {Error}                      Thrown if duplicate order values are found.
  */
 function checkForDuplicateOrders<T>(rules: MigrationRule<T>[]): void {
 	const orders = new Map<number, { count: number, ruleIdentifiers: string[] }>();
@@ -580,6 +589,7 @@ function sortAndCombineRules<T>(validRules: MigrationRule<T>[], invalidRules: Mi
  * @template T                            - The type of the data object being migrated.
  * @param    {ImportModules<T>}   modules - Result of `import.meta.glob` (synchronous module map due to `eager: true`).
  * @returns  {MigrationRule<T>[]}           An array of migration rules sorted in ascending order by the `order` property.
+ * @throws   {Error}                        Thrown if any rules are invalid or have duplicate order values.
  *
  * @example
  * // rules/index.ts
