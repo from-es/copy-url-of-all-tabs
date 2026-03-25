@@ -1,7 +1,4 @@
 /**
- * @file ClipboardManager.test.ts
- * @lastupdate 2025-09-06
- * @description
  * This file tests the ClipboardManager class.
  *
  * Since ClipboardManager relies on the browser's `navigator.clipboard` API,
@@ -11,6 +8,9 @@
  * Each method (`readText`, `writeText`, `write`, `clear`) is tested for
  * both successful execution and failure handling to ensure the wrapper
  * class behaves as expected.
+ *
+ * @file
+ * @lastModified 2026-03-25
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";

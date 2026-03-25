@@ -1,7 +1,4 @@
 /**
- * @file MigrationManager.test.ts
- * @lastupdate 2025-11-25
- * @description
  * This file tests the `MigrationManager` function and its interactions with `migrationRules` and `cloneObject`.
  *
  * It ensures that the migration process correctly applies rules, handles errors,
@@ -17,6 +14,9 @@
  * - Mocks `migrationRules` module with a mutable empty array and pushes specific rules in each test.
  * - Uses `beforeEach` to reset mocks and clear `migrationRules` for test isolation.
  * - Test cases cover scenarios such as no rules, single rule, multiple rules, and error handling.
+ *
+ * @file
+ * @lastModified 2026-03-25
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -197,20 +197,20 @@ describe("MigrationManager", () => {
 		expect(result.appliedRules).toEqual([ rule1.meta, rule2.meta ]);
 	});
 
-			  // Test Case 5: A rule throws an error
-	 it("should roll back changes from the failed rule but continue processing other rules", async () => {
+	// Test Case 5: A rule throws an error
+	it("should roll back changes from the failed rule but continue processing other rules", async () => {
 		// Arrange
 		const errorMessage = "Migration failed for this rule";
 		const initialConfigSnapshot = cloneDeep(mockConfig);
 		const failingRule: MigrationRule<Config> = {
-			 meta: { author: "Test1", reason: "Fail rule", target: "Info", action: "Cause error", authored: "2025-01-01", version: { introduced: "0.0.0", obsoleted: null } },
-			 condition: () => true,
-			 execute: () => { throw new Error(errorMessage); }
+			meta: { author: "Test1", reason: "Fail rule", target: "Info", action: "Cause error", authored: "2025-01-01", version: { introduced: "0.0.0", obsoleted: null } },
+			condition: () => true,
+			execute: () => { throw new Error(errorMessage); }
 		};
 		const succeedingRule: MigrationRule<Config> = {
-			 meta: { author: "Test2", reason: "Succeed rule", target: "Debug.logging", action: "Set logging to true", authored: "2025-01-01", version: { introduced: "0.0.0", obsoleted: null } },
-			 condition: () => true,
-			 execute: ({ data }) => { data.Debug.logging = true; return data; }
+			meta: { author: "Test2", reason: "Succeed rule", target: "Debug.logging", action: "Set logging to true", authored: "2025-01-01", version: { introduced: "0.0.0", obsoleted: null } },
+			condition: () => true,
+			execute: ({ data }) => { data.Debug.logging = true; return data; }
 		};
 		migrationRules.push(failingRule, succeedingRule);
 		const manager = new MigrationManager(migrationRules);
@@ -224,16 +224,18 @@ describe("MigrationManager", () => {
 		expect(result.data).toEqual(initialConfigSnapshot); // However, we can check if the successful mutation would have happened by checking the internal state if we could.
 		// Since we can't, we check the final output. The succeeding rule was applied, but the overall process failed.
 		expect(result.isExecuted).toBe(true);
-			 expect(result.hasError).toBe(true);
-			 expect(result.isSucceeded).toBe(false);
-			 expect(result.appliedRules).toEqual([ succeedingRule.meta ]); // The successful rule's meta is still recorded
-			 expect(result.errorReports).toHaveLength(1);
-			 expect(result.errorReports[0].rule).toEqual(failingRule.meta);
-			 expect(result.errorReports[0].error.message).toBe(errorMessage);
-			 expect(result.errorReports[0].data).toEqual(initialConfigSnapshot); // Data before the failing rule
-			 expect(consoleErrorSpy).toHaveBeenCalledOnce();
-			 consoleErrorSpy.mockRestore();
-	});	// Test Case 6: Should not mutate the original config or define objects passed to it
+		expect(result.hasError).toBe(true);
+		expect(result.isSucceeded).toBe(false);
+		expect(result.appliedRules).toEqual([ succeedingRule.meta ]); // The successful rule's meta is still recorded
+		expect(result.errorReports).toHaveLength(1);
+		expect(result.errorReports[0].rule).toEqual(failingRule.meta);
+		expect(result.errorReports[0].error.message).toBe(errorMessage);
+		expect(result.errorReports[0].data).toEqual(initialConfigSnapshot); // Data before the failing rule
+		expect(consoleErrorSpy).toHaveBeenCalledOnce();
+		consoleErrorSpy.mockRestore();
+	});
+
+	// Test Case 6: Should not mutate the original config or define objects passed to it
 	it("should not mutate the original config or define objects passed to it", async () => {
 		// Arrange
 		const originalConfigSnapshot = cloneDeep(mockConfig);

@@ -1,7 +1,4 @@
 /**
- * @file CompareVersions.test.ts
- * @lastupdate 2025-10-23
- * @description
  * This file tests the `compareVersions` utility function, which is responsible for
  * comparing two semantic version strings according to the SemVer 2.0.0 specification.
  *
@@ -21,6 +18,9 @@
  * - For invalid versions, it asserts that the function correctly throws an `Error`.
  * - Specific edge cases, like long strings and potential ReDoS patterns, are tested
  *   to ensure stability and security.
+ *
+ * @file
+ * @lastModified 2026-03-25
  */
 
 import { describe, it, expect } from "vitest";

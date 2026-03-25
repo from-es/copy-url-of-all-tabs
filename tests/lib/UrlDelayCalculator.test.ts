@@ -1,7 +1,4 @@
 /**
- * @file UrlDelayCalculator.test.ts
- * @lastupdate 2025-08-30
- * @description
  * This file was created to verify the functionality of the `UrlDelayCalculator` class,
  * defined in `src/assets/js/lib/user/UrlDelayCalculator/index.ts`, and to ensure that
  * the path alias `@/assets/js/lib/user/UrlDelayCalculator` is correctly resolved by Vitest.
@@ -18,6 +15,9 @@
  *   the expected delay calculation outcomes (individual and cumulative delays).
  * - Multiple test cases are executed in a data-driven manner using `it.each` to
  *   enhance test coverage.
+ *
+ * @file
+ * @lastModified 2026-03-25
  */
 
 import { describe, it, expect } from "vitest";
