@@ -11,7 +11,7 @@ export const manifest: UserManifest = {
 	"author": "From E",
 
 	"name"       : "Copy URL of All Tabs",
-	"description": "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
+	"description": "Copy all open tab URLs in various formats or Open all URLs in the clipboard at once.",
 
 	// Obtained from package.json
 	"version": pkg.version,
