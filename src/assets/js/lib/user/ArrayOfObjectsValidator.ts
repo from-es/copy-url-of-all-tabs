@@ -356,6 +356,7 @@ export class ArrayOfObjectsValidator {
 	 * @param   {ValidatorOption}      option     - Validation options.
 	 * @returns {ValidationItemResult}              The result of validating the single item.
 	 */
+	// eslint-disable-next-line no-unused-vars
 	#validateSingleItem(item: unknown, index: number, schemaKeys: string[], validation: { check: (value: unknown) => void }, option: ValidatorOption): ValidationItemResult {
 		// Step 1: Validate that the item is a non-null object.
 		const typeViolations = this.#checkObjectType(item, index, option);
