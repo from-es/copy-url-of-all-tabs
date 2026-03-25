@@ -1,3 +1,19 @@
+/**
+ * This file tests the `setSafeHTML`, `createSafeDOM`, and `createSafeHTML` utility functions,
+ * which are responsible for safely injecting HTML into the DOM and creating sanitized
+ * HTML/DOM objects to prevent XSS attacks.
+ *
+ * Purpose of Inspection:
+ * - To verify that `createSafeHTML` correctly sanitizes HTML strings and handles
+ *   various input types (null, undefined, non-strings).
+ * - To ensure `createSafeDOM` returns a sanitized Document object.
+ * - To confirm `setSafeHTML` properly clears and sets sanitized content in a target element.
+ * - To check that appropriate errors are thrown for invalid arguments.
+ *
+ * @file
+ * @lastModified 2026-03-25
+ */
+
 import { describe, it, expect, beforeEach } from "vitest";
 import { setSafeHTML, createSafeDOM, createSafeHTML } from "../../src/assets/js/utils/setSafeHTML";
 
@@ -27,20 +43,20 @@ describe("setSafeHTML utilities", () => {
 
 		it("should apply DOMPurify options (e.g., ALLOWED_TAGS)", () => {
 			const input = "<div><p>Hello</p><b>Bold</b></div>";
-			const options = { ALLOWED_TAGS: ["p"] };
+			const options = { ALLOWED_TAGS: [ "p" ] };
 			const output = createSafeHTML(input, options);
 			expect(output).toBe("<p>Hello</p>Bold");
 		});
 
 		it("should throw TypeError if htmlString is not a string (and not empty)", () => {
-			expect(() => (createSafeHTML as any)(123)).toThrow(/must be a string/);
-			expect(() => (createSafeHTML as any)({})).toThrow(/must be a string/);
+			expect(() => createSafeHTML(123 as unknown as string)).toThrow(/must be a string/);
+			expect(() => createSafeHTML({} as unknown as string)).toThrow(/must be a string/);
 		});
 
 		it("should throw TypeError if options is not an object", () => {
-			expect(() => (createSafeHTML as any)("test", null)).toThrow(/must be an object/);
-			expect(() => (createSafeHTML as any)("test", [])).toThrow(/must be an object/);
-			expect(() => (createSafeHTML as any)("test", 123)).toThrow(/must be an object/);
+			expect(() => createSafeHTML("test", null as unknown as object)).toThrow(/must be an object/);
+			expect(() => createSafeHTML("test", [] as unknown as object)).toThrow(/must be an object/);
+			expect(() => createSafeHTML("test", 123 as unknown as object)).toThrow(/must be an object/);
 		});
 	});
 
@@ -114,11 +130,11 @@ describe("setSafeHTML utilities", () => {
 		});
 
 		it("should throw TypeError if element is not provided", () => {
-			expect(() => (setSafeHTML as any)(null, "test")).toThrow("Invalid: target element is not provided in setSafeHTML");
+			expect(() => setSafeHTML(null as unknown as Element, "test")).toThrow("Invalid: target element is not provided in setSafeHTML");
 		});
 
 		it("should throw TypeError if element is not an instance of Element", () => {
-			expect(() => (setSafeHTML as any)({}, "test")).toThrow("Invalid: target element must be an instance of Element in setSafeHTML");
+			expect(() => setSafeHTML({} as unknown as Element, "test")).toThrow("Invalid: target element must be an instance of Element in setSafeHTML");
 		});
 	});
 });

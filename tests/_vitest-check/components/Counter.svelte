@@ -1,4 +1,12 @@
 <script lang="ts">
+	/**
+	 * This component provides a simple counter interface for smoke testing Svelte components
+	 * with Vitest and @testing-library/svelte.
+	 *
+	 * @file
+	 * @lastModified 2026-03-25
+	 */
+
 	import { onMount } from "svelte";
 
 	export let count: number = 0;
