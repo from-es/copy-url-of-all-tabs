@@ -1,19 +1,30 @@
+/**
+ * Module for managing the data migration process.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 // Import Module
 import { cloneObject } from "@/assets/js/lib/user/CloneObject";
 
 // Import Types
-import {
-	type MigrationArgument,
-	type MigrationRule,
-	type MigrationResult,
-	type MigrationOptions,
-	type MigrationErrorReport,
-	type MigrationRuleMeta
+import type {
+	MigrationArgument,
+	MigrationRule,
+	MigrationResult,
+	MigrationOptions,
+	MigrationErrorReport,
+	MigrationRuleMeta
 } from "./types";
+
+
 
 /**
  * Represents the internal state during a migration process.
- * @template T The type of the data object being migrated.
+ *
+ * @template T - The type of the data object being migrated.
  */
 type MigrationExecutionState<T> = {
 	originalData: T;
@@ -23,21 +34,22 @@ type MigrationExecutionState<T> = {
 	errorReports: MigrationErrorReport<T>[];
 };
 
+
+
 /**
- * Manages the data migration process based on a provided set of rules.
+ * Class that manages the data migration process based on a provided set of rules.
  *
- * @template     T The type of the data object to be migrated.
- * @lastModified 2026-02-27
+ * @template T - The type of the data object being migrated.
  */
 export class MigrationManager<T> {
 	/**
 	 * A sorted array of migration rules to be applied.
-	 * @private
 	 */
 	private readonly rules: readonly MigrationRule<T>[];
 
 	/**
 	 * Initializes a new instance of the MigrationManager.
+	 *
 	 * @param {readonly MigrationRule<T>[]} rules - A sorted array of migration rules.
 	 */
 	public constructor(rules: readonly MigrationRule<T>[]) {
@@ -47,10 +59,9 @@ export class MigrationManager<T> {
 	/**
 	 * Initializes the migration state before starting the process.
 	 *
-	 * @private
 	 * @param   {T}                          data          - The initial data.
 	 * @param   {Partial<T>}                 defaultValues - The default values.
-	 * @returns {MigrationExecutionState<T>}               - The initial migration state.
+	 * @returns {MigrationExecutionState<T>}                 The initial migration state.
 	 */
 	#initializeState(data: T, defaultValues: Partial<T>): MigrationExecutionState<T> {
 		return {
@@ -68,10 +79,9 @@ export class MigrationManager<T> {
 	/**
 	 * Applies a single migration rule and updates the state accordingly.
 	 *
-	 * @private
 	 * @param   {MigrationRule<T>}           rule  - The migration rule to apply.
 	 * @param   {MigrationExecutionState<T>} state - The current migration state.
-	 * @returns {Promise<void>}                    - A promise that resolves when the rule has been processed.
+	 * @returns {Promise<void>}                      A promise that resolves when the rule has been processed.
 	 */
 	async #applyRule(rule: MigrationRule<T>, state: MigrationExecutionState<T>): Promise<void> {
 		const dataBeforeRule = cloneObject(state.argument.data);
@@ -113,9 +123,8 @@ export class MigrationManager<T> {
 	/**
 	 * Builds the final migration result from the execution state.
 	 *
-	 * @private
 	 * @param   {MigrationExecutionState<T>} state - The final migration state.
-	 * @returns {MigrationResult<T>}               - The result of the migration.
+	 * @returns {MigrationResult<T>}                 The result of the migration.
 	 */
 	#buildResult(state: MigrationExecutionState<T>): MigrationResult<T> {
 		const hasError    = state.errorReports.length > 0;
@@ -137,7 +146,7 @@ export class MigrationManager<T> {
 	 * @param   {T}                           data          - The data to be migrated.
 	 * @param   {Partial<T>}                  defaultValues - An object containing default values to be used during migration.
 	 * @param   {MigrationOptions}            [options]     - Options to control the migration process.
-	 * @returns {Promise<MigrationResult<T>>}               - The result of the migration.
+	 * @returns {Promise<MigrationResult<T>>}                 The result of the migration.
 	 */
 	public async migrate(data: T, defaultValues: Partial<T>, options?: MigrationOptions): Promise<MigrationResult<T>> {
 		const state = this.#initializeState(data, defaultValues);

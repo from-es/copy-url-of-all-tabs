@@ -1,3 +1,9 @@
+#### [1.20.4] - 2026/03/26
+
+- improve
+	- Internal code improvements to enhance extension stability and maintainability.
+	- Improved extension description for better clarity in the browser extension store.
+
 #### [1.20.3] - 2026/03/13
 
 - improve

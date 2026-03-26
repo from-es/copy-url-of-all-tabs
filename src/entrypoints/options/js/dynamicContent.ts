@@ -1,43 +1,66 @@
-// WXT provided cross-browser compatible API and types
+/**
+ * Manages dynamically changing content on the options screen.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+// WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
 // Import Types
-import { type Config, type Define } from "@/assets/js/types/index";
+import type { Config, Define } from "@/assets/js/types/index";
 
-// statusの型をmain.svelteから受け取るため、必要な部分だけを定義
-// NOTE: main.svelte の `$props()` の型が変更された場合は、それに合わせた変更が必要
+
+
+/**
+ * Define only the necessary parts to receive the status type from main.svelte.
+ *
+ * Note: Changes are required if the $props() type in main.svelte is updated.
+ */
 type Status = {
 	define: Define;
 	config: Config;
 };
 
+
+
+/**
+ * Class that manages dynamically changing content on the options screen (browser-specific store links, warning messages, etc.).
+ *
+ * @lastModified 2026-03-24
+ */
 export class DynamicContent {
 	private status   : Status;
 	private storeData: Define["Information"]["BrowserExtensionStore"][string] | null;
 
+	/**
+	 * @param {Status} status - Application state object.
+	 */
 	constructor(status: Status) {
 		this.status    = status;
 		this.storeData = this.getBrowserStoreData();
 	}
 
-	/*
-		ブラウザの種類を判定
-		NOTE: manifest.json に依存する形でハードコーディングをしている為、リファクタリング時は要注意
-
-		@dependency manifest.json (has property, "browser_specific_settings" or "minimum_chrome_version")
-	*/
+	/**
+	 * Determines the type of the running browser.
+	 *
+	 * Note: Caution during refactoring as this is hardcoded depending on manifest.json.
+	 *
+	 * @dependency manifest.json (has property, "browser_specific_settings" or "minimum_chrome_version")
+	 *
+	 * @returns {"chrome" | "firefox" | null} - Browser type, or null if it cannot be determined.
+	 */
 	private getBrowserType(): "chrome" | "firefox" | null {
 		const manifest = browser.runtime.getManifest();
 
-		// console.debug("DEBUG(app): get browser type", { manifest });
-
-		// Firefox: "browser_specific_settings" のプロパティを持っているか
+		// Firefox: Does it have the "browser_specific_settings" property?
 		const isFirefox = Object.hasOwn(manifest, "browser_specific_settings");
 		if (isFirefox) {
 			return "firefox";
 		}
 
-		// Chrome: 有効な "minimum_chrome_version" のプロパティを持っているか
+		// Chrome: Does it have a valid "minimum_chrome_version" property?
 		const isChrome = Object.hasOwn(manifest, "minimum_chrome_version") && typeof manifest.minimum_chrome_version === "string" && manifest.minimum_chrome_version.length > 0;
 		if (isChrome) {
 			return "chrome";
@@ -46,6 +69,11 @@ export class DynamicContent {
 		return null;
 	}
 
+	/**
+	 * Gets the store information corresponding to the determined browser type.
+	 *
+	 * @returns {Define["Information"]["BrowserExtensionStore"][string] | null} - Store information, or null if it doesn't exist.
+	 */
 	private getBrowserStoreData(): Define["Information"]["BrowserExtensionStore"][string] | null {
 		const storeInfos  = this.status.define.Information.BrowserExtensionStore;
 		const browserType = this.getBrowserType();
@@ -57,6 +85,11 @@ export class DynamicContent {
 		return null;
 	}
 
+	/**
+	 * Gets the link (HTML) to the browser extension store.
+	 *
+	 * @returns {string} - Anchor tag string, or a message for unofficial browsers.
+	 */
 	public getBrowserExtensionStoreContent(): string {
 		if (this.storeData) {
 			return `<a href="${this.storeData.url}" title="${this.storeData.title}" target="_blank" rel="noopener noreferrer">${this.storeData.title}</a>`;
@@ -65,6 +98,11 @@ export class DynamicContent {
 		}
 	}
 
+	/**
+	 * Gets the warning message (HTML) when running on an unofficial browser.
+	 *
+	 * @returns {string} - HTML string of the warning message, or an empty string for official browsers.
+	 */
 	public getWarningMessage(): string {
 		if (!this.storeData) {
 			const issues  = `${this.status.define.Information.github.url}/issues`;
@@ -75,6 +113,11 @@ export class DynamicContent {
 		return "";
 	}
 
+	/**
+	 * Gets the copyright notice (HTML).
+	 *
+	 * @returns {string} - HTML string of the copyright notice.
+	 */
 	public getCopyright(): string {
 		const store = this.storeData;
 

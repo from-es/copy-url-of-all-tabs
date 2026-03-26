@@ -1,19 +1,40 @@
 <script lang="ts">
+	/**
+	 * A numeric input component with debounced updates.
+	 *
+	 * @file
+	 * @lastModified 2026-03-24
+	 */
+
 	// Import NPM Package
 	import { debounce } from "lodash-es";
 
 	// Import Module & Types
 	import { PopoverMessage, type MessageType } from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 
+
+
+	/**
+	 * Properties for the DebouncedNumericInput component.
+	 */
 	type Props = {
+		/** Optional ID for the input element. */
 		id          ?: string;
+		/** The numeric value to be debounced and synchronized. */
 		value        : number;
+		/** Minimum allowed value. */
 		min         ?: number;
+		/** Maximum allowed value. */
 		max         ?: number;
+		/** Step increment for the numeric input. */
 		step        ?: number;
+		/** Debounce time in milliseconds. */
 		debounceTime?: number;
+		/** Additional attributes to be passed to the input element. */
 		[key: string]: unknown;
 	};
+
+
 
 	/* eslint-disable prefer-const */
 	let {
@@ -29,18 +50,18 @@
 
 	let handleInput = $state<ReturnType<typeof debounce> | null>(null);
 
-	// `debounceTime` プロパティが変更されるたびに、effect が再実行される
+	// The effect is re-executed whenever the debounceTime property changes.
 	$effect(() => {
-		// 新しい debounce 関数を生成
+		// Generate a new debounce function.
 		const newHandleInput = debounce(processInput, debounceTime);
 
-		// この関数は、
-		//   - effect が再実行される（`debounceTime`が変更される）
-		//   - コンポーネントが破棄される
-		// のタイミングに呼び出される、クリーンアップ用関数である。
-		//
-		// このスコープの `newHandleInput` をキャプチャしてキャンセルする。
+		/**
+		 * Cleanup function called when:
+		 *   - The effect is re-executed (debounceTime changes)
+		 *   - The component is destroyed
+		 */
 		const cleanup = () => {
+			// Capture and cancel newHandleInput within this scope.
 			newHandleInput.cancel();
 		};
 
@@ -53,9 +74,10 @@
 	 * Processes the input event, validates the numeric value,
 	 * and updates the parent component's state or shows a warning.
 	 *
-	 * @param {Event} event - The input event from the HTMLInputElement.
+	 * @param   {Event} event - The input event from the HTMLInputElement.
+	 * @returns {void}
 	 */
-	function processInput(event: Event) {
+	function processInput(event: Event): void {
 		const target = event.target as HTMLInputElement;
 		const num    = Number(target.value);
 

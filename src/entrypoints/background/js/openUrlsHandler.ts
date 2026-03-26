@@ -1,9 +1,12 @@
-// WXT provided cross-browser compatible API and Types
-import { browser, type Browser } from "wxt/browser";
+/**
+ * Handler for opening multiple URLs in new tabs.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
 
-// Import Types
-import type { Config, ExtensionMessage }                from "@/assets/js/types/";
-import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
+// WXT provided cross-browser compatible API and Types.
+import { browser, type Browser } from "wxt/browser";
 
 // Import Module
 import { define }             from "@/assets/js/define";
@@ -12,23 +15,29 @@ import { sleep }              from "@/assets/js/utils/sleep";
 import { QueueManager }       from "@/assets/js/lib/user/QueueManager";
 import { countManager }       from "@/entrypoints/background/js/CountManager";
 
-// Types
-export type TabPosition = "default" | "first" | "left" | "right" | "last";
-export type TaskMode    = "unitary" | "batch" | "monolithic";
-export type OpenMode    = "parallel" | "append" | "prepend" | "insertNext";
+// Import Types
+import type { Config, ExtensionMessage }                from "@/assets/js/types/";
+import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
+
+
+type TabPosition     = "default" | "first" | "left" | "right" | "last";
+type TaskMode        = "unitary" | "batch" | "monolithic";
+type OpenMode        = "parallel" | "append" | "prepend" | "insertNext";
 type TabOption       = Config["Tab"];
 type CreateTabOption = TabOption & { windowId: number | undefined };
 
 
 
 /**
- * メッセージを受け取り、URLを開くプロセスを開始するハンドラー。
- * メッセージに含まれるURLリストは、popup側でフィルタリング等の前処理が済んでいることを前提とする。
- * @param   {ExtensionMessage} message - 拡張機能メッセージ（前処理済みのURLリストと設定を含む）
- * @returns {Promise<void>}
+ * Handler that receives a message and starts the process of opening URLs.
+ *
+ * Assumes the URL list in the message has been pre-processed (e.g., filtered) by the popup.
+ *
+ * @param   {ExtensionMessage} message - Extension message containing the pre-processed URL list and settings.
+ * @returns {Promise<void>}              Promise that resolves when the process has been initiated.
  */
-export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
+async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
 	const { argument } = message;
 	const urlList      = argument?.urlList;
 	const config       = argument?.option;
@@ -41,11 +50,13 @@ export async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
 }
 
 /**
- * 渡されたURLリストとタブ設定に基づき、タブを開くプロセスを調整。
- * この関数はURLのフィルタリングは行わず、タブの順序変更や遅延計算、タスクのディスパッチを担当。
- * @param   {string[]}      urlList - 開く対象のURLリスト（popup側でフィルタリング済み）
- * @param   {Config}        config  - 設定オブジェクト
- * @returns {Promise<void>}
+ * Coordinate the process of opening tabs based on the provided URL list and tab settings.
+ *
+ * This function does not filter URLs; instead it handles tab reordering, delay calculation, and task dispatching.
+ *
+ * @param   {string[]}      urlList - List of URLs to open (pre-filtered by the popup).
+ * @param   {Config}        config  - Configuration object.
+ * @returns {Promise<void>}           Promise that resolves when tasks have been dispatched.
  */
 async function openURLs(urlList: string[], config: Config): Promise<void> {
 	if ( !urlList || !Array.isArray(urlList) || urlList.length === 0 ) {
@@ -84,15 +95,16 @@ async function openURLs(urlList: string[], config: Config): Promise<void> {
 }
 
 /**
- * URLリストとタブ設定に基づき、適切な順序と遅延時間を持つURL処理リストを構築
- * @param   {string[]}                    urlList   - 処理対象のURLリスト
- * @param   {TabOption}                   tabOption - タブの開き方に関する設定
- * @returns {UrlDelayCalculationResult[]}           - 遅延計算後のURL情報配列
+ * Build a list of URL processing tasks with appropriate order and delay times based on the URL list and tab settings.
+ *
+ * @param   {string[]}                    urlList   - List of URLs to be processed.
+ * @param   {TabOption}                   tabOption - Configuration for how to open tabs.
+ * @returns {UrlDelayCalculationResult[]}             Array of URL information after delay calculation.
  */
 function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDelayCalculationResult[] {
 	const { delay, customDelay }            = tabOption;
 	const { enable, list: customDelayList } = customDelay;
-	const applyFrom                         = define.TabOpenCustomDelayApplyFrom;  // 遅延適応はルールマッチ二回目(デフォルト値: 2)から
+	const applyFrom                         = define.TabOpenCustomDelayApplyFrom;  // Delay application starts from the second rule match (default: 2).
 	let   rules: UrlDelayRule[]             = [];
 
 	if ( enable && customDelayList ) {
@@ -101,7 +113,7 @@ function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDela
 			.map(item => ({
 				pattern  : item.pattern,
 				delay    : item.delay,
-				matchType: define.TabOpenCustomDelayMatchType // `UrlDelayCalculator` に渡す正規表現判定時用の値(デフォルト値: "prefix")
+				matchType: define.TabOpenCustomDelayMatchType  // Match type used for regex evaluation in UrlDelayCalculator (default: "prefix").
 			}));
 	}
 
@@ -109,28 +121,30 @@ function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDela
 }
 
 /**
- * タスクの生成とキューへのディスパッチを統括
- * @param {UrlDelayCalculationResult[]} delayResults - 遅延時間を含むURL情報
- * @param {number | undefined}          windowId     - タブを開くウィンドウのID
- * @param {TabOption}                   tabOption    - タブの開き方に関する設定
+ * Oversee the generation and dispatching of tasks to the queue.
+ *
+ * @param {UrlDelayCalculationResult[]} delayResults - URL information including delay times.
+ * @param {number | undefined}          windowId     - ID of the window in which to open the tabs.
+ * @param {TabOption}                   tabOption    - Configuration for how to open tabs.
  */
 function taskController(delayResults: UrlDelayCalculationResult[], windowId: number | undefined, tabOption: TabOption): void {
-	// タスクオブジェクト（関数）の配列を生成
+	// Generate an array of task objects (functions).
 	const tasks = createTasks(delayResults, windowId, tabOption);
 
-	// 生成されたタスク配列を、指定されたモードで実行
+	// Execute the generated task array in the specified mode.
 	dispatchTasks(tasks, tabOption.TaskControl.openMode);
 }
 
 /**
- * 遅延結果の配列から、実行可能なタスク（関数）の配列を生成
- * @param   {UrlDelayCalculationResult[]} delayResults - 遅延時間を含むURL情報
- * @param   {number | undefined}          windowId     - タブを開くウィンドウのID
- * @param   {TabOption}                   tabOption    - タブの開き方に関する設定
- * @returns {(() => Promise<void>)[]}                  - 生成されたタスク関数の配列
+ * Generate an array of executable tasks (functions) from an array of delay results.
+ *
+ * @param   {UrlDelayCalculationResult[]} delayResults - URL information including delay times.
+ * @param   {number | undefined}          windowId     - ID of the window in which to open the tabs.
+ * @param   {TabOption}                   tabOption    - Configuration for how to open tabs.
+ * @returns {(() => Promise<void>)[]}                    Array of generated task functions.
  */
 function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number | undefined, tabOption: TabOption): (() => Promise<void>)[] {
-	// これから処理するURLの総数を一度にカウンターへ加算
+	// Add the total number of URLs to be processed to the counter at once.
 	countManager.increment(delayResults.length);
 
 	const openTabWithDelay = async (result: UrlDelayCalculationResult): Promise<void> => {
@@ -141,9 +155,9 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 				await sleep(individual);
 			}
 
-			createTab(result.url, { ...tabOption, windowId }); // tabOption と windowId はクロージャでキャプチャ
+			createTab(result.url, { ...tabOption, windowId }); // tabOption and windowId are captured via closure.
 		} finally {
-			// 個々のURLのタブ展開処理完了後、成功・失敗に関わらずカウンターを減算
+			// Decrement the counter after processing each URL, regardless of success or failure.
 			countManager.decrement();
 		}
 	};
@@ -151,13 +165,13 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 	const taskMode: TaskMode = tabOption?.TaskControl?.taskMode ?? "unitary";
 
 	switch (taskMode) {
-		// URLリスト全体を1つの大きなタスクとして扱う
+		// Treat the entire URL list as a single monolithic task.
 		case "monolithic": {
 			const task = async () => { for (const result of delayResults) { await openTabWithDelay(result); } };
 			return [ task ];
 		}
 
-		// URLリストを指定されたサイズで分割し、それぞれをタスクとして扱う
+		// Split the URL list into chunks of a specified size and treat each as a task.
 		case "batch": {
 			const chunkSize                             = tabOption?.TaskControl?.chunkSize ?? define.TaskControlChunkSizeValue;
 			const loop                                  = delayResults.length;
@@ -177,7 +191,7 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 			});
 		}
 
-		// URL一つひとつを個別のタスクとして扱う
+		// Treat each URL as an individual task.
 		case "unitary": {
 			return delayResults.map(result => {
 				return async () => {
@@ -186,7 +200,7 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 			});
 		}
 
-		// 未知のモードが渡された場合はエラーをスローし、開発者に問題を通知
+		// Throw an error if an unknown mode is provided, notifying the developer.
 		default: {
 			const exhaustiveCheck: never = taskMode;
 			throw new Error(`Error: unknown TaskMode "${exhaustiveCheck}" in createTasks`);
@@ -195,9 +209,10 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 }
 
 /**
- * タスクの配列を、指定されたモードに応じてキューに追加、または直接実行
- * @param {(() => Promise<void>)[]} tasks - 実行するタスクの配列
- * @param {OpenMode}                mode  - 実行モード
+ * Add an array of tasks to the queue or execute them directly according to the specified mode.
+ *
+ * @param {(() => Promise<void>)[]} tasks - Array of tasks to execute.
+ * @param {OpenMode}                mode  - Execution mode.
  */
 function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 	switch (mode) {
@@ -208,28 +223,23 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 			break;
 
 		case "prepend":
-			/*
-				ループでタスクを追加している途中でキューの処理が始まると、タスクの実行順序が狂ってしまう。
-				これを防ぐため、全てのタスクを追加し終えるまでキューを一時停止する。
-			*/
+			// If queue processing begins while tasks are still being added in the loop, the task execution order may become corrupted.
+			// To prevent this, we pause the queue until all tasks have been successfully added.
 			QueueManager.pause();
 
-			/*
-				`QueueManager.addPriorityTask` は、優先度を上げてタスクをキューに追加する際、
-				後から追加されたタスクほど高い優先度を持つように動作する。
-				そのため、タスクが追加された順序とは逆の順序で実行される傾向がある。
-				意図した順序（FIFO）でタスクを実行させるため、ここでタスク配列を逆順にしてからキューに追加する必要がある。
-			*/
+			// QueueManager.addPriorityTask increases priority as it adds tasks to the queue, resulting in tasks being executed
+			// in the reverse order of addition. To maintain the intended FIFO order, we reverse the task array before adding.
 			for (const task of tasks.toReversed()) {
 				QueueManager.addPriorityTask(task);
 			}
 
-			// 全てのタスクを追加し終えたので、キューの処理を再開する。
+			// Resume queue processing now that all tasks have been added.
 			QueueManager.resume();
 			break;
 
 		case "insertNext":
-			// v1.8.0 の実装では prepend と同じ挙動（優先キューへの追加）。将来的には、実行中のタスクの直後に挿入する機能の実装を検討。
+			// In v1.8.0, this behaves the same as prepend (adding to the priority queue).
+			// We may consider a future implementation that inserts immediately after the currently running task.
 			for (const task of tasks) {
 				QueueManager.addPriorityTask(task);
 			}
@@ -242,7 +252,7 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 			break;
 
 		default: {
-			// 未知のモードが渡された場合はエラーをスローし、開発者に問題を通知
+			// Throw an error if an unknown mode is provided, notifying the developer.
 			const exhaustiveCheck: never = mode;
 			throw new Error(`Error: unknown OpenMode "${exhaustiveCheck}" in dispatchTasks`);
 		}
@@ -250,8 +260,9 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 }
 
 /**
- * 現在アクティブなウィンドウのIDを取得
- * @returns {Promise<number | undefined>} ウィンドウID、または取得失敗時に undefined
+ * Get the ID of the currently active window.
+ *
+ * @returns {Promise<number | undefined>} Window ID, or undefined on failure.
  */
 async function getCurrentWindowID(): Promise<number | undefined> {
 	try {
@@ -264,10 +275,11 @@ async function getCurrentWindowID(): Promise<number | undefined> {
 }
 
 /**
- * 指定されたURLとオプションで新しいタブを作成
- * @param   {string}          url    - 開くURL
- * @param   {CreateTabOption} tabOption - タブ作成に関するオプション
- * @returns {Promise<void>}
+ * Create a new tab with the specified URL and options.
+ *
+ * @param   {string}          url       - URL to open.
+ * @param   {CreateTabOption} tabOption - Options for tab creation.
+ * @returns {Promise<void>}               Promise that resolves when the tab creation has been requested.
  */
 async function createTab(url: string, tabOption: CreateTabOption): Promise<void> {
 	const { active, position, windowId } = tabOption;
@@ -289,11 +301,12 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 }
 
 /**
- * 指定された位置設定に基づき、新しいタブを挿入すべきインデックスを計算
- * @param   {TabPosition}                  position   - タブの挿入位置を示す識別子
- * @param   {Browser.tabs.Tab[]}           tabs       - 現在のウィンドウにあるタブの配列
- * @param   {Browser.tabs.Tab | undefined} currentTab - 現在アクティブなタブ
- * @returns {number | null}                           - 計算されたタブのインデックス、またはデフォルトの挙動に任せる場合は null
+ * Calculate the index at which a new tab should be inserted based on the position setting.
+ *
+ * @param   {TabPosition}                  position   - Identifier for the tab insertion position.
+ * @param   {Browser.tabs.Tab[]}           tabs       - Array of tabs in the current window.
+ * @param   {Browser.tabs.Tab | undefined} currentTab - Currently active tab.
+ * @returns {number | null}                             Calculated tab index, or null to allow default behavior.
  */
 function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], currentTab: Browser.tabs.Tab | undefined): number | null {
 	let number: number | null = null;
@@ -315,10 +328,8 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 			number = tabs.length + 1;
 			break;
 		default:
-			/*
-			  position が "未指定 or undefined or null" の場合のタブの位置は、browser.tabs.create(options) における index のデフォルトの挙動に準ずる
-			  index のデフォルトの挙動: 新規タブは、指定されたウィンドウの一番右端（末尾）に作成される
-			*/
+			// If position is "unspecified, undefined, or null", the tab's position follows the default behavior of browser.tabs.create(options) for index.
+			// Default index behavior: The new tab is created at the far right (end) of the specified window.
 
 			console.error("ERROR(tab): Invalid: invalid argument passed to createTabPosition", { position });
 			break;
@@ -330,3 +341,14 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 
 	return number;
 }
+
+
+
+export {
+	handleOpenURLs
+};
+export type {
+	TabPosition,
+	TaskMode,
+	OpenMode
+};

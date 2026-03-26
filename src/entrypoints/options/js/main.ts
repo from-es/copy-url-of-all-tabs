@@ -1,3 +1,10 @@
+/**
+ * Main entry point for the options page.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 // Import Svelte
 import { mount } from "svelte";
 
@@ -6,15 +13,27 @@ import App          from "./App.svelte";
 import type AppType from "./App.svelte";
 
 // Import Module
-import { initializeConfig }      from "@/assets/js/initializeConfig";
 import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state";
+import { initializeConfig }      from "@/assets/js/initializeConfig";
 import { logging }               from "@/assets/js/logging";
 
-export let app: ReturnType<typeof mount> | AppType | null = null;
+
+
+/**
+ * The Svelte application instance.
+ */
+let app: ReturnType<typeof mount> | AppType | null = null;
 
 window.addEventListener("load", main);
 
-async function main() {
+/**
+ * Initializes and mounts the Svelte application.
+ *
+ * Initializes the configuration, logging, and shared state, then mounts the Svelte application to the document body.
+ *
+ * @returns {Promise<void>}
+ */
+async function main(): Promise<void> {
 	console.clear();
 
 	// Initialize settings
@@ -30,3 +49,7 @@ async function main() {
 	const target = document.body;
 	app = mount(App, { target });
 }
+
+
+
+export { app };

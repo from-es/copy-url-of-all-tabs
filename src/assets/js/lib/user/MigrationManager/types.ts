@@ -1,7 +1,15 @@
 /**
+ * Type definitions used by the Migration Manager.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
+/**
  * Metadata for a migration rule, intended for developer information. Not used in processing.
  */
-export type MigrationRuleMeta = {
+type MigrationRuleMeta = {
 	author  : string;
 	reason  : string;
 	target  : string;
@@ -15,18 +23,20 @@ export type MigrationRuleMeta = {
 
 /**
  * Arguments passed to the execution context of a migration rule.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
-export type MigrationArgument<T> = {
+type MigrationArgument<T> = {
 	data         : T;
 	defaultValues: Partial<T>;
 };
 
 /**
  * Defines a single migration rule.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
-export type MigrationRule<T> = {
+type MigrationRule<T> = {
 	meta    ?: MigrationRuleMeta;
 	order   ?: number;  // Execution order of the rule.
 	// eslint-disable-next-line no-unused-vars
@@ -37,9 +47,10 @@ export type MigrationRule<T> = {
 
 /**
  * A report for an error that occurred during a migration.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
-export type MigrationErrorReport<T> = {
+type MigrationErrorReport<T> = {
 	rule : MigrationRuleMeta;
 	error: Error;
 	data : T;  // The state of data before the failed rule was applied.
@@ -47,9 +58,10 @@ export type MigrationErrorReport<T> = {
 
 /**
  * The overall result of the migration process.
- * @template T The type of the data being migrated.
+ *
+ * @template T - The type of the data being migrated.
  */
-export type MigrationResult<T> = {
+type MigrationResult<T> = {
 	isSucceeded : boolean;
 	isExecuted  : boolean;
 	hasError    : boolean;
@@ -61,6 +73,17 @@ export type MigrationResult<T> = {
 /**
  * Options to configure the migration execution.
  */
-export type MigrationOptions = {
+type MigrationOptions = {
 	failFast?: boolean;  // If true, the migration stops immediately on the first error.
+};
+
+
+
+export type {
+	MigrationRuleMeta,
+	MigrationArgument,
+	MigrationRule,
+	MigrationErrorReport,
+	MigrationResult,
+	MigrationOptions
 };

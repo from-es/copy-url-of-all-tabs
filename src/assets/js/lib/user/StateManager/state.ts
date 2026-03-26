@@ -1,13 +1,16 @@
 /**
- * @file This file provides a typed, shared store instance for state management across the application.
- * Modules can import `shareStatus` for reading state, `updateState` for modifying state,
- * and `initializeSharedState` for setting up the initial state.
+ * Provides a type-safe store instance shared throughout the application.
+ *
+ * Modules can import `shareStatus` to read state, `updateState` to modify state,
+ * and use `initializeSharedState` to set up the initial state.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
  */
 
 // Import Module & Types
 import { createStore, type UpdateState } from "@/assets/js/lib/user/StateManager/store.svelte";
-
-
 
 // ----------------------------------------------------------------------------------------------------------------------------
 // IMPORTANT: Project-specific configurations are defined here.
@@ -19,7 +22,11 @@ import { createStore, type UpdateState } from "@/assets/js/lib/user/StateManager
 // Import Types
 import type { Config, Define, Status } from "@/assets/js/types";
 
-// Create a store instance with the `Status` type.
+
+
+/**
+ * The reactive proxy object representing the shared application state.
+ */
 const { shareStatus, updateState }: {
 	shareStatus: Status;
 	updateState: UpdateState;
@@ -29,10 +36,11 @@ const { shareStatus, updateState }: {
  * Initializes the shared application state.
  * This function should be called at the application's entry point (e.g., in the background script)
  * to set up the initial values for the store.
-*
-* @param config - The application configuration object.
-* @param define - The application's definition object, which is frozen after initialization.
-*/
+ *
+ * @param   {Config} config - The application configuration object.
+ * @param   {Define} define - The application's definition object, which is frozen after initialization.
+ * @returns {void}
+ */
 function initializeSharedState(config: Config, define: Define): void {
 	updateState([
 		{ name: "config", value: config, freeze: false },
@@ -44,4 +52,9 @@ function initializeSharedState(config: Config, define: Define): void {
 
 
 // Export the instantiated store for use in other components.
-export { shareStatus, updateState, initializeSharedState };
+export {
+	shareStatus,
+
+	updateState,
+	initializeSharedState
+};

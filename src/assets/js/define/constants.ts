@@ -1,12 +1,14 @@
+/* eslint-disable import/group-exports */
+
 export const Regex = {
 	url: {
 		standard: /(https?):\/\/(?:[-\w.])+(?::[0-9]+)?(?:\/(?:[\w._~:/?#[\]@!$&"()*+,;=%-])*)?/gi,
 		RFC3986 : /(https?):\/\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::[1-9][0-9]{0,4})?(?:\/[a-z0-9._~:/?#[\]@!$&"()*+,;=%-]*)?/gi,
 
-		// RFC3986 & Basic認証対応
+		// RFC3986 & basic auth support
 		RFC3986WithAuth: /https?:\/\/(?:[a-z0-9._~%!$&'()*+,;=:-]+(?::[a-z0-9._~%!$&'()*+,;=:-]+)?@)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?::[1-9][0-9]{0,4})?(?:\/[a-z0-9._~:/?#[\]@!$&"'()*+,;=%-]*)?/gi,
 
-		// RFC3986 にホスト名にアンダースコアを許容 & Basic認証対応
+		// Allow underscores in hostname for RFC3986 & basic auth support
 		RFC3986LooseWithAuth: /https?:\/\/(?:[a-z0-9._~%!$&'()*+,;=:-]+(?::[a-z0-9._~%!$&'()*+,;=:-]+)?@)?(?:[a-z0-9_](?:[a-z0-9_-]{0,61}[a-z0-9_])?\.)*[a-z0-9_](?:[a-z0-9_-]{0,61}[a-z0-9_])?(?::[1-9][0-9]{0,4})?(?:\/[a-z0-9._~:/?#[\]@!$&"'()*+,;=%-]*)?/gi
 	},
 	UUID: {
@@ -109,7 +111,6 @@ export const ChromiumBasedBrowser = [
 	"vivaldi"  // vivaldi://
 ];
 
-
 // OptionsPage
 export const OptionsPageFontSizeValueMin           = 8;   // px
 export const OptionsPageFontSizeValueMax           = 32;  // px
@@ -137,12 +138,12 @@ export const TabOpenCustomDelayValue               = 1000;   // millisecond
 export const TabOpenCustomDelayMatchType           = "prefix";
 export const TabOpenCustomDelayApplyFrom           = 2;
 
-// Options >> Reset Button: ボタン要素の連打対策用
+// Options >> Reset Button: Anti-repeat click measure for button elements
 export const DisabledTimeoutValue                  = 1000;  // millisecond
 
-// Options >> デバウンス処理用
-export const OptionsPageInputDebounceTime          = 500;  // millisecond >> オプションページの入力フィールドの待ち時間
-export const OptionsPageSortListDebounceTime       = 500;  // millisecond >> オプションページのソート対応リストの待ち時間
+// Options >> For debounce processing
+export const OptionsPageInputDebounceTime          = 500;  // millisecond >> Wait time for input fields on the options page
+export const OptionsPageSortListDebounceTime       = 500;  // millisecond >> Wait time for sortable lists on the options page
 
 // TaskControl
 export const TaskControlChunkSizeValue             = 5;
@@ -150,7 +151,7 @@ export const TaskControlChunkSizeValueMin          = 1;
 export const TaskControlChunkSizeValueMax          = 16;
 export const TaskControlChunkSizeValueStep         = 1;
 
-// 設定検証時に不正な値が検出された設定の項目
+// Configuration items where invalid values were detected during validation
 export const ConfigPropertyDisplayNames = {
 	Information: "Extension Information",
 	Debug      : "Debug Settings",

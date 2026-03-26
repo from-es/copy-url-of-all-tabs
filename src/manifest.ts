@@ -1,20 +1,22 @@
+// WXT provided cross-browser compatible Types.
 import type { UserManifest } from "wxt";
-import pkg                   from "../package.json";
 
-export const manifest: UserManifest =
-{
+// Import Object
+import pkg from "../package.json";
+
+export const manifest: UserManifest = {
 	"manifest_version": 3,
 
 	// @ts-expect-error: Chrome no longer supports the "author" key, but we keep it for legacy reasons.
 	"author": "From E",
 
 	"name"       : "Copy URL of All Tabs",
-	"description": "Copy, Copy all Tabs URLs to the clipboard. Paste, Open Tabs all the URLs in the clipboard.",
+	"description": "Copy all open tab URLs in various formats or Open all URLs in the clipboard at once.",
 
-	// package.json から取得
+	// Obtained from package.json
 	"version": pkg.version,
 
-	/**
+	/*
 		CSS
 			:has() (https://developer.mozilla.org/en-US/docs/Web/CSS/:has)
 				- Chrome : 105 & later

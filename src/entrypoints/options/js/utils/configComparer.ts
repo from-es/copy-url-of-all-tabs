@@ -1,23 +1,42 @@
+/**
+ * Utility for comparing two configuration objects.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
 // Import NPM Package
 import { isEqual } from "lodash-es";
 
 // Import Types
 import type { Config } from "@/assets/js/define";
 
-// Types
-type KeyOfConfig   = Array<keyof Config>;
-type CompareResult = {
-    isEqual : boolean;
-    diffKeys: KeyOfConfig;
-};
+
 
 /**
- * 2つの設定オブジェクトのトップレベルプロパティを比較し、差分情報を返す。
- * ネストされたオブジェクトの比較には `lodash-es` の `isEqual` を使用する。
+ * Represents an array of keys from the Config object.
+ */
+type KeyOfConfig = Array<keyof Config>;
+
+/**
+ * Result of the configuration comparison.
+ */
+type CompareResult = {
+	/** Whether the two configurations are identical. */
+	isEqual : boolean;
+	/** Array of top-level keys that differed between the two objects. */
+	diffKeys: KeyOfConfig;
+};
+
+
+
+/**
+ * Compares top-level properties of two configuration objects and returns the difference information.
+ * Uses `isEqual` from `lodash-es` for deep comparison of nested objects.
  *
- * @param   {Config}        oldConfig - 比較元の設定オブジェクト
- * @param   {Config}        newConfig - 比較先の正規化済み設定オブジェクト
- * @returns {CompareResult}           - 比較結果。isEqual が false の場合、差分があったトップレベルのキー配列を含む。
+ * @param   {Config}        oldConfig - Original configuration object.
+ * @param   {Config}        newConfig - Normalized configuration object to compare against.
+ * @returns {CompareResult}             Comparison result. If isEqual is false, it includes an array of top-level keys where differences were found.
  */
 export function compareConfig(oldConfig: Config, newConfig: Config): CompareResult {
 	if (isEqual(oldConfig, newConfig)) {
@@ -28,7 +47,7 @@ export function compareConfig(oldConfig: Config, newConfig: Config): CompareResu
 	const keys                  = Object.keys(newConfig) as KeyOfConfig;
 
 	for (const key of keys) {
-		// oldConfig にキーが存在しない場合、または値が異なる場合に差分とみなす
+		// Considered a difference if the key does not exist in oldConfig or if the values are different.
 		if (!Object.prototype.hasOwnProperty.call(oldConfig, key) || !isEqual(oldConfig[key], newConfig[key])) {
 			diffKeys.push(key);
 		}

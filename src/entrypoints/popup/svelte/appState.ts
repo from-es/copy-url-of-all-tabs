@@ -1,10 +1,21 @@
-// Import Types
-import type { Action, EventOnClickActionResult } from "./types";
+/**
+ * State management for the popup menu using Svelte stores.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
 
 // Import Svelte
 import { writable, derived } from "svelte/store";
 
-// AppStateの型定義
+// Import Types
+import type { Action, EventOnClickActionResult } from "./types";
+
+
+
+/**
+ * Type definition for AppState.
+ */
 type AppState = {
 	isLoading    : boolean;
 	currentAction: Action | null;
@@ -12,12 +23,17 @@ type AppState = {
 	message      : string | null;
 };
 
-// PopupMenu の状態管理用変数の初期化
+
+
+/**
+ * Initialization of variables for popup menu state management.
+ */
 const appState = writable<AppState>(getDefaultValueOfAppState());
 
 /**
- * appState オブジェクトのテンプレート
- * @returns {AppState}
+ * Returns the default template for the appState object.
+ *
+ * @returns {AppState} - The default app state.
  */
 function getDefaultValueOfAppState(): AppState {
 	return {
@@ -29,8 +45,9 @@ function getDefaultValueOfAppState(): AppState {
 };
 
 /**
- * result オブジェクトのテンプレート
- * @returns {ActionResult}
+ * Returns a template for the result object.
+ *
+ * @returns {EventOnClickActionResult} - A fresh result template.
  */
 function createResultTemplate(): EventOnClickActionResult {
 	return {
@@ -46,17 +63,23 @@ function createResultTemplate(): EventOnClickActionResult {
 	};
 };
 
-// PopupMenu の状態管理用メソッド
+/**
+ * Methods for popup menu state management.
+ */
 const actionStore = {
-	// アクション開始
+	/**
+	 * Starts an action and updates the state.
+	 *
+	 * @param {Action | null} action - The action to start.
+	 */
 	startAction: (action: Action | null) => {
 		appState.update(
 			(state) => {
 				return {
-					// 現在の appState の値、スプレッド構文で展開
+					// Spread current state
 					...state,
 
-					// 上書き
+					// Overwrite properties
 					isLoading    : true,
 					currentAction: action,
 					result       : createResultTemplate(),
@@ -66,14 +89,18 @@ const actionStore = {
 		);
 	},
 
-	// アクション完了
+	/**
+	 * Completes an action and updates the state.
+	 *
+	 * @param {EventOnClickActionResult | null} result - The result of the completed action.
+	 */
 	completeAction: (result: EventOnClickActionResult | null) => {
 		appState.update((state) => {
 			return {
-				// 現在の appState の値、スプレッド構文で展開
+				// Spread current state
 				...state,
 
-				// 上書き
+				// Overwrite properties
 				isLoading    : false,
 				currentAction: null,
 				result       : result
@@ -81,26 +108,34 @@ const actionStore = {
 		});
 	},
 
-	// メッセージを設定
+	/**
+	 * Sets the UI message in the state.
+	 *
+	 * @param {string | null} message - The message to set.
+	 */
 	setMessage: (message: string | null) => {
 		appState.update((state) => {
 			return {
-				// 現在の appState の値、スプレッド構文で展開
+				// Spread current state
 				...state,
 
-				// 上書き
+				// Overwrite properties
 				message: message
 			};
 		});
 	},
 
-	// 状態のリセット
+	/**
+	 * Resets the state to default values.
+	 */
 	reset: () => {
 		appState.set(getDefaultValueOfAppState());
 	}
 };
 
-// 派生ストア
+/**
+ * Derived store indicating if an action is currently in progress.
+ */
 const isActionInProgress = derived(
 	appState,
 	($appState) => {
@@ -108,7 +143,9 @@ const isActionInProgress = derived(
 	}
 );
 
-// 派生ストア
+/**
+ * Derived store indicating if a message should be shown.
+ */
 const shouldShowMessage = derived(
 	appState,
 	($appState) => {
@@ -118,4 +155,9 @@ const shouldShowMessage = derived(
 
 
 
-export { appState, actionStore, isActionInProgress, shouldShowMessage };
+export {
+	appState,
+	actionStore,
+	isActionInProgress,
+	shouldShowMessage
+};

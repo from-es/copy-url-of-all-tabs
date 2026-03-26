@@ -1,58 +1,71 @@
+/**
+ * Storage management module.
+ *
+ * @file
+ * @author       From E
+ * @lastModified 2026-03-23
+ */
+
 // WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
+
+
 
 type StorageGetKeys   = string | string[] | object | null;
 type StorageRemoveKey = string | string[];
 
-/*
-	@name         StorageManager
-	@description  `browser.storage.local` API を介して、ローカルストレージにアクセス
-	@author       From E
-	@lastModified 2026-03-05
-	@dependency   `browser.storage.local` API
 
-	@note
-		このクラスは `browser.storage.local` API に大きく依存しており、`get` / `set` の仕様は以下の通り
 
-		■ get(keys) の keys 引数の仕様:
-			1. 単一の文字列（例: "key"）:
-				- その文字列をキーとするアイテムを取得（注: スペースのみの文字列などもキーとして扱われるが非推奨）
-			2. 文字列の配列（例: [ "key1", "key2" ]）:
-				- 指定されたキーに合致するすべてのアイテムを取得
-				- 空の配列 [] を指定した場合、空のオブジェクト {} が返される
-			3. オブジェクト（例: { key1: default1, key2: default2 }）:
-				- 指定されたキーのアイテムを取得
-				- ストレージにキーが存在しない場合は、オブジェクトに指定されたデフォルト値が返される
-				- 空のオブジェクト {} を指定した場合、空のオブジェクト {} が返される
-				- この操作はストレージへの書き込みを行わない
-			4. null または undefined:
-				- ストレージ内のすべてのアイテムを取得
-
-		■ set(items) の items 引数の仕様:
-			- 保存したいキーと値のペアを持つ単一のオブジェクトを指定
-			- 例: set({ config: {...}, status: "active" })
-			- このように、複数のアイテムを一度に保存・更新することが可能
-			- 指定したキーがストレージに既に存在する場合、その値は新しい値に上書き
-			- この操作は、指定したキー以外のデータには影響を与えない
-			- オブジェクトの配列（例: [{ key: "value" }]）を引数として渡すことはできない
-*/
+/**
+ * Static class that centrally manages access to the browser's `local` storage.
+ *
+ * Accesses local storage via the `browser.storage.local` API.
+ * This class relies heavily on the `browser.storage.local` API, and the specifications for `get` / `set` are as follows:
+ *
+ * Specification for the keys argument in get(keys):
+ *   1. A single string (e.g., "key"):
+ *     - Retrieves the item with that string as the key (Note: strings containing only spaces are also treated as keys but are deprecated).
+ *   2. An array of strings (e.g., [ "key1", "key2" ]):
+ *     - Retrieves all items matching the specified keys.
+ *     - If an empty array [] is specified, an empty object {} is returned.
+ *   3. An object (e.g., { key1: default1, key2: default2 }):
+ *     - Retrieves items for the specified keys.
+ *     - If a key does not exist in storage, the default value specified in the object is returned.
+ *     - If an empty object {} is specified, an empty object {} is returned.
+ *    - This operation does not write to storage.
+ *   4. null or undefined:
+ *     - Retrieves all items in storage.
+ *
+ * Specification for the items argument in set(items):
+ * - Specify a single object containing the key-value pairs you want to save.
+ * - Example: set({ config: {...}, status: "active" })
+ * - This allows saving/updating multiple items at once.
+ * - If a specified key already exists in storage, its value is overwritten with the new value.
+ * - This operation does not affect data other than the specified keys.
+ * - An array of objects (e.g., [{ key: "value" }]) cannot be passed as an argument.
+ *
+ * @dependency `browser.storage.local` API
+ */
 export class StorageManager {
 	/**
-	 * テスト用メソッド
+	 * Method for testing.
+	 *
+	 * @returns {void}
 	 */
 	static test(): void {
 		console.debug("DEBUG(storage): call StorageManager test method");
 	}
 
 	/**
-	 * ストレージ操作をラップし、一元的なエラーハンドリングを提供
-	 * @template T 正常に完了した場合の操作の返り値の型
-	 * @template E エラーが発生した場合の返り値の型
-	 * @param    operation        - 実行する Promise を返す関数
-	 * @param    errorReturnValue - エラー発生時に返す値
-	 * @param    errorMessage     - エラー時に表示するメッセージ
-	 * @param    errorDetails     - エラーログに含める追加情報
-	 * @returns  {Promise<T | E>} - 成功時は操作の返り値、失敗時は errorReturnValue を返す
+	 * Wraps storage operations and provides centralized error handling.
+	 *
+	 * @template T                                   - The type of the operation's return value on success.
+	 * @template E                                   - The type of the return value on error.
+	 * @param    {() => Promise<T>} operation        - The function returning a Promise to execute.
+	 * @param    {E}                errorReturnValue - The value to return when an error occurs.
+	 * @param    {string}           errorMessage     - The message to display on error.
+	 * @param    {object}           [errorDetails]   - Additional information to include in the error log.
+	 * @returns  {Promise<T | E>}                      Returns the operation's return value on success, or errorReturnValue on failure.
 	 */
 	static async #handleStorageOperation<T, E>(
 		operation        : () => Promise<T>,
@@ -68,8 +81,14 @@ export class StorageManager {
 		}
 	}
 
+	/**
+	 * Displays data for the specified key(s) (or all data) in the debug console.
+	 *
+	 * @param   {StorageGetKeys} [keys] - The keys to display.
+	 * @returns {Promise<void>}
+	 */
 	static async view(keys?: StorageGetKeys): Promise<void> {
-		// エラー時は undefined を返すようにし、事実上何も返さない (void)
+		// Return undefined on error, effectively returning nothing (void).
 		const items = await this.#handleStorageOperation(
 			() => this.#getStorageData(keys ?? null),
 			undefined,
@@ -77,19 +96,20 @@ export class StorageManager {
 			{ keys }
 		);
 
-		if (items) {  // items が undefined でない場合のみログ出力
+		if (items) { // Log only if items is not undefined.
 			console.debug("DEBUG(storage): view local storage items", { items });
 		}
 	}
 
 	/**
-	 * ローカルストレージからデータを読み込む
-	 * @template T
-	 * @param    {StorageGetKeys}    keys - 読み込むアイテムのキー。文字列、文字列配列、オブジェクト、または全件取得の場合は null を指定
-	 * @returns  {Promise<T | null>}      - 読み込んだデータを返す。キーに該当するアイテムが無い場合は空のオブジェクト、エラー時は null を返す
+	 * Loads data from local storage.
+	 *
+	 * @template T                          - The type of the loaded data.
+	 * @param    {StorageGetKeys}    keys   - The keys of the items to load. Specify a string, array of strings, object, or null to retrieve all items.
+	 * @returns  {Promise<T | null>}          Returns the loaded data. Returns an empty object if no items match the keys, or null on error.
 	 */
 	static async load<T>(keys: StorageGetKeys): Promise<T | null> {
-		// エラー時は null を返す
+		// Return null on error.
 		return this.#handleStorageOperation(
 			() => this.#getStorageData<T>(keys),
 			null,
@@ -99,9 +119,10 @@ export class StorageManager {
 	}
 
 	/**
-	 * 1つ以上のアイテムをローカルストレージに保存
-	 * @param   {object}           items - 保存するキーと値のペアを持つオブジェクト。キーは空でない文字列である必要が
-	 * @returns {Promise<boolean>}       - 保存が成功した場合は true、それ以外は false
+	 * Saves one or more items to local storage.
+	 *
+	 * @param   {object}           items - An object with key-value pairs to save. Keys must be non-empty strings.
+	 * @returns {Promise<boolean>}         Returns true if the save was successful, otherwise false.
 	 */
 	static async save(items: object): Promise<boolean> {
 		if (!this.#isValidData(items) || !this.#isValidSecureKey(Object.keys(items))) {
@@ -109,7 +130,7 @@ export class StorageManager {
 			return false;
 		}
 
-		// エラー時は false を返す
+		// Return false on error.
 		const result = await this.#handleStorageOperation(
 			() => browser.storage.local.set(items),
 			false,
@@ -117,14 +138,15 @@ export class StorageManager {
 			{ items }
 		);
 
-		// 成功時、operation() の返り値は void (undefined) な為、result !== false の評価で true に変換する
+		// On success, the operation's return value is void (undefined), so evaluate result !== false to return true.
 		return result !== false;
 	}
 
 	/**
-	 * ローカルストレージから1つ以上のアイテムを削除
-	 * @param   {StorageRemoveKey} key - 削除するアイテムのキー（単一の文字列または文字列の配列）
-	 * @returns {Promise<boolean>}     - 削除が成功した場合は true、それ以外は false
+	 * Removes one or more items from local storage.
+	 *
+	 * @param   {StorageRemoveKey} key - The key(s) of the items to remove (a single string or an array of strings).
+	 * @returns {Promise<boolean>}       Returns true if the removal was successful, otherwise false.
 	 */
 	static async remove(key: StorageRemoveKey): Promise<boolean> {
 		if (!this.#isValidSecureKey(key)) {
@@ -132,7 +154,7 @@ export class StorageManager {
 			return false;
 		}
 
-		// エラー時は false を返す
+		// Return false on error.
 		const result = await this.#handleStorageOperation(
 			() => browser.storage.local.remove(key),
 			false,
@@ -144,10 +166,12 @@ export class StorageManager {
 	}
 
 	/**
-	 * ローカルストレージの全アイテムを削除
+	 * Removes all items from local storage.
+	 *
+	 * @returns {Promise<boolean>} Returns true if the removal was successful, otherwise false.
 	 */
 	static async removeAll(): Promise<boolean> {
-		// エラー時は false を返す
+		// Return false on error.
 		const result = await this.#handleStorageOperation(
 			() => browser.storage.local.clear(),
 			false,
@@ -161,22 +185,25 @@ export class StorageManager {
 	}
 
 	/**
-	 * 取得処理（get）に適した、有効なキー（群）であるか検証
-	 * 文字列、配列、オブジェクト、nullなど、APIが許容する全ての形式を検証
-	 * @see https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/get#keys
-	 * @param   {unknown} keys - 検証するキー（群）
-	 * @returns {boolean}      - 有効な形式の場合は true、それ以外は false
+	 * Verifies if the key(s) are valid and suitable for the retrieval process (get).
+	 *
+	 * Verifies all formats allowed by the API, such as string, array, object, null, etc.
+	 *
+	 * @param   {unknown} keys - The key(s) to verify.
+	 * @returns {boolean}        Returns true if the format is valid, otherwise false.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/get#keys
 	 */
 	static #isValidKey(keys: unknown): boolean {
 		if (keys === null || keys === undefined) {
 			return true;
 		}
 		if (typeof keys === "object" && !Array.isArray(keys)) {
-			// 空のオブジェクトは、この判定で true を返す
+			// Empty objects return true in this check.
 			return true;
 		}
 		if (Array.isArray(keys)) {
-			return keys.every(k => typeof k === "string");  // 空の配列は、この判定で true を返す
+			return keys.every(k => typeof k === "string"); // Empty arrays return true in this check.
 		}
 		if (typeof keys === "string") {
 			return true;
@@ -186,11 +213,14 @@ export class StorageManager {
 	}
 
 	/**
-	 * 保存・削除処理に適した、安全なキーであるか検証
-	 * 具体的には、キーが空や空白のみでない文字列、もしくはその条件を満たす配列であることを保証。storage.getにおける文字列キーの仕様に準拠
-	 * @see https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/get#keys
-	 * @param   {unknown} key - 検証するキー
-	 * @returns {boolean}     - キーが安全な文字列の場合は true、それ以外は false
+	 * Verifies if the key is valid and secure, suitable for save/remove operations.
+	 *
+	 * Specifically, ensures that the key is a string that is not empty or whitespace only, or an array meeting that condition. Complies with string key specifications in storage.get.
+	 *
+	 * @param   {unknown} key - The key to verify.
+	 * @returns {boolean}       Returns true if the key is a secure string, otherwise false.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/get#keys
 	 */
 	static #isValidSecureKey(key: unknown): boolean {
 		if (typeof key === "string" && key.trim() !== "") {
@@ -204,24 +234,25 @@ export class StorageManager {
 	}
 
 	/**
-	 * データが有効なオブジェクトであるか検証
-	 * @param   {unknown} data - 検証するデータ。保存したい1つ以上のキー/値ペアを持つオブジェクト、値は primitive 型 (整数型・ブール型・文字列) または配列を指定可能
-	 * @returns {boolean}      - データが null でないオブジェクトの場合は true、それ以外は false
+	 * Verifies if the data is a valid object.
+	 *
+	 * @param   {unknown} data - The data to verify. An object with one or more key/value pairs to save; values can be primitive types (integer, boolean, string) or arrays.
+	 * @returns {boolean}        Returns true if the data is a non-null object, otherwise false.
 	 */
 	static #isValidData(data: unknown): data is object {
 		return (typeof data === "object" && data !== null);
 	}
 
 	/**
-	 * ストレージからデータを取得
+	 * Retrieves data from storage.
 	 *
-	 * このメソッドは、`browser.storage.local.get` APIのラッパーとして機能し、成功時には取得したデータを、失敗時には例外をスローする
-	 * ロギングやエラーハンドリングなどは行わず、該当処理は呼び出し元で
+	 * This method functions as a wrapper for the `browser.storage.local.get` API, returning the retrieved data on success and throwing an exception on failure.
+	 * Logging and error handling are not performed here; they should be handled by the caller.
 	 *
-	 * @template T
-	 * @param   {StorageGetKeys} keys - 取得するアイテムのキー
-	 * @returns {Promise<T>}          - 取得したデータを返す
-	 * @throws  {Error}               - キーが不正な場合、またはAPIの呼び出しに失敗した場合
+	 * @template T                     - The type of the retrieved data.
+	 * @param    {StorageGetKeys} keys - The keys of the items to retrieve.
+	 * @returns  {Promise<T>}            Returns the retrieved data.
+	 * @throws   {Error}                 If the keys are invalid or the API call fails.
 	 */
 	static async #getStorageData<T>(keys: StorageGetKeys): Promise<T> {
 		if (!this.#isValidKey(keys)) {

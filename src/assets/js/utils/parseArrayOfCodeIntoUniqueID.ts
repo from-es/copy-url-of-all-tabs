@@ -1,22 +1,34 @@
+/**
+ * Detects duplicate IDs within an array of objects and replaces duplicates with newly generated unique IDs.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+// Import Module
 import { generateID } from "./generateID";
 
+
+
 interface CodeObject {
-	id           : string;
+	id: string;
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[key: string]: any;    // 渡されたオブジェクトの配列のプロパティが "id" 以外だった場合のフォールバック
+	[key: string]: any;  // Fallback if properties of the passed array of objects were other than "id"
 }
 
+
+
 /**
- * オブジェクトの配列内で重複したIDを検出し、重複している場合は新しいユニークIDを生成して置き換える
+ * Detects duplicate IDs within an array of objects and replaces duplicates with newly generated unique IDs.
  *
- * @param   {CodeObject[]} array - IDプロパティを持つオブジェクトの配列
- * @returns {CodeObject[]}       - 重複するIDがユニークなものに置き換えられた新しい配列
+ * @param   {CodeObject[]} array - An array of objects with an ID property
+ * @returns {CodeObject[]}         A new array where duplicate IDs have been replaced by unique ones
  */
 export function parseArrayOfCodeIntoUniqueID(array: CodeObject[]): CodeObject[] {
 	const codes       = structuredClone(array);
 	const flatArray   = codes.map(elm => elm.id);
-	const isDuplicate = (flatArray.length !== (new Set(flatArray)).size); // 重複検知
+	const isDuplicate = (flatArray.length !== (new Set(flatArray)).size); // Duplicate detection
 
 	if (!isDuplicate) {
 		return codes;

@@ -1,7 +1,4 @@
 /**
- * @file sanitizeForSendMessage.test.ts
- * @lastupdate 2025-09-13
- * @description
  * This file tests the `sanitizeForSendMessage` utility function.
  *
  * The purpose of this function is to prepare an object to be sent via
@@ -12,6 +9,9 @@
  * 1. That non-serializable properties are correctly removed from a complex object.
  * 2. That an already-serializable object remains unchanged.
  * 3. That it correctly handles arrays containing objects with non-serializable properties.
+ *
+ * @file
+ * @lastModified 2026-03-25
  */
 
 import { describe, it, expect } from "vitest";

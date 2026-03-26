@@ -1,9 +1,19 @@
 /**
- * selectTab(https://blog.25egg.com/?p=203)を jQuery 非依存に書き換え
+ * Module for handling tab switching on the options screen.
+ *
+ * selectTab (https://blog.25egg.com/?p=203) rewritten to be jQuery-independent.
+ *
+ * @file
  */
-export function selectTab() {
+
+/**
+ * Registers event handlers for tab switching on the options screen and activates the initial tab.
+ *
+ * @returns {void}
+ */
+export function selectTab(): void {
 	const selectors = {
-		active    : "#setting",             // オプション画面読み込み時に表示する要素へのCSSセレクター
+		active    : "#setting",             // CSS selector for the element to show when loading the options screen
 		article   : "#contents > article",
 		navigation: "#tabnav a",
 	};

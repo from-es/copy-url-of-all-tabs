@@ -1,41 +1,80 @@
+/**
+ * Type definitions for the popup entrypoint.
+ *
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+/**
+ * Represents the available actions in the popup menu.
+ */
 type Action = "copy" | "paste" | "options";
 
-// 結果のコア部分
+/**
+ * Core part of the result object.
+ */
 type ResultCore = {
+  /** The message to be displayed to the user. */
   message: string;
+  /** Whether the action was considered successful. */
   judgment: boolean;
+  /** The list of URLs involved in the action. */
   urlList: string[];
 };
 
-// 汎用的な結果型 (App.svelte, appState.ts などで利用)
+/**
+ * Generic result type used in App.svelte, appState.ts, etc.
+ */
 type EventOnClickActionResult = ResultCore & {
+  /** The action that was performed. */
   action: Action | null;
+  /** Status of the action execution. */
   status: string | boolean;
+  /** Clipboard information. */
   clipboard: {
-    direction: string | null;
-    text: string | null;
+	 /** The direction of the clipboard operation (e.g., "copy", "paste"). */
+	 direction: string | null;
+	 /** The text content of the clipboard. */
+	 text: string | null;
   };
 };
 
-// イベントハンドラが返す、プロパティが確定した結果の型
+/**
+ * Type of the result returned by event handlers, with confirmed properties.
+ */
 type ConcreteResult = ResultCore & {
+  /** The action that was performed. */
   action: Action;
+  /** Clipboard information. */
   clipboard: {
-    direction: string;
-    text: string;
+	 /** The direction of the clipboard operation. */
+	 direction: string;
+	 /** The text content of the clipboard. */
+	 text: string;
   };
 };
 
-// コピーアクションの結果
+/**
+ * Result of the copy action.
+ */
 type EventActionCopyResult = ConcreteResult & {
+  /** Whether the copy action was successful. */
   status: boolean;
 };
 
-// ペーストアクションの結果
+/**
+ * Result of the paste action.
+ */
 type EventActionPasteResult = ConcreteResult & {
+  /** Status of the paste action. */
   status: string | boolean;
 };
 
 
 
-export { Action, EventOnClickActionResult, EventActionCopyResult, EventActionPasteResult };
+export {
+	Action,
+	EventOnClickActionResult,
+	EventActionCopyResult,
+	EventActionPasteResult
+};

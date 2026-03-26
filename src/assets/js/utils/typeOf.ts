@@ -1,9 +1,18 @@
 /**
- * 与えられたオブジェクトの具体的な型を小文字の文字列で返す
- * `typeof`演算子よりも詳細な型情報（例: 'array', 'null', 'object'）を取得
+ * Returns the specific type of the given object as a lowercase string.
  *
- * @param   {*}      obj - 型を判定する任意のオブジェクトまたはプリミティブ値。
- * @returns {string}     - オブジェクトの型を示す小文字の文字列。
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+/**
+ * Returns the specific type of the given object as a lowercase string.
+ *
+ * Retrieves more detailed type information than the `typeof` operator (e.g., 'array', 'null', 'object').
+ *
+ * @param   {*}      obj - Any object or primitive value whose type is to be determined
+ * @returns {string}       A lowercase string representing the type of the object
+ *
  * @example
  * typeOf([]);   // 'array'
  * typeOf(null); // 'null'

@@ -1,12 +1,20 @@
 /**
- * 指定されたミリ秒数だけ非同期で処理を待機します。
+ * Asynchronously waits for the specified number of milliseconds.
  *
- * @param   {number}        msec - 待機する時間（ミリ秒）
- * @returns {Promise<void>}      - 指定時間が経過した後に解決されるPromise
+ * @file
+ * @lastModified 2026-03-24
+ */
+
+/**
+ * Asynchronously waits for the specified number of milliseconds.
+ *
+ * @param   {number}        msec - The time to wait (in milliseconds)
+ * @returns {Promise<void>}        A promise that resolves after the specified time has elapsed
+ *
  * @example
  * async function example() {
  *   console.info('INFO(util): Sleep processing start');
- *   await sleep(2000); // 2秒待機
+ *   await sleep(2000); // Wait for 2 seconds
  *   console.info('INFO(util): Sleep processing end');
  * }
  */
