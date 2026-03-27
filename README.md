@@ -7,12 +7,12 @@
 
 ## About
 
-You can copy the URLs of all open tabs to the clipboard or open all URLs in the clipboard at once.
+Copy all open tab URLs in various formats or Open all URLs in the clipboard at once. Cross-browser extension supporting both Chrome and Firefox.
 
 ## Features
 
 - Copy
-	- Copy the URLs of all open tabs to the clipboard in any format (text, json, custom).
+	- Copy all open tab URLs to the clipboard in various formats (text, JSON, custom).
 - Paste
 	- Open all URLs in the clipboard at once. The URLs to be opened can be filtered.
 
@@ -31,7 +31,7 @@ Install it from your browser's official extension store:
 
 1. Click on the icon of "**Copy URL of All Tabs**" on the right side of the address bar.
 2. Action
-	- To "Copy all tab URLs"
+	- To "Copy all open tab URLs"
 		- Click **Copy** in the Popup Menu. The URLs of all open tabs are copied to the clipboard.
 	- To "Open the URL in the clipboard in a new tab"
 		- Click **Paste** in the Popup Menu. The URLs in the clipboard are opened at once.
