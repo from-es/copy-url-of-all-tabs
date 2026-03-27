@@ -1,3 +1,8 @@
+#### [1.20.5] - 2026/03/28
+
+- improve
+	- Improved extension descriptions on the options page for better clarity.
+
 #### [1.20.4] - 2026/03/26
 
 - improve
