@@ -489,15 +489,33 @@ const VerificationRules: VerificationRule[] = [
 				return false;
 			}
 
-			const result         = validator.validate(value, ValidationRules, option);
-			const { isAllValid } = result;
+			const result                       = validator.validate(value, ValidationRules, option);
+			const { isAllValid, invalidItems } = result;
 
-			console.debug("DEBUG(tab): validation data and v8n custom rule object: tab.customDelay.list", { value, ValidationRules });
+			if (!isAllValid) {
+				/**
+				 * NOTE: This logic assumes that the 'value' array (and the parent configuration object)
+				 * has been deep-cloned (e.g., via cloneObject) before validation.
+				 * Mutating the array here is intended to "repair" the cloned object in-place.
+				 * This repaired object is then committed to the store/storage, triggering reactivity
+				 * without side effects on the original source of truth during the validation phase.
+				 */
 
-			// Report the result to the console
+				// Non-destructive repair: filter out only invalid items.
+				const invalidIndices = new Set(invalidItems.map(item => item.index));
+				const repairedValue  = value.filter((_, index) => !invalidIndices.has(index));
+
+				// Atomic replacement of array contents while maintaining the reference to ensure reactivity.
+				value.splice(0, value.length, ...repairedValue);
+
+				console.warn("WARN(tab): Non-destructive validation: removed invalid custom delay items", { removedCount: invalidItems.length });
+			}
+
+			// Report the result to the console for debugging purposes.
 			validator.reportToConsole();
 
-			return isAllValid;
+			// Always return true to accept the "repaired" array as valid.
+			return true;
 		}
 	},
 	{
