@@ -179,7 +179,8 @@
 				const item    = { [keyname]: currentConfig };
 				await StorageManager.save(item);
 
-				// Re-initialize UI only upon successful save
+				// Re-initialize UI and sync status.config with currentConfig (which may contain auto-corrections)
+				status.config = currentConfig;
 				await reInitialize();
 
 				PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
