@@ -295,7 +295,7 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 	const { active, position, windowId } = tabOption;
 
 	try {
-		const tabs       = await browser.tabs.query({ currentWindow : true });
+		const tabs       = await browser.tabs.query({ windowId : windowId });  // Specify "windowId" to avoid race conditions when switching windows during delay.
 		const currentTab = (tabs).find((tab) => tab.active === true);
 		const tabIndex   = createTabPosition(position, tabs, currentTab);
 
@@ -304,7 +304,8 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 
 		console.debug("DEBUG(tab): open urls: create tab", { position : position, ...createProperties });
 
-		browser.tabs.create(createProperties);
+		// Await to ensure stable execution order across multiple tab creations.
+		await browser.tabs.create(createProperties);
 	} catch (error) {
 		console.error("ERROR(tab): Exception: cannot open url, create tab failed", { error });
 	}
