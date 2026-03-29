@@ -2,7 +2,7 @@
  * Handler for opening multiple URLs in new tabs.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-03-29
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -240,9 +240,19 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 		case "insertNext":
 			// In v1.8.0, this behaves the same as prepend (adding to the priority queue).
 			// We may consider a future implementation that inserts immediately after the currently running task.
-			for (const task of tasks) {
+			//
+			// If queue processing begins while tasks are still being added in the loop, the task execution order may become corrupted.
+			// To prevent this, we pause the queue until all tasks have been successfully added.
+			QueueManager.pause();
+
+			// QueueManager.addPriorityTask increases priority as it adds tasks to the queue, resulting in tasks being executed
+			// in the reverse order of addition. To maintain the intended FIFO order, we reverse the task array before adding.
+			for (const task of tasks.toReversed()) {
 				QueueManager.addPriorityTask(task);
 			}
+
+			// Resume queue processing now that all tasks have been added.
+			QueueManager.resume();
 			break;
 
 		case "append":
@@ -285,7 +295,7 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 	const { active, position, windowId } = tabOption;
 
 	try {
-		const tabs       = await browser.tabs.query({ currentWindow : true });
+		const tabs       = await browser.tabs.query({ windowId : windowId });  // Specify "windowId" to avoid race conditions when switching windows during delay.
 		const currentTab = (tabs).find((tab) => tab.active === true);
 		const tabIndex   = createTabPosition(position, tabs, currentTab);
 
@@ -294,7 +304,8 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 
 		console.debug("DEBUG(tab): open urls: create tab", { position : position, ...createProperties });
 
-		browser.tabs.create(createProperties);
+		// Await to ensure stable execution order across multiple tab creations.
+		await browser.tabs.create(createProperties);
 	} catch (error) {
 		console.error("ERROR(tab): Exception: cannot open url, create tab failed", { error });
 	}
@@ -325,7 +336,7 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 			number = currentTab ? currentTab.index + 1 : null;
 			break;
 		case "last":
-			number = tabs.length + 1;
+			number = tabs.length;
 			break;
 		default:
 			// If position is "unspecified, undefined, or null", the tab's position follows the default behavior of browser.tabs.create(options) for index.

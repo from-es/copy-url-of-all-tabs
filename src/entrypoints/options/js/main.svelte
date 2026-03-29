@@ -177,7 +177,7 @@
 				// Save to Local Storage
 				const keyname = status.define.Storage.keyname;
 				const item    = { [keyname]: currentConfig };
-				StorageManager.save(item);
+				await StorageManager.save(item);
 
 				// Re-initialize UI only upon successful save
 				await reInitialize();
