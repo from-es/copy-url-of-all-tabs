@@ -335,7 +335,7 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 			number = currentTab ? currentTab.index + 1 : null;
 			break;
 		case "last":
-			number = tabs.length + 1;
+			number = tabs.length;
 			break;
 		default:
 			// If position is "unspecified, undefined, or null", the tab's position follows the default behavior of browser.tabs.create(options) for index.
