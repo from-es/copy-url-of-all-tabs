@@ -704,6 +704,11 @@
 								</label>
 							</form>
 
+
+							{#if status.config.Tab.customDelay.enable}
+								<p id="custom-delay-note"><span class="notice-highlight">Notice</span>: Custom delays are applied from the second match of the pattern onwards.</p>
+							{/if}
+
 							<div>
 								<table id="Tab-custom-delay-table">
 									<thead>
