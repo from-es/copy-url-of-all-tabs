@@ -179,7 +179,8 @@
 				const item    = { [keyname]: currentConfig };
 				await StorageManager.save(item);
 
-				// Re-initialize UI only upon successful save
+				// Re-initialize UI and sync status.config with currentConfig (which may contain auto-corrections)
+				status.config = currentConfig;
 				await reInitialize();
 
 				PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
@@ -702,6 +703,11 @@
 									Custom Delay
 								</label>
 							</form>
+
+
+							{#if status.config.Tab.customDelay.enable}
+								<p id="custom-delay-note"><span class="notice-highlight">Notice</span>: Custom delays are applied from the second match of the pattern onwards.</p>
+							{/if}
 
 							<div>
 								<table id="Tab-custom-delay-table">

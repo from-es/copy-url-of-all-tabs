@@ -32,8 +32,8 @@ async function eventActionCopy(action: Action, config: Config, define: Define): 
 	const tabs     = prepareForActionCopy(rawTabs, action, config, define);
 	const type     = config.Format.type;
 	const template = config.Format.template;
-	const sanitize = true;
 	const mimetype = (config.Format.type === "custom" && config.Format?.mimetype) ? config.Format.mimetype : "text/plain";
+	const sanitize = (mimetype === "text/html");  // Apply HTML escape only when the output format is text/html
 
 	// Format and write to clipboard
 	const text   = FormatManager.format(tabs, type, template, sanitize);
