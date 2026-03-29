@@ -2,7 +2,7 @@
  * Handler for opening multiple URLs in new tabs.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-03-29
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -240,9 +240,19 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 		case "insertNext":
 			// In v1.8.0, this behaves the same as prepend (adding to the priority queue).
 			// We may consider a future implementation that inserts immediately after the currently running task.
-			for (const task of tasks) {
+			//
+			// If queue processing begins while tasks are still being added in the loop, the task execution order may become corrupted.
+			// To prevent this, we pause the queue until all tasks have been successfully added.
+			QueueManager.pause();
+
+			// QueueManager.addPriorityTask increases priority as it adds tasks to the queue, resulting in tasks being executed
+			// in the reverse order of addition. To maintain the intended FIFO order, we reverse the task array before adding.
+			for (const task of tasks.toReversed()) {
 				QueueManager.addPriorityTask(task);
 			}
+
+			// Resume queue processing now that all tasks have been added.
+			QueueManager.resume();
 			break;
 
 		case "append":
