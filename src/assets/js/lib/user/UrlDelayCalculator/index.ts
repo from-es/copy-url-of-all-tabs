@@ -3,8 +3,13 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-03-29
  */
+
+// Import Object
+import { define } from "@/assets/js/define";
+
+
 
 /**
  * Rule for defining delay time for a specific URL pattern.
@@ -80,7 +85,7 @@ class UrlDelayCalculator {
 	 * @returns {string}     - The escaped string.
 	 */
 	static #escapeRegExp(str: string): string {
-		return str.replace(/[.*+?^${}()|[\\][\\]\\]/g, "\\$&");
+		return str.replace(define.Regex.MetaCharacters, "\\$&");
 	}
 
 	/**
@@ -99,7 +104,7 @@ class UrlDelayCalculator {
 				if (typeof rule.pattern !== "string" || rule.pattern.length === 0) {
 					console.warn("WARN(tab): Invalid: invalid or empty string pattern in custom delay rule, rule ignored", { rule });
 
-					return { ...rule, compiledPattern: /(?!)/ };  // Returns a regular expression that matches nothing for invalid patterns.
+					return { ...rule, compiledPattern: define.Regex.NeverMatch };  // Returns a regular expression that matches nothing for invalid patterns.
 				}
 
 				const escapedPattern = UrlDelayCalculator.#escapeRegExp(rule.pattern);

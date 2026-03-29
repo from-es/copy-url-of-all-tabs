@@ -137,7 +137,8 @@ type Define_Delta = {
 		UUID: {
 			v4: RegExp
 		}
-		NeverMatch: RegExp;
+		MetaCharacters: RegExp;
+		NeverMatch    : RegExp;
 	};
 	Message: {
 		[key: string]: {

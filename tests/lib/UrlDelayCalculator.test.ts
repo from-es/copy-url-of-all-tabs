@@ -17,10 +17,10 @@
  *   enhance test coverage.
  *
  * @file
- * @lastModified 2026-03-25
+ * @lastModified 2026-03-29
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { UrlDelayCalculator, type UrlDelayRule, type UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
 interface TestCase {
@@ -31,6 +31,21 @@ interface TestCase {
 	applyFrom      : number;
 	expectedResults: UrlDelayCalculationResult[];
 }
+
+// Mock WXT's browser API module before importing modules that depend on it
+vi.mock("wxt/browser", () => ({
+	browser: {
+		runtime: {
+			getManifest: vi.fn(() => ({
+				author     : "From E",
+				name       : "Copy URL of All Tabs",
+				description: "A browser extension for copying all tab URLs.",
+				version    : "1.0.0"
+			})),
+			id: "dummy-extension-id"
+		}
+	}
+}));
 
 const urlList = [
 	"http://example.com/a",
@@ -108,6 +123,37 @@ describe("UrlDelayCalculator", () => {
 				{ url: "http://example.com/c", delay: { individual: 250, cumulative:  850 } }, // Second exact match for /c rule >> "applyFrom: 2"
 				{ url: "http://example.com/d", delay: { individual: 100, cumulative:  950 } },
 				{ url: "http://example.com/e", delay: { individual: 999, cumulative: 1949 } }  // Second substring match for /e rule >> "applyFrom: 2"
+			],
+		},
+		{
+			name        : "should correctly escape and match regex meta-characters in pattern",
+			urls        : [
+				"http://example.com/page[1]",
+				"http://example.com/page[1]",
+				"http://example.com/path\\to\\file",
+				"http://example.com/path\\to\\file",
+				"http://example.com/group(A)|B",
+				"http://example.com/group(A)|B",
+				"http://example.com/1+1=2?",
+				"http://example.com/1+1=2?"
+			],
+			defaultDelay: 100,
+			applyFrom   : 2,
+			customRules : [
+				{ pattern: "page[1]",        delay: 500, matchType: "substring" },
+				{ pattern: "path\\to\\file", delay: 800, matchType: "substring" },
+				{ pattern: "group(A)|B",     delay: 999, matchType: "substring" },
+				{ pattern: "1+1=2?",         delay: 777, matchType: "substring" }
+			],
+			expectedResults: [
+				{ url: "http://example.com/page[1]",        delay: { individual:   0, cumulative:    0 } },
+				{ url: "http://example.com/page[1]",        delay: { individual: 500, cumulative:  500 } },
+				{ url: "http://example.com/path\\to\\file", delay: { individual: 100, cumulative:  600 } },
+				{ url: "http://example.com/path\\to\\file", delay: { individual: 800, cumulative: 1400 } },
+				{ url: "http://example.com/group(A)|B",     delay: { individual: 100, cumulative: 1500 } },
+				{ url: "http://example.com/group(A)|B",     delay: { individual: 999, cumulative: 2499 } },
+				{ url: "http://example.com/1+1=2?",         delay: { individual: 100, cumulative: 2599 } },
+				{ url: "http://example.com/1+1=2?",         delay: { individual: 777, cumulative: 3376 } }
 			],
 		},
 	];
