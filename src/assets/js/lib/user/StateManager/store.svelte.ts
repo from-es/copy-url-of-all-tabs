@@ -5,14 +5,16 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-03-31
+ *
+ * @dependency lodash-es (https://www.npmjs.com/package/lodash-es)
  */
 
 // Import Svelte
 import { SvelteMap } from "svelte/reactivity";
 
 // Import NPM Package
-import merge from "lodash-es/merge";
+import { mergeWith } from "lodash-es";
 
 
 
@@ -82,7 +84,17 @@ function createStore<T extends StateObject>(initialStates: StateOption[] = []): 
 
 			// Merge the new value with the existing state or set it if new.
 			if (Object.prototype.hasOwnProperty.call(internalState, name)) {
-				merge(internalState[name], value);
+				if (Array.isArray(internalState[name]) || Array.isArray(value)) {
+					// Replace the entire value if it or the existing state is an array.
+					internalState[name] = value;
+				} else {
+					// Use mergeWith to replace nested arrays instead of merging them by index.
+					mergeWith(internalState[name], value, (objValue, srcValue) => {
+						if (Array.isArray(objValue)) {
+							return srcValue;
+						}
+					});
+				}
 			} else {
 				internalState[name] = value;
 				// If freeze status is not set, default to the provided value (or false).
