@@ -300,7 +300,7 @@ class PopoverMessage {
 	 */
 	static #alignPopoverMessage(isOpen: boolean): void {
 		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<HTMLDivElement>;
-		const array  = Array.from(popovers).reverse();
+		const array  = Array.from(popovers).toReversed();
 
 		// Stack popovers vertically.
 		//	  - isOpen: true  >> opacity transition

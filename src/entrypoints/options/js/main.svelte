@@ -1175,7 +1175,7 @@
 
 							<form id="Debug-loglevel">
 								<select id="Debug-loglevel-select" bind:value={ status.config.Debug.loglevel }>
-									{#each Object.keys(LOG_LEVELS).reverse() as level (level)}
+									{#each Object.keys(LOG_LEVELS).toReversed() as level (level)}
 										<option value={ level }>{ level }</option>
 									{/each}
 								</select>
