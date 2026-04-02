@@ -3,7 +3,7 @@
 	 * Main Svelte component for the popup menu.
 	 *
 	 * @file
-	 * @lastModified 2026-03-24
+	 * @lastModified 2026-04-02
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -24,20 +24,28 @@
 	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";  // Shared State Object
 
 	// Import Types
-	import type { Config, Define, ExtensionMessage } from "@/assets/js/types/";
-	import type { Action, EventOnClickActionResult } from "./types";
+	import type { Config, Define, ExtensionMessage, SetTimeoutHandle } from "@/assets/js/types/";
+	import type { Action, EventOnClickActionResult }                   from "./types";
 
 
+
+	/**
+	 * Variable for managing the timer ID to control the display duration
+	 * of notification messages at the bottom of the popup.
+	 */
+	let messageTimerId: SetTimeoutHandle = undefined;
 
 	onMount(() => {
 		console.info("INFO(popup): Popup component mounted");
-		console.debug("DEBUG(popup): initial status object", { status: cloneObject(status) }); // Deep copy the status object to avoid Svelte errors caused by non-cloneable types (functions) within the status structure
+		console.debug("DEBUG(popup): initial status object", { status: cloneObject(status) });  // Deep copy the status object to avoid Svelte errors caused by non-cloneable types (functions) within the status structure
 
 		initialize();
 	});
 
 	/**
 	 * Initializes the popup menu.
+	 *
+	 * @returns {void}
 	 */
 	function initialize(): void {
 		// Dynamic update of styles (popup.css >> :root element)
@@ -51,13 +59,13 @@
 	 * Handler for button click events.
 	 * Executes the corresponding action based on the data-action attribute.
 	 *
-	 * @param {MouseEvent} event - Mouse click event object.
+	 * @param   {MouseEvent}    event - Mouse click event object.
 	 * @returns {Promise<void>}
 	 */
 	async function eventOnClick(event: MouseEvent): Promise<void> {
-		const self               = event.currentTarget;
-		const { config, define } = await initializeConfig(null);                                               // Measure for when options are changed while the popup menu is open -> calling again from the popup menu @2024/10/18
-		const action             = self ? (self as HTMLElement).getAttribute("data-action") as Action : null;  // Action to execute >> "copy" or "paste" or "options"
+		const self                                    = event.currentTarget;
+		const { config, define }                      = await initializeConfig(null);                                               // Measure for when options are changed while the popup menu is open -> calling again from the popup menu @2024/10/18
+		const action                                  = self ? (self as HTMLElement).getAttribute("data-action") as Action : null;  // Action to execute >> "copy" or "paste" or "options"
 		let   result: EventOnClickActionResult | null = null;
 
 		// Delegate state management to appState
@@ -77,7 +85,7 @@
 		}
 
 		// Post-processing for "paste" action
-		if ( action === "paste" && result && result.judgment && result.urlList?.length > 0 ) {
+		if (action === "paste" && result && result.judgment && Array.isArray(result.urlList) && result.urlList?.length > 0) {
 			const urlList          = result.urlList;
 			const extensionMessage = {
 				action : status.define.Messaging.OpenURLs,
@@ -99,7 +107,7 @@
 		}
 
 		// Display message
-		showMessage(action, result, config);
+		messageController(action, result, config);
 
 		// Close popup menu
 		closePopupMenu(config.PopupMenu.OnClickClose);
@@ -114,7 +122,7 @@
 	async function eventOpenOptionsPage(): Promise<void> {
 		browser.runtime.openOptionsPage();
 
-		const delay = 500; // milliseconds
+		const delay = 500;  // milliseconds
 		window.setTimeout(() => { window.close(); }, delay);
 	}
 
@@ -126,7 +134,7 @@
 	 * @returns {EventOnClickActionResult}          Result object containing error information.
 	 */
 	function eventDoNotMatch(action: Action | null): EventOnClickActionResult {
-		const message = `Error, Do not match any switch statement. >> eventOnClick() >> ${action}`;
+		const message = `Error, Does not match any switch statement. >> eventOnClick() >> ${action}`;
 		const result: EventOnClickActionResult  = {
 			action,
 			status   : false,
@@ -196,42 +204,141 @@
 	/**
 	 * Sends a message to the background script to open the specified list of URLs in new tabs.
 	 *
-	 * @param {ExtensionMessage} message - Message object containing the list of URLs to open and settings.
+	 * @param   {ExtensionMessage} message - Message object containing the list of URLs to open and settings.
+	 * @returns {void}
 	 */
 	function openURLs(message: ExtensionMessage): void {
-		// Sanitize the object before sending for Firefox compatibility and safety >> remove properties not supported by the structured clone algorithm
+		/**
+		 * To ensure Firefox compatibility and safety, the object must be sanitized (removing properties
+		 * not supported by the structured clone algorithm) before sending.
+		 *
+		 * @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
+		 */
 		const options = {
 			checkOnly: false,
 			debug    : false
 		};
 		const sanitizedMessage = sanitizeForSendMessage(message, options);
 
-		// Open tabs in background.js because opening in the active tab moves focus and closes the popup menu, which might terminate the process prematurely @2024/10/13
+		// Open tabs in background.js because opening in the active tab moves focus and closes the popup menu,
+		// which might terminate the process prematurely.
 		browser.runtime.sendMessage(sanitizedMessage);
 	}
 
 	/**
 	 * Displays a message in the UI based on the action result.
 	 *
-	 * @param {Action | null}                   action - The action that was executed.
-	 * @param {EventOnClickActionResult | null} result - Action result object.
-	 * @param {Config}                          config - Extension configuration object.
+	 * @param   {Action | null}                   action - The action that was executed.
+	 * @param   {EventOnClickActionResult | null} result - Action result object.
+	 * @param   {Config}                          config - Extension configuration object.
+	 * @returns {void}
 	 */
-	function showMessage(action: Action | null, result: EventOnClickActionResult | null, config: Config): void {
-		const message = createMessage(action, result);
-		const option  = config.PopupMenu.ClearMessage;
+	function messageController(action: Action | null, result: EventOnClickActionResult | null, config: Config): void {
+		/**
+		 * Validates the arguments passed to the messageController.
+		 *
+		 * @param   {Action | null} action - The action that was executed.
+		 * @param   {Config}        config - Extension configuration object.
+		 * @returns {boolean}                True if the arguments are valid, false otherwise.
+		 */
+		const validateArguments = (action: Action | null, config: Config): boolean => {
+			const option       = config?.PopupMenu?.ClearMessage;
+			const regex_action = /^(copy|paste|options)$/;
 
-		if ( !message ) {
+			// action
+			if (!action || !regex_action.test(action)) {
+				console.error("ERROR(ui): Invalid: argument 'action' passed to MessageController is invalid", { action });
+				return false;
+			}
+
+			// config: config.PopupMenu.ClearMessage
+			if (!config || !(typeof config === "object" && !Array.isArray(config))) {
+				console.error("ERROR(ui): Invalid: argument 'config' passed to MessageController is not an object", { config });
+				return false;
+			}
+			if (!(Object.hasOwn(config, "PopupMenu") && typeof config.PopupMenu === "object" && config.PopupMenu !== null)) {
+				console.error("ERROR(ui): Invalid: property 'config.PopupMenu' is missing or not an object", { config });
+				return false;
+			}
+			if (!(Object.hasOwn(config.PopupMenu, "ClearMessage") && typeof config.PopupMenu.ClearMessage === "object" && config.PopupMenu.ClearMessage !== null)) {
+				console.error("ERROR(ui): Invalid: property 'config.PopupMenu.ClearMessage' is missing or not an object", { config });
+				return false;
+			}
+			if (!(Object.hasOwn(config.PopupMenu.ClearMessage, "enable") && Object.hasOwn(config.PopupMenu.ClearMessage, "timeout"))) {
+				console.error("ERROR(ui): Invalid: properties 'enable' or 'timeout' are missing in 'config.PopupMenu.ClearMessage'", { config });
+				return false;
+			}
+
+			// option: config.PopupMenu.ClearMessage
+			if (!option || !(typeof option === "object" && !Array.isArray(option))) {
+				console.error("ERROR(ui): Invalid: argument 'config.PopupMenu.ClearMessage' passed to MessageController is invalid", { option });
+				return false;
+			}
+			if (!(Object.hasOwn(option, "enable") && typeof option.enable === "boolean")) {
+				console.error("ERROR(ui): Invalid: property 'config.PopupMenu.ClearMessage.enable' is invalid", { enable: option?.enable });
+
+				return false;
+			}
+			if (!(Object.hasOwn(option, "timeout") && typeof option.timeout === "number" && option.timeout >= 0)) {
+				console.error("ERROR(ui): Invalid: property 'config.PopupMenu.ClearMessage.timeout' is invalid", { timeout: option?.timeout });
+				return false;
+			}
+
+			return true;
+		};
+
+		/**
+		 * Updates the message text in the action store.
+		 *
+		 * @param {string} message - The message to display.
+		 */
+		const setMessageText = (message: string): void => {
+			actionStore.setMessage(message);
+		};
+
+		/**
+		 * Sets or clears the timer to hide the notification message.
+		 *
+		 * @param {Config["PopupMenu"]["ClearMessage"]} option - Settings regarding the behavior of clearing the message.
+		 */
+		const setMessageClearTimer = (option: typeof config.PopupMenu.ClearMessage): void => {
+			const { enable: clear, timeout: delay } = option;
+
+			// To prevent race conditions from overlapping timer processes,
+			// if a previous timer ID exists, reset the ID and clear the previous timer,
+			// ensuring only the last triggered timer is active.
+			if (messageTimerId) {
+				window.clearTimeout(messageTimerId);
+				messageTimerId = undefined;
+			}
+
+			if (clear) {
+				messageTimerId = scheduleMessageClear(delay);
+			}
+		};
+
+		const isValid = validateArguments(action, config);
+		if (!isValid) {
 			return;
 		}
 
-		actionStore.setMessage(message);
+		const message            = createMessage(action, result);
+		const clearMessageOption = config.PopupMenu.ClearMessage;
 
-		if ( !$shouldShowMessage ) {
+		// No further processing is required if the message is empty.
+		if (!message || !(typeof message === "string" && message.length > 0)) {
 			return;
 		}
 
-		clearMessage(message, option);
+		// Writing to the store updates $shouldShowMessage to true, so it must be done before the evaluation.
+		setMessageText(message);
+
+		if (!$shouldShowMessage) {
+			return;
+		}
+
+		// Execute in conjunction with the message display process.
+		setMessageClearTimer(clearMessageOption);
 	}
 
 	/**
@@ -242,7 +349,7 @@
 	 * @returns {string | null}                            Generated HTML string. Returns null if there is no result.
 	 */
 	function createMessage(action: Action | null, result: EventOnClickActionResult | null): string | null {
-		if ( !result || !result?.message ) {
+		if (!result || !(typeof result.message === "string" && result.message.length > 0)) {
 			console.debug("DEBUG(ui): message is null, undefined, or empty", { action, result });
 
 			return null;
@@ -261,53 +368,42 @@
 	/**
 	 * Clears the displayed message after the configured timeout.
 	 *
-	 * @param {string}                              message - The displayed message string.
-	 * @param {Config["PopupMenu"]["ClearMessage"]} option  - Settings regarding message clearing.
+	 * @param   {number}           delay - Delay time until the message is cleared (in seconds).
+	 * @returns {SetTimeoutHandle}         Timer ID of the scheduled message clear. Returns undefined if validation fails.
 	 */
-	function clearMessage(message: string, option: Config["PopupMenu"]["ClearMessage"]): void {
-		if ( !message || !(typeof message === "string") || !(message.length > 0) ) {
-			console.error("ERROR(ui): Invalid: argument passed to showMessage, message invalid", { message });
-
-			return;
-		}
-		if ( !option ) {
-			console.error("ERROR(ui): Invalid: argument passed to showMessage, option invalid", { option });
-
-			return;
-		}
-		if ( !(Object.hasOwn(option, "enable") && typeof option?.enable === "boolean") ) {
-			console.error("ERROR(ui): Invalid: argument passed to showMessage, option enable invalid", { enable: option?.enable });
-
-			return;
-		}
-		if ( !(Object.hasOwn(option, "timeout") && typeof option.timeout === "number" && option.timeout >= 0) ) {
-			console.error("ERROR(ui): Invalid: argument passed to showMessage, option timeout invalid", { timeout: option?.timeout });
+	function scheduleMessageClear(delay: number): SetTimeoutHandle {
+		if (!(typeof delay === "number" && delay >= 0)) {
+			console.error("ERROR(ui): Invalid: argument passed to clearMessage, delay invalid", { delay });
 
 			return;
 		}
 
-		const { enable: clear, timeout: delay } = option;
-
-		if ( clear ) {
-			window.setTimeout(() => { actionStore.setMessage(""); }, delay * 1000);
-		}
+		return window.setTimeout(
+			() => {
+				actionStore.setMessage("");
+				messageTimerId = undefined;  // Reset the ID after execution is complete.
+			},
+			delay * 1000
+		);
 	}
 
 	/**
 	 * Closes the popup menu after the configured timeout.
 	 *
-	 * @param {Config["PopupMenu"]["OnClickClose"]} option - Settings regarding the behavior of closing the popup menu.
+	 * @param   {Config["PopupMenu"]["OnClickClose"]} option - Settings regarding the behavior of closing the popup menu.
+	 * @returns {void}
 	 */
 	function closePopupMenu(option: Config["PopupMenu"]["OnClickClose"]): void {
 		const { enable: close, timeout: delay } = option;
+		const isValid                           = (typeof close === "boolean") && (typeof delay === "number" && delay >= 0);
 
-		if ( !(typeof close === "boolean") || !(typeof delay === "number" && delay >= 0) ) {
+		if (!isValid) {
 			console.error("ERROR(ui): Invalid: argument passed to closePopupMenu, option invalid", { option });
 
 			return;
 		}
 
-		if ( close ) {
+		if (close) {
 			window.setTimeout(() => { window.close(); }, delay * 1000);
 
 			console.debug("DEBUG(ui): close popup menu", { close, delay });
@@ -318,6 +414,14 @@
 
 
 {#snippet button(attr: { action: Action; label: string; text: string; disabled: boolean })}
+	<!--
+		@snippet button
+		@param {Object}  attr          - Button attributes.
+		@param {Action}  attr.action   - Action to execute on click.
+		@param {string}  attr.label    - Accessible label for the button (aria-label).
+		@param {string}  attr.text     - Display text of the button.
+		@param {boolean} attr.disabled - Whether the button is disabled.
+	-->
 	<button
 		class       = "text"
 		type        = "button"
