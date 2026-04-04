@@ -14,10 +14,10 @@
  * - Multiple test cases are executed in a data-driven manner to ensure comprehensive coverage of state update behaviors.
  *
  * @file
- * @lastModified 2026-03-31
+ * @lastModified 2026-04-04
  */
 
-import { createStore, type StateOption } from "@/assets/js/lib/user/StateManager/store.svelte";
+import { createStore, type StateOption } from "@/assets/js/lib/user/StateManager/store.svelte.ts";
 import { describe, it, expect } from "vitest";
 
 interface TestCase {

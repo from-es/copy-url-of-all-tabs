@@ -2,7 +2,7 @@
  * Main entry point for the options page.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-04
  */
 
 // Import Svelte
@@ -13,7 +13,7 @@ import App          from "./App.svelte";
 import type AppType from "./App.svelte";
 
 // Import Module
-import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state";
+import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state.svelte.ts";
 import { initializeConfig }      from "@/assets/js/initializeConfig";
 import { logging }               from "@/assets/js/logging";
 

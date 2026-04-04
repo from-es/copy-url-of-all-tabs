@@ -15,15 +15,15 @@
 	// Import Svelte Module
 	import { actionStore } from "./appState.svelte.ts";
 
+	// Import Svelte Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";  // Shared State Object
+
 	// Import Module
 	import { initializeConfig }                  from "@/assets/js/initializeConfig";
 	import { cloneObject }                       from "@/assets/js/lib/user/CloneObject";
 	import { sanitizeForSendMessage }            from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
 	import { eventActionCopy, eventActionPaste } from "./userActions";
-
-	// Import Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";  // Shared State Object
 
 	// Import Types
 	import type { Config, Define, ExtensionMessage, SetTimeoutHandle } from "@/assets/js/types/";
