@@ -2,7 +2,7 @@
  * Main entry point for the popup page.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-04
  */
 
 // Import Svelte
@@ -12,10 +12,12 @@ import { mount } from "svelte";
 import App          from "../svelte/App.svelte";
 import type AppType from "../svelte/App.svelte";
 
+// Import Svelte Module
+import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state.svelte.ts";
+
 // Import Module
-import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state";
-import { initializeConfig }      from "@/assets/js/initializeConfig";
-import { logging }               from "@/assets/js/logging";
+import { initializeConfig } from "@/assets/js/initializeConfig";
+import { logging }          from "@/assets/js/logging";
 
 // Import CSS
 import "../css/popup.css";

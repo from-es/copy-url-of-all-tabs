@@ -3,7 +3,7 @@
 	 * Main Svelte component for the options page.
 	 *
 	 * @file
-	 * @lastModified 2026-03-24
+	 * @lastModified 2026-04-04
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -18,7 +18,7 @@
 	import Footer from "./footer.svelte";
 
 	// Import Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";  // Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";  // Shared State Object
 
 
 

@@ -1,6 +1,7 @@
 {
 	"extends": "./.wxt/tsconfig.json",
 	"compilerOptions": {
-		"useDefineForClassFields": true
+		"useDefineForClassFields"   : true,
+		"allowImportingTsExtensions": true  // Allow importing files with .ts extensions
 	}
 }

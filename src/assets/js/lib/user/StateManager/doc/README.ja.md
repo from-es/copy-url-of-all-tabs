@@ -1,6 +1,6 @@
 # State Manager
 
-**最終更新日:** 2025年12月31日
+**最終更新日:** 2026年4月4日
 
 `Svelte 5` のルーンを活用し、Svelte プロジェクト内で共有される状態を管理するための、リアクティブな状態管理モジュールです。動的なプロパティ生成と、プロパティ単位での書き込み保護（freeze）機能を備えています。
 
@@ -19,7 +19,7 @@
 以下に、`state.ts` での型適用のコード例を示します。
 
 ```typescript
-// src/assets/js/lib/user/StateManager/state.ts
+// src/assets/js/lib/user/StateManager/state.svelte.ts
 
 // Import Module & Types
 import { createStore, type UpdateState } from "./store.svelte";
