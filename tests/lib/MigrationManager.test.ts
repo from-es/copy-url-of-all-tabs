@@ -16,7 +16,7 @@
  * - Test cases cover scenarios such as no rules, single rule, multiple rules, and error handling.
  *
  * @file
- * @lastModified 2026-03-25
+ * @lastModified 2026-04-04
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -82,7 +82,7 @@ describe("MigrationManager", () => {
 			Config: mockConfig, // Using mockConfig as the default config for simplicity in tests
 			Verification: [],
 			Messaging: {},
-			Regex: { url: { standard: /a/, RFC3986: /b/ }, UUID: { v4: /d/ }, NeverMatch: /e/ },
+			Regex: { url: { standard: /a/, RFC3986: /b/ }, UUID: { v4: /d/ }, MetaCharacters: /[.*+?^${}()|[\]\\]/g, NeverMatch: /e/ },
 			Message: {},
 			MimeType: [],
 			ChromiumBasedBrowser: [],
