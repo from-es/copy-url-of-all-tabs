@@ -3,7 +3,7 @@
 	 * Main Svelte component for the popup menu.
 	 *
 	 * @file
-	 * @lastModified 2026-04-02
+	 * @lastModified 2026-04-04
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -12,13 +12,15 @@
 	// Import Svelte
 	import { onMount } from "svelte";
 
+	// Import Svelte Module
+	import { actionStore } from "./appState.svelte.ts";
+
 	// Import Module
-	import { initializeConfig }                                             from "@/assets/js/initializeConfig";
-	import { cloneObject }                                                  from "@/assets/js/lib/user/CloneObject";
-	import { sanitizeForSendMessage }                                       from "@/assets/js/utils/sanitizeForSendMessage";
-	import { createSafeHTML }                                               from "@/assets/js/utils/setSafeHTML";
-	import { appState, actionStore, isActionInProgress, shouldShowMessage } from "./appState";
-	import { eventActionCopy, eventActionPaste }                            from "./userActions";
+	import { initializeConfig }                  from "@/assets/js/initializeConfig";
+	import { cloneObject }                       from "@/assets/js/lib/user/CloneObject";
+	import { sanitizeForSendMessage }            from "@/assets/js/utils/sanitizeForSendMessage";
+	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
+	import { eventActionCopy, eventActionPaste } from "./userActions";
 
 	// Import Object
 	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";  // Shared State Object
@@ -135,7 +137,7 @@
 	 */
 	function eventDoNotMatch(action: Action | null): EventOnClickActionResult {
 		const message = `Error, Does not match any switch statement. >> eventOnClick() >> ${action}`;
-		const result: EventOnClickActionResult  = {
+		const result: EventOnClickActionResult = {
 			action,
 			status   : false,
 			message  : message,
@@ -330,10 +332,10 @@
 			return;
 		}
 
-		// Writing to the store updates $shouldShowMessage to true, so it must be done before the evaluation.
+		// Writing to the store updates shouldShowMessage to true, so it must be done before the evaluation.
 		setMessageText(message);
 
-		if (!$shouldShowMessage) {
+		if (!actionStore.shouldShowMessage) {
 			return;
 		}
 
@@ -444,8 +446,8 @@
 					{
 						action  : "copy",
 						label   : "Copy URLs of all tabs to clipboard",
-						text    : ($isActionInProgress && $appState.currentAction === "copy") ? "Copying..." : "Copy",
-						disabled: $isActionInProgress
+						text    : (actionStore.isActionInProgress && actionStore.currentAction === "copy") ? "Copying..." : "Copy",
+						disabled: actionStore.isActionInProgress
 					}
 				)}
 			</li>
@@ -454,8 +456,8 @@
 					{
 						action  : "paste",
 						label   : "Open URLs from clipboard in new tabs",
-						text    : ($isActionInProgress && $appState.currentAction === "paste") ? "Pasting..." : "Paste",
-						disabled: $isActionInProgress
+						text    : (actionStore.isActionInProgress && actionStore.currentAction === "paste") ? "Pasting..." : "Paste",
+						disabled: actionStore.isActionInProgress
 					}
 				)}
 			</li>
@@ -470,7 +472,7 @@
 						action  : "options",
 						label   : "Open extension options page",
 						text    : "Options",
-						disabled: $isActionInProgress
+						disabled: actionStore.isActionInProgress
 					}
 				)}
 			</li>
@@ -478,9 +480,9 @@
 	</section>
 
 	<section id="message" aria-live="polite">
-		{#if $shouldShowMessage}
+		{#if actionStore.shouldShowMessage}
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html createSafeHTML($appState.message)}
+			{@html createSafeHTML(actionStore.message)}
 		{/if}
 	</section>
 </main>
