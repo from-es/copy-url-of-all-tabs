@@ -1,3 +1,9 @@
+#### [1.20.6] - 2026/04/04
+
+- improve
+	- Internal code improvements to enhance extension stability and maintainability.
+	- Added explanatory notes for the "Custom Delay" setting on the options page.
+
 #### [1.20.5] - 2026/03/28
 
 - improve
