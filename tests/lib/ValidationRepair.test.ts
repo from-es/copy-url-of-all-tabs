@@ -9,7 +9,7 @@
  * - Handles edge cases such as empty arrays and fully invalid arrays.
  *
  * @file
- * @lastModified 2026-03-29
+ * @lastModified 2026-04-04
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -38,12 +38,12 @@ vi.mock("wxt/browser", () => ({
  * Retrieves the validation rule function for `Tab.customDelay.list`
  * from the exported VerificationRules array.
  */
-function getCustomDelayListRule(): (value: unknown[]) => boolean {
+function getCustomDelayListRule(): (value: unknown[]) => boolean {  // eslint-disable-line no-unused-vars
 	const entry = VerificationRules.find(r => r.property === "Tab.customDelay.list");
 	if (!entry) {
 		throw new Error("Tab.customDelay.list rule not found in VerificationRules");
 	}
-	return entry.rule as (value: unknown[]) => boolean;
+	return entry.rule as (value: unknown[]) => boolean;  // eslint-disable-line no-unused-vars
 }
 
 /**
@@ -95,7 +95,7 @@ const invalidItemBadDelay = {
 describe("ValidationRepair (Tab.customDelay.list)", () => {
 	it("should return true and leave a fully valid array untouched", () => {
 		const rule  = getCustomDelayListRule();
-		const value = deepClone([validItem1, validItem2]);
+		const value = deepClone([ validItem1, validItem2 ]);
 
 		const result = rule(value);
 
@@ -107,7 +107,7 @@ describe("ValidationRepair (Tab.customDelay.list)", () => {
 
 	it("should return true and remove only the invalid item (bad pattern)", () => {
 		const rule  = getCustomDelayListRule();
-		const value = deepClone([validItem1, invalidItemBadPattern, validItem2]);
+		const value = deepClone([ validItem1, invalidItemBadPattern, validItem2 ]);
 
 		const result = rule(value);
 
@@ -126,7 +126,7 @@ describe("ValidationRepair (Tab.customDelay.list)", () => {
 
 	it("should return true and remove only the invalid item (bad delay)", () => {
 		const rule  = getCustomDelayListRule();
-		const value = deepClone([validItem1, invalidItemBadDelay]);
+		const value = deepClone([ validItem1, invalidItemBadDelay ]);
 
 		const result = rule(value);
 
@@ -154,7 +154,7 @@ describe("ValidationRepair (Tab.customDelay.list)", () => {
 
 	it("should return true and produce an empty array when all items are invalid", () => {
 		const rule  = getCustomDelayListRule();
-		const value = deepClone([invalidItemBadPattern, invalidItemBadDelay]);
+		const value = deepClone([ invalidItemBadPattern, invalidItemBadDelay ]);
 
 		const result = rule(value);
 
@@ -174,7 +174,7 @@ describe("ValidationRepair (Tab.customDelay.list)", () => {
 
 	it("should mutate the original array reference in-place (splice), not replace it", () => {
 		const rule          = getCustomDelayListRule();
-		const value         = deepClone([validItem1, invalidItemBadPattern]);
+		const value         = deepClone([ validItem1, invalidItemBadPattern ]);
 		const originalRef   = value;  // Keep reference to the same array object.
 
 		rule(value);
