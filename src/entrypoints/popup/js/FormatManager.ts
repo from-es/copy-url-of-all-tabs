@@ -2,13 +2,14 @@
  * Manages the formatting of tab data into various string formats.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-03-29
  */
 
 // WXT provided cross-browser compatible Types.
 import type { Browser } from "wxt/browser";
 
 // Import Module
+import { define }     from "@/assets/js/define";
 import { escapeHTML } from "@/assets/js/utils/escapeHTML";
 
 
@@ -118,17 +119,31 @@ export class FormatManager {
 				const url            = tab.url   ?? "";
 				const sanitizedTitle = sanitize ? escapeHTML(title) : title;
 
-				const placeholders = {
-					"\\$title": sanitizedTitle,
-					"\\$url"  : url
+				// Define placeholders without regex escapes.
+				const placeholders: Record<string, string> = {
+					"$title": sanitizedTitle,
+					"$url"  : url
 				};
 
-				let current = template;
-				for (const [ key, value ] of Object.entries(placeholders)) {
-					current = current.replace(new RegExp(key, "gi"), String(value));
-				}
+				/**
+				 * 1. Escape each placeholder key for regex matching (e.g., "$title" -> "\$title").
+				 * 2. Create a combined regex pattern that matches any of the keys.
+				 * 3. Perform a single-pass replacement using a match handler function.
+				 *    Using a function as the second argument ensures that substituted values
+				 *    are not interpreted as regex special characters (e.g., $&).
+				 *    Single-pass ensures that substituted values are not themselves processed for placeholders.
+				 */
+				const escapedKeys = Object.keys(placeholders).map(key => key.replace(define.Regex.MetaCharacters, "\\$&"));
+				const pattern     = new RegExp(escapedKeys.join("|"), "gi");
 
-				return current;
+				return template.replace(pattern, (matched) => {
+					// Case-insensitive lookup of the value corresponding to the matched placeholder.
+					const key = Object.keys(placeholders).find(
+						k => k.toLowerCase() === matched.toLowerCase()
+					);
+
+					return key ? String(placeholders[key]) : matched;
+				});
 			}
 		);
 		const result = array.join("\n");

@@ -2,7 +2,7 @@
  * Type definitions for the popup entrypoint.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-04
  */
 
 /**
@@ -23,7 +23,7 @@ type ResultCore = {
 };
 
 /**
- * Generic result type used in App.svelte, appState.ts, etc.
+ * Generic result type used in App.svelte, appState.svelte.ts, etc.
  */
 type EventOnClickActionResult = ResultCore & {
   /** The action that was performed. */

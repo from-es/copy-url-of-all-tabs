@@ -1,6 +1,6 @@
 # PopoverMessage.ts
 
-**Last Updated:** September 27, 2025
+**Last Updated:** April 3, 2026
 
 A utility class for easily displaying stackable messages on the screen using the Popover API.
 
@@ -20,6 +20,7 @@ This utility is designed as a stateless, static class, requiring no instantiatio
 - **Auto-hide and Manual Close:** Messages disappear automatically after a specified time and can be closed immediately with a double-click.
 - **Flexible Customization:** Individually set the display time, font size, and colors (text and background) for messages.
 - **Predefined Styles:** Comes with five standard message types for common use cases: `success`, `debug`, `notice`, `warning`, and `error`.
+- **Style Isolation (Shadow DOM):** Using custom elements and Shadow DOM ensures no style conflicts (style leakage) with the page's existing styles.
 
 ## Basic Usage
 
@@ -43,7 +44,6 @@ PopoverMessage.create({
   timeout: 10000 // Set to disappear in 10 seconds
 });
 
-// Advanced usage with all options specified
 PopoverMessage.create({
   message: "This is a custom message with all options specified.",
   timeout: 15000, // 15 seconds
@@ -56,6 +56,42 @@ PopoverMessage.create({
 });
 ```
 
+## Advanced Control (Using Return Value)
+
+The `create` method returns the created message element (`PopoverMessageElement`). You can use this to control the message after it has been displayed.
+
+### Manual Hiding and Removal
+Use this if you want to remove a message before the timeout expire.
+```typescript
+const msg = PopoverMessage.create({ message: "Starting process...", timeout: 10000 });
+
+// Clear it when some processing is complete
+if (msg) {
+  msg.hidePopover(); // Hide the popover
+  msg.remove();      // Remove from DOM
+}
+```
+
+### Canceling the Auto-hide Timer
+If you want a message to stay until the user closes it, you can clear the timer using the element's `timerHandle`.
+```typescript
+const msg = PopoverMessage.create({ message: "Important notice. Won't disappear until you acknowledge it." });
+
+if (msg && msg.timerHandle) {
+  clearTimeout(msg.timerHandle); // Cancel auto-hide
+}
+```
+
+### Custom Event Listeners
+You can add click events or other listeners to specific messages.
+```typescript
+const msg = PopoverMessage.create({ message: "Click here to see more details" });
+
+msg?.addEventListener("click", () => {
+    console.log("Message clicked");
+});
+```
+
 ## API Reference
 
 ### `PopoverMessage.create(options)`
@@ -63,6 +99,9 @@ PopoverMessage.create({
 Displays a new popover message on the screen.
 
 - **`options: PopoverMessageOptions`**: An object containing the display settings for the message.
+- **Return Value**: `PopoverMessageElement | null`
+  - Returns the created message element if displayed successfully.
+  - Returns `null` if argument validation fails.
 
 ### `PopoverMessageOptions` Interface
 
@@ -130,7 +169,7 @@ This ensures that the message is displayed at an appropriate size on both very w
 
 The arguments passed to the `create` method are strictly validated internally.
 - **Invalid Arguments:** If an unexpected argument is passed, such as a missing `message` property or a non-numeric `timeout`, the process is aborted, and an error message is logged to the browser console.
-- **Empty Message:** If the `message` property is an empty string (`""`) or an empty array (`[]`), the process is not aborted. Instead, a default warning message ("This is a confirmation message...") is automatically displayed.
+- **Empty Message:** If the `message` property is an empty string (`""`) or an empty array (`[]`), the process is not aborted. Instead, a developer warning message ("Message text missing. This is a developer debug message...") is automatically displayed.
 
 ### Dependencies
 
@@ -144,6 +183,32 @@ This class relies on the following modern browser APIs. It must be run in an env
   - **Firefox**: `117`+
 
 For more details, please refer to the respective MDN documentation ([Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API), [CSS Nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting)).
+
+---
+
+## Pros and Cons of Specification Change
+
+### Pros
+- **Flexible Control:** Enables dynamic UI control, such as clearing a "processing" message when the task is finished.
+- **Resource Management:** Allows immediate disposal of unnecessary messages, saving memory and DOM nodes.
+- **Extensibility:** Enables adding custom events (like click handlers) on the caller side without modifying the core class.
+
+### Cons
+- **Management Cost:** Callers need to be aware of the element's lifecycle if they keep the reference (e.g., potential errors when trying to manipulate an element already removed from the DOM).
+- **Timer Management Complexity:** When clearing timers externally, you must be careful about conflicts with the internal auto-hide logic.
+
+## Security Considerations
+
+When manipulating the returned `PopoverMessageElement`, please keep the following in mind:
+
+1. **Shadow DOM Access:**
+   The message content is encapsulated within a Shadow DOM. While you can directly manipulate internal elements via `msg.shadowRoot`, doing so might break the layout or cause unexpected script behavior.
+
+2. **Inserting Untrusted Data:**
+   `PopoverMessage` prevents XSS by treating content as `textContent`. However, if you later use `innerHTML` on the returned element, this safety is lost. Always use `textContent` or `innerText` when dynamically adding content, or ensure proper sanitization.
+
+3. **Memory Leaks:**
+   If you generate many messages and keep their references (return values) in global variables or long-lived objects, they won't be garbage collected even after disappearing from the screen. Always set the reference to `null` once it's no longer needed.
 
 ### Execution Context
 

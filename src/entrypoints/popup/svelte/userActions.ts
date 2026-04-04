@@ -2,7 +2,7 @@
  * User-initiated action handlers for the popup menu.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-03-29
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -32,8 +32,8 @@ async function eventActionCopy(action: Action, config: Config, define: Define): 
 	const tabs     = prepareForActionCopy(rawTabs, action, config, define);
 	const type     = config.Format.type;
 	const template = config.Format.template;
-	const sanitize = true;
 	const mimetype = (config.Format.type === "custom" && config.Format?.mimetype) ? config.Format.mimetype : "text/plain";
+	const sanitize = (mimetype === "text/html");  // Apply HTML escape only when the output format is text/html
 
 	// Format and write to clipboard
 	const text   = FormatManager.format(tabs, type, template, sanitize);
@@ -58,26 +58,26 @@ async function eventActionCopy(action: Action, config: Config, define: Define): 
 /**
  * Pre-processing that extracts URLs from the clipboard and filters them based on settings.
  *
- * @param   {Action}                         action - Action string to execute (e.g., "paste").
- * @param   {Config}                         config - User configuration object.
- * @param   {Define}                         define - Predefined constant object.
- * @returns {Promise<EventActionPasteResult>}         Object containing the paste result and status.
+ * @param   {Action}                          action - Action string to execute (e.g., "paste").
+ * @param   {Config}                          config - User configuration object.
+ * @param   {Define}                          define - Predefined constant object.
+ * @returns {Promise<EventActionPasteResult>}          Object containing the paste result and status.
  */
 async function eventActionPaste(action: Action, config: Config, define: Define): Promise<EventActionPasteResult> {
 	const regexSearch     = config.Search.regex;
 	const regexUrlPattern = define.Regex.url.RFC3986LooseWithAuth;
 
-	const status  = await ClipboardManager.readText();
-	const text    = status ? status : "";
-	const rawList = getUrlList(text, regexSearch, regexUrlPattern);
-	const urlList = prepareForActionPaste(rawList, action, config, define);
-	const num     = (urlList && Array.isArray(urlList) && urlList?.length) ? urlList.length : null;
+	const status   = await ClipboardManager.readText();
+	const text     = (typeof status === "string") ? status : "";
+	const rawList  = getUrlList(text, regexSearch, regexUrlPattern);
+	const urlList  = prepareForActionPaste(rawList, action, config, define);
+	const urlCount = (urlList && Array.isArray(urlList) && urlList?.length) ? urlList.length : null;
 
 	const result = {
 		action   : action,
-		status   : status,
-		message  : status ? ((num && typeof num === "number") ? `${num} URLs open !` : "Not found URLs.") : "Could not access to clipboard.",
-		judgment : (status && num) ? true : false,
+		status   : (typeof status === "string"),
+		message  : (typeof status === "string") ? ((urlCount && typeof urlCount === "number" && urlCount > 0) ? `${urlCount} URLs open !` : "Not found URLs.") : "Could not access to clipboard.",
+		judgment : (status && urlCount) ? true : false,
 		urlList  : urlList,
 		clipboard: {
 			direction: "From Clipboard to Tabs",

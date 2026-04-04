@@ -3,7 +3,7 @@
 	 * Main Svelte component for the options page content.
 	 *
 	 * @file
-	 * @lastModified 2026-03-24
+	 * @lastModified 2026-04-04
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -13,7 +13,11 @@
 	import { onMount } from "svelte";
 
 	// Import Svelte Module
+	import { sortable }          from "@/assets/js/lib/user/sortable.svelte.ts";
 	import DebouncedNumericInput from "./DebouncedNumericInput.svelte";
+
+	// Import Svelte Object
+	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";  // Shared State Object
 
 	// Import NPM Package
 	import dayjs from "dayjs";
@@ -22,7 +26,6 @@
 	import { cloneObject }                                   from "@/assets/js/lib/user/CloneObject";
 	import { StorageManager }                                from "@/assets/js/lib/user/StorageManager";
 	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
-	import { sortable }                                      from "@/assets/js/lib/user/sortable";
 	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/user/ConfigManager";
 	import { MigrationManager }                              from "@/assets/js/lib/user/MigrationManager";
 	import { rules as PreSaveCorrections }                   from "@/assets/js/lib/user/MigrationManager/rules/patch/preSaveCorrections";
@@ -35,8 +38,7 @@
 	import { DynamicContent }                                from "./dynamicContent";
 
 	// Import Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state";    // Shared State Object
-	import { LOG_LEVELS }            from "@/assets/js/lib/user/ConsoleManager/types";
+	import { LOG_LEVELS } from "@/assets/js/lib/user/ConsoleManager/types";
 
 	// Import Types
 	import type { Config, Define, Status } from "@/assets/js/types/";
@@ -177,9 +179,10 @@
 				// Save to Local Storage
 				const keyname = status.define.Storage.keyname;
 				const item    = { [keyname]: currentConfig };
-				StorageManager.save(item);
+				await StorageManager.save(item);
 
-				// Re-initialize UI only upon successful save
+				// Re-initialize UI and sync status.config with currentConfig (which may contain auto-corrections)
+				status.config = currentConfig;
 				await reInitialize();
 
 				PopoverMessage.create(status.define.Message.Setting_OnClick_SaveButton_Success);
@@ -703,6 +706,11 @@
 								</label>
 							</form>
 
+
+							{#if status.config.Tab.customDelay.enable}
+								<p id="custom-delay-note"><span class="notice-highlight">Notice</span>: Custom delays are applied from the second match of the pattern onwards.</p>
+							{/if}
+
 							<div>
 								<table id="Tab-custom-delay-table">
 									<thead>
@@ -1169,7 +1177,7 @@
 
 							<form id="Debug-loglevel">
 								<select id="Debug-loglevel-select" bind:value={ status.config.Debug.loglevel }>
-									{#each Object.keys(LOG_LEVELS).reverse() as level (level)}
+									{#each Object.keys(LOG_LEVELS).toReversed() as level (level)}
 										<option value={ level }>{ level }</option>
 									{/each}
 								</select>

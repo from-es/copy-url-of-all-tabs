@@ -3,8 +3,16 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-04-03
+ *
+ * @dependency SetTimeoutHandle (@/assets/js/types)
+ * @dependency Popover API (https://developer.mozilla.org/en-US/docs/Web/API/Popover_API)
  */
+
+// Import Types
+import type { SetTimeoutHandle } from "@/assets/js/types";
+
+
 
 type MessageType = "success" | "debug" | "notice" | "warning" | "error";
 
@@ -23,9 +31,9 @@ interface PopoverMessageOptions {
  * Defines the output type of the #preprocess method.
  */
 interface ProcessedMessageOptions extends PopoverMessageOptions {
-	timeout  : number;
-	fontsize : string;
-	max      : number; // Property derived from #default.message.max
+	timeout : number;
+	fontsize: string;
+	max     : number;  // Property derived from #default.message.max
 };
 
 
@@ -33,13 +41,38 @@ interface ProcessedMessageOptions extends PopoverMessageOptions {
 /**
  * Custom HTML element for displaying popover messages.
  */
-class PopoverMessageElement extends HTMLDivElement {
+class PopoverMessageElement extends HTMLElement {
+	/**
+	 * Holds the timer ID or object for automatic removal.
+	 * This is a JavaScript property, not an HTML attribute.
+	 */
+	public timerHandle: SetTimeoutHandle;
+
+	/**
+	 * Represents the popover state of the element.
+	 * Returns "auto", "manual", or null if the popover attribute is absent.
+	 * Setting this property reflects onto the "popover" HTML attribute.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/popover
+	 */
+	declare public popover: "auto" | "manual" | "" | null;
+
+	/**
+	 * Displays the popover element.
+	 */
+	declare public showPopover: () => void;
+
+	/**
+	 * Hides the popover element.
+	 */
+	declare public hidePopover: () => void;
+
 	constructor() {
 		// Always call super() first in the constructor.
 		super();
 	}
 }
-customElements.define("component-popover-message", PopoverMessageElement, { extends: "div" });
+customElements.define("component-popover-message", PopoverMessageElement);
 
 /**
  * Message display using the Popover API.
@@ -51,7 +84,7 @@ customElements.define("component-popover-message", PopoverMessageElement, { exte
  * @see Manually toggling popover visibility (https://ics.media/entry/230530/#%E3%83%9D%E3%83%83%E3%83%97%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E8%A1%A8%E7%A4%BA/%E9%9D%9E%E8%A1%A8%E7%A4%BA%E3%82%92%E6%89%8B%E5%8B%95%E3%81%A7%E5%88%87%E3%82%8A%E6%9B%BF%E3%81%88%E3%82%8B)
  */
 class PopoverMessage {
-	constructor () {
+	constructor() {
 		//
 	}
 
@@ -118,7 +151,7 @@ class PopoverMessage {
 */
 
 /*
-	Styles applied from the shadow DOM to the custom-dialog element itself.
+	Styles applied from the shadow DOM to the component-popover-message element itself.
 	If styles are specified for the same element from both :host and the document, the document style takes precedence.
 */
 :host {
@@ -197,36 +230,39 @@ class PopoverMessage {
 	/**
 	 * Displays a message.
 	 *
-	 * @param {PopoverMessageOptions} options - Configuration object for the message to display.
+	 * @param   {PopoverMessageOptions}        options - Configuration object for the message to display.
+	 * @returns {PopoverMessageElement | null}           The created popover element, or null if initialization failed.
 	 */
-	static create(options: PopoverMessageOptions): void {
+	static create(options: PopoverMessageOptions): PopoverMessageElement | null {
 		console.debug("DEBUG(ui): PopoverMessage.create called");
 
-		this.#main(options);
+		return this.#main(options);
 	}
 
 	/**
 	 * Main process for displaying a message.
 	 *
-	 * @param {PopoverMessageOptions} options - Configuration object for the message to display.
+	 * @param   {PopoverMessageOptions}        options - Configuration object for the message to display.
+	 * @returns {PopoverMessageElement | null}           The created popover element, or null if initialization failed.
 	 */
-	static #main(options: PopoverMessageOptions): void {
+	static #main(options: PopoverMessageOptions): PopoverMessageElement | null {
 		const popoverMessage = this.#preprocess(options);
 
-		if ( !popoverMessage ) {
+		if (!popoverMessage) {
 			console.error("ERROR(ui): Failure: preprocessing failed or message already displayed");
-			return;
+			return null;
 		}
 
-		this.#setupPopoverMessage(popoverMessage);
+		return this.#setupPopoverMessage(popoverMessage);
 	}
 
 	/**
 	 * Sets up and displays a popover message.
 	 *
-	 * @param {ProcessedMessageOptions} popoverMessage - Processed configuration object for the message.
+	 * @param   {ProcessedMessageOptions} popoverMessage - Processed configuration object for the message.
+	 * @returns {PopoverMessageElement}                    The created popover element.
 	 */
-	static #setupPopoverMessage(popoverMessage: ProcessedMessageOptions): void {
+	static #setupPopoverMessage(popoverMessage: ProcessedMessageOptions): PopoverMessageElement {
 		console.debug("DEBUG(ui): PopoverMessage.setupPopoverMessage: setting up new popover");
 
 		// Add the popover to the DOM (document.body).
@@ -235,39 +271,38 @@ class PopoverMessage {
 		root.appendChild(popover);
 
 		// Display using the showPopover method.
-		(popover as HTMLDivElement & { showPopover: () => void }).showPopover();
+		popover.showPopover();
 
 		// If the number of displayed popovers exceeds the limit, remove the oldest one.
 		this.#limitPopoverMessage();
 
 		// Automatically hide the popover after a set period using setTimeout.
 		const timeout = popoverMessage.timeout;
-		const timer   = setTimeout(() => this.#removePopoverElement(popover), timeout);
-
-		// Set the timer as a dataset element to allow clearing the timeout.
-		(popover as HTMLDivElement & { dataset: { timer: NodeJS.Timeout } }).dataset.timer = timer;
+		popover.timerHandle = setTimeout(() => this.#removePopoverElement(popover), timeout);
 
 		// Reorder popovers when they are shown or hidden.
 		popover.addEventListener("toggle", (event: Event) => {
 			const customEvent = event as ToggleEvent;  // Cast to ToggleEvent
-			const isOpen = (customEvent.newState === "open");
+			const isOpen      = (customEvent.newState === "open");
 
 			console.debug("DEBUG(ui): PopoverMessage: popover toggle event", { isOpen, newState: customEvent.newState });
 
 			this.#alignPopoverMessage(isOpen);
 		});
+
+		return popover;
 	}
 
 	/**
 	 * Creates a popover element.
 	 *
 	 * @param   {ProcessedMessageOptions} popoverMessage - Configuration object for the message.
-	 * @returns {HTMLDivElement}                           The created popover element.
+	 * @returns {PopoverMessageElement}                    The created popover element.
 	 */
-	static #createPopoverElement(popoverMessage: ProcessedMessageOptions): HTMLDivElement {
+	static #createPopoverElement(popoverMessage: ProcessedMessageOptions): PopoverMessageElement {
 		const { message } = popoverMessage;
 
-		const popover = document.createElement(this.#information.element.name) as HTMLDivElement;
+		const popover = document.createElement(this.#information.element.name) as PopoverMessageElement;
 		popover.popover = "manual";
 
 		// Insert stylesheet.
@@ -299,8 +334,8 @@ class PopoverMessage {
 	 * @param {boolean} isOpen - Whether the popover is being opened or closed.
 	 */
 	static #alignPopoverMessage(isOpen: boolean): void {
-		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<HTMLDivElement>;
-		const array  = Array.from(popovers).reverse();
+		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<PopoverMessageElement>;
+		const array    = Array.from(popovers).toReversed();
 
 		// Stack popovers vertically.
 		//	  - isOpen: true  >> opacity transition
@@ -312,13 +347,15 @@ class PopoverMessage {
 
 			const rootNumberOfFontSize = this.#getFontSizeNumberOfRoot();
 			const margin               = rootNumberOfFontSize * this.#default.style.margin;
-			let   sum                  = 0;
-			for (let i = 0; i < index; i++) {
-				sum += (array[i].clientHeight) + margin;
-			}
-			const moveHeight = sum;
 
-			popover.style.translate = `0px ${moveHeight}px`;
+			// Calculate the total height of all preceding messages (including margins)
+			// to determine the vertical offset for the current message.
+			let offset = 0;
+			for (let i = 0; i < index; i++) {
+				offset += (array[i].clientHeight) + margin;
+			}
+
+			popover.style.translate = `0px ${offset}px`;
 			popover.style.opacity   = "1";
 		});
 	}
@@ -327,11 +364,10 @@ class PopoverMessage {
 	 * Limits the number of displayed popover messages and removes the oldest message.
 	 */
 	static #limitPopoverMessage(): void {
-		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<HTMLDivElement>;
+		const popovers = document.querySelectorAll(this.#information.element.name) as NodeListOf<PopoverMessageElement>;
 		console.debug("DEBUG(ui): PopoverMessage.limitPopoverMessage: current popovers count", { count: popovers.length });
 
-		//
-		if ( popovers.length > this.#default.message.max ) {
+		if (popovers.length > this.#default.message.max) {
 			console.debug("DEBUG(ui): PopoverMessage.limitPopoverMessage: removing oldest popover");
 
 			this.#removePopoverElement(popovers[0]);
@@ -341,19 +377,21 @@ class PopoverMessage {
 	/**
 	 * Removes a popover.
 	 *
-	 * @param {HTMLDivElement} popover - The popover element to be removed.
+	 * @param {PopoverMessageElement} popover - The popover element to be removed.
 	 */
-	static #removePopoverElement(popover: HTMLDivElement): void {
+	static #removePopoverElement(popover: PopoverMessageElement): void {
 		console.debug("DEBUG(ui): PopoverMessage.removePopoverElement: removing popover");
 
 		// Hide using the hidePopover method.
-		(popover as HTMLDivElement & { hidePopover: () => void }).hidePopover();
+		popover.hidePopover();
 
 		// Remove from DOM after hiding.
 		popover.remove();
 
 		// Clear the timeout.
-		clearTimeout((popover as HTMLDivElement & { dataset: { timer: NodeJS.Timeout } }).dataset.timer);
+		if (popover.timerHandle) {
+			clearTimeout(popover.timerHandle);
+		}
 	}
 
 	/**
@@ -365,7 +403,7 @@ class PopoverMessage {
 	static #preprocess(options: PopoverMessageOptions): ProcessedMessageOptions | false {
 		// Check Argument
 		const pass = this.#checkArgument(options);
-		if ( !pass ) {
+		if (!pass) {
 			return false;
 		}
 
@@ -373,11 +411,11 @@ class PopoverMessage {
 
 		// Verify Message Text
 		let warning = "";
-		if ( !popoverMessage.message ) { // !popoverMessage.message === undefined or null or ""
+		if (!popoverMessage.message) {  // !popoverMessage.message === undefined or null or ""
 			warning = "Message text missing. This is a developer debug message. The message text may be empty or incorrectly provided.";
 			popoverMessage.message = [ warning ];
 		}
-		if ( Array.isArray(popoverMessage.message) && !(popoverMessage.message).length ) {
+		if (Array.isArray(popoverMessage.message) && !(popoverMessage.message).length) {
 			popoverMessage.message = [ warning ];
 		}
 
@@ -461,25 +499,25 @@ class PopoverMessage {
 	 * @returns {HTMLStyleElement}                         The created style element.
 	 */
 	static #getStylesheet(popoverMessage: ProcessedMessageOptions): HTMLStyleElement {
-		const style = document.createElement("style");
+		const style         = document.createElement("style");
 		const getStyleValue = (obj: ProcessedMessageOptions) => {
 			const style = {
 				// Default Color Setting
-				fontsize        : "1.0rem",
-				fontColor       : "#fff",
-				backgroundColor : "#000"
+				fontsize       : "1.0rem",
+				fontColor      : "#fff",
+				backgroundColor: "#000"
 			};
 
-			if ( obj.fontsize ) {
+			if (obj.fontsize) {
 				style.fontsize = obj.fontsize ? obj.fontsize : style.fontsize;
 			}
 
 			// Style Priority: message.color > message.messagetype > default
-			if ( obj.messagetype ) {
+			if (obj.messagetype) {
 				style.fontColor       = this.#MessageType[obj.messagetype].font;
 				style.backgroundColor = this.#MessageType[obj.messagetype].background;
 			}
-			if ( obj.color ) {
+			if (obj.color) {
 				style.fontColor       = obj.color.font       ? obj.color.font       : style.fontColor;
 				style.backgroundColor = obj.color.background ? obj.color.background : style.backgroundColor;
 			}
@@ -489,7 +527,7 @@ class PopoverMessage {
 		const prop = getStyleValue(popoverMessage);
 
 		style.textContent =
-`
+			`
 .popover {
 	color           : ${prop.fontColor} !important;
 	background-color: ${prop.backgroundColor} !important;

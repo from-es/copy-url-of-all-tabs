@@ -1,6 +1,6 @@
 # State Manager
 
-**Last updated:** December 31, 2025
+**Last updated:** April 4, 2026
 
 A reactive state management module that utilizes Svelte 5 runes to manage shared state within a Svelte project. It features dynamic property generation and per-property write protection (freezing).
 
@@ -19,7 +19,7 @@ This approach allows for the reuse of the core store logic while ensuring type s
 Below is a code example of how types are applied in `state.ts`.
 
 ```typescript
-// src/assets/js/lib/user/StateManager/state.ts
+// src/assets/js/lib/user/StateManager/state.svelte.ts
 
 // Import Module & Types
 import { createStore, type UpdateState } from "./store.svelte";
