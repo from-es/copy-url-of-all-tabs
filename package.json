@@ -29,7 +29,7 @@
     "vitest:run"     : "vitest run",
     "vitest:ui"      : "vitest --ui",
     "vitest:coverage": "vitest run --coverage",
-    "vitest:smoke"   : "vitest run ./tests/_vitest-check/",
+    "vitest:smoke"   : "vitest run --config vitest.smoke.config.ts",
 
     "postinstall": "wxt prepare",
     "prepare"    : "husky"
