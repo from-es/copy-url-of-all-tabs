@@ -1,6 +1,6 @@
 # Vitest: 高速でモダンな単体テストフレームワーク
 
-**最終更新日:** 2025年8月29日
+**最終更新日:** 2026年4月6日
 
 このドキュメントは、このプロジェクトで指定されたテストフレームワークである [Vitest](https://vitest.dev/) を使用した単体テストおよび結合テストの記述に関するガイドラインを提供します。
 
@@ -104,13 +104,13 @@ npm install --save-dev vitest jsdom @vitest/ui @sveltejs/vite-plugin-svelte @tes
 
 | パッケージ                      | バージョン   |
 | :------------------------------ | :--------- |
-| `svelte`                        | `^5.38.1`  |
-| `vitest`                        | `^3.2.4`   |
-| `jsdom`                         | `^26.1.0`  |
-| `@sveltejs/vite-plugin-svelte`  | `^6.1.2`   |
-| `@testing-library/svelte`       | `^5.2.8`   |
-| `@vitest/ui`                    | `^3.2.4`   |
-| `@vitest/coverage-v8`           | `^3.2.4`   |
+| `svelte`                        | `^5.55.0`  |
+| `vitest`                        | `^4.0.18`  |
+| `jsdom`                         | `^29.0.1`  |
+| `@sveltejs/vite-plugin-svelte`  | `^6.2.4`   |
+| `@testing-library/svelte`       | `^5.3.1`   |
+| `@vitest/ui`                    | `^4.0.18`  |
+| `@vitest/coverage-v8`           | `^4.0.18`  |
 
 <br>
 
@@ -120,11 +120,13 @@ npm install --save-dev vitest jsdom @vitest/ui @sveltejs/vite-plugin-svelte @tes
 ```typescript
 import { defineConfig, configDefaults } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [
     // Vitest実行中はSvelteのホットモジュールリプレースメント(HMR)を無効化し、テストの安定性を確保します。
     svelte({ hot: !process.env.VITEST }),
+    tsconfigPaths(),
   ],
   // `resolve.conditions` をトップレベルに設定します。
   // これにより、Vitestが内部的に利用するViteのモジュール解決全体で、`package.json`の`browser`フィールドが優先的に参照されるようになります。
@@ -140,18 +142,53 @@ export default defineConfig({
     // ブラウザで動作するコンポーネントのテストが可能になります。
     environment: 'jsdom',
 
+    // テスト対象のファイルパターンを指定します。
+    include: [
+      'src/**/*.test.{js,ts}',
+      'tests/**/*.test.{js,ts}',
+    ],
+
     // テスト対象から除外するファイルやディレクトリのパターンを指定します。
-    // デフォルトでは、環境検証用のスモークテストが除外されます。
+    // `tests/_vitest-check/` はスモークテスト専用の設定ファイル（`vitest.smoke.config.ts`）を使用して
+    // `npm run vitest:smoke` で個別に実行するため、ここでは除外します。
     exclude: [
       // node_modulesなどを誤って含めないよう、デフォルトの除外設定を継承することを推奨します。
       ...configDefaults.exclude,
-      '_vitest-check/**',
+      'tests/_vitest-check/**',
     ],
   },
 });
 ```
 
 **注記:** `resolve.conditions` は `test` オブジェクトの中ではなく、設定のトップレベルに配置する必要があります。これにより、Vite全体のモジュール解決に設定が適用され、Svelteが正しくブラウザモードで動作するようになります。
+
+さらに、スモークテストを単独で実行するための専用設定ファイル `vitest.smoke.config.ts` も作成します。これが必要な理由は、Vitestの `--exclude` CLIオプションは設定ファイルの `exclude` リストに追記（マージ）されるだけであり、上書きできないためです。専用の設定ファイルを用意することで、この制限をクリーンに回避できます。
+
+**`vitest.smoke.config.ts`**
+```typescript
+import { defineConfig } from 'vitest/config';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig({
+  plugins: [
+    svelte({ hot: !process.env.VITEST }),
+    tsconfigPaths(),
+  ],
+  resolve: {
+    conditions: ['browser'],
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+
+    // スモークテストのみ: _vitest-check ディレクトリだけを対象とする
+    include: [
+      'tests/_vitest-check/**/*.test.{js,ts}',
+    ],
+  },
+});
+```
 
 次に、テスト対象の簡単なカウンターコンポーネント (`Counter.svelte`) を作成します。
 
@@ -160,9 +197,10 @@ export default defineConfig({
 <script lang="ts">
   import { onMount } from "svelte";
 
-  export let count: number = 0;
+  let { count = 0 }: { count?: number } = $props();
+  let currentCount = $state(count);
   const increment = () => {
-    count += 1;
+    currentCount += 1;
   };
 
   onMount(() => {
@@ -174,8 +212,8 @@ export default defineConfig({
 
 <main>
   <h1>Counter</h1>
-  <p>Current count: {count}</p>
-  <button on:click={increment}>Increment</button>
+  <p>Current count: {currentCount}</p>
+  <button onclick={increment}>Increment</button>
 </main>
 ```
 
@@ -228,37 +266,42 @@ describe('Counter.svelte', () => {
 ```json
 {
   "scripts": {
-    "test": "vitest run",
-    "test:smoke": "vitest run _vitest-check/",
     "vitest": "vitest",
+    "vitest:run": "vitest run",
     "vitest:ui": "vitest --ui",
-    "vitest:coverage": "vitest run --coverage"
+    "vitest:coverage": "vitest run --coverage",
+    "vitest:smoke": "vitest run --config vitest.smoke.config.ts"
   }
 }
 ```
+
+**`vitest:smoke` で `--config` を使う理由**
+`tests/_vitest-check/**` は `vitest.config.ts` の `exclude` に記載されています。VitestのCLIオプション `--exclude` は `exclude` リストに「追加」されるだけで、既存の設定を上書きすることはできません。専用の `vitest.smoke.config.ts`（conflictする `exclude` を持たず、`include: ['tests/_vitest-check/**']` のみを定義）を使うことで、この制限をクリーンに解決できます。
 
 これにより、以下のコマンドで各々の目的に応じたテストが実行可能になります。
 
 ---
 
-### `npm run test`
+### `npm run vitest:run`
 
 **用途:** プロジェクト本体の全テストを実行。
 
-**動作:** アプリケーションの全てのテストを実行します。`_vitest-check/` ディレクトリのスモークテストは除外されます。これは、通常の開発中にアプリケーションの機能性を検証するために使用する主要なコマンドです。
+**動作:** アプリケーションの全てのテストを実行します。`tests/_vitest-check/` ディレクトリのスモークテストは除外されます。これは、通常の開発中にアプリケーションの機能性を検証するために使用する主要なコマンドです。
 
 ```bash
-npm run test
+npm run vitest:run
 ```
 
-### `npm run test:smoke`
+### `npm run vitest:smoke`
 
 **用途:** テスト環境の検証。
 
-**動作:** `_vitest-check/` ディレクトリ内のテストのみを実行します。これは、テスト関連のパッケージをインストールまたは更新した後に、Vitest環境が正しく設定されていることを確認するために使用します。
+**動作:** 専用の設定ファイル（`vitest.smoke.config.ts`）を使用して、`tests/_vitest-check/` ディレクトリ内のテストのみを実行します。テスト関連のパッケージをインストールまたは更新した後に、Vitest環境が正しく設定されていることを確認するために使用します。
+
+> **注記:** このコマンドはパスのフィルタではなく `--config vitest.smoke.config.ts` を使用します。これは、`tests/_vitest-check/**` がメインの `vitest.config.ts` の `exclude` に記載されており、VitestのCLIオプション `--exclude` では上書きできない（追加のみ）ためです。専用の設定ファイルを使うことでこの制限をクリーンに解決しています。
 
 ```bash
-npm run test:smoke
+npm run vitest:smoke
 ```
 
 ### `npm run vitest`
@@ -301,7 +344,7 @@ npm run vitest:coverage
 
 第二に、**テストの自動化と構造化**です。
 
-- **自動化:** `npm run vitest`のような単一のコマンドで、何百ものテストケースを一度に、かつ自動で実行できます。手動での確認作業とは比較にならない効率性を誇ります。
+- **自動化:** `npm run vitest:run`のような単一のコマンドで、何百ものテストケースを一度に、かつ自動で実行できます。手動での確認作業とは比較にならない効率性を誇ります。
 - **構造化:** `describe`や`it`といった構文を使うことで、「何を」「どのような条件で」テストしているのかが明確になります。テストコード自体が仕様書のような役割（リビングドキュメント）を果たし、コードの保守性を高めます。
 - **明確な結果:** `expect(result).toBe(3)`のようなアサーション（表明）は、テストの成功・失敗を明確に判断します。`console.log`のように、開発者が目視で出力を解釈する必要がありません。
 
