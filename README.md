@@ -55,7 +55,7 @@ If you have issue or feature requests, please report them at issues (https://git
 
 Vivaldi prioritizes browser-side settings (**Settings >> Tabs >> New Tab Position**) over extension settings.
 
-### Links to pages opened with "Copy URL to all tabs" do not marked as "Visited"
+### Links to pages opened with "Copy URL of All Tabs" do not marked as "Visited"
 
 If opened links are not marked as “visited”, then that is a **Google Chrome** specification; the behavior specification changed in an update in **early 2025/03**. For more information on this change, see the following article.
 
