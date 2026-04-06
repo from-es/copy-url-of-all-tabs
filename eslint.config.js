@@ -26,7 +26,7 @@ const customRules = [
 			// Import 関連
 			"import/internal-regex": "^@/",  // tsconfig.json で定義した "@/" エイリアスを "internal" グループとして識別する
 
-			// jsoc 関連
+			// jsdoc 関連
 			"jsdoc": {
 				"tagNamePreference": {
 					"overview"    : "file",         // file に統一

@@ -35,7 +35,7 @@ export default defineConfig({
 		exclude: [
 			// デフォルトの除外設定に加えて、動作確認用のテストを除外
 			...configDefaults.exclude,
-			"_vitest-check/**"
+			"tests/_vitest-check/**"
 		],
 		// exclude: [ "_vitest-check/**" ]
 	},
