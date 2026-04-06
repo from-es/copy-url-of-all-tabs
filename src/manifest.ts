@@ -78,9 +78,6 @@ export const manifest: UserManifest = {
 		"service_worker": "/background.js",
 		"type"          : "module"
 	},
-	"content_scripts": [
-		// Nothing
-	],
 	"options_ui": {
 		"open_in_tab": true,
 		"page"       : "/options.html"

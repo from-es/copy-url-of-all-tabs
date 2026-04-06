@@ -1,6 +1,6 @@
 # Vitest: A Fast and Modern Unit Testing Framework
 
-**Last Updated:** August 29, 2025
+**Last Updated:** April 6, 2026
 
 This document provides guidelines for writing unit and integration tests using [Vitest](https://vitest.dev/), the designated testing framework for this project.
 
@@ -104,13 +104,13 @@ The configuration and code described in this document have been tested in the fo
 
 | Package                         | Version    |
 | :------------------------------ | :--------- |
-| `svelte`                        | `^5.38.1`  |
-| `vitest`                        | `^3.2.4`   |
-| `jsdom`                         | `^26.1.0`  |
-| `@sveltejs/vite-plugin-svelte`  | `^6.1.2`   |
-| `@testing-library/svelte`       | `^5.2.8`   |
-| `@vitest/ui`                    | `^3.2.4`   |
-| `@vitest/coverage-v8`           | `^3.2.4`   |
+| `svelte`                        | `^5.55.0`  |
+| `vitest`                        | `^4.0.18`  |
+| `jsdom`                         | `^29.0.1`  |
+| `@sveltejs/vite-plugin-svelte`  | `^6.2.4`   |
+| `@testing-library/svelte`       | `^5.3.1`   |
+| `@vitest/ui`                    | `^4.0.18`  |
+| `@vitest/coverage-v8`           | `^4.0.18`  |
 
 <br>
 
@@ -120,11 +120,13 @@ Next, create a `vitest.config.ts` file in the project's root directory with the 
 ```typescript
 import { defineConfig, configDefaults } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [
     // Disable Svelte's Hot Module Replacement (HMR) during Vitest execution to ensure test stability.
     svelte({ hot: !process.env.VITEST }),
+    tsconfigPaths(),
   ],
   // Set `resolve.conditions` at the top level.
   // This ensures that the `browser` field in `package.json` is prioritized for module resolution throughout Vitest's internal Vite instance.
@@ -140,18 +142,54 @@ export default defineConfig({
     // enabling tests for components that run in a browser.
     environment: 'jsdom',
 
+    // Specifies patterns for the test files to include.
+    include: [
+      'src/**/*.test.{js,ts}',
+      'tests/**/*.test.{js,ts}',
+    ],
+
     // Specifies patterns for files or directories to be excluded from testing.
-    // By default, smoke tests for environment verification are excluded.
+    // Smoke tests in `tests/_vitest-check/` are excluded here because they use a
+    // dedicated configuration file (`vitest.smoke.config.ts`) and are run separately
+    // via `npm run vitest:smoke`.
     exclude: [
       // It's recommended to inherit the default exclusions to avoid accidentally including files from node_modules.
       ...configDefaults.exclude,
-      '_vitest-check/**',
+      'tests/_vitest-check/**',
     ],
   },
 });
 ```
 
 **Note:** `resolve.conditions` must be placed at the top level of the configuration, not inside the `test` object. This ensures the setting applies to Vite's overall module resolution, allowing Svelte to operate correctly in browser mode.
+
+In addition, create a separate `vitest.smoke.config.ts` file for running smoke tests in isolation. This is necessary because Vitest's `--exclude` CLI option merges with (rather than overrides) the config file's `exclude` list, which would prevent smoke tests from being discovered if specified in the same config.
+
+**`vitest.smoke.config.ts`**
+```typescript
+import { defineConfig } from 'vitest/config';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig({
+  plugins: [
+    svelte({ hot: !process.env.VITEST }),
+    tsconfigPaths(),
+  ],
+  resolve: {
+    conditions: ['browser'],
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+
+    // Smoke tests: only include the _vitest-check directory
+    include: [
+      'tests/_vitest-check/**/*.test.{js,ts}',
+    ],
+  },
+});
+```
 
 Next, create a simple counter component to be tested (`Counter.svelte`).
 
@@ -160,9 +198,10 @@ Next, create a simple counter component to be tested (`Counter.svelte`).
 <script lang="ts">
   import { onMount } from "svelte";
 
-  export let count: number = 0;
+  let { count = 0 }: { count?: number } = $props();
+  let currentCount = $state(count);
   const increment = () => {
-    count += 1;
+    currentCount += 1;
   };
 
   onMount(() => {
@@ -174,8 +213,8 @@ Next, create a simple counter component to be tested (`Counter.svelte`).
 
 <main>
   <h1>Counter</h1>
-  <p>Current count: {count}</p>
-  <button on:click={increment}>Increment</button>
+  <p>Current count: {currentCount}</p>
+  <button onclick={increment}>Increment</button>
 </main>
 ```
 
@@ -227,37 +266,42 @@ Define the following test scripts in your `package.json`. For efficiency, it is 
 ```json
 {
   "scripts": {
-    "test": "vitest run",
-    "test:smoke": "vitest run _vitest-check/",
     "vitest": "vitest",
+    "vitest:run": "vitest run",
     "vitest:ui": "vitest --ui",
-    "vitest:coverage": "vitest run --coverage"
+    "vitest:coverage": "vitest run --coverage",
+    "vitest:smoke": "vitest run --config vitest.smoke.config.ts"
   }
 }
 ```
+
+**Why use `--config` for smoke tests?**
+The `tests/_vitest-check/**` directory is listed in the `exclude` of `vitest.config.ts`. Vitest's `--exclude` CLI option *appends to* (rather than replaces) the config's exclude list, so passing a filter path on the command line alone cannot override it. Using a dedicated `vitest.smoke.config.ts` — which defines `include: ['tests/_vitest-check/**']` with no conflicting `exclude` — is the clean solution.
 
 This allows you to run tests for various purposes with the following commands.
 
 ---
 
-### `npm run test`
+### `npm run vitest:run`
 
 **Purpose:** Run all main project tests.
 
-**Behavior:** Executes all tests for the application, excluding the smoke tests in the `_vitest-check/` directory. This is the primary command to use during regular development to verify the application's functionality.
+**Behavior:** Executes all tests for the application, excluding the smoke tests in the `tests/_vitest-check/` directory. This is the primary command to use during regular development to verify the application's functionality.
 
 ```bash
-npm run test
+npm run vitest:run
 ```
 
-### `npm run test:smoke`
+### `npm run vitest:smoke`
 
 **Purpose:** Verify the test environment.
 
-**Behavior:** Runs only the tests within the `_vitest-check/` directory. This is useful after installing or updating test-related packages to ensure that the Vitest environment is correctly configured.
+**Behavior:** Runs only the tests within the `tests/_vitest-check/` directory using the dedicated `vitest.smoke.config.ts` configuration. This is useful after installing or updating test-related packages to ensure that the Vitest environment is correctly configured.
+
+> **Note:** This command uses `--config vitest.smoke.config.ts` instead of a path filter. This is because `tests/_vitest-check/**` is listed in the `exclude` of the main `vitest.config.ts`, and Vitest's `--exclude` CLI option cannot override it — it only appends. The dedicated config file sidesteps this limitation cleanly.
 
 ```bash
-npm run test:smoke
+npm run vitest:smoke
 ```
 
 ### `npm run vitest`
@@ -300,7 +344,7 @@ First is the **separation of test code and production code**. A major benefit of
 
 Second is **test automation and structuring**.
 
--   **Automation:** With a single command like `npm run vitest`, you can run hundreds of test cases at once, automatically. This is incomparably more efficient than manual verification.
+-   **Automation:** With a single command like `npm run vitest:run`, you can run hundreds of test cases at once, automatically. This is incomparably more efficient than manual verification.
 -   **Structuring:** Using syntax like `describe` and `it` clarifies "what" is being tested and under "what conditions." The test code itself serves as a form of living documentation, enhancing code maintainability.
 -   **Clear Results:** Assertions like `expect(result).toBe(3)` provide a clear pass/fail judgment for tests. There's no need for a developer to visually interpret `console.log` output.
 
@@ -337,6 +381,8 @@ Viewing a coverage report offers the following benefits:
     By checking that the coverage rate has not unintentionally decreased after modifying code, you can reduce the risk of "degradations" that break existing functionality.
 
 The `npm run vitest:coverage` command mentioned in the document is used to generate this report using Vitest's functionality.
+
+**Last Updated:** April 6, 2026
 
 ## Official Website and Documentation
 
