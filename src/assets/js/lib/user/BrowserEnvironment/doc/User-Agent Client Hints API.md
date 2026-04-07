@@ -189,7 +189,7 @@ getOsVersionName();
 
 - [Microsoft Learn: Detect Windows 11 using User-Agent Client Hints](https://learn.microsoft.com/en-us/microsoft-edge/web-platform/how-to-detect-win11)
 - [MDN Web Docs: Navigator.userAgentData](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/userAgentData)
-- [MDN Web Docs: NavigatorUAData.getHighEntropyValues()](https://developer.mozilla.org/ja/docs/Web/API/NavigatorUAData/getHighEntropyValues)
+- [MDN Web Docs: NavigatorUAData.getHighEntropyValues()](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorUAData/getHighEntropyValues)
 - [User-Agent Client Hints - WICG](https://wicg.github.io/ua-client-hints/#browser-os-experiments-use-case)
 - [Yauaa - User-Agent Client Hints](https://yauaa.basjes.nl/using/clienthints/)
 - [Releases, Windows NT - Wikipedia](https://en.wikipedia.org/wiki/Windows_NT#Releases "Releases, Windows NT - Wikipedia")

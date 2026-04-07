@@ -12,7 +12,7 @@
  * @param    {T}           obj - The object to freeze
  * @returns  {Readonly<T>}       The object with all its properties made read-only
  *
- * @see https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
  */
 export function deepFreeze<T extends object>(obj: T): Readonly<T> {
 	// Get property names defined on the object

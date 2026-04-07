@@ -182,7 +182,7 @@ interface PopoverMessageOptions {
   - **Google Chrome**: `112` 以降
   - **Firefox**: `117` 以降
 
-詳細はMDNの各APIドキュメント（[Popover API](https://developer.mozilla.org/ja/docs/Web/API/Popover_API)、[CSS Nesting](https://developer.mozilla.org/ja/docs/Web/CSS/CSS_nesting)）を参照してください。
+詳細はMDNの各APIドキュメント（[Popover API](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API), [CSS Nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting)）を参照してください。
 
 ---
 
