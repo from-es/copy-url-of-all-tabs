@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-04-08
  */
 
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -156,11 +156,11 @@ type NavigatorUserAgentData = {
  * Defines the structure for the metadata of a User-Agent parser plugin.
  */
 type UserAgentParserPluginInformation = {  // Required fields
-	name      : string;  // Name of the plugin
-	useLibrary: string;  // Name of the library used
-	version   : string;  // Version: in the format x.y.z
-	lastupdate: string;  // Last update date: date format YYYY/MM/DD
-	author    : string;  // The plugin author's name
+	name        : string;  // Name of the plugin
+	useLibrary  : string;  // Name of the library used
+	version     : string;  // Version: in the format x.y.z
+	lastModified: string;  // Last modified: date format YYYY-MM-DD
+	author      : string;  // The plugin author's name
 };
 
 /**

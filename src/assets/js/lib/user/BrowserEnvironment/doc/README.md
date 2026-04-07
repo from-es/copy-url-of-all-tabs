@@ -1,7 +1,7 @@
 # BrowserEnvironment Library Technical Specification & Operation Specification
 
 *   Created Date: July 19, 2025
-*   Last Updated: July 19, 2025
+*   Last Updated: April 8, 2026
 
 ## Overview
 
@@ -64,7 +64,7 @@ A wrapper class for parsing User-Agent strings.
 A plugin that uses the [bowser](#bowser) library to parse User-Agent strings.
 
 *   **Properties:**
-    *   `information`: Plugin metadata (`name`, `useLibrary`, `version`, `lastupdate`). `useLibrary` is set to `"bowser"`.
+    *   `information`: Plugin metadata (`name`, `useLibrary`, `version`, `lastModified`). `useLibrary` is set to `"bowser"`.
 *   **Methods:**
     *   `execute(): PluginValue | null`:
         *   Returns `null` if `navigator.userAgent` does not exist.
@@ -80,7 +80,7 @@ A plugin that uses the [bowser](#bowser) library to parse User-Agent strings.
 *   `UserAgentDataBrand`: Brand information for [User-Agent Client Hints](#user-agent-client-hints) (`brand`, `version`).
 *   `UserAgentDataValues`: Detailed [User-Agent Client Hints](#user-agent-client-hints) values returned by `navigator.userAgentData.getHighEntropyValues()`.
 *   `NavigatorUserAgentData`: Extends the `Navigator` interface to define the `userAgentData` property and `getHighEntropyValues` method.
-*   `PluginInformation`: Plugin metadata (`name`, `useLibrary`, `version`, `lastupdate`).
+*   `UserAgentParserPluginInformation`: Plugin metadata (`name`, `useLibrary`, `version`, `lastModified`).
 *   `PluginValue`: Browser, engine, and OS information returned by the plugin.
 *   `UserAgentParserInformation`: An object containing plugin information and an execution function.
 
