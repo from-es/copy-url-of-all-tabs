@@ -3,7 +3,7 @@
 	 * Main Svelte component for the popup menu.
 	 *
 	 * @file
-	 * @lastModified 2026-04-04
+	 * @lastModified 2026-04-08
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -26,7 +26,7 @@
 	import { eventActionCopy, eventActionPaste } from "./userActions";
 
 	// Import Types
-	import type { Config, Define, ExtensionMessage, SetTimeoutHandle } from "@/assets/js/types/";
+	import type { Config, Define, ExtensionMessage, SetTimeoutHandle } from "@/assets/js/types";
 	import type { Action, EventOnClickActionResult }                   from "./types";
 
 

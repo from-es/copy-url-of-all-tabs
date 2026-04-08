@@ -2,14 +2,14 @@
  * Utility for comparing two configuration objects.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-08
  */
 
 // Import NPM Package
 import { isEqual } from "lodash-es";
 
 // Import Types
-import type { Config } from "@/assets/js/define";
+import type { Config } from "@/assets/js/types";
 
 
 

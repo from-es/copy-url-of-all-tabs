@@ -2,7 +2,7 @@
  * Logic for filtering tabs and URLs based on user settings.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-08
  */
 
 // WXT provided cross-browser Types.
@@ -12,7 +12,7 @@ import type { Browser } from "wxt/browser";
 import { toUniqueArray } from "@/assets/js/utils/toUniqueArray";
 
 // Import Types
-import type { Config, Define } from "@/assets/js/types/";
+import type { Config, Define } from "@/assets/js/types";
 import type { Action }         from "./types";
 
 

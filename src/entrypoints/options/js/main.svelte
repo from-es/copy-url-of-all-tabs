@@ -3,7 +3,7 @@
 	 * Main Svelte component for the options page content.
 	 *
 	 * @file
-	 * @lastModified 2026-04-04
+	 * @lastModified 2026-04-08
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -41,7 +41,7 @@
 	import { LOG_LEVELS } from "@/assets/js/lib/user/ConsoleManager/types";
 
 	// Import Types
-	import type { Config, Define, Status } from "@/assets/js/types/";
+	import type { Config, Define, Status } from "@/assets/js/types";
 	import type { CustomDelayInfo }        from "@/assets/js/define/types";
 	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
 	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";

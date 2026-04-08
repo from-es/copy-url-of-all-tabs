@@ -3,14 +3,14 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-04-08
  */
 
 // Import NPM Package
 import { get as lodashGetValue, set as lodashSetValue, has as lodashHasValue } from "lodash-es";
 
 // Import Types
-import type { Config, Define } from "@/assets/js/types/";
+import type { Config, Define } from "@/assets/js/types";
 
 
 

@@ -21,7 +21,7 @@ import { VerifyConfigValue  } from "./lib/user/VerifyConfigValue";
 import { BrowserEnvironment } from "./lib/user/BrowserEnvironment";
 
 // Import Types
-import type { Config, Define, Status, EmptyObject } from "@/assets/js/types/";
+import type { Config, Define, Status, EmptyObject } from "@/assets/js/types";
 import type { MigrationResult }                     from "@/assets/js/lib/user/MigrationManager/types";
 
 

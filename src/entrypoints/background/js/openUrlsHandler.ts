@@ -2,7 +2,7 @@
  * Handler for opening multiple URLs in new tabs.
  *
  * @file
- * @lastModified 2026-03-29
+ * @lastModified 2026-04-08
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -16,7 +16,7 @@ import { QueueManager }       from "@/assets/js/lib/user/QueueManager";
 import { countManager }       from "@/entrypoints/background/js/CountManager";
 
 // Import Types
-import type { Config, ExtensionMessage }                from "@/assets/js/types/";
+import type { Config, ExtensionMessage }                from "@/assets/js/types";
 import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
 
 

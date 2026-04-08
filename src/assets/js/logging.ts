@@ -2,7 +2,7 @@
  * Utility for logging
  *
  * @file
- * @lastModified 2026-03-30
+ * @lastModified 2026-04-08
  *
  * @dependency isEqual
  */
@@ -12,7 +12,7 @@ import { ConsoleManager } from "@/assets/js/lib/user/ConsoleManager";
 import { isEqual }        from "@/assets/js/utils/isEqual";
 
 // Import Types
-import type { Config, Define } from "@/assets/js/define";
+import type { Config, Define } from "@/assets/js/types";
 
 
 

@@ -2,7 +2,7 @@
  * User-initiated action handlers for the popup menu.
  *
  * @file
- * @lastModified 2026-03-29
+ * @lastModified 2026-04-08
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -14,7 +14,7 @@ import { FormatManager }                               from "../js/FormatManager
 import { prepareForActionCopy, prepareForActionPaste } from "./filtering";
 
 // Import Types
-import type { Config, Define }                                        from "@/assets/js/types/";
+import type { Config, Define }                                        from "@/assets/js/types";
 import type { Action, EventActionCopyResult, EventActionPasteResult } from "./types";
 
 
