@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-04-08
  *
  * @dependency bowser (https://github.com/bowser-js/bowser)
  */
@@ -24,11 +24,11 @@ import type { UserAgentParserPlugin, UserAgentParserPluginParseData } from "../t
  */
 const UserAgentParserPlugin: UserAgentParserPlugin = {
 	information: {
-		name      : "UserAgent parser plugin using bowser",
-		useLibrary: "bowser",
-		version   : "1.0.0",
-		lastupdate: "2025/07/21",
-		author    : "From E"
+		name        : "UserAgent parser plugin using bowser",
+		useLibrary  : "bowser",
+		version     : "1.0.1",
+		lastModified: "2026-04-08",
+		author      : "From E"
 	},
 
 	/**

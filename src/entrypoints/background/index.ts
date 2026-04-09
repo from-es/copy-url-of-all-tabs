@@ -2,7 +2,7 @@
  * Main entry point for the background script.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-08
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -17,8 +17,8 @@ import { countManager }     from "./js/CountManager";
 import { badgeController }  from "./js/BadgeController";
 
 // Import Types
-import type { Config }           from "@/assets/js/define";
-import type { ExtensionMessage } from "@/assets/js/types/";
+import type { Config }           from "@/assets/js/types";
+import type { ExtensionMessage } from "@/assets/js/types";
 
 // eslint-disable-next-line import/exports-last
 export default defineBackground({

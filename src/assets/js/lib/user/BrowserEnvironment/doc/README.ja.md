@@ -1,7 +1,7 @@
 # BrowserEnvironment ライブラリ 技術仕様 & 動作仕様
 
 *   作成日: 2025年7月19日
-*   最終更新日: 2025年7月19日
+*   最終更新日: 2026年4月8日
 
 ## 概要
 
@@ -64,7 +64,7 @@ User-Agent文字列を解析するためのラッパークラス。
 [bowser](#bowser) ライブラリを利用してUser-Agent文字列を解析するプラグイン。
 
 *   **プロパティ:**
-    *   `information`: プラグインのメタ情報 (`name`, `useLibrary`, `version`, `lastupdate`)。`useLibrary` は `"bowser"` となっています。
+    *   `information`: プラグインのメタ情報 (`name`, `useLibrary`, `version`, `lastModified`)。`useLibrary` は `"bowser"` となっています。
 *   **メソッド:**
     *   `execute(): PluginValue | null`:
         *   `navigator.userAgent` が存在しない場合は `null` を返します。
@@ -80,7 +80,7 @@ User-Agent文字列を解析するためのラッパークラス。
 *   `UserAgentDataBrand`: [User-Agent Client Hints](#user-agent-client-hints) のブランド情報 (`brand`, `version`)。
 *   `UserAgentDataValues`: `navigator.userAgentData.getHighEntropyValues()` から返される詳細な [User-Agent Client Hints](#user-agent-client-hints) の値。
 *   `NavigatorUserAgentData`: `Navigator` インターフェースを拡張し、`userAgentData` プロパティと `getHighEntropyValues` メソッドを定義。
-*   `PluginInformation`: プラグインのメタ情報 (`name`, `useLibrary`, `version`, `lastupdate`)。
+*   `UserAgentParserPluginInformation`: プラグインのメタ情報 (`name`, `useLibrary`, `version`, `lastModified`)。
 *   `PluginValue`: プラグインが返すブラウザ、エンジン、OSの情報。
 *   `UserAgentParserInformation`: プラグイン情報と実行関数を含むオブジェクト。
 

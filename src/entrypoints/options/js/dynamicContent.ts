@@ -2,14 +2,14 @@
  * Manages dynamically changing content on the options screen.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-08
  */
 
 // WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
 // Import Types
-import type { Config, Define } from "@/assets/js/types/index";
+import type { Config, Define } from "@/assets/js/types";
 
 
 

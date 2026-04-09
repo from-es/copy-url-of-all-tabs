@@ -53,7 +53,7 @@ export const defaultConfig: Config = {
 			type: {
 				/*
 					Chrome         : FTP Protocol support ends Google Chrome 95 and later
-					Firefox        : Privileged URLs cannot be opened due to security specifications (https://developer.mozilla.org/ja/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
+					Firefox        : Privileged URLs cannot be opened due to security specifications (https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/create#url)
 					privileged URLs: "about:*****" (e.g., about:config, about:addons, about:debugging). Unprivileged URLs (about:blank) can still be used.
 				*/
 				http      : true,
