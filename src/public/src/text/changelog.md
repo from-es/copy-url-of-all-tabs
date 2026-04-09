@@ -1,3 +1,8 @@
+#### [1.20.8] - 2026/04/09
+
+- improve
+	- Internal code improvements to enhance extension stability and maintainability.
+
 #### [1.20.7] - 2026/04/06
 
 - improve
