@@ -2,11 +2,11 @@
  * Generates a cryptographically secure random ID based on the specified number of digits and character types.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-18
  */
 
 interface CharacterOptions {
-	number?: boolean;
+	number  ?: boolean;
 	alphabet?: {
 		uppercase?: boolean;
 		lowercase?: boolean;
@@ -17,40 +17,72 @@ interface CharacterOptions {
 
 
 /**
- * Generates a cryptographically secure random ID based on the specified number of digits and character types.
+ * Validates the arguments passed to the generateID function.
  *
- * @param   {number}           [digit=8]                                                                                   - The number of digits for the generated ID. Defaults to 8
- * @param   {CharacterOptions} [character={ number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }] - Options specifying the types of characters to use
- * @returns {string}                                                                                                         The generated random ID string
- * @throws  {TypeError}                                                                                                      Thrown if the digit or character arguments are invalid
+ * @remarks
+ * Both parameters are typed as `unknown` intentionally to enforce Fail-Fast validation
+ * regardless of how the function is called at runtime (e.g., via untyped JavaScript).
+ *
+ * @param   {unknown}    digit     - The number of digits for the generated ID
+ * @param   {unknown}    character - Options specifying the types of characters to use
+ * @returns {void}
+ * @throws  {TypeError}              Thrown if any argument is of an invalid type
+ * @throws  {RangeError}             Thrown if the digit is out of legal range
  */
-export function generateID(digit: number = 8, character: CharacterOptions = { number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }): string {
-	const validate = (digit && typeof digit === "number" && Number.isInteger(digit));
-	if (!validate) {
-		throw new TypeError(`Invalid: digit must be an integer in generateID, received ${digit}`);
+function validateArguments(digit: unknown, character: unknown): void {
+	if (typeof digit !== "number" || !Number.isInteger(digit)) {
+		throw new TypeError(`Invalid argument 'digit': an integer is required, but ${typeof digit} was provided.`);
 	}
 
-	const number = Number(digit);
-	if ( !(Number.MAX_SAFE_INTEGER >= number) && (number > 0) ) {
-		throw new TypeError(`Invalid: digit must be within the legal range in generateID, received ${digit}`);
+	if (digit > Number.MAX_SAFE_INTEGER || digit <= 0) {
+		throw new RangeError(`Invalid argument 'digit': must be within the range 1 to ${Number.MAX_SAFE_INTEGER}, but ${digit} was provided.`);
 	}
 
-	if ( !character || typeof character !== "object" ) {
-		throw new TypeError(`Invalid: character options must be an object in generateID, received ${typeof character}`);
-	} else if ( !character?.number && !character?.alphabet?.uppercase && !character?.alphabet?.lowercase && !character?.symbol ) {
-		throw new TypeError("Invalid: character options must have at least one character type enabled in generateID");
-	} else if ( character?.number && typeof character.number !== "boolean" ) {
-		throw new TypeError(`Invalid: character.number must be a boolean in generateID, received ${typeof character.number}`);
-	} else if ( character?.alphabet?.uppercase && typeof character.alphabet.uppercase !== "boolean" ) {
-		throw new TypeError(`Invalid: character.alphabet.uppercase must be a boolean in generateID, received ${typeof character.alphabet.uppercase}`);
-	} else if ( character?.alphabet?.lowercase && typeof character.alphabet.lowercase !== "boolean" ) {
-		throw new TypeError(`Invalid: character.alphabet.lowercase must be a boolean in generateID, received ${typeof character.alphabet.lowercase}`);
-	} else if ( character?.symbol && typeof character.symbol !== "boolean" ) {
-		throw new TypeError(`Invalid: character.symbol must be a boolean in generateID, received ${typeof character.symbol}`);
+	if (!character || typeof character !== "object") {
+		throw new TypeError(`Invalid argument 'character': an object is required, but ${typeof character} was provided.`);
 	}
 
-	const finalCharacter = Object.assign({ number: false, alphabet: { uppercase: false, lowercase: false }, symbol: false }, character);
+	// Use a type-safe cast after verifying it's an object to check properties.
+	const options = character as CharacterOptions;
 
+	const hasAtLeastOneType = !!(
+		options.number ||
+		options.alphabet?.uppercase ||
+		options.alphabet?.lowercase ||
+		options.symbol
+	);
+	if (!hasAtLeastOneType) {
+		throw new TypeError("Invalid argument 'character': at least one character type must be enabled.");
+	}
+
+	if (options.number !== undefined && typeof options.number !== "boolean") {
+		throw new TypeError(`Invalid argument 'character.number': a boolean is required, but ${typeof options.number} was provided.`);
+	}
+
+	if (options.alphabet !== undefined) {
+		if (typeof options.alphabet !== "object" || options.alphabet === null) {
+			throw new TypeError(`Invalid argument 'character.alphabet': an object is required, but ${typeof options.alphabet} was provided.`);
+		}
+		if (options.alphabet.uppercase !== undefined && typeof options.alphabet.uppercase !== "boolean") {
+			throw new TypeError(`Invalid argument 'character.alphabet.uppercase': a boolean is required, but ${typeof options.alphabet.uppercase} was provided.`);
+		}
+		if (options.alphabet.lowercase !== undefined && typeof options.alphabet.lowercase !== "boolean") {
+			throw new TypeError(`Invalid argument 'character.alphabet.lowercase': a boolean is required, but ${typeof options.alphabet.lowercase} was provided.`);
+		}
+	}
+
+	if (options.symbol !== undefined && typeof options.symbol !== "boolean") {
+		throw new TypeError(`Invalid argument 'character.symbol': a boolean is required, but ${typeof options.symbol} was provided.`);
+	}
+}
+
+/**
+ * Generates the character pool for the random ID based on specified character options.
+ *
+ * @param   {CharacterOptions} character - Options specifying the types of characters to use
+ * @returns {string}                       The combined string of all allowed characters
+ */
+function getCharacterPool(character: CharacterOptions): string {
 	const stringType = {
 		number  : "0123456789",
 		alphabet: {
@@ -59,29 +91,42 @@ export function generateID(digit: number = 8, character: CharacterOptions = { nu
 		},
 		symbol: "`~!@#$%^&*()_+-={}[]|:;\"'<>,.?/"
 	};
-	const getCharacter = (chr: CharacterOptions): string => {
-		let str = "";
 
-		if ( chr?.number ) {
-			str += stringType.number;
-		}
-		if ( chr?.alphabet?.uppercase ) {
-			str += stringType.alphabet.uppercase;
-		}
-		if ( chr?.alphabet?.lowercase ) {
-			str += stringType.alphabet.lowercase;
-		}
-		if ( chr?.symbol ) {
-			str += stringType.symbol;
-		}
+	let str = "";
 
-		return str;
-	};
+	if (character?.number) {
+		str += stringType.number;
+	}
+	if (character?.alphabet?.uppercase) {
+		str += stringType.alphabet.uppercase;
+	}
+	if (character?.alphabet?.lowercase) {
+		str += stringType.alphabet.lowercase;
+	}
+	if (character?.symbol) {
+		str += stringType.symbol;
+	}
 
-	const typedArray  = new Uint32Array(digit);
-	const cryptoArray = crypto.getRandomValues(typedArray);
-	const char        = getCharacter(finalCharacter);
-	const rand        = Array.from(cryptoArray)
+	return str;
+}
+
+/**
+ * Generates a cryptographically secure random ID based on the specified number of digits and character types.
+ *
+ * @param   {number}           [digit]     - The number of digits for the generated ID
+ * @param   {CharacterOptions} [character] - Options specifying the types of characters to use
+ * @returns {string}                         The generated random ID string
+ * @throws  {TypeError}                      Thrown if the digit is not an integer or character options are invalid
+ * @throws  {RangeError}                     Thrown if the digit is out of legal range
+ */
+export function generateID(digit: number = 8, character: CharacterOptions = { number: true, alphabet: { uppercase: true, lowercase: true }, symbol: false }): string {
+	validateArguments(digit, character);
+
+	const finalCharacter = Object.assign({ number: false, alphabet: { uppercase: false, lowercase: false }, symbol: false }, character);
+	const typedArray     = new Uint32Array(digit);
+	const cryptoArray    = crypto.getRandomValues(typedArray);
+	const char           = getCharacterPool(finalCharacter);
+	const rand           = Array.from(cryptoArray)
 		.map((num) => char[num % char.length])
 		.join("");
 

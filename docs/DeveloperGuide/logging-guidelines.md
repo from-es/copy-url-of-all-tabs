@@ -31,6 +31,17 @@ Based on the log levels defined in the project, methods are used according to th
 > - The `info` method is intended to announce an "overview"; if detailed data is needed, use `debug` in conjunction.
 > - `console.group`, `console.groupCollapsed`, `console.groupEnd` are treated as "labels" for visually organizing console output during development and do not apply the message normalization format (`<method>(<scope>):`).
 
+## Logging Responsibilities at Architectural Boundaries (Separation of Concerns)
+
+To strictly enforce the Separation of Concerns (SoC) between architectural layers (Application layer and Utility layer), the following principles apply to error handling and logging.
+
+1. **Utility Layer (`utils/`, `lib/`, etc.)**:
+	- **Do not use `console.error`.**
+	- Under Fail-Fast principles (e.g., input validation failure or unexecutable states), primarily use `throw` to propagate exceptions to the upper layers. The utility layer should not mandate how or whether logs are output.
+	- If internal state output is required for debugging or tracing, use `console.debug` instead of `console.error`. When re-throwing exceptions from external APIs, retain the root cause using `{ cause: error }`.
+2. **Application Layer (`entrypoints/`, `background/`, etc.)**:
+	- The application layer is responsible for catching exceptions (`try-catch`) thrown by utilities or external APIs, evaluating their impact on the system, and appropriately outputting logs using `console.error` or other appropriate methods.
+
 ---
 
 ## Output Message Standardization Guidelines

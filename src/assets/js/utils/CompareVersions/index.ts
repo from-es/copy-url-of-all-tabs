@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-18
  */
 
 /**
@@ -17,9 +17,9 @@ type SEMVER_PATTERN = typeof SEMVER_PATTERN;
 type CompareVersionsResult = -1 | 0 | 1;
 
 interface ParsedVersion {
-	major: number;
-	minor: number;
-	patch: number;
+	major     : number;
+	minor     : number;
+	patch     : number;
 	prerelease: (string | number)[];
 }
 
@@ -66,26 +66,26 @@ function validSemanticVersionsString(str: unknown, pattern: SEMVER_PATTERN): str
 
 	// Check if it is a string
 	if (!str || typeof str !== "string") {
-		console.error("ERROR(string): invalid version string: input must be a string", { str, typeof: typeof str });
+		console.debug("DEBUG(string): Invalid: input must be a string", { str, typeof: typeof str });
 
 		return false;
 	}
 	// Validate string length
 	if (str.length > pattern.length) {
-		console.error("ERROR(string): invalid version string: length exceeds maximum allowed", { str, length: str.length, maxLength: pattern.length });
+		console.debug("DEBUG(string): Invalid: version string length exceeds maximum allowed", { str, length: str.length, maxLength: pattern.length });
 
 		return false;
 	}
 
 	// Validate with a simple regular expression as a countermeasure against ReDoS
 	if (!isValidString(str, pattern.simple)) {
-		console.error("ERROR(string): invalid version string: failed basic format check", { str, regex: pattern.simple });
+		console.debug("DEBUG(string): Invalid: version string failed basic format check", { str, regex: pattern.simple });
 
 		return false;
 	}
 	// Validate with a detailed regular expression compliant with SemVer 2.0.0 specification
 	if (!isValidString(str, pattern.detail)) {
-		console.error("ERROR(string): invalid version string: does not conform to semver 2.0.0 specification", { str, regex: pattern.detail });
+		console.debug("DEBUG(string): Invalid: version string does not conform to SemVer 2.0.0 specification", { str, regex: pattern.detail });
 
 		return false;
 	}
@@ -98,21 +98,22 @@ function validSemanticVersionsString(str: unknown, pattern: SEMVER_PATTERN): str
  *
  * @param   {SemVerString} version - The version string to parse
  * @returns {ParsedVersion}          A parsed version object
- * @throws  {Error}                  Throws if the format is invalid
+ * @throws  {TypeError}              Thrown if the format is invalid
  */
 function parseVersion(version: SemVerString): ParsedVersion {
 	const buildMetadataIndex = version.indexOf("+");
-	const mainVersion = buildMetadataIndex !== -1 ? version.substring(0, buildMetadataIndex) : version;
+	const mainVersion        = buildMetadataIndex !== -1 ? version.substring(0, buildMetadataIndex) : version;
 
 	const prereleaseIndex = mainVersion.indexOf("-");
-	const versionParts = prereleaseIndex !== -1 ? mainVersion.substring(0, prereleaseIndex) : mainVersion;
+	const versionParts    = prereleaseIndex !== -1 ? mainVersion.substring(0, prereleaseIndex) : mainVersion;
 	const prereleaseParts = prereleaseIndex !== -1 ? mainVersion.substring(prereleaseIndex + 1).split(".") : [];
 
 	const parts = versionParts.split(".").map(Number);
 	// The isNaN check here is strictly unnecessary because the regular expression guarantees
 	// the numeric parts, but keeping it ensures stability for future changes in the regular Expression.
 	if (parts.some(isNaN) || parts.length !== 3) {
-		throw new Error(`Invalid: version string "${version}" does not conform to SemVer format in parseVersion`);
+		console.debug("DEBUG(string): Invalid: version string does not conform to SemVer format", { version });
+		throw new TypeError(`Invalid: version string "${version}" does not conform to SemVer format`);
 	}
 
 	const prerelease = prereleaseParts.map(part => {
@@ -121,9 +122,9 @@ function parseVersion(version: SemVerString): ParsedVersion {
 	});
 
 	return {
-		major: parts[0],
-		minor: parts[1],
-		patch: parts[2],
+		major     : parts[0],
+		minor     : parts[1],
+		patch     : parts[2],
 		prerelease: prerelease,
 	};
 };
@@ -169,12 +170,12 @@ function comparePrerelease(parsedBase: ParsedVersion, parsedTarget: ParsedVersio
 		const len = Math.min(parsedBase.prerelease.length, parsedTarget.prerelease.length);
 
 		for (let i = 0; i < len; i++) {
-			const idBase = parsedBase.prerelease[i];
+			const idBase   = parsedBase.prerelease[i];
 			const idTarget = parsedTarget.prerelease[i];
 
 			if (idBase === idTarget) { continue; }
 
-			const typeBase = typeof idBase;
+			const typeBase   = typeof idBase;
 			const typeTarget = typeof idTarget;
 
 			// If types differ, numeric identifiers have lower precedence than string identifiers
@@ -197,7 +198,7 @@ function comparePrerelease(parsedBase: ParsedVersion, parsedTarget: ParsedVersio
 
 		// If identifiers differ in length, the one with more fields has higher precedence
 		if (parsedBase.prerelease.length > parsedTarget.prerelease.length) { return -1; }
-		if (parsedBase.prerelease.length < parsedTarget.prerelease.length) { return 1; }
+		if (parsedBase.prerelease.length < parsedTarget.prerelease.length) { return  1; }
 	}
 
 	return 0;
@@ -208,21 +209,26 @@ function comparePrerelease(parsedBase: ParsedVersion, parsedTarget: ParsedVersio
  * Supports MAJOR.MINOR.PATCH[-PRERELEASE][+BUILDMETADATA] format and follows the comparison rules for prerelease versions (SemVer 2.0.0).
  * Build metadata is ignored for comparison purposes.
  *
- * @param   {string} base   - The version string to serve as the baseline for comparison. Throws an error if not SemVer 2.0.0 compliant
- * @param   {string} target - The version string to be compared. Throws an error if not SemVer 2.0.0 compliant
- * @returns {number}          Returns -1 if target is less than base, 0 if equal, and 1 if target is greater than base
- * @throws  {Error}           Thrown if an invalid version string is provided
+ * @remarks
+ * The 'base' and 'target' parameters are accepted as 'unknown' to ensure runtime safety against unverified data sources (e.g., storage).
+ *
+ * @param   {unknown} base   - The version string to serve as the baseline for comparison
+ * @param   {unknown} target - The version string to be compared
+ * @returns {number}           Returns -1 if target is less than base, 0 if equal, and 1 if target is greater than base
+ * @throws  {TypeError}        Thrown if an invalid version string is provided
  */
 function compareVersions(base: unknown, target: unknown): CompareVersionsResult {
+
 	// Validate that both base and target are compliant with SEMVER_PATTERN
-	const isValidStringBase = validSemanticVersionsString(base, SEMVER_PATTERN);
+	const isValidStringBase   = validSemanticVersionsString(base, SEMVER_PATTERN);
 	const isValidStringTarget = validSemanticVersionsString(target, SEMVER_PATTERN);
-	const isValidStringBoth = isValidStringBase && isValidStringTarget;
+	const isValidStringBoth   = isValidStringBase && isValidStringTarget;
 	if (!isValidStringBoth) {
-		throw new Error("Invalid: one or both of the provided version strings are not valid semantic versions in compareVersions");
+		console.debug("DEBUG(string): Invalid: one or both of the provided version strings are not valid semantic versions", { base, target });
+		throw new TypeError("Invalid: one or both of the provided version strings are not valid semantic versions");
 	}
 
-	const parsedBase = parseVersion(base);
+	const parsedBase   = parseVersion(base);
 	const parsedTarget = parseVersion(target);
 
 	const coreVersionComparison = compareMajorMinorPatch(parsedBase, parsedTarget);

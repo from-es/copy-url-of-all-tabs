@@ -2,7 +2,7 @@
  * Controller class for managing the extension's badge display.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-18
  */
 
 // WXT provided cross-browser compatible API.
@@ -212,10 +212,22 @@ class BadgeController {
 		this.#queue.add(async () => {
 			try {
 				await browser.action.setBadgeText({ text: "0" });
-				await sleep(this.#waitingTime);
-				await browser.action.setBadgeText({ text: "" });
+
+				try {
+					// sleep itself performs validation and throws an exception if the value is invalid.
+					await sleep(this.#waitingTime);
+				// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+				} catch (sleepError) {
+					// Skip waiting and proceed to clear if sleep fails.
+				}
 			} catch (error) {
-				console.error("ERROR(badge): failed to clear badge text after delay", { error });
+				console.error("ERROR(badge): Exception: failed to display temporary '0' on badge", { error });
+			} finally {
+				try {
+					await browser.action.setBadgeText({ text: "" });
+				} catch (error) {
+					console.error("ERROR(badge): Exception: failed to clear badge text in finally", { error });
+				}
 			}
 		});
 	}

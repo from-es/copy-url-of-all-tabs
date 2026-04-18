@@ -2,7 +2,7 @@
  * Logic for filtering tabs and URLs based on user settings.
  *
  * @file
- * @lastModified 2026-04-08
+ * @lastModified 2026-04-18
  */
 
 // WXT provided cross-browser Types.
@@ -73,7 +73,7 @@ function applyUrlProcessingRules(urlList: string[], action: Action, config: Conf
 	filteredUrlList = filterUrlsByPatternMatch(filteredUrlList, isPatternMatchFilteringEnabled, action, config);
 
 	// Filtering: Deduplicate
-	if (isDeduplicateEnabled) {
+	if (isDeduplicateEnabled && Array.isArray(filteredUrlList)) {
 		const originalCount = filteredUrlList.length;
 		filteredUrlList = toUniqueArray(filteredUrlList);
 

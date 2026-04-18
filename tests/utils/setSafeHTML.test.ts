@@ -130,11 +130,11 @@ describe("setSafeHTML utilities", () => {
 		});
 
 		it("should throw TypeError if element is not provided", () => {
-			expect(() => setSafeHTML(null as unknown as Element, "test")).toThrow("Invalid: target element is not provided in setSafeHTML");
+			expect(() => setSafeHTML(null as unknown as Element, "test")).toThrow("Invalid: target element is not provided");
 		});
 
 		it("should throw TypeError if element is not an instance of Element", () => {
-			expect(() => setSafeHTML({} as unknown as Element, "test")).toThrow("Invalid: target element must be an instance of Element in setSafeHTML");
+			expect(() => setSafeHTML({} as unknown as Element, "test")).toThrow("Invalid: target element must be an instance of Element");
 		});
 	});
 });

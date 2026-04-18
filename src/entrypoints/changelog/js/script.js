@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-04-18
  */
 
 // WXT provided cross-browser compatible API.
@@ -77,8 +77,12 @@ window.addEventListener("load", main);
  * @returns {Promise<void>}
  */
 async function main() {
-	await initialize();
-	await setUpdateHistory();
+	try {
+		await initialize();
+		await setUpdateHistory();
+	} catch (error) {
+		console.error("ERROR(main): Failure: initialize or display changelog", { error });
+	}
 }
 
 /**
@@ -113,7 +117,10 @@ async function setUpdateHistory() {
 
 		const elm          = document.querySelector(ERROR_NOTIFICATION_SELECTOR) || document.body;
 		const errorMessage = `<p>Failed to load changelog.</p><p>Error: ${error.message}</p>`;
-		setSafeHTML(elm, errorMessage);
+
+		if (typeof errorMessage === "string") {
+			setSafeHTML(elm, errorMessage, SANITIZED_OPTION);
+		}
 	}
 }
 
@@ -169,13 +176,13 @@ function createCustomMarkedInstance() {
  * @returns {void}
  */
 function renderLatestHistory(html, target) {
-	const doc           = createSafeDOM(html, SANITIZED_OPTION);
 	const targetElement = document.querySelector(target);
 
-	if (!targetElement) {
+	if (!targetElement || typeof html !== "string") {
 		return;
 	};
 
+	const doc            = createSafeDOM(html, SANITIZED_OPTION);
 	const historyHeaders = doc.querySelectorAll(HISTORY_HEADER_TAG);
 	const displayCount   = Math.min(historyHeaders.length, LATEST_HISTORY_COUNT);
 	const fragment       = new DocumentFragment();
@@ -205,7 +212,7 @@ function renderLatestHistory(html, target) {
 function renderPastHistory(html) {
 	const targetElement = document.querySelector(PAST_HISTORY_SELECTOR);
 
-	if (!targetElement) {
+	if (!targetElement || typeof html !== "string") {
 		return;
 	}
 

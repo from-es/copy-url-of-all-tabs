@@ -3,7 +3,7 @@
 	 * Main Svelte component for the options page content.
 	 *
 	 * @file
-	 * @lastModified 2026-04-08
+	 * @lastModified 2026-04-18
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -528,9 +528,10 @@
 			<dl>
 				<dt>Browser Extension Store</dt>
 				<dd id="browser-extension-store">
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html createSafeHTML(dynamicContent.getBrowserExtensionStoreContent(), { ADD_ATTR: [ "target" ] }) }
-
+					{#if typeof dynamicContent.getBrowserExtensionStoreContent() === "string"}
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						{@html createSafeHTML(dynamicContent.getBrowserExtensionStoreContent(), { ADD_ATTR: [ "target" ] }) }
+					{/if}
 				</dd>
 			</dl>
 
@@ -548,15 +549,19 @@
 
 			<h2>Support</h2>
 
-			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html createSafeHTML(dynamicContent.getWarningMessage()) }
+			{#if typeof dynamicContent.getWarningMessage() === "string"}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html createSafeHTML(dynamicContent.getWarningMessage()) }
+			{/if}
 
 			<p>Please note that as this is a free extension we are unable to provide personalized support.</p>
 
 			<p>If you have issue or feature requests, please report them at issues (<a href="https://github.com/from-es/copy-url-of-all-tabs/issues" title="Support" target="_blank" rel="noopener noreferrer">https://github.com/from-es/copy-url-of-all-tabs/issues</a>).</p>
 
-			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			<p id="copyright">{@html createSafeHTML(dynamicContent.getCopyright()) }</p>
+			{#if typeof dynamicContent.getCopyright() === "string"}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				<p id="copyright">{@html createSafeHTML(dynamicContent.getCopyright()) }</p>
+			{/if}
 		</article>
 		<!-- close id="about" -->
 
@@ -890,11 +895,12 @@
 							<form>
 								<input id="Filtering-Protocol-Paste-enable-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.Paste.enable }>
 								<label for="Filtering-Protocol-Paste-enable-input">Filter on Paste</label>
-								{#if status.config.Search.regex}
+								{#if status.config.Search.regex && typeof showNoticeMessageForPaste() === "string"}
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 									{@html createSafeHTML(showNoticeMessageForPaste()) }
 								{/if}
 							</form>
+
 						</fieldset>
 
 						<fieldset>
@@ -939,7 +945,7 @@
 								<form>
 									<input id="Filtering-Protocol-type-chrome-input" type="checkbox" bind:checked={ status.config.Filtering.Protocol.type.chrome }>
 									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-									<label for="Filtering-Protocol-type-chrome-input">chrome ({@html createSafeHTML(getChromiumBasedBrowserList())})</label>
+									<label for="Filtering-Protocol-type-chrome-input">chrome ({#if typeof getChromiumBasedBrowserList() === "string"}{@html createSafeHTML(getChromiumBasedBrowserList())}{/if})</label>
 								</form>
 							</div>
 						</fieldset>

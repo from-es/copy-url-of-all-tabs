@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-04-18
  */
 
 // Import Module
@@ -355,8 +355,21 @@ export const rules: MigrationRule<Config>[] = [
 			const { data }      = argument;
 			const configVersion = data.Information?.version ?? "0.0.0";
 
-			// Not a migration target if configVersion is not less than "1.18.0"
-			if (compareVersions("1.18.0", configVersion) !== -1) {
+			try {
+				// Not a migration target if configVersion is not less than "1.18.0"
+				if (compareVersions("1.18.0", configVersion) !== -1) {
+					return false;
+				}
+			} catch (error) {
+				console.error("ERROR(migration): migration rule error: failed to compare versions for custom delay enable property rule",
+					{
+						"Migration Rule": "Add enable property to each item in config.Tab.customDelay.list",
+						baseVersion     : "1.18.0",
+						targetVersion   : configVersion,
+						originalError   : error
+					}
+				);
+
 				return false;
 			}
 
