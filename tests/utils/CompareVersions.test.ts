@@ -113,7 +113,7 @@ describe("compareVersions", () => {
 			const longString = "1.0.0-" + "a.".repeat(70); // 146 chars
 			expect(longString.length).toBeGreaterThan(128);
 			// Expect the correct generic error message
-			expect(() => compareVersions(longString, "1.0.0")).toThrow("Invalid: one or both of the provided version strings are not valid semantic versions in compareVersions");
+			expect(() => compareVersions(longString, "1.0.0")).toThrow("Invalid: one or both of the provided version strings are not valid semantic versions");
 		});
 
 		it("should correctly handle near-limit-length strings that could cause ReDoS", () => {
