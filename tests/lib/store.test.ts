@@ -1,135 +1,149 @@
 /**
- * This file verifies the functionality of the `createStore` function and its state management capabilities,
- * specifically focusing on how it handles array updates and deep merging.
+ * Tests for createStore
  *
- * Purpose of Inspection:
- * - To ensure that arrays within the state are replaced entirely rather than being merged by index.
- * - To verify that deep merging works correctly for non-array objects.
- * - To confirm that top-level arrays are handled as expected when they are part of the state object.
- *
- * Inspection Method:
- * - The `createStore` function is initialized with various `StateOption` configurations.
- * - The `updateState` function is called with new values.
- * - The resulting `shareStatus` is compared against expected values using `expect(...).toEqual(...)`.
- * - Multiple test cases are executed in a data-driven manner to ensure comprehensive coverage of state update behaviors.
+ * Verifies state management via the `createStore` function, specifically behaviors
+ * for array updates (complete replacement instead of index-based merging) and
+ * deep merging of objects.
  *
  * @file
- * @lastModified 2026-04-04
+ *
+ * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
+ * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
  */
 
+import { describe, it, afterEach, expect, vi } from "vitest";
 import { createStore, type StateOption } from "@/assets/js/lib/user/StateManager/store.svelte.ts";
-import { describe, it, expect } from "vitest";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
-interface TestCase {
-	name           : string;
-	initialStates  : StateOption[];
-	expectedInitial: Record<string, unknown>;
-	updates        : StateOption[];
-	expectedFinal  : Record<string, unknown>;
-}
+// =============================================================================
+// 1. Definition of test data
+// =============================================================================
 
-describe("createStore", () => {
-	const testCases: TestCase[] = [
+const testData = {
+	success: [
 		{
-			name         : "should replace arrays instead of merging them by index",
-			initialStates: [
-				{
-					name  : "list",
-					freeze: false,
-					value : { items: [ 1, 2, 3 ] }
-				}
-			],
-			expectedInitial: { list: { items: [ 1, 2, 3 ] } },
-			updates        : [
-				{
-					name  : "list",
-					freeze: false,
-					value : { items: [ 4, 5 ] }
-				}
-			],
-			expectedFinal: { list: { items: [ 4, 5 ] } }
-		},
-		{
-			name         : "should replace top-level arrays if they are part of the state object",
-			initialStates: [
-				{
-					name  : "topLevelArray",
-					freeze: false,
-					value : [ "a", "b", "c" ] as unknown as StateOption["value"]
-				}
-			],
-			expectedInitial: { topLevelArray: [ "a", "b", "c" ] },
-			updates        : [
-				{
-					name  : "topLevelArray",
-					freeze: false,
-					value : [ "d" ] as unknown as StateOption["value"]
-				}
-			],
-			expectedFinal: { topLevelArray: [ "d" ] }
-		},
-		{
-			name         : "should still perform deep merge for non-array objects",
-			initialStates: [
-				{
-					name  : "config",
-					freeze: false,
-					value : {
-						nested: {
-							keep: "me",
-							change: "old"
-						}
-					}
-				}
-			],
-			expectedInitial: {
-				config: {
-					nested: {
-						keep: "me",
-						change: "old"
-					}
-				}
+			name: "arrays should be replaced with new arrays instead of being merged by index",
+			input: {
+				initial: [
+					{ name: "list", freeze: false, value: { items: [ 1, 2, 3 ] } }
+				] as StateOption[],
+				updates: [
+					{ name: "list", freeze: false, value: { items: [ 4, 5 ] } }
+				] as StateOption[]
 			},
-			updates: [
-				{
-					name  : "config",
-					freeze: false,
-					value : {
-						nested: {
-							change: "new",
-							add: "more"
+			expected: { list: { items: [ 4, 5 ] } }
+		},
+		{
+			name: "top-level arrays within the state object should also be correctly replaced",
+			input: {
+				initial: [
+					{ name: "topLevelArray", freeze: false, value: [ "a", "b", "c" ] }
+				] as StateOption[],
+				updates: [
+					{ name: "topLevelArray", freeze: false, value: [ "d" ] }
+				] as StateOption[]
+			},
+			expected: { topLevelArray: [ "d" ] }
+		},
+		{
+			name: "deep merge should be executed for objects other than arrays",
+			input: {
+				initial: [
+					{
+						name: "config",
+						freeze: false,
+						value: {
+							nested: { keep: "me", change: "old" }
 						}
 					}
-				}
-			],
-			expectedFinal: {
-				config: {
-					nested: {
-						keep: "me",
-						change: "new",
-						add: "more"
+				] as StateOption[],
+				updates: [
+					{
+						name: "config",
+						freeze: false,
+						value: {
+							nested: { change: "new", add: "more" }
+						}
 					}
+				] as StateOption[]
+			},
+			expected: {
+				config: {
+					nested: { keep: "me", change: "new", add: "more" }
 				}
 			}
 		}
-	];
+	]
+} as const satisfies Record<string, readonly TestCase[]>;
 
-	testCases.forEach(({ name, initialStates, expectedInitial, updates, expectedFinal }) => {
-		it(name, () => {
-			const { shareStatus, updateState } = createStore(initialStates);
+// =============================================================================
+// 2. Orchestration
+// =============================================================================
 
-			// Initial check
-			Object.entries(expectedInitial).forEach(([ key, expectedValue ]) => {
-				expect(shareStatus[key]).toEqual(expectedValue);
-			});
+describe("createStore", () => {
+	afterEach(() => {
+		vi.clearAllMocks();
+	});
 
-			// Update
-			updateState(updates);
+	TestRunner.success(testData.success, null, (input) => {
+		// Arrange
+		const { shareStatus, updateState } = createStore(input.initial);
 
-			// Final check
-			Object.entries(expectedFinal).forEach(([ key, expectedValue ]) => {
-				expect(shareStatus[key]).toEqual(expectedValue);
-			});
+		// Act
+		updateState(input.updates);
+
+		// Assert
+		return shareStatus;
+	});
+
+	describe("Property Freezing", () => {
+		it("should not be able to update properties initialized with freeze: true via updateState", () => {
+			// Arrange
+			const initial: StateOption[] = [
+				{ name: "frozenProp", freeze: true, value: { a: 1 } }
+			];
+			const { shareStatus, updateState } = createStore(initial);
+			const spy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			// Act
+			updateState([ { name: "frozenProp", freeze: false, value: { a: 2 } } ]);
+
+			// Assert
+			expect(shareStatus.frozenProp.a).toBe(1);
+			expect(spy).toHaveBeenCalledWith(expect.stringContaining("attempted to update frozen property"), expect.anything());
+		});
+
+		it("should not be able to directly update properties initialized with freeze: true via proxy", () => {
+			// Arrange
+			const initial: StateOption[] = [
+				{ name: "frozenProp", freeze: true, value: { a: 1 } }
+			];
+			const { shareStatus } = createStore<any>(initial);
+			const spy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+			// Act & Assert: If Proxy's set trap returns false, TypeError is thrown in strict mode
+			expect(() => {
+				shareStatus.frozenProp = { a: 2 };
+			}).toThrow(TypeError);
+
+			// Assert
+			expect(shareStatus.frozenProp.a).toBe(1);
+			expect(spy).toHaveBeenCalledWith(expect.stringContaining("attempted to write to frozen property"), expect.anything());
+		});
+
+		it("should be able to directly update regular properties via proxy", () => {
+			// Arrange
+			const initial: StateOption[] = [
+				{ name: "mutableProp", freeze: false, value: { a: 1 } }
+			];
+			const { shareStatus } = createStore<any>(initial);
+
+			// Act
+			shareStatus.mutableProp = { a: 2 };
+
+			// Assert
+			expect(shareStatus.mutableProp.a).toBe(2);
 		});
 	});
 });

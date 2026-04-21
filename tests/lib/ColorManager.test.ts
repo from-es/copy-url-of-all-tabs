@@ -1,7 +1,7 @@
 /**
- * Smoke test for helpers utility
+ * Tests for ColorManager
  *
- * This is a basic test to ensure that the Vitest execution environment is correctly configured.
+ * Verifies the color validation functionality provided by `ColorManager/index.ts`.
  *
  * @file
  *
@@ -11,8 +11,8 @@
  */
 
 import { describe, afterEach, vi } from "vitest";
-import { add } from "./helpers";
-import { TestRunner, type TestCase } from "../../shared/support/TestRunner";
+import { ColorManager } from "@/assets/js/lib/user/ColorManager";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // =============================================================================
 // 1. Definition of test data
@@ -20,8 +20,11 @@ import { TestRunner, type TestCase } from "../../shared/support/TestRunner";
 
 const testData = {
 	success: [
-		{ name: "should return the sum of two numbers", input: [ 1, 2 ], expected: 3 },
-		{ name: "should handle negative numbers correctly", input: [ -1, -1 ], expected: -2 }
+		{ name: "should identify a valid color name (red) as true", input: "red", expected: true },
+		{ name: "should identify a valid hex color (#ffffff) as true", input: "#ffffff", expected: true },
+		{ name: "should identify a valid rgb color (rgb(255, 255, 255)) as true", input: "rgb(255, 255, 255)", expected: true },
+		{ name: "should identify an invalid string (not-a-color) as false", input: "not-a-color", expected: false },
+		{ name: "should identify an empty string as false", input: "", expected: false }
 	]
 } as const satisfies Record<string, readonly TestCase[]>;
 
@@ -29,12 +32,12 @@ const testData = {
 // 2. Orchestration
 // =============================================================================
 
-describe("add function (smoke test)", () => {
+describe("ColorManager", () => {
 	afterEach(() => {
 		vi.clearAllMocks();
 	});
 
 	TestRunner.success(testData.success, null, (input) => {
-		return add(input[0], input[1]);
+		return ColorManager.isValidColor(input);
 	});
 });

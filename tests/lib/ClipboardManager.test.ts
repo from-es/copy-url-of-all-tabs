@@ -1,28 +1,71 @@
 /**
- * This file tests the ClipboardManager class.
+ * Tests for ClipboardManager
  *
- * Since ClipboardManager relies on the browser's `navigator.clipboard` API,
- * which is not available in the Node.js environment where Vitest runs,
- * this test file uses `vi.stubGlobal` to mock the clipboard functionality.
- *
- * Each method (`readText`, `writeText`, `write`, `clear`) is tested for
- * both successful execution and failure handling to ensure the wrapper
- * class behaves as expected.
+ * ClipboardManager depends on the browser's `navigator.clipboard` API.
+ * Since it is not available in the Node.js environment where Vitest runs,
+ * the clipboard functionality is mocked using `vi.stubGlobal`.
  *
  * @file
- * @lastModified 2026-03-25
+ *
+ * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
+ * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, beforeEach, afterEach, vi } from "vitest";
 import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+
+// =============================================================================
+// 1. Definition of test data
+// =============================================================================
+
+const mockClipboard = {
+	readText: vi.fn(),
+	writeText: vi.fn(),
+	write: vi.fn(),
+};
+
+const testData = {
+	readText: {
+		success: [
+			{ name: "should return the read string when reading text succeeds", input: "Hello, world!", expected: "Hello, world!" }
+		],
+		error: [
+			{ name: "should return false when reading text fails", input: new Error("Read failed"), expected: false }
+		]
+	},
+	writeText: {
+		success: [
+			{ name: "should return true when writing text succeeds", input: "Hello, world!", expected: true }
+		],
+		error: [
+			{ name: "should return false when writing text fails", input: new Error("Write failed"), expected: false }
+		]
+	},
+	write: {
+		success: [
+			{ name: "should return true when writing data succeeds", input: { data: "some data", mimetype: "text/plain" }, expected: true }
+		],
+		error: [
+			{ name: "should return false when writing data fails", input: { data: "some data", mimetype: "text/plain" }, expected: false }
+		]
+	},
+	clear: {
+		success: [
+			{ name: "should return true when clearing clipboard succeeds", input: null, expected: true }
+		],
+		error: [
+			{ name: "should return false when clearing clipboard fails", input: new Error("Clear failed"), expected: false }
+		]
+	}
+} as const satisfies Record<string, Record<string, readonly TestCase[]>>;
+
+// =============================================================================
+// 2. Orchestration
+// =============================================================================
 
 describe("ClipboardManager", () => {
-	const mockClipboard = {
-		readText: vi.fn(),
-		writeText: vi.fn(),
-		write: vi.fn(),
-	};
-
 	beforeEach(() => {
 		// Mock browser APIs used by ClipboardManager
 		vi.stubGlobal("navigator", {
@@ -52,82 +95,50 @@ describe("ClipboardManager", () => {
 	});
 
 	describe("readText", () => {
-		it("should return text on successful read", async () => {
-			const sampleText = "Hello, world!";
-			mockClipboard.readText.mockResolvedValue(sampleText);
-
-			const result = await ClipboardManager.readText();
-			expect(result).toBe(sampleText);
-			expect(mockClipboard.readText).toHaveBeenCalledOnce();
+		TestRunner.success(testData.readText.success, null, async (input) => {
+			mockClipboard.readText.mockResolvedValue(input);
+			return await ClipboardManager.readText();
 		});
 
-		it("should return false on failure", async () => {
-			mockClipboard.readText.mockRejectedValue(new Error("Read failed"));
-
-			const result = await ClipboardManager.readText();
-			expect(result).toBe(false);
-			expect(mockClipboard.readText).toHaveBeenCalledOnce();
+		TestRunner.success(testData.readText.error, null, async (input) => {
+			mockClipboard.readText.mockRejectedValue(input);
+			return await ClipboardManager.readText();
 		});
 	});
 
 	describe("writeText", () => {
-		it("should return true on successful write", async () => {
-			const sampleText = "Hello, world!";
+		TestRunner.success(testData.writeText.success, null, async (input) => {
 			mockClipboard.writeText.mockResolvedValue(undefined);
-
-			const result = await ClipboardManager.writeText(sampleText);
-			expect(result).toBe(true);
-			expect(mockClipboard.writeText).toHaveBeenCalledWith(sampleText);
+			return await ClipboardManager.writeText(input);
 		});
 
-		it("should return false on failure", async () => {
-			const sampleText = "Hello, world!";
-			mockClipboard.writeText.mockRejectedValue(new Error("Write failed"));
-
-			const result = await ClipboardManager.writeText(sampleText);
-			expect(result).toBe(false);
-			expect(mockClipboard.writeText).toHaveBeenCalledWith(sampleText);
+		TestRunner.success(testData.writeText.error, null, async (input) => {
+			mockClipboard.writeText.mockRejectedValue(input);
+			return await ClipboardManager.writeText(input);
 		});
 	});
 
 	describe("write", () => {
-		it("should return true on successful write", async () => {
-			const data = "some data";
-			const mimetype = "text/plain";
+		TestRunner.success(testData.write.success, null, async (input) => {
 			mockClipboard.write.mockResolvedValue(undefined);
-
-			const result = await ClipboardManager.write(data, mimetype);
-			expect(result).toBe(true);
-			expect(mockClipboard.write).toHaveBeenCalledOnce();
+			return await ClipboardManager.write(input.data, input.mimetype);
 		});
 
-		it("should return false on failure", async () => {
-			const data = "some data";
-			const mimetype = "text/plain";
+		TestRunner.success(testData.write.error, null, async (input) => {
 			mockClipboard.write.mockRejectedValue(new Error("Write failed"));
-
-			const result = await ClipboardManager.write(data, mimetype);
-			expect(result).toBe(false);
-			expect(mockClipboard.write).toHaveBeenCalledOnce();
+			return await ClipboardManager.write(input.data, input.mimetype);
 		});
 	});
 
 	describe("clear", () => {
-		it("should return true on successful clear", async () => {
+		TestRunner.success(testData.clear.success, null, async () => {
 			mockClipboard.writeText.mockResolvedValue(undefined);
-
-			const result = await ClipboardManager.clear();
-			expect(result).toBe(true);
-			// clear() calls writeText with an empty string
-			expect(mockClipboard.writeText).toHaveBeenCalledWith("");
+			return await ClipboardManager.clear();
 		});
 
-		it("should return false on failure", async () => {
-			mockClipboard.writeText.mockRejectedValue(new Error("Clear failed"));
-
-			const result = await ClipboardManager.clear();
-			expect(result).toBe(false);
-			expect(mockClipboard.writeText).toHaveBeenCalledWith("");
+		TestRunner.success(testData.clear.error, null, async (input) => {
+			mockClipboard.writeText.mockRejectedValue(input);
+			return await ClipboardManager.clear();
 		});
 	});
 });
