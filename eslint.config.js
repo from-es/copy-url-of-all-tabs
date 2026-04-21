@@ -111,6 +111,12 @@ const customRules = [
 							group   : "builtin",
 							position: "after",
 						},
+						// Vitest 関連のインポートは builtin の次に配置
+						{
+							pattern : "vitest{,/**}",
+							group   : "builtin",
+							position: "after",
+						},
 						// Svelte 関連のインポートは builtin の次に配置
 						{
 							pattern : "{svelte,**/*.svelte,**/*.svelte.*,./**/*.svelte,./**/*.svelte.*,../**/*.svelte,../**/*.svelte.*,@/**/*.svelte,@/**/*.svelte.*}",
@@ -215,6 +221,22 @@ const customRules = [
 		rules: {
 			// Stylistic Issues
 			"quotes": [ "error", "double", { avoidEscape: true, "allowTemplateLiterals": true } ]  // 可能な限り二重引用符を使用
+		}
+	},
+	{
+		// テストコード用のルール緩和
+		files: [
+			"tests/**/*.test.ts",
+			"tests/**/*.test.js",
+			"src/**/*.test.ts",
+			"src/**/*.test.js"
+		],
+		rules: {
+			// テスト内のヘルパー関数等では JSDoc を必須としない
+			"jsdoc/require-jsdoc": "off",
+			// テストの可読性を優先し、export の位置やまとめ方の制約を緩和
+			"import/group-exports": "off",
+			"import/exports-last" : "off"
 		}
 	}
 ];
