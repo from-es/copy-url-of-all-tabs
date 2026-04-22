@@ -11,10 +11,12 @@
  *
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
 import { setTextareaHeightAutomatically } from "@/assets/js/utils/setTextareaHeightAutomatically";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 2. Orchestration
@@ -59,8 +61,8 @@ describe("setTextareaHeightAutomatically Utility", () => {
 	});
 
 	describe("Error cases", () => {
-		it("should throw TypeError if event is not an instance of Event", () => {
-			expect(() => setTextareaHeightAutomatically({} as any)).toThrow(TypeError);
+		it("should throw TypeError when non-HTMLElement is passed", () => {
+			expect(() => setTextareaHeightAutomatically({} as IntentionalAnyForValidation)).toThrow(TypeError);
 		});
 
 		it("should throw TypeError if event.currentTarget is not an instance of HTMLTextAreaElement", () => {

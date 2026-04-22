@@ -9,11 +9,13 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, afterEach, vi } from "vitest";
 import { toUniqueArray, validatePrimitiveArray } from "@/assets/js/utils/toUniqueArray";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 1. Definition of test data
@@ -32,8 +34,8 @@ const testData = {
 			})(), expected: [ { id: 1 }, { id: 1 } ] } // Objects with the same reference are removed, while objects with the same content but different references remain.
 		],
 		error: [
-			{ name: "should throw an error if non-array (null) is passed", input: null as any, expected: /Invalid: expected an array/ },
-			{ name: "should throw an error if non-array (number) is passed", input: 123 as any, expected: /Invalid: expected an array/ }
+			{ name: "should throw an error if non-array (null) is passed", input: null as IntentionalAnyForValidation, expected: /Invalid: expected an array/ },
+			{ name: "should throw an error if non-array (number) is passed", input: 123 as IntentionalAnyForValidation, expected: /Invalid: expected an array/ }
 		]
 	},
 	validatePrimitiveArray: {
@@ -45,10 +47,10 @@ const testData = {
 			{ name: "should consider an array of only Symbols as valid", input: [ Symbol("a"), Symbol("b") ] }
 		],
 		error: [
-			{ name: "should throw an error if non-array is passed", input: null as any, expected: /Invalid: expected an array/ },
-			{ name: "should throw an error if an unauthorized type (object) is included", input: [ {} ] as any, expected: /Invalid: expected array element type/ },
-			{ name: "should throw an error if an unauthorized type (null) is included", input: [ null ] as any, expected: /Invalid: expected array element type/ },
-			{ name: "should throw an error if mixed types (number and string) are included", input: [ 1, "a" ] as any, expected: /Invalid: all elements in array must be of the same type/ }
+			{ name: "should throw an error if non-array is passed", input: null as IntentionalAnyForValidation, expected: /Invalid: expected an array/ },
+			{ name: "should throw an error if an unauthorized type (object) is included", input: [ {} ] as IntentionalAnyForValidation, expected: /Invalid: expected array element type/ },
+			{ name: "should throw an error if an unauthorized type (null) is included", input: [ null ] as IntentionalAnyForValidation, expected: /Invalid: expected array element type/ },
+			{ name: "should throw an error if mixed types (number and string) are included", input: [ 1, "a" ] as IntentionalAnyForValidation, expected: /Invalid: all elements in array must be of the same type/ }
 		]
 	}
 } as const satisfies Record<string, Record<string, readonly TestCase[]>>;

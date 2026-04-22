@@ -9,11 +9,13 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, afterEach, vi } from "vitest";
 import { getWidthOfStringLength } from "@/assets/js/utils/getWidthOfStringLength";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 1. Definition of test data
@@ -33,7 +35,7 @@ const testData = {
 		{ name: "should count complex emojis (👨‍👩‍👧‍👦) as the sum of full-width components", input: "👨‍👩‍👧‍👦", expected: 14 }
 	],
 	error: [
-		{ name: "should throw TypeError when non-string is passed", input: [ 123 ] as any, expected: TypeError }
+		{ name: "should throw TypeError when non-string is passed", input: [ 123 ] as IntentionalAnyForValidation, expected: TypeError }
 	]
 } as const satisfies Record<string, readonly TestCase[]>;
 

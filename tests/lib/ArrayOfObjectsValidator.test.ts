@@ -9,12 +9,14 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
 import v8n from "v8n";
 import { ArrayOfObjectsValidator } from "@/assets/js/lib/user/ArrayOfObjectsValidator";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 1. Definition of test data
@@ -144,7 +146,7 @@ describe("ArrayOfObjectsValidator", () => {
 			validator.validate([], schema);
 			const result = validator.test_lastResult;
 			if (result) {
-				(result.source.rules as any).stringified = null;
+				(result.source.rules as IntentionalAnyForValidation).stringified = null;
 			}
 
 			const spyWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -171,9 +173,9 @@ describe("ArrayOfObjectsValidator", () => {
 
 		it("should throw an exception when an invalid type is passed", () => {
 			// Act & Assert
-			expect(() => ArrayOfObjectsValidator.stringifySchemaRules(null as any)).toThrow(TypeError);
-			expect(() => ArrayOfObjectsValidator.stringifySchemaRules(123 as any)).toThrow(TypeError);
-			expect(() => ArrayOfObjectsValidator.stringifySchemaRules([]) as any).toThrow(TypeError);
+			expect(() => ArrayOfObjectsValidator.stringifySchemaRules(null as IntentionalAnyForValidation)).toThrow(TypeError);
+			expect(() => ArrayOfObjectsValidator.stringifySchemaRules(123 as IntentionalAnyForValidation)).toThrow(TypeError);
+			expect(() => ArrayOfObjectsValidator.stringifySchemaRules([]) as IntentionalAnyForValidation).toThrow(TypeError);
 		});
 
 		it("should correctly stringify complex arguments (RegExp, Array, Object)", () => {

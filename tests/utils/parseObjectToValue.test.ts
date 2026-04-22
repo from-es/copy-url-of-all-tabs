@@ -9,11 +9,13 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
 import { parseObjectToValue } from "@/assets/js/utils/parseObjectToValue";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 1. Definition of test data
@@ -69,13 +71,13 @@ describe("parseObjectToValue Utility", () => {
 		});
 	});
 
-	describe("Error handling", () => {
-		it("should throw a TypeError if the argument is null", () => {
-			expect(() => parseObjectToValue(null as any)).toThrow(TypeError);
+	describe("Error cases", () => {
+		it("should throw TypeError when invalid data (null) is passed", () => {
+			expect(() => parseObjectToValue(null as IntentionalAnyForValidation)).toThrow(TypeError);
 		});
 
-		it("should throw a TypeError if the argument is not an object (e.g., number)", () => {
-			expect(() => parseObjectToValue(123 as any)).toThrow(TypeError);
+		it("should throw TypeError when invalid data (number) is passed", () => {
+			expect(() => parseObjectToValue(123 as IntentionalAnyForValidation)).toThrow(TypeError);
 		});
 
 		it("should throw a TypeError for objects with circular references", () => {

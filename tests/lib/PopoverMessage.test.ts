@@ -11,10 +11,12 @@
  *
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
 import { PopoverMessage } from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 describe("PopoverMessage", () => {
 	beforeEach(() => {
@@ -44,26 +46,26 @@ describe("PopoverMessage", () => {
 		const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 		// Act (invalid message options)
-		expect(PopoverMessage.create({} as any)).toBeNull();
-		expect(PopoverMessage.create(null as any)).toBeNull();
-		expect(PopoverMessage.create({ message: 123 } as any)).toBeNull();
-		expect(PopoverMessage.create({ message: [ 123 ] } as any)).toBeNull();
+		expect(PopoverMessage.create({} as IntentionalAnyForValidation)).toBeNull();
+		expect(PopoverMessage.create(null as IntentionalAnyForValidation)).toBeNull();
+		expect(PopoverMessage.create({ message: 123 } as IntentionalAnyForValidation)).toBeNull();
+		expect(PopoverMessage.create({ message: [ 123 ] } as IntentionalAnyForValidation)).toBeNull();
 
 		// Invalid messagetype
-		expect(PopoverMessage.create({ message: "a", messagetype: "invalid" as any })).toBeNull();
+		expect(PopoverMessage.create({ message: "a", messagetype: "invalid" as IntentionalAnyForValidation })).toBeNull();
 
 		// Invalid timeout
 		expect(PopoverMessage.create({ message: "a", timeout: 0 })).toBeNull();
 		expect(PopoverMessage.create({ message: "a", timeout: -1 })).toBeNull();
-		expect(PopoverMessage.create({ message: "a", timeout: "5000" as any })).toBeNull();
+		expect(PopoverMessage.create({ message: "a", timeout: "5000" as IntentionalAnyForValidation })).toBeNull();
 
 		// Invalid fontsize
-		expect(PopoverMessage.create({ message: "a", fontsize: 12 as any })).toBeNull();
+		expect(PopoverMessage.create({ message: "a", fontsize: 12 as IntentionalAnyForValidation })).toBeNull();
 
 		// Invalid color
-		expect(PopoverMessage.create({ message: "a", color: "red" as any })).toBeNull();
-		expect(PopoverMessage.create({ message: "a", color: { font: 123 as any } })).toBeNull();
-		expect(PopoverMessage.create({ message: "a", color: { background: null as any } })).toBeNull();
+		expect(PopoverMessage.create({ message: "a", color: "red" as IntentionalAnyForValidation })).toBeNull();
+		expect(PopoverMessage.create({ message: "a", color: { font: 123 as IntentionalAnyForValidation } })).toBeNull();
+		expect(PopoverMessage.create({ message: "a", color: { background: null as IntentionalAnyForValidation } })).toBeNull();
 
 		// Assert
 		expect(spy).toHaveBeenCalled();

@@ -82,6 +82,7 @@ describe('算術モジュール', () => {
  * @see {@link project/vitest.config.ts} - グローバル設定
  * @see {@link project/tests/shared/support/setup.ts} - 共通モック
  * @see {@link project/tests/shared/support/TestRunner.ts} - テスト実行エンジン
+ * @see {@link project/tests/shared/types/validation.ts} - バリデーションテスト用の型定義（任意）
  */
 
 import { describe, beforeEach, afterEach, expect, vi } from "vitest";
@@ -134,6 +135,13 @@ describe("{{モジュール名}}", () => {
 ### 2.6 例外的なケースへの対応
 厳密な非同期のシーケンス検証など、`TestRunner` のパターンが当てはまらない場合は、標準の `it` ブロックを使用できます。
 - **必須要件**: 標準パターンを使用しなかった理由を、ファイル冒頭の JSDoc に明記しなければなりません。
+
+### 2.7 バリデーションテストにおける不正な型の扱い
+実行時のバリデーション（型チェック）をテストする際、TypeScript の静的解析ではブロックされる不正な値を意図的に渡す必要があります。この際、ESLint の `no-explicit-any` 警告を回避しつつ意図を明確にするため、プロジェクト共通の型を使用してください。
+- **ルール**: 生の `as any` ではなく、`as IntentionalAnyForValidation` を使用してください。
+- **目的**: 型チェックのバイパスがテスト目的の意図的なものであることを明示し、ESLint 警告の抑制箇所を一箇所に集約するためです。
+- **インポート**: `import { type IntentionalAnyForValidation } from "../shared/types";`
+- **JSDoc**: ファイルヘッダーに `@see {@link project/tests/shared/types/validation.ts} - バリデーションテスト用の型定義` を追加してください。
 
 ---
 

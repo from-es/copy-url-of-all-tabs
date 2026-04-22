@@ -9,11 +9,13 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, afterEach, beforeAll, vi } from "vitest";
 import { generateID } from "@/assets/js/utils/generateID";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 0. Environmental setup (Mocking crypto.getRandomValues)
@@ -65,15 +67,15 @@ const testData = {
 	],
 	error: [
 		{ name: "should throw TypeError when non-integer (1.5) is passed as length", input: [ 1.5 ], expected: TypeError },
-		{ name: "should throw TypeError when a string is passed as length", input: [ "8" as any ], expected: TypeError },
+		{ name: "should throw TypeError when a string is passed as length", input: [ "8" as IntentionalAnyForValidation ], expected: TypeError },
 		{ name: "should throw RangeError when length is 0 or less", input: [ 0 ], expected: RangeError },
 		{ name: "should throw RangeError when length is a negative number", input: [ -1 ], expected: RangeError },
 		{ name: "should throw TypeError when options are empty (all character types are false)", input: [ 8, { number: false } ], expected: TypeError },
-		{ name: "should throw TypeError when options are not an object", input: [ 8, "invalid" as any ], expected: TypeError },
-		{ name: "should throw TypeError when character.number is not a boolean", input: [ 8, { number: "true" as any } ], expected: TypeError },
-		{ name: "should throw TypeError when character.alphabet.uppercase is not a boolean", input: [ 8, { alphabet: { uppercase: "true" as any } } ], expected: TypeError },
-		{ name: "should throw TypeError when character.alphabet.lowercase is not a boolean", input: [ 8, { alphabet: { lowercase: "true" as any } } ], expected: TypeError },
-		{ name: "should throw TypeError when character.symbol is not a boolean", input: [ 8, { symbol: "true" as any } ], expected: TypeError }
+		{ name: "should throw TypeError when options are not an object", input: [ 8, "invalid" as IntentionalAnyForValidation ], expected: TypeError },
+		{ name: "should throw TypeError when character.number is not a boolean", input: [ 8, { number: "true" as IntentionalAnyForValidation } ], expected: TypeError },
+		{ name: "should throw TypeError when character.alphabet.uppercase is not a boolean", input: [ 8, { alphabet: { uppercase: "true" as IntentionalAnyForValidation } } ], expected: TypeError },
+		{ name: "should throw TypeError when character.alphabet.lowercase is not a boolean", input: [ 8, { alphabet: { lowercase: "true" as IntentionalAnyForValidation } } ], expected: TypeError },
+		{ name: "should throw TypeError when character.symbol is not a boolean", input: [ 8, { symbol: "true" as IntentionalAnyForValidation } ], expected: TypeError }
 	]
 } as const satisfies Record<string, readonly TestCase[]>;
 

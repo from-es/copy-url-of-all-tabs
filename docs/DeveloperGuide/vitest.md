@@ -82,6 +82,7 @@ Use this template as your starting point for new tests.
  * @see {@link project/vitest.config.ts} - Global settings
  * @see {@link project/tests/shared/support/setup.ts} - Shared mocks
  * @see {@link project/tests/shared/support/TestRunner.ts} - Test execution engine
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests (Optional)
  */
 
 import { describe, beforeEach, afterEach, expect, vi } from "vitest";
@@ -134,6 +135,13 @@ describe("{{Module Name}}", () => {
 ### 2.6 Handling Exceptions
 If a test is too complex for `TestRunner` (e.g., strict async sequencing), you may use standard `it` blocks.
 - **Requirement**: You **must** explain why the standard pattern was not used in the file's JSDoc.
+
+### 2.7 Handling Invalid Types for Validation Tests
+When testing runtime validation (type checking), you must intentionally pass invalid values that TypeScript's static analysis would normally block. To do this while avoiding ESLint `no-explicit-any` warnings, use the project's semantic type.
+- **Rule**: Instead of `as any`, use `as IntentionalAnyForValidation`.
+- **Purpose**: This clarifies that the type bypassing is intentional for testing purposes and centralizes ESLint suppression.
+- **Import**: `import { type IntentionalAnyForValidation } from "../shared/types";`
+- **JSDoc**: Add `@see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests` to the file header.
 
 ---
 

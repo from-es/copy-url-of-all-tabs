@@ -9,11 +9,13 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
 import { compareVersions } from "@/assets/js/utils/CompareVersions";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 1. Definition of test data
@@ -77,7 +79,7 @@ describe("compareVersions", () => {
 
 	describe("Success cases: Comparison of valid versions", () => {
 		TestRunner.success(testData.success, null, (input) => {
-			return compareVersions(input[0] as any, input[1] as any);
+			return compareVersions(input[0] as IntentionalAnyForValidation, input[1] as IntentionalAnyForValidation);
 		});
 	});
 
@@ -87,7 +89,7 @@ describe("compareVersions", () => {
 			vi.spyOn(console, "error").mockImplementation(() => {});
 
 			// Act
-			const result = compareVersions(input[0] as any, input[1] as any);
+			const result = compareVersions(input[0] as IntentionalAnyForValidation, input[1] as IntentionalAnyForValidation);
 
 			// Assert
 			return result;

@@ -9,11 +9,13 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
 import { hasParentNode } from "@/assets/js/utils/hasParentNode";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 1. Definition of test data
@@ -21,8 +23,8 @@ import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 const testData = {
 	error: [
-		{ name: "should throw TypeError when non-HTMLElement (null) is passed", input: [ null as any ], expected: TypeError },
-		{ name: "should throw TypeError when non-HTMLElement (number) is passed", input: [ 123 as any ], expected: TypeError }
+		{ name: "should throw TypeError when non-HTMLElement (null) is passed", input: [ null as IntentionalAnyForValidation ], expected: TypeError },
+		{ name: "should throw TypeError when non-HTMLElement (number) is passed", input: [ 123 as IntentionalAnyForValidation ], expected: TypeError }
 	]
 } as const satisfies Record<string, readonly TestCase[]>;
 

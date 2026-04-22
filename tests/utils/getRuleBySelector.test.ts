@@ -11,10 +11,12 @@
  *
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
 import { getRuleBySelector } from "@/assets/js/utils/getRuleBySelector";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 2. Orchestration
@@ -83,8 +85,8 @@ describe("getRuleBySelector Utility", () => {
 		expect(result).toBeNull();
 	});
 
-	it("should throw TypeError if the argument is not a string", () => {
-		expect(() => getRuleBySelector(123 as any)).toThrow(TypeError);
+	it("should throw TypeError when non-string is passed", () => {
+		expect(() => getRuleBySelector(123 as IntentionalAnyForValidation)).toThrow(TypeError);
 	});
 
 	it("should throw TypeError if the argument is an empty string", () => {

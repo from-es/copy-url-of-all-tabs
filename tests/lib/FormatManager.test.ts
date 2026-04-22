@@ -9,12 +9,14 @@
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
  * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import type { Browser } from "wxt/browser";
 import { describe, afterEach, vi } from "vitest";
 import { FormatManager } from "@/entrypoints/popup/js/FormatManager";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 // =============================================================================
 // 1. Definition of test data
@@ -93,7 +95,7 @@ const testData = {
 		{
 			name: "format: custom - should treat missing titles or URLs as empty strings",
 			input: {
-				tabs: [ { title: undefined, url: undefined } as any ],
+				tabs: [ { title: undefined, url: undefined } as IntentionalAnyForValidation ],
 				format: "custom", template: "$title|$url", sanitize: false
 			},
 			expected: "|"
@@ -121,8 +123,8 @@ describe("FormatManager", () => {
 		TestRunner.success(testData.success, null, (input) => {
 			// Arrange & Act
 			return FormatManager.format(
-				input.tabs as any,
-				input.format as any,
+				input.tabs as IntentionalAnyForValidation,
+				input.format as IntentionalAnyForValidation,
 				input.template,
 				input.sanitize
 			);
@@ -135,8 +137,8 @@ describe("FormatManager", () => {
 			vi.spyOn(console, "error").mockImplementation(() => {});
 			// Act & Assert
 			return FormatManager.format(
-				input.tabs as any,
-				input.format as any,
+				input.tabs as IntentionalAnyForValidation,
+				input.format as IntentionalAnyForValidation,
 				input.template,
 				input.sanitize
 			);

@@ -10,10 +10,12 @@
  *
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
  * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
 import { ConsoleManager } from "@/assets/js/lib/user/ConsoleManager";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
 describe("ConsoleManager", () => {
 	beforeEach(() => {
@@ -70,27 +72,27 @@ describe("ConsoleManager", () => {
 	it("should throw an error when invalid options are set", () => {
 		// Act & Assert
 		expect(() => {
-			ConsoleManager.option({ loglevel: "invalid" as any });
+			ConsoleManager.option({ loglevel: "invalid" as IntentionalAnyForValidation });
 		}).toThrow();
 
 		expect(() => {
-			ConsoleManager.option({ logging: "not-a-boolean" as any });
+			ConsoleManager.option({ logging: "not-a-boolean" as IntentionalAnyForValidation });
 		}).toThrow();
 
 		expect(() => {
-			ConsoleManager.option({ methodLabel: "not-a-boolean" as any });
+			ConsoleManager.option({ methodLabel: "not-a-boolean" as IntentionalAnyForValidation });
 		}).toThrow();
 
 		expect(() => {
-			ConsoleManager.option({ timestamp: "not-a-boolean" as any });
+			ConsoleManager.option({ timestamp: "not-a-boolean" as IntentionalAnyForValidation });
 		}).toThrow();
 
 		expect(() => {
-			ConsoleManager.option({ timecoordinate: "not-utc-or-gmt" as any });
+			ConsoleManager.option({ timecoordinate: "not-utc-or-gmt" as IntentionalAnyForValidation });
 		}).toThrow();
 
 		expect(() => {
-			ConsoleManager.option(null as any);
+			ConsoleManager.option(null as IntentionalAnyForValidation);
 		}).toThrow();
 	});
 
