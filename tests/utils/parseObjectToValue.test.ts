@@ -4,6 +4,10 @@
  * Verifies the simple deep copy functionality using JSON serialization/deserialization,
  * provided by `parseObjectToValue.ts`.
  *
+ * This file uses a manual `it` block for identity verification (reference checking)
+ * because the standard `TestRunner.success` pattern focuses on value equality (`toEqual`),
+ * whereas deep copy verification requires identity inequality (`not.toBe`).
+ *
  * @file
  *
  * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
@@ -43,6 +47,27 @@ const testData = {
 			input: { date: new Date("2026-04-11T00:00:00Z") },
 			expected: { date: "2026-04-11T00:00:00.000Z" }
 		}
+	],
+	error: [
+		{
+			name: "should throw TypeError when invalid data (null) is passed",
+			input: null as IntentionalAnyForValidation,
+			expected: TypeError
+		},
+		{
+			name: "should throw TypeError when invalid data (number) is passed",
+			input: 123 as IntentionalAnyForValidation,
+			expected: TypeError
+		},
+		{
+			name: "should throw a TypeError for objects with circular references",
+			input: (() => {
+				const obj: any = { a: 1 };
+				obj.self = obj;
+				return obj;
+			})(),
+			expected: TypeError
+		}
 	]
 } as const satisfies Record<string, readonly TestCase[]>;
 
@@ -56,6 +81,9 @@ describe("parseObjectToValue Utility", () => {
 	});
 
 	describe("Success cases", () => {
+		TestRunner.success(testData.success, {}, (input) => {
+			return parseObjectToValue(input);
+		});
 
 		it("return value should be a different reference from the original object (deep copy)", () => {
 			// Arrange
@@ -72,21 +100,8 @@ describe("parseObjectToValue Utility", () => {
 	});
 
 	describe("Error cases", () => {
-		it("should throw TypeError when invalid data (null) is passed", () => {
-			expect(() => parseObjectToValue(null as IntentionalAnyForValidation)).toThrow(TypeError);
-		});
-
-		it("should throw TypeError when invalid data (number) is passed", () => {
-			expect(() => parseObjectToValue(123 as IntentionalAnyForValidation)).toThrow(TypeError);
-		});
-
-		it("should throw a TypeError for objects with circular references", () => {
-			// Arrange
-			const obj: any = { a: 1 };
-			obj.self = obj;
-
-			// Act & Assert
-			expect(() => parseObjectToValue(obj)).toThrow(TypeError);
+		TestRunner.error(testData.error, {}, (input) => {
+			parseObjectToValue(input);
 		});
 	});
 });
