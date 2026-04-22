@@ -22,6 +22,11 @@ export default defineConfig({
 		// ブラウザで動作するコンポーネントのテストが可能になります。
 		environment: "jsdom",
 
+		// 共通のセットアップファイルを指定します。
+		setupFiles: [
+			"tests/shared/support/setup.ts"
+		],
+
 		// テスト対象のファイルパターンを指定します。
 		// 'src'ディレクトリ or 'tests'ディレクトリ以下の'.test.js'または'.test.ts'ファイルを対象とします。
 		include: [

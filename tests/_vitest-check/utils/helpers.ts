@@ -2,7 +2,6 @@
  * This file provides a simple addition utility for testing purposes.
  *
  * @file
- * @lastModified 2026-03-25
  */
 
 /**
