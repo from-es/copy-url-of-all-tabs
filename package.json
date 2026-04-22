@@ -1,7 +1,7 @@
 {
   "name": "copy-url-of-all-tabs",
   "description": "Copy all open tab URLs in various formats or Open all URLs in the clipboard at once. Cross-browser extension supporting both Chrome and Firefox.",
-  "version": "1.20.8",
+  "version": "1.20.9",
   "license": "MIT",
   "type": "module",
   "repository": {
