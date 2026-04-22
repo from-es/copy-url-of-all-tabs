@@ -119,6 +119,22 @@ export class ArrayOfObjectsValidator {
 	}
 
 	/**
+	 * For testing purposes only.
+	 * Returns the internal state of the last validation result.
+	 */
+	get test_lastResult(): ValidationFinalResult | null {
+		return this.#lastResult;
+	}
+
+	/**
+	 * For testing purposes only.
+	 * Exposes the internal extractViolations method.
+	 */
+	test_extractViolations(error: unknown): ValidationViolation[] {
+		return this.#extractViolations(error);
+	}
+
+	/**
 	 * Helper for #stringifySingleV8nRule to recursively stringify arguments.
 	 *
 	 * @param   {unknown} arg - The argument to stringify.

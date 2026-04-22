@@ -1,92 +1,184 @@
 /**
- * This file tests the `sanitizeForSendMessage` utility function.
+ * Tests for sanitizeForSendMessage utility
  *
- * The purpose of this function is to prepare an object to be sent via
- * `chrome.runtime.sendMessage` by removing properties that cannot be
- * serialized by the structured clone algorithm, such as functions and symbols.
- *
- * The tests verify three main scenarios:
- * 1. That non-serializable properties are correctly removed from a complex object.
- * 2. That an already-serializable object remains unchanged.
- * 3. That it correctly handles arrays containing objects with non-serializable properties.
+ * Verifies the data cleansing functionality for MessagePassing (such as removing functions
+ * that cannot be structured cloned), provided by `sanitizeForSendMessage.ts`.
  *
  * @file
- * @lastModified 2026-03-25
+ *
+ * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
+ * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
 import { sanitizeForSendMessage } from "@/assets/js/utils/sanitizeForSendMessage";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+
+// =============================================================================
+// 1. Definition of test data
+// =============================================================================
+
+const testData = {
+	success: [
+		{
+			name: "should remove functions and symbols from an object",
+			input: {
+				aString: "Hello",
+				aNumber: 123,
+				aBoolean: true,
+				anArray: [ 1, "two", { three: 3 } ],
+				aFunction: () => "I am a function",
+				aSymbol: Symbol("I am a symbol"),
+				aNull: null,
+				anUndefined: undefined,
+				nested: {
+					aValue: "nested value",
+					aNestedFunction: () => "I am a nested function",
+				},
+			},
+			expected: {
+				aString: "Hello",
+				aNumber: 123,
+				aBoolean: true,
+				anArray: [ 1, "two", { three: 3 } ],
+				aNull: null,
+				anUndefined: undefined,
+				nested: {
+					aValue: "nested value",
+				},
+			}
+		},
+		{
+			name: "should not modify objects that are already serializable",
+			input: {
+				aString: "Hello",
+				aNumber: 123,
+				anArray: [ 1, 2, 3 ],
+				nested: {
+					aValue: "nested"
+				}
+			},
+			expected: {
+				aString: "Hello",
+				aNumber: 123,
+				anArray: [ 1, 2, 3 ],
+				nested: {
+					aValue: "nested"
+				}
+			}
+		},
+		{
+			name: "should remove functions from an array of objects containing functions",
+			input: [
+				{ id: 1, action: () => "action 1" },
+				{ id: 2, value: "serializable" },
+				{ id: 3, action: () => "action 3" },
+			],
+			expected: [
+				{ id: 1 },
+				{ id: 2, value: "serializable" },
+				{ id: 3 },
+			]
+		},
+		{
+			name: "should remove DOM nodes from an object containing nodes",
+			input: {
+				text: "some text",
+				element: document.createElement("div"),
+				nested: {
+					span: document.createElement("span")
+				}
+			},
+			expected: {
+				text: "some text",
+				nested: {}
+			}
+		}
+	]
+} as const satisfies Record<string, readonly TestCase[]>;
+
+// =============================================================================
+// 2. Orchestration
+// =============================================================================
 
 describe("sanitizeForSendMessage", () => {
-	it("should remove non-serializable properties like functions and symbols", () => {
-		// 1. Arrange: Create a complex object with non-serializable properties
-		const originalObject = {
-			aString: "Hello",
-			aNumber: 123,
-			aBoolean: true,
-			anArray: [ 1, "two", { three: 3 } ],
-			aFunction: () => "I am a function",
-			aSymbol: Symbol("I am a symbol"),
-			aNull: null,
-			anUndefined: undefined,
-			nested: {
-				aValue: "nested value",
-				aNestedFunction: () => "I am a nested function",
-			},
-		};
+	let originalStructuredClone: any;
 
-		// 2. Act: Sanitize the object
-		const sanitizedObject = sanitizeForSendMessage(originalObject);
-
-		// 3. Assert: Check that non-serializable properties are removed
-		expect(sanitizedObject).not.toHaveProperty("aFunction");
-		expect(sanitizedObject).not.toHaveProperty("aSymbol");
-		expect(sanitizedObject.nested).not.toHaveProperty("aNestedFunction");
-
-		// Also check that serializable properties remain
-		expect(sanitizedObject.aString).toBe("Hello");
-		expect(sanitizedObject.aNumber).toBe(123);
-		expect(sanitizedObject.anArray).toEqual([ 1, "two", { three: 3 } ]);
-		expect(sanitizedObject.nested.aValue).toBe("nested value");
-
-		// Check how it handles undefined
-		// structuredClone supports undefined, so it should still be there.
-		expect(sanitizedObject).toHaveProperty("anUndefined");
-		expect(sanitizedObject.anUndefined).toBeUndefined();
+	beforeEach(() => {
+		originalStructuredClone = globalThis.structuredClone;
 	});
 
-	it("should not modify an object that is already serializable", () => {
-		const serializableObject = {
-			aString: "Hello",
-			aNumber: 123,
-			anArray: [ 1, 2, 3 ],
-			nested: {
-				aValue: "nested"
+	afterEach(() => {
+		globalThis.structuredClone = originalStructuredClone;
+		vi.clearAllMocks();
+	});
+
+	TestRunner.success(testData.success, null, (input) => {
+		// Arrange
+		// In a JSDOM environment, structuredClone might be able to clone DOM nodes.
+		// Therefore, we mock it to throw DataCloneError if property values contain functions or Nodes.
+		globalThis.structuredClone = vi.fn().mockImplementation((data) => {
+			const hasNonCloneable = (obj: any): boolean => {
+				if (!obj || typeof obj !== "object") { return false; }
+				for (const key in obj) {
+					const val = obj[key];
+					if (typeof val === "function" || typeof val === "symbol" || (typeof Node !== "undefined" && val instanceof Node)) { return true; }
+					if (hasNonCloneable(val)) { return true; }
+				}
+				return false;
+			};
+
+			if (hasNonCloneable(data)) {
+				const error = new Error("DataCloneError");
+				error.name = "DataCloneError";
+				throw error;
 			}
-		};
+			return originalStructuredClone(data);
+		});
 
-		// Use structuredClone to create a deep copy for comparison
-		const originalDeepCopy = structuredClone(serializableObject);
-
-		const sanitizedObject = sanitizeForSendMessage(serializableObject);
-
-		// The object should be deeply equal to the original
-		expect(sanitizedObject).toEqual(originalDeepCopy);
+		// Act
+		return sanitizeForSendMessage(input, { debug: true });
 	});
 
-	it("should handle arrays of objects with non-serializable properties", () => {
-		const arrayWithFunctions = [
-			{ id: 1, action: () => "action 1" },
-			{ id: 2, value: "serializable" },
-			{ id: 3, action: () => "action 3" },
-		];
+	describe("Options", () => {
+		it("should throw error if non-clonable properties are included when checkOnly is true", () => {
+			// Arrange
+			const data = { func: () => {} };
 
-		const sanitizedArray = sanitizeForSendMessage(arrayWithFunctions);
+			// Act & Assert
+			expect(() => sanitizeForSendMessage(data, { checkOnly: true })).toThrow("Invalid: data contains properties that cannot be structured cloned");
+		});
 
-		expect(sanitizedArray[0]).not.toHaveProperty("action");
-		expect(sanitizedArray[0].id).toBe(1);
-		expect(sanitizedArray[1]).toEqual({ id: 2, value: "serializable" });
-		expect(sanitizedArray[2]).not.toHaveProperty("action");
-		expect(sanitizedArray[2].id).toBe(3);
+		it("should output debug logs when debug is true", () => {
+			// Arrange
+			const data = { func: () => {} };
+			const spy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
+			// Act
+			sanitizeForSendMessage(data, { debug: true });
+
+			// Assert
+			expect(spy).toHaveBeenCalled();
+		});
+	});
+
+	describe("Error Handling", () => {
+		it("should throw an exception if structuredClone throws an error other than DataCloneError", () => {
+			// Arrange
+			const data = { a: 1 };
+			const originalClone = globalThis.structuredClone;
+			globalThis.structuredClone = vi.fn().mockImplementation(() => {
+				throw new Error("Unexpected Error");
+			});
+
+			try {
+				// Act & Assert
+				expect(() => sanitizeForSendMessage(data)).toThrow("Exception: an unexpected error occurred");
+			} finally {
+				// Cleanup
+				globalThis.structuredClone = originalClone;
+			}
+		});
 	});
 });

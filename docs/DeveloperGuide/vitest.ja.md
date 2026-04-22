@@ -1,390 +1,170 @@
-# Vitest: 高速でモダンな単体テストフレームワーク
+# Vitest ガイド：基礎からプロジェクト標準まで
 
-**最終更新日:** 2026年4月6日
+**最終更新日:** 2026年4月21日
 
-このドキュメントは、このプロジェクトで指定されたテストフレームワークである [Vitest](https://vitest.dev/) を使用した単体テストおよび結合テストの記述に関するガイドラインを提供します。
-
-## 概要
-
-Vitestは、Jest互換のAPIを提供する高速でモダンなテストフレームワークであり、直感的で効率的なテストを可能にします。私たちは、コードが信頼でき、バグがなく、期待どおりに動作することを確認するためにこれを使用します。
-
-## テストの記述方法
-
-### テストの基本構成
-
-ここでは、テストファイルを記述する上での基本的なルールと構造について説明します。
-
-1. **ファイル命名**: テストファイルには `.test.ts` または `.spec.ts` という**接尾辞を付ける必要**があります (例: `myFunction.test.ts`)。
-2. **ファイルの場所**: テストファイルは、ソースファイルに隣接する `__tests__` ディレクトリ、またはプロジェクトのルートにある中央集権的な `tests` ディレクトリに配置することが推奨されます。
-3. **テストの構造**: 一般的なテストファイルは `describe`、`it` (または `test`)、`expect` を使用して構成されます。
-    - `describe(name, fn)`: 関連するいくつかのテストをグループ化するブロックを作成します。
-    - `it(name, fn)`: これがテストケース自体です。
-    - `expect(value)`: アサーション（表明）を作成するために使用します。通常、「マッチャー」関数（例: `toBe`, `toEqual`, `toHaveBeenCalled`）と組み合わせて使用します。
-
-### テストファイルの検出について
-
-Vitestがどのようにテストファイルを検出するか、および上記の「ファイルの場所」について。
-
-Vitestは、デフォルトでプロジェクト内のすべてのディレクトリから、ファイル名が `.test.ts` や `.spec.ts` のようなパターンに一致するファイルを自動的にテストとして検出します。上記のディレクトリ構造は、**テストコードを整理するための推奨事項であり、Vitestの技術的な要件ではありません**。Vitestのテストファイル検出パターンは、設定ファイルの `include` オプションで制御されます。詳細は[Vitest公式ドキュメントのConfiguration](https://vitest.dev/config/)を参照してください。
-
-### テストコードの記述例
-
-はじめに、Vitest単体で完結する基本的なテスト（例1）を示し、その後でSvelteコンポーネントのような、追加ライブラリを要する応用的なテスト（例2）を解説します。
-
-#### 例1：純粋関数
-
-フレームワークに依存しない、純粋なTypeScript/JavaScript関数のテストは非常にシンプルです。
-
-まず、テストを実行するために`vitest`を開発依存関係としてインストールします。
-
-```bash
-npm install --save-dev vitest
-```
-
-次に、テスト対象となる`add`関数を`tests/_vitest-check/utils/helpers.ts`ファイルに作成します。
-
-**`tests/_vitest-check/utils/helpers.ts`**
-```typescript
-export function add(a: number, b: number): number {
-  return a + b;
-}
-```
-
-そして、この関数に対するテストコードを`tests/_vitest-check/utils/helpers.test.ts`ファイルに作成します
-
-```typescript
-import { add } from './helpers';
-import { describe, it, expect } from 'vitest';
-
-describe('add function', () => {
-  it('should return the sum of two numbers', () => {
-    // 準備
-    const a = 1;
-    const b = 2;
-
-    // 実行
-    const result = add(a, b);
-
-    // 検証
-    expect(result).toBe(3);
-  });
-
-  it('should handle negative numbers', () => {
-    expect(add(-1, -1)).toBe(-2);
-  });
-});
-```
-
-#### 例2：Svelteコンポーネント
-
-Svelteコンポーネントのテストには、`@sveltejs/vite-plugin-svelte`, `@testing-library/svelte`, `jsdom` などのライブラリを使用します。これらはVite用プラグイン、UIを仮想DOM環境でレンダリング、ユーザー操作をシミュレートするのに使用されます。
-
-このテスト方法は、Svelteの公式ドキュメントで推奨されているアプローチに準拠しています。詳細については、[Testing - Svelte Docs](https://svelte.dev/docs/svelte/testing) を参照してください。
-
-まず、必要な開発依存関係をインストールします。
-
-```bash
-npm install --save-dev vitest jsdom @vitest/ui @sveltejs/vite-plugin-svelte @testing-library/svelte @vitest/coverage-v8
-```
-
-インストールされる各モジュールの役割は以下の通りです。
-
-| モジュール                  | 説明                                                                                                         |
-| :-------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `vitest`                    | テストフレームワークの本体。                                                                                 |
-| `jsdom`                     | Node.js環境でDOMをシミュレートするためのライブラリ。ブラウザ環境を必要とするクライアントサイドコンポーネントのテストに使用。 |
-| `@vitest/ui`                | Vitestのテスト結果を視覚的に表示するためのUI。テストの実行状況をブラウザでインタラクティブに確認するために使用。 |
-| `@sveltejs/vite-plugin-svelte` | ViteでSvelteコンポーネントをコンパイルするためのプラグイン。テスト環境でSvelteファイルを処理するために必要。    |
-| `@testing-library/svelte`   | Svelteコンポーネントをテストするためのユーティリティライブラリ。ユーザーの操作をシミュレートし、コンポーネントの動作検証に使用。 |
-| `@vitest/coverage-v8`       | テストカバレッジを収集・レポートするためのプロバイダ。V8エンジンに組み込まれたカバレッジ機能を使用し、高速に動作。 |
-
-##### 動作環境
-
-本ドキュメントで解説する設定とコードは、以下の環境で動作確認されています。パッケージのバージョンアップにより問題が発生した場合は、この構成と比較してください。
-
-| パッケージ                      | バージョン   |
-| :------------------------------ | :--------- |
-| `svelte`                        | `^5.55.0`  |
-| `vitest`                        | `^4.0.18`  |
-| `jsdom`                         | `^29.0.1`  |
-| `@sveltejs/vite-plugin-svelte`  | `^6.2.4`   |
-| `@testing-library/svelte`       | `^5.3.1`   |
-| `@vitest/ui`                    | `^4.0.18`  |
-| `@vitest/coverage-v8`           | `^4.0.18`  |
-
-<br>
-
-次に、プロジェクトのルートディレクトリに `vitest.config.ts` ファイルを以下の内容で作成します。これにより、VitestはWXTのビルド設定とは独立して、テスト専用の設定で動作します。
-
-**`vitest.config.ts`**
-```typescript
-import { defineConfig, configDefaults } from 'vitest/config';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import tsconfigPaths from 'vite-tsconfig-paths';
-
-export default defineConfig({
-  plugins: [
-    // Vitest実行中はSvelteのホットモジュールリプレースメント(HMR)を無効化し、テストの安定性を確保します。
-    svelte({ hot: !process.env.VITEST }),
-    tsconfigPaths(),
-  ],
-  // `resolve.conditions` をトップレベルに設定します。
-  // これにより、Vitestが内部的に利用するViteのモジュール解決全体で、`package.json`の`browser`フィールドが優先的に参照されるようになります。
-  // Svelteコンポーネントのテスト時に`onMount`などのライフサイクル関数がサーバーサイドと誤認されてエラーになることを防ぎます。
-  resolve: {
-    conditions: ['browser'],
-  },
-  test: {
-    // `describe`, `it`, `expect` などを各テストファイルでimportせずにグローバルに利用可能にします。
-    globals: true,
-
-    // JSDOMをテスト環境として設定します。これにより、Node.js環境でDOM APIをシミュレートでき、
-    // ブラウザで動作するコンポーネントのテストが可能になります。
-    environment: 'jsdom',
-
-    // テスト対象のファイルパターンを指定します。
-    include: [
-      'src/**/*.test.{js,ts}',
-      'tests/**/*.test.{js,ts}',
-    ],
-
-    // テスト対象から除外するファイルやディレクトリのパターンを指定します。
-    // `tests/_vitest-check/` はスモークテスト専用の設定ファイル（`vitest.smoke.config.ts`）を使用して
-    // `npm run vitest:smoke` で個別に実行するため、ここでは除外します。
-    exclude: [
-      // node_modulesなどを誤って含めないよう、デフォルトの除外設定を継承することを推奨します。
-      ...configDefaults.exclude,
-      'tests/_vitest-check/**',
-    ],
-  },
-});
-```
-
-**注記:** `resolve.conditions` は `test` オブジェクトの中ではなく、設定のトップレベルに配置する必要があります。これにより、Vite全体のモジュール解決に設定が適用され、Svelteが正しくブラウザモードで動作するようになります。
-
-さらに、スモークテストを単独で実行するための専用設定ファイル `vitest.smoke.config.ts` も作成します。これが必要な理由は、Vitestの `--exclude` CLIオプションは設定ファイルの `exclude` リストに追記（マージ）されるだけであり、上書きできないためです。専用の設定ファイルを用意することで、この制限をクリーンに回避できます。
-
-**`vitest.smoke.config.ts`**
-```typescript
-import { defineConfig } from 'vitest/config';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import tsconfigPaths from 'vite-tsconfig-paths';
-
-export default defineConfig({
-  plugins: [
-    svelte({ hot: !process.env.VITEST }),
-    tsconfigPaths(),
-  ],
-  resolve: {
-    conditions: ['browser'],
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-
-    // スモークテストのみ: _vitest-check ディレクトリだけを対象とする
-    include: [
-      'tests/_vitest-check/**/*.test.{js,ts}',
-    ],
-  },
-});
-```
-
-次に、テスト対象の簡単なカウンターコンポーネント (`Counter.svelte`) を作成します。
-
-**`tests/_vitest-check/components/Counter.svelte`**
-```html
-<script lang="ts">
-  import { onMount } from "svelte";
-
-  let { count = 0 }: { count?: number } = $props();
-  let currentCount = $state(count);
-  const increment = () => {
-    currentCount += 1;
-  };
-
-  onMount(() => {
-    // onMountのようなブラウザ固有のライフサイクル関数が含まれている場合、
-    // Vitestが正しくブラウザ環境を認識していないとエラーになります。
-    console.log("Counter component mounted");
-  });
-</script>
-
-<main>
-  <h1>Counter</h1>
-  <p>Current count: {currentCount}</p>
-  <button onclick={increment}>Increment</button>
-</main>
-```
-
-そして、このコンポーネントに対するテスト (`Counter.test.ts`) を記述します。
-
-**`tests/_vitest-check/components/Counter.test.ts`**
-```typescript
-import { render, fireEvent, screen, cleanup } from '@testing-library/svelte';
-import { describe, it, expect, afterEach } from 'vitest';
-import Counter from './Counter.svelte';
-
-describe('Counter.svelte', () => {
-  // 各テストの実行後にDOMをクリーンアップし、テスト間の副作用（stateの残留など）を防ぎます。
-  afterEach(() => cleanup());
-
-  it('コンポーネントがマウントされ、初期カウントが正しく表示されること', () => {
-    // 1. 準備(Arrange): テスト対象のコンポーネントを初期値0でレンダリングします。
-    render(Counter, { props: { count: 0 } });
-
-    // 2. 検証(Assert): "Current count: 0" というテキストを持つ要素が存在することを確認します。
-    expect(screen.getByText('Current count: 0')).toBeTruthy();
-  });
-
-  it('ボタンクリックでカウントがインクリメントされること', async () => {
-    // 1. 準備(Arrange): コンポーネントを初期値0でレンダリングします。
-    render(Counter, { props: { count: 0 } });
-    const button = screen.getByText('Increment');
-
-    // 2. 実行(Act): ボタンを1回クリックします。
-    await fireEvent.click(button);
-
-    // 3. 検証(Assert): カウントが1になっていることを確認します。
-    expect(screen.getByText('Current count: 1')).toBeTruthy();
-
-    // 4. 実行(Act): ボタンをもう1回クリックします。
-    await fireEvent.click(button);
-
-    // 5. 検証(Assert): カウントが2になっていることを確認します。
-    expect(screen.getByText('Current count: 2')).toBeTruthy();
-  });
-});
-```
-
-
-## テストの実行方法
-
-`package.json` に、以下のようにテストスクリプトを定義します。効率化のため、プロジェクト本体のテストと、環境確認用のスモークテストを実行するコマンドを分離することを推奨します。
-
-**`package.json`**
-```json
-{
-  "scripts": {
-    "vitest": "vitest",
-    "vitest:run": "vitest run",
-    "vitest:ui": "vitest --ui",
-    "vitest:coverage": "vitest run --coverage",
-    "vitest:smoke": "vitest run --config vitest.smoke.config.ts"
-  }
-}
-```
-
-**`vitest:smoke` で `--config` を使う理由**
-`tests/_vitest-check/**` は `vitest.config.ts` の `exclude` に記載されています。VitestのCLIオプション `--exclude` は `exclude` リストに「追加」されるだけで、既存の設定を上書きすることはできません。専用の `vitest.smoke.config.ts`（conflictする `exclude` を持たず、`include: ['tests/_vitest-check/**']` のみを定義）を使うことで、この制限をクリーンに解決できます。
-
-これにより、以下のコマンドで各々の目的に応じたテストが実行可能になります。
+このドキュメントは、このプロジェクトにおける [Vitest](https://vitest.dev/) を使用した単体テストおよび結合テストの包括的なガイドです。「初学者向けの基礎」「プロジェクト独自の標準ルール」「高度な使用方法」の3部構成となっています。
 
 ---
 
-### `npm run vitest:run`
+## 第1部：テストの基礎 (For Beginners)
 
-**用途:** プロジェクト本体の全テストを実行。
+### 1.1 テストフレームワークを使用する理由
+`console.log` によるデバッグは一時的な確認には便利ですが、Vitestは以下の利点を提供します。
+- **関心の分離**: テストコードが製品ロジックを汚すことがありません。
+- **自動化**: 1つのコマンドで数百のチェックを数秒で実行できます。
+- **ドキュメント化**: テストはコードが「どう動作すべきか」を記述した、生きた仕様書になります。
+- **信頼性**: 自動化されたアサーションにより、人の解釈を通さずに「合格」を確認できます。
 
-**動作:** アプリケーションの全てのテストを実行します。`tests/_vitest-check/` ディレクトリのスモークテストは除外されます。これは、通常の開発中にアプリケーションの機能性を検証するために使用する主要なコマンドです。
+### 1.2 AAA パターン
+読みやすいテストを書くために、私たちは **Arrange（準備）→ Act（実行）→ Assert（検証）** パターンに従います。
+1.  **Arrange**: 環境、変数、モックをセットアップします。
+2.  **Act**: テスト対象の関数や振る舞いを実行します。
+3.  **Assert**: 結果が期待どおりか検証します。
 
-```bash
-npm run vitest:run
+### 1.3 基本構造 (`describe`, `it`, `expect`)
+```typescript
+import { describe, it, expect } from 'vitest';
+
+describe('算術モジュール', () => {
+  it('正しく加算できること（it ブロックがテストケースです）', () => {
+    // 1. Arrange (準備)
+    const a = 1;
+    const b = 2;
+
+    // 2. Act (実行)
+    const result = a + b;
+
+    // 3. Assert (検証)
+    expect(result).toBe(3);
+  });
+});
 ```
 
-### `npm run vitest:smoke`
+---
 
-**用途:** テスト環境の検証。
+## 第2部：プロジェクト標準構成 (Recommended Construction)
 
-**動作:** 専用の設定ファイル（`vitest.smoke.config.ts`）を使用して、`tests/_vitest-check/` ディレクトリ内のテストのみを実行します。テスト関連のパッケージをインストールまたは更新した後に、Vitest環境が正しく設定されていることを確認するために使用します。
+テストスイートの品質を維持するため、このプロジェクトの全てのテストは以下の基準に従う必要があります。
 
-> **注記:** このコマンドはパスのフィルタではなく `--config vitest.smoke.config.ts` を使用します。これは、`tests/_vitest-check/**` がメインの `vitest.config.ts` の `exclude` に記載されており、VitestのCLIオプション `--exclude` では上書きできない（追加のみ）ためです。専用の設定ファイルを使うことでこの制限をクリーンに解決しています。
+### 2.1 `TestRunner` によるデータ駆動テスト
+私たちは、テストデータと実行ロジックを分離する「データ駆動テスト」を推奨しています。共通の実行サイクルを処理するために、静的クラス `TestRunner` を使用します。
+- **利点**: ボイラープレートを削減し、テストを宣言的な記述にできます。「どうループさせるか」ではなく「何をテストするか」に集中できます。
 
-```bash
-npm run vitest:smoke
+### 2.2 ディレクトリ構造 (`shared/`)
+テストの支援ファイルは `tests/shared/` ディレクトリに集約されています。
+- **`support/TestRunner.ts`**: コアとなる実行エンジン。
+- **`support/setup.ts`**: 全テストで自動実行される共通モック（例: `wxt/browser`）。
+- **`fixtures/`**: 静的なJSONデータや、複雑なオブジェクトを生成するファクトリ関数。
+
+### 2.3 インポートの正規化
+可読性を高めるため、Vitest からのインポートは以下の4つのカテゴリに正規化して並べてください。
+1.  **Category 1: 構造 (Structure)**: `describe`, `it`, `test`, `suite`
+2.  **Category 2: ライフサイクル (Lifecycle)**: `beforeAll`, `beforeEach`, `afterEach`, `afterAll`
+3.  **Category 3: 検証 (Assertion)**: `expect`, `assert`
+4.  **Category 4: 補助・モック (Utility)**: `vi`
+
+**規則**: カテゴリ番号順に並べ、各カテゴリ内はアルファベット順に並べます。
+*例:* `import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";`
+
+### 2.4 ドキュメント基準 (JSDoc)
+すべてのテストファイルには `@file` ヘッダーを含めてください。また、新しい開発者がセットアップを理解しやすくするため、`@see` を使ってテスト基盤へのリンクを記述します。
+
+### 2.5 標準テストテンプレート
+新しいテストを作成する際は、このテンプレートをコピーして使用してください。
+
+```typescript
+/**
+ * {{モジュール名}} のテスト
+ *
+ * {{テストの目的や背景を簡潔に記述。}}
+ *
+ * @file
+ * @see {@link project/vitest.config.ts} - グローバル設定
+ * @see {@link project/tests/shared/support/setup.ts} - 共通モック
+ * @see {@link project/tests/shared/support/TestRunner.ts} - テスト実行エンジン
+ * @see {@link project/tests/shared/types/validation.ts} - バリデーションテスト用の型定義（任意）
+ */
+
+import { describe, beforeEach, afterEach, expect, vi } from "vitest";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+
+// =============================================================================
+// 1. テストデータの定義 (データとロジックの分離)
+// =============================================================================
+
+const testData = {
+	successCases: [
+		{ name: "ケースAの動作", input: { val: 1 }, expected: 2 },
+		{ name: "ケースBの動作", input: { val: 2 }, expected: 4 }
+	],
+	errorCases: [
+		{ name: "不正な入力でエラーを投げること", input: null, expected: "Invalid input" }
+	]
+} as const satisfies Record<string, readonly TestCase[]>;
+
+// =============================================================================
+// 2. オーケストレーション (構造定義)
+// =============================================================================
+
+describe("{{モジュール名}}", () => {
+	let context: any;
+
+	beforeEach(() => {
+		// Arrange: 標準的な準備
+		vi.clearAllMocks();
+	});
+
+	afterEach(() => {
+		// Cleanup: 後処理
+	});
+
+	describe("Success cases", () => {
+		TestRunner.success(testData.successCases, context, (input) => {
+			// return targetFunction(input);
+		});
+	});
+
+	describe("Error handling", () => {
+		TestRunner.error(testData.errorCases, context, (input) => {
+			// targetFunction(input);
+		});
+	});
+});
 ```
 
-### `npm run vitest`
+### 2.6 例外的なケースへの対応
+厳密な非同期のシーケンス検証など、`TestRunner` のパターンが当てはまらない場合は、標準の `it` ブロックを使用できます。
+- **必須要件**: 標準パターンを使用しなかった理由を、ファイル冒頭の JSDoc に明記しなければなりません。
 
-**用途:** 開発中の継続的なテスト実行（監視モード）。
+### 2.7 バリデーションテストにおける不正な型の扱い
+実行時のバリデーション（型チェック）をテストする際、TypeScript の静的解析ではブロックされる不正な値を意図的に渡す必要があります。この際、ESLint の `no-explicit-any` 警告を回避しつつ意図を明確にするため、プロジェクト共通の型を使用してください。
+- **ルール**: 生の `as any` ではなく、`as IntentionalAnyForValidation` を使用してください。
+- **目的**: 型チェックのバイパスがテスト目的の意図的なものであることを明示し、ESLint 警告の抑制箇所を一箇所に集約するためです。
+- **インポート**: `import { type IntentionalAnyForValidation } from "../shared/types";`
+- **JSDoc**: ファイルヘッダーに `@see {@link project/tests/shared/types/validation.ts} - バリデーションテスト用の型定義` を追加してください。
 
-**動作:** Vitestを **監視（watch）モード** で起動します。ファイルの変更を検知して、関連するテストだけを自動で再実行するため、迅速なフィードバックが得られます。
+---
 
-```bash
-npm run vitest
-```
+## 第3部：高度な使用方法と設定
 
-### `npm run vitest:ui`
+### 3.1 Svelte コンポーネントのテスト
+`jsdom` と `@testing-library/svelte` を使用します。
+- **Cleanup**: テスト間の状態の残留を防ぐため、常に `afterEach` で `cleanup()` を呼び出してください。
 
-**用途:** テスト結果のインタラクティブな分析。
+### 3.2 カバレッジ目標
+測定可能なカバレッジを通じて高い信頼性を目指します。
+- **短期目標**: `lib/` ディレクトリのラインカバレッジ 80% 以上。
+- **プロジェクト目標**: `lib/` および `utils/` を含む全体で 75% 以上。
 
-**動作:** ブラウザ上で動作するグラフィカルなUIを起動し、テスト結果を視覚的に確認します。（`@vitest/ui` のインストールが必要です）
+### 3.3 テストの実行（CLIコマンド）
+- `npm run vitest:run`: プロジェクト本体の全テストを1回実行。
+- `npm run vitest`: 開発中の監視（watch）モード起動。
+- `npm run vitest:ui`: 結果分析用のブラウザUIを起動。
+- `npm run vitest:coverage`: カバレッジレポートを生成。
+- `npm run vitest:smoke`: テスト環境の検証（`tests/_vitest-check/` を使用）。
 
-```bash
-npm run vitest:ui
-```
+---
 
-### `npm run vitest:coverage`
-
-**用途:** テストカバレッジレポートの生成。
-
-**動作:** テストを実行し、コードカバレッジを測定します。`coverage/` ディレクトリに詳細なレポートが生成されます。（`@vitest/coverage-v8` のインストールが必要です）
-
-```bash
-npm run vitest:coverage
-```
-
-## Q&A
-
-### Q. なぜVitestのようなテストフレームワークを使うのですか？ `console.log`での確認や、ソースコードに一時的なテスト処理を書いて検証する方法と何が違うのですか？
-
-**A.** `console.log`は一時的なデバッグに非常に便利ですが、テストフレームワーク、特にVitestの利用には、それを超える多くの利点があります。
-
-第一に、**テストコードとプロダクションコードの分離**です。Vitestの大きな利点は、アプリケーション本体のコードにテスト用のコードを追加することなく、動作検証が可能になる点です。これにより、プロダクションコードをクリーンに保ちながら、独立したテストファイルで堅牢なテストを記述できます。製品に不要なテストコードが混入するリスクを防ぎます。
-
-第二に、**テストの自動化と構造化**です。
-
-- **自動化:** `npm run vitest:run`のような単一のコマンドで、何百ものテストケースを一度に、かつ自動で実行できます。手動での確認作業とは比較にならない効率性を誇ります。
-- **構造化:** `describe`や`it`といった構文を使うことで、「何を」「どのような条件で」テストしているのかが明確になります。テストコード自体が仕様書のような役割（リビングドキュメント）を果たし、コードの保守性を高めます。
-- **明確な結果:** `expect(result).toBe(3)`のようなアサーション（表明）は、テストの成功・失敗を明確に判断します。`console.log`のように、開発者が目視で出力を解釈する必要がありません。
-
-これらの理由から、継続的に品質を保ち、安全にソフトウェアを成長させていく上で、Vitestのようなテストフレームワークは不可欠なツールと言えます。
-
-### Q. テストファイルは、特定のディレクトリに置く必要がありますか？
-
-**A.** いいえ、必須ではありません。ソースファイルに隣接する `__tests__` ディレクトリや、プロジェクトルートの `tests` ディレクトリに配置するのは、あくまでコードを整理しやすくするための **推奨事項** です。
-
-Vitestは、デフォルト設定でプロジェクト内のすべてのファイルから、ファイル名が `.test.ts` や `.spec.ts` で終わるものを自動的にテストファイルとして検出します。
-
-なお、Vitestはデフォルトで以下のパターンに一致するファイルやディレクトリをテスト対象から除外します（詳細は[Vitest公式ドキュメントの`exclude`オプション](https://vitest.dev/config/#exclude)を参照）。
-- `**/node_modules/**`
-- `**/dist/**`
-- `**/cypress/**`
-- `**/.{idea,git,cache,output,temp}/**`
-- `**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*`
-
-このファイル検出パターンは、設定ファイル（`vitest.config.ts`）の `include` オプションで自由に変更することも可能です。詳細は[Vitest公式ドキュメントのConfiguration](https://vitest.dev/config/)をご参照ください。
-
-### Q. 「カバレッジレポート」とは何ですか？
-
-**A.** 作成したテストが、ソースコードをどの程度網羅できているか（カバーできているか）を測定し、その結果を可視化した報告書のことです。
-
-カバレッジレポートを見ることで、以下のようなメリットがあります。
-
-- **テスト不足の箇所の特定**
-  レポートは、テストで実行されなかったコード行や分岐（if文など）をハイライト表示します。これにより、テストが漏れている箇所を簡単に見つけ出し、より信頼性の高いコードを書くための指針となります。
-
-- **コード品質の客観的な評価**
-  「コード全体の80%がテストされている」といった具体的な数値（カバレッジ率）で、テストの品質を客観的に評価できます。これをチームの開発目標にすることで、品質の維持・向上に繋がります。
-
-- **安全なリファクタリング**
-  コードを修正した際に、意図せずカバレッジ率が低下していないかを確認することで、既存の機能を壊してしまう「デグレード」のリスクを低減できます。
-
-ドキュメントに記載の `npm run vitest:coverage` は、Vitestの機能を使ってこのレポートを生成するためのコマンドです。
-
-## 公式サイトとドキュメント
-
-より詳細な情報については、Vitestの公式サイトとドキュメントを参照してください。
-
+## 公式ドキュメント
 - [Vitest 公式サイト](https://vitest.dev/)
 - [Vitest ドキュメント](https://vitest.dev/guide/)

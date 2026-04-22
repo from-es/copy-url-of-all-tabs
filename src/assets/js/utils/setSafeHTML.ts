@@ -2,7 +2,7 @@
  * Safely sets an HTML string to an element using sanitization and replaceChildren instead of innerHTML.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-18
  */
 
 // Import NPM Package
@@ -14,6 +14,62 @@ import type { Config as DOMPurifyConfig } from "dompurify";
 
 
 /**
+ * Determines whether a value is empty (null, undefined, an empty string, or whitespace-only).
+ *
+ * @param   {unknown} value - The value to check
+ * @returns {boolean}         true if empty, otherwise false
+ */
+function isEmptyString(value: unknown): boolean {
+	const isEmpty = !value || (typeof value === "string" && value.trim().length === 0);
+
+	return isEmpty;
+}
+
+/**
+ * Validates that the provided value is a valid Element.
+ *
+ * @remarks
+ * Both parameters are typed as `unknown` intentionally to enforce Fail-Fast validation
+ * regardless of how the function is called at runtime (e.g., via untyped JavaScript).
+ *
+ * @param  {unknown}   element      - The value to validate
+ * @param  {string}    functionName - The name of the calling function
+ * @throws {TypeError}                If validation fails
+ */
+function validateElement(element: unknown): void {
+	if (!element) {
+		throw new TypeError(`Invalid: target element is not provided`);
+	}
+	if (!(element instanceof Element)) {
+		throw new TypeError(`Invalid: target element must be an instance of Element`);
+	}
+}
+
+/**
+ * Validates the arguments passed to createSafeHTML().
+ *
+ * @remarks
+ * Both parameters are typed as `unknown` intentionally to enforce Fail-Fast validation
+ * regardless of how the function is called at runtime (e.g., via untyped JavaScript).
+ *
+ * @param  {unknown}   htmlString - The HTML string to be sanitized
+ * @param  {unknown}   options    - DOMPurify configuration options
+ * @throws {TypeError}              Throws if htmlString is not a string, or if options is not an object
+ */
+function validateArguments(htmlString: unknown, options: unknown): void {
+	// htmlString: Check if it's a string
+	if (typeof htmlString !== "string") {
+		throw new TypeError(`Invalid: argument "htmlString" must be a string, but received type ${typeof htmlString}`);
+	}
+
+	// options: Check if it's valid as DOMPurify configuration options
+	// Since typeof [] is "object", a check using Array.isArray is necessary to exclude arrays
+	if (options !== undefined && (typeof options !== "object" || options === null || Array.isArray(options))) {
+		throw new TypeError(`Invalid: argument "options" must be an object, but received ${options === null ? "null" : `type ${typeof options}`}`);
+	}
+}
+
+/**
  * Safely sets an HTML string to an element using sanitization and replaceChildren instead of innerHTML.
  *
  * @param   {Element}                   element    - The target DOM element to set the content. Replaces the child elements of the target
@@ -22,18 +78,14 @@ import type { Config as DOMPurifyConfig } from "dompurify";
  * @returns {void}
  */
 function setSafeHTML(element: Element, htmlString: string | null | undefined, options?: DOMPurifyConfig): void {
-	if (!element) {
-		throw new TypeError("Invalid: target element is not provided in setSafeHTML");
-	}
-	if (!(element instanceof Element)) {
-		throw new TypeError("Invalid: target element must be an instance of Element in setSafeHTML");
-	}
+	validateElement(element);
 
 	const isEmpty = isEmptyString(htmlString);
 
 	// Clear the child elements if null, undefined, an empty string, or whitespaces only is passed as the 2nd argument
 	if (isEmpty) {
 		element.replaceChildren();
+
 		return;
 	}
 
@@ -73,50 +125,12 @@ function createSafeHTML(htmlString: string | null | undefined, options?: DOMPuri
 		return "";
 	}
 
-	/**
-	 * Since TypeScript type definitions alone cannot prevent unexpected types (e.g., objects) from being passed at runtime,
-	 * validation (explicit type checking) is performed before passing to DOMPurify
-	 */
 	validateArguments(htmlString, options);
 
 	const sanitizedHTML = DOMPurify.sanitize(htmlString as string, options ?? {});
 
 	return sanitizedHTML;
 }
-
-/**
- * Determines whether a value is empty (null, undefined, an empty string, or whitespace-only).
- *
- * @param   {unknown} value - The value to check
- * @returns {boolean}         true if empty, otherwise false
- */
-function isEmptyString(value: unknown): boolean {
-	const isEmpty = !value || (typeof value === "string" && value.trim().length === 0);
-
-	return isEmpty;
-}
-
-/**
- * Validates the arguments passed to createSafeHTML().
- *
- * @param  {unknown}   htmlString - The HTML string to be sanitized
- * @param  {unknown}   options    - DOMPurify configuration options
- * @throws {TypeError}              Throws if htmlString is not a string, or if options is not an object
- */
-function validateArguments(htmlString: unknown, options: unknown): void {
-	// htmlString: Check if it's a string
-	if (typeof htmlString !== "string") {
-		throw new TypeError(`Invalid: argument "htmlString" must be a string, but received type ${typeof htmlString} in validateArguments`);
-	}
-
-	// options: Check if it's valid as DOMPurify configuration options
-	// Since typeof [] is "object", a check using Array.isArray is necessary to exclude arrays
-	if (options !== undefined && (typeof options !== "object" || options === null || Array.isArray(options))) {
-		throw new TypeError(`Invalid: argument "options" must be an object, but received ${options === null ? "null" : `type ${typeof options}`} in validateArguments`);
-	}
-}
-
-
 
 export {
 	setSafeHTML,

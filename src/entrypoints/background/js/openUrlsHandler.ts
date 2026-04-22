@@ -2,7 +2,7 @@
  * Handler for opening multiple URLs in new tabs.
  *
  * @file
- * @lastModified 2026-04-08
+ * @lastModified 2026-04-18
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -151,8 +151,12 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 		try {
 			const individual = result.delay.individual;
 
-			if ( typeof individual === "number" && individual > 0 ) {
+			try {
+				// sleep itself performs validation and throws an exception if the value is invalid.
 				await sleep(individual);
+			// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+			} catch (sleepError) {
+				// Skip waiting and proceed to create tab if sleep fails.
 			}
 
 			createTab(result.url, { ...tabOption, windowId }); // tabOption and windowId are captured via closure.

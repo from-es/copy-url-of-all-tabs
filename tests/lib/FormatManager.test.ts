@@ -1,173 +1,147 @@
 /**
- * Test suite for FormatManager.
+ * Tests for FormatManager
  *
- * This file verifies the formatting and variable substitution logic in FormatManager,
- * specifically ensuring the robust variable substitution implemented to handle
- * special characters in titles and URLs.
+ * Verifies the string formatting process via `FormatManager.format`,
+ * as well as variable substitution logic ($title, $url) and escaping functionality.
  *
  * @file
- * @lastModified 2026-03-29
+ *
+ * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
+ * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
 import type { Browser } from "wxt/browser";
-import { describe, it, expect, vi } from "vitest";
+import { describe, afterEach, vi } from "vitest";
 import { FormatManager } from "@/entrypoints/popup/js/FormatManager";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
 
-// Mock WXT's browser API module.
-vi.mock("wxt/browser", () => ({
-	browser: {
-		runtime: {
-			getManifest: vi.fn(() => ({
-				author: "From E",
-				name: "Copy URL of All Tabs",
-				description: "A browser extension for copying all tab URLs.",
-				version: "1.0.0"
-			})),
-			id: "dummy-extension-id"
-		}
-	}
-}));
+// =============================================================================
+// 1. Definition of test data
+// =============================================================================
 
-// --- Test Data Definition ---
-
-/**
- * Standard mock tabs for general tests.
- */
-const mockTabs: Browser.tabs.Tab[] = [
+/** Standard mock tabs for general tests. */
+const mockTabs = [
 	{ title: "Example Page", url: "http://example.com" } as Browser.tabs.Tab,
 	{ title: "Another Page", url: "http://another.com" } as Browser.tabs.Tab
 ];
 
-/**
- * Tab with titles/URLs containing regex special characters.
- */
-const trickyTabs: Browser.tabs.Tab[] = [
-	{ title: "Price: $100", url: "http://shop.com/search?q=$&" } as Browser.tabs.Tab
-];
+const testData = {
+	success: [
+		{
+			name: "format: text - should return a newline-separated list of URLs",
+			input: { tabs: mockTabs, format: "text", template: null, sanitize: false },
+			expected: "http://example.com\nhttp://another.com"
+		},
+		{
+			name: "format: json - should return a formatted JSON string",
+			input: { tabs: mockTabs, format: "json", template: null, sanitize: false },
+			expected: JSON.stringify(mockTabs.map(t => ({ title: t.title, url: t.url })), null, "\t")
+		},
+		{
+			name: "format: custom - should correctly substitute $title and $url",
+			input: { tabs: mockTabs, format: "custom", template: "[$title]($url)", sanitize: false },
+			expected: "[Example Page](http://example.com)\n[Another Page](http://another.com)"
+		},
+		{
+			name: "format: custom - placeholders should be case-insensitive",
+			input: { tabs: mockTabs, format: "custom", template: "$TITLE: $URL", sanitize: false },
+			expected: "Example Page: http://example.com\nAnother Page: http://another.com"
+		},
+		{
+			name: "format: custom - should handle regex special characters in replacement values as is",
+			input: {
+				tabs: [ { title: "Price: $100", url: "http://shop.com/search?q=$&" } as Browser.tabs.Tab ],
+				format: "custom", template: "$title - $url", sanitize: false
+			},
+			expected: "Price: $100 - http://shop.com/search?q=$&"
+		},
+		{
+			name: "format: custom - should avoid recursive replacement and replace only once",
+			input: {
+				tabs: [ { title: "Contains $url", url: "http://realworld.com" } as Browser.tabs.Tab ],
+				format: "custom", template: "Title: $title, URL: $url", sanitize: false
+			},
+			expected: "Title: Contains $url, URL: http://realworld.com"
+		},
+		{
+			name: "format: custom - should perform HTML escaping when sanitize is true",
+			input: {
+				tabs: [ { title: "Title <with> tags & symbols", url: "http://example.com?q=a&b=c" } as Browser.tabs.Tab ],
+				format: "custom", template: "<li>$title</li>", sanitize: true
+			},
+			expected: "<li>Title &lt;with&gt; tags &amp; symbols</li>"
+		},
+		{
+			name: "format: custom - should correctly process multi-line templates",
+			input: {
+				tabs: [ mockTabs[0] ],
+				format: "custom", template: "Template Start\nTitle: $title\nURL: $url\nTemplate End", sanitize: false
+			},
+			expected: "Template Start\nTitle: Example Page\nURL: http://example.com\nTemplate End"
+		},
+		{
+			name: "format: custom - should return an error message if the template is null",
+			input: { tabs: mockTabs, format: "custom", template: null, sanitize: false },
+			expected: "Error, Row template is empty! (see options page)"
+		},
+		{
+			name: "format: custom - should return an error message if the template is an empty string",
+			input: { tabs: mockTabs, format: "custom", template: "", sanitize: false },
+			expected: "Error, Row template is empty! (see options page)"
+		},
+		{
+			name: "format: custom - should treat missing titles or URLs as empty strings",
+			input: {
+				tabs: [ { title: undefined, url: undefined } as IntentionalAnyForValidation ],
+				format: "custom", template: "$title|$url", sanitize: false
+			},
+			expected: "|"
+		}
+	],
+	error: [
+		{
+			name: "should throw an error if an invalid format is specified",
+			input: { tabs: mockTabs, format: "invalid", template: null, sanitize: false },
+			expected: "Error: no match switch case in FormatManager.format"
+		}
+	]
+} as const satisfies Record<string, Record<string, readonly TestCase[]> | readonly TestCase[]>;
 
-/**
- * Tab with titles that look like placeholders themselves.
- */
-const recursiveTabs: Browser.tabs.Tab[] = [
-	{ title: "Contains $url", url: "http://realworld.com" } as Browser.tabs.Tab
-];
-
-/**
- * Tab with HTML special characters.
- */
-const htmlTabs: Browser.tabs.Tab[] = [
-	{ title: "Title <with> tags & symbols", url: "http://example.com?q=a&b=c" } as Browser.tabs.Tab
-];
-
-/**
- * Test case interface for data-driven testing.
- */
-interface TestCase {
-	name: string;
-	tabs: Browser.tabs.Tab[];
-	format: "text" | "json" | "custom";
-	template: string | null;
-	sanitize: boolean;
-	expected: string;
-}
-
-/**
- * List of test cases for FormatManager.format.
- */
-const testCases: TestCase[] = [
-	{
-		name: "format: text - should return newline-separated URLs",
-		tabs: mockTabs,
-		format: "text",
-		template: null,
-		sanitize: false,
-		expected: "http://example.com\nhttp://another.com"
-	},
-	{
-		name: "format: json - should return a pretty-printed JSON string",
-		tabs: mockTabs,
-		format: "json",
-		template: null,
-		sanitize: false,
-		expected: JSON.stringify(
-			mockTabs.map(t => ({ title: t.title, url: t.url })),
-			null,
-			"\t"
-		)
-	},
-	{
-		name: "format: custom - should substitute $title and $url correctly",
-		tabs: mockTabs,
-		format: "custom",
-		template: "[$title]($url)",
-		sanitize: false,
-		expected: "[Example Page](http://example.com)\n[Another Page](http://another.com)"
-	},
-	{
-		name: "format: custom - should be case-insensitive for placeholders",
-		tabs: mockTabs,
-		format: "custom",
-		template: "$TITLE: $URL",
-		sanitize: false,
-		expected: "Example Page: http://example.com\nAnother Page: http://another.com"
-	},
-	{
-		name: "format: custom - should handle regex special characters in replacement values literally",
-		tabs: trickyTabs,
-		format: "custom",
-		template: "$title - $url",
-		sanitize: false,
-		expected: "Price: $100 - http://shop.com/search?q=$&"
-	},
-	{
-		name: "format: custom - should implement single-pass replacement to avoid recursive substitution",
-		tabs: recursiveTabs,
-		format: "custom",
-		template: "Title: $title, URL: $url",
-		sanitize: false,
-		expected: "Title: Contains $url, URL: http://realworld.com"
-	},
-	{
-		name: "format: custom - should HTML-escape content if sanitize is true",
-		tabs: htmlTabs,
-		format: "custom",
-		template: "<li>$title</li>",
-		sanitize: true,
-		expected: "<li>Title &lt;with&gt; tags &amp; symbols</li>"
-	},
-	{
-		name: "format: custom - should handle multi-line templates correctly",
-		tabs: [ mockTabs[0] ],
-		format: "custom",
-		template: "Template Start\nTitle: $title\nURL: $url\nTemplate End",
-		sanitize: false,
-		expected: "Template Start\nTitle: Example Page\nURL: http://example.com\nTemplate End"
-	},
-	{
-		name: "format: custom - should return error message if template is null",
-		tabs: mockTabs,
-		format: "custom",
-		template: null,
-		sanitize: false,
-		expected: "Error, Row template is empty! (see options page)"
-	},
-	{
-		name: "format: custom - should return error message if template is empty string",
-		tabs: mockTabs,
-		format: "custom",
-		template: "",
-		sanitize: false,
-		expected: "Error, Row template is empty! (see options page)"
-	}
-];
-
-// --- Test Execution ---
+// =============================================================================
+// 2. Orchestration
+// =============================================================================
 
 describe("FormatManager", () => {
-	testCases.forEach(({ name, tabs, format, template, sanitize, expected }) => {
-		it(name, () => {
-			const result = FormatManager.format(tabs, format, template, sanitize);
-			expect(result).toBe(expected);
+	afterEach(() => {
+		vi.clearAllMocks();
+	});
+
+	describe("Success cases", () => {
+		TestRunner.success(testData.success, null, (input) => {
+			// Arrange & Act
+			return FormatManager.format(
+				input.tabs as IntentionalAnyForValidation,
+				input.format as IntentionalAnyForValidation,
+				input.template,
+				input.sanitize
+			);
+		});
+	});
+
+	describe("Error cases", () => {
+		TestRunner.error(testData.error, null, (input) => {
+			// Arrange
+			vi.spyOn(console, "error").mockImplementation(() => {});
+			// Act & Assert
+			return FormatManager.format(
+				input.tabs as IntentionalAnyForValidation,
+				input.format as IntentionalAnyForValidation,
+				input.template,
+				input.sanitize
+			);
 		});
 	});
 });

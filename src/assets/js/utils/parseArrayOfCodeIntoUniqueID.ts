@@ -2,7 +2,7 @@
  * Detects duplicate IDs within an array of objects and replaces duplicates with newly generated unique IDs.
  *
  * @file
- * @lastModified 2026-03-24
+ * @lastModified 2026-04-18
  */
 
 // Import Module
@@ -21,33 +21,52 @@ interface CodeObject {
 
 /**
  * Detects duplicate IDs within an array of objects and replaces duplicates with newly generated unique IDs.
+ * Optimized to O(N) complexity using a Map to track ID occurrences.
  *
  * @param   {CodeObject[]} array - An array of objects with an ID property
  * @returns {CodeObject[]}         A new array where duplicate IDs have been replaced by unique ones
+ * @throws  {TypeError}            Thrown if the argument is not an array
  */
 export function parseArrayOfCodeIntoUniqueID(array: CodeObject[]): CodeObject[] {
-	const codes       = structuredClone(array);
-	const flatArray   = codes.map(elm => elm.id);
-	const isDuplicate = (flatArray.length !== (new Set(flatArray)).size); // Duplicate detection
+	if (!Array.isArray(array)) {
+		throw new TypeError("Invalid: argument 'array' must be an array");
+	}
 
-	if (!isDuplicate) {
+	const codes = structuredClone(array);
+
+	// Count occurrences of each ID - O(N)
+	const idCounts = new Map<string, number>();
+	for (const item of codes) {
+		idCounts.set(item.id, (idCounts.get(item.id) || 0) + 1);
+	}
+
+	// Early return if no duplicate IDs are found - O(N)
+	if (idCounts.size === codes.length) {
 		return codes;
 	}
 
-	(flatArray).forEach(
-		(element, index) => {
-			const match = flatArray.filter(elm => elm === element);
+	// Track all IDs currently in use to avoid collisions with generated IDs - O(N)
+	const usedIds = new Set(idCounts.keys());
 
-			if (match.length > 1) {
-				const id = generateID(32);
+	// Iterate through the array and replace duplicates with new unique IDs - O(N)
+	for (const item of codes) {
+		const currentId = item.id;
 
-				console.debug("DEBUG(string): duplicate id found, generating new unique id", { index, match });
+		if (idCounts.get(currentId)! > 1) {
+			// Generate a new unique ID and ensure it doesn't collide with any existing ID
+			let newId: string;
+			do {
+				newId = generateID(32);
+			} while (usedIds.has(newId));
 
-				flatArray[index]  = id;
-				(codes[index]).id = id;
-			}
+			// Update the object and tracking state
+			item.id = newId;
+			usedIds.add(newId);
+			idCounts.set(currentId, idCounts.get(currentId)! - 1); // Decrease the count for the original ID
+
+			console.debug("DEBUG(string): duplicate id found, generated new unique id", { originalId: currentId, newId });
 		}
-	);
+	}
 
 	return codes;
 }

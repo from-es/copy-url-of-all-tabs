@@ -2,7 +2,7 @@
  * Manages the formatting of tab data into various string formats.
  *
  * @file
- * @lastModified 2026-03-29
+ * @lastModified 2026-04-18
  */
 
 // WXT provided cross-browser compatible Types.
@@ -23,8 +23,6 @@ type FormatType = "text" | "json" | "custom";
 
 /**
  * Manages the formatting of tab data into various string formats.
- *
- * @lastModified 2026-03-24
  *
  * @dependency escapeHTML
  */
@@ -115,9 +113,9 @@ export class FormatManager {
 
 		const array = tabs.map(
 			(tab) => {
-				const title          = tab.title ?? "";
-				const url            = tab.url   ?? "";
-				const sanitizedTitle = sanitize ? escapeHTML(title) : title;
+				const title          = (typeof tab.title === "string") ? tab.title : "";
+				const url            = (typeof tab.url   === "string") ? tab.url   : "";
+				const sanitizedTitle = (sanitize && typeof title === "string") ? escapeHTML(title) : title;
 
 				// Define placeholders without regex escapes.
 				const placeholders: Record<string, string> = {

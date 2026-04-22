@@ -4,7 +4,6 @@
 	 * with Vitest and @testing-library/svelte.
 	 *
 	 * @file
-	 * @lastModified 2026-03-25
 	 */
 
 	import { onMount } from "svelte";

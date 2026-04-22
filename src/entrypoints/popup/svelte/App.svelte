@@ -3,7 +3,7 @@
 	 * Main Svelte component for the popup menu.
 	 *
 	 * @file
-	 * @lastModified 2026-04-08
+	 * @lastModified 2026-04-18
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -220,11 +220,16 @@
 			checkOnly: false,
 			debug    : false
 		};
-		const sanitizedMessage = sanitizeForSendMessage(message, options);
 
-		// Open tabs in background.js because opening in the active tab moves focus and closes the popup menu,
-		// which might terminate the process prematurely.
-		browser.runtime.sendMessage(sanitizedMessage);
+		try {
+			const sanitizedMessage = sanitizeForSendMessage(message, options);
+
+			// Open tabs in background.js because opening in the active tab moves focus and closes the popup menu,
+			// which might terminate the process prematurely.
+			browser.runtime.sendMessage(sanitizedMessage);
+		} catch (error) {
+			console.error("ERROR(popup): failed to sanitize message for openURLs", { message, error });
+		}
 	}
 
 	/**
@@ -480,7 +485,7 @@
 	</section>
 
 	<section id="message" aria-live="polite">
-		{#if actionStore.shouldShowMessage}
+		{#if actionStore.shouldShowMessage && typeof actionStore.message === "string"}
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html createSafeHTML(actionStore.message)}
 		{/if}

@@ -1,392 +1,170 @@
-# Vitest: A Fast and Modern Unit Testing Framework
+# Vitest Guide: From Basics to Project Standards
 
-**Last Updated:** April 6, 2026
+**Last Updated:** April 21, 2026
 
-This document provides guidelines for writing unit and integration tests using [Vitest](https://vitest.dev/), the designated testing framework for this project.
+This document provides a comprehensive guide to unit and integration testing in this project using [Vitest](https://vitest.dev/). It is divided into three parts: basics for beginners, our project's specific recommended standards, and advanced usage.
 
-## Overview
+---
 
-Vitest is a fast and modern testing framework with a Jest-compatible API, enabling intuitive and efficient testing. We use it to ensure our code is reliable, bug-free, and functions as expected.
+## Part 1: Vitest Basics (For Beginners)
 
-## How to Write Tests
+### 1.1 Why We Use a Testing Framework
+While `console.log` is useful for quick debugging, Vitest provides:
+- **Separation of Concerns**: Test code stays out of your production logic.
+- **Automation**: Run hundreds of checks in seconds with one command.
+- **Documentation**: Tests describe how code *should* behave, serving as living documentation.
+- **Reliability**: Automated assertions ensure that "Pass" means "Pass," without manual interpretation.
 
-### Basic Test Structure
+### 1.2 The AAA Pattern
+To keep tests readable, we follow the **Arrange → Act → Assert** pattern:
+1.  **Arrange**: Set up the environment, variables, and mocks.
+2.  **Act**: Execute the function or behavior being tested.
+3.  **Assert**: Verify that the result matches your expectations.
 
-This section explains the fundamental rules and structure for writing test files.
-
-1.  **File Naming**: Test files **must have the suffix** `.test.ts` or `.spec.ts` (e.g., `myFunction.test.ts`).
-2.  **File Location**: It is recommended to place test files in a `__tests__` directory adjacent to the source file or in a centralized `tests` directory at the project root.
-3.  **Test Structure**: A typical test file is structured using `describe`, `it` (or `test`), and `expect`.
-    -   `describe(name, fn)`: Creates a block that groups together several related tests.
-    -   `it(name, fn)`: This is the test case itself.
-    -   `expect(value)`: Used to create an assertion. It is typically used with a "matcher" function (e.g., `toBe`, `toEqual`, `toHaveBeenCalled`).
-
-### Test File Discovery
-
-This section explains how Vitest discovers test files and clarifies the "File Location" recommendation above.
-
-By default, Vitest automatically discovers files from all directories within the project that match patterns like `.test.ts` or `.spec.ts`. The directory structure mentioned above is a **recommendation for organizing test code, not a technical requirement for Vitest**. The test file discovery pattern is controlled by the `include` option in the configuration file. For details, refer to the [Vitest Official Documentation on Configuration](https://vitest.dev/config/).
-
-### Test Code Examples
-
-First, we will show a basic test that is self-contained within Vitest (Example 1), followed by a more advanced test for a Svelte component that requires additional libraries (Example 2).
-
-#### Example 1: Pure Functions
-
-Testing pure TypeScript/JavaScript functions that are not dependent on any framework is very straightforward.
-
-First, install `vitest` as a development dependency.
-
-```bash
-npm install --save-dev vitest
-```
-
-Next, create the function to be tested, `add`, in the `tests/_vitest-check/utils/helpers.ts` file.
-
-**`tests/_vitest-check/utils/helpers.ts`**
+### 1.3 Basic Structure (`describe`, `it`, `expect`)
 ```typescript
-export function add(a: number, b: number): number {
-  return a + b;
-}
-```
-
-Then, create the test code for this function in the `tests/_vitest-check/utils/helpers.test.ts` file.
-
-```typescript
-import { add } from './helpers';
 import { describe, it, expect } from 'vitest';
 
-describe('add function', () => {
-  it('should return the sum of two numbers', () => {
+describe('math module', () => {
+  it('should add numbers correctly (The "it" block is the test case)', () => {
     // Arrange
     const a = 1;
     const b = 2;
 
     // Act
-    const result = add(a, b);
+    const result = a + b;
 
     // Assert
     expect(result).toBe(3);
   });
-
-  it('should handle negative numbers', () => {
-    expect(add(-1, -1)).toBe(-2);
-  });
 });
 ```
-
-#### Example 2: Svelte Components
-
-Testing Svelte components requires libraries such as `@sveltejs/vite-plugin-svelte`, `@testing-library/svelte`, and `jsdom`. These are used as a Vite plugin, for rendering the UI in a virtual DOM environment, and for simulating user interactions.
-
-This testing method complies with the approach recommended in the official Svelte documentation. For more details, see [Testing - Svelte Docs](https://svelte.dev/docs/svelte/testing).
-
-First, install the necessary development dependencies.
-
-```bash
-npm install --save-dev vitest jsdom @vitest/ui @sveltejs/vite-plugin-svelte @testing-library/svelte @vitest/coverage-v8
-```
-
-The roles of each installed module are as follows:
-
-| Module                      | Description                                                                                               |
-| :-------------------------- | :-------------------------------------------------------------------------------------------------------- |
-| `vitest`                    | The core testing framework.                                                                               |
-| `jsdom`                     | A library to simulate a DOM in a Node.js environment. Used for testing client-side components that require a browser environment. |
-| `@vitest/ui`                | A UI for visually displaying Vitest test results. Used to interactively check test execution status in a browser. |
-| `@sveltejs/vite-plugin-svelte` | A plugin to compile Svelte components with Vite. Required to process Svelte files in the test environment. |
-| `@testing-library/svelte`   | A utility library for testing Svelte components. Used to simulate user interactions and verify component behavior. |
-| `@vitest/coverage-v8`       | A provider for collecting and reporting test coverage. Uses the V8 engine's built-in coverage capabilities for fast performance. |
-
-##### Environment
-
-The configuration and code described in this document have been tested in the following environment. If you encounter issues after package updates, please compare your setup with this configuration.
-
-| Package                         | Version    |
-| :------------------------------ | :--------- |
-| `svelte`                        | `^5.55.0`  |
-| `vitest`                        | `^4.0.18`  |
-| `jsdom`                         | `^29.0.1`  |
-| `@sveltejs/vite-plugin-svelte`  | `^6.2.4`   |
-| `@testing-library/svelte`       | `^5.3.1`   |
-| `@vitest/ui`                    | `^4.0.18`  |
-| `@vitest/coverage-v8`           | `^4.0.18`  |
-
-<br>
-
-Next, create a `vitest.config.ts` file in the project's root directory with the following content. This allows Vitest to operate with a dedicated test configuration, independent of WXT's build settings.
-
-**`vitest.config.ts`**
-```typescript
-import { defineConfig, configDefaults } from 'vitest/config';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import tsconfigPaths from 'vite-tsconfig-paths';
-
-export default defineConfig({
-  plugins: [
-    // Disable Svelte's Hot Module Replacement (HMR) during Vitest execution to ensure test stability.
-    svelte({ hot: !process.env.VITEST }),
-    tsconfigPaths(),
-  ],
-  // Set `resolve.conditions` at the top level.
-  // This ensures that the `browser` field in `package.json` is prioritized for module resolution throughout Vitest's internal Vite instance.
-  // It prevents errors where lifecycle functions like `onMount` are incorrectly identified as server-side during Svelte component tests.
-  resolve: {
-    conditions: ['browser'],
-  },
-  test: {
-    // Makes `describe`, `it`, `expect`, etc., globally available without needing to import them in each test file.
-    globals: true,
-
-    // Sets JSDOM as the test environment. This simulates DOM APIs in a Node.js environment,
-    // enabling tests for components that run in a browser.
-    environment: 'jsdom',
-
-    // Specifies patterns for the test files to include.
-    include: [
-      'src/**/*.test.{js,ts}',
-      'tests/**/*.test.{js,ts}',
-    ],
-
-    // Specifies patterns for files or directories to be excluded from testing.
-    // Smoke tests in `tests/_vitest-check/` are excluded here because they use a
-    // dedicated configuration file (`vitest.smoke.config.ts`) and are run separately
-    // via `npm run vitest:smoke`.
-    exclude: [
-      // It's recommended to inherit the default exclusions to avoid accidentally including files from node_modules.
-      ...configDefaults.exclude,
-      'tests/_vitest-check/**',
-    ],
-  },
-});
-```
-
-**Note:** `resolve.conditions` must be placed at the top level of the configuration, not inside the `test` object. This ensures the setting applies to Vite's overall module resolution, allowing Svelte to operate correctly in browser mode.
-
-In addition, create a separate `vitest.smoke.config.ts` file for running smoke tests in isolation. This is necessary because Vitest's `--exclude` CLI option merges with (rather than overrides) the config file's `exclude` list, which would prevent smoke tests from being discovered if specified in the same config.
-
-**`vitest.smoke.config.ts`**
-```typescript
-import { defineConfig } from 'vitest/config';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import tsconfigPaths from 'vite-tsconfig-paths';
-
-export default defineConfig({
-  plugins: [
-    svelte({ hot: !process.env.VITEST }),
-    tsconfigPaths(),
-  ],
-  resolve: {
-    conditions: ['browser'],
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-
-    // Smoke tests: only include the _vitest-check directory
-    include: [
-      'tests/_vitest-check/**/*.test.{js,ts}',
-    ],
-  },
-});
-```
-
-Next, create a simple counter component to be tested (`Counter.svelte`).
-
-**`tests/_vitest-check/components/Counter.svelte`**
-```html
-<script lang="ts">
-  import { onMount } from "svelte";
-
-  let { count = 0 }: { count?: number } = $props();
-  let currentCount = $state(count);
-  const increment = () => {
-    currentCount += 1;
-  };
-
-  onMount(() => {
-    // If browser-specific lifecycle functions like onMount are included,
-    // an error will occur if Vitest does not correctly recognize the browser environment.
-    console.log("Counter component mounted");
-  });
-</script>
-
-<main>
-  <h1>Counter</h1>
-  <p>Current count: {currentCount}</p>
-  <button onclick={increment}>Increment</button>
-</main>
-```
-
-And then, write the test for this component (`Counter.test.ts`).
-
-**`tests/_vitest-check/components/Counter.test.ts`**
-```typescript
-import { render, fireEvent, screen, cleanup } from '@testing-library/svelte';
-import { describe, it, expect, afterEach } from 'vitest';
-import Counter from './Counter.svelte';
-
-describe('Counter.svelte', () => {
-  // Cleans up the DOM after each test to prevent side effects (like lingering state) between tests.
-  afterEach(() => cleanup());
-
-  it('should mount the component and display the initial count correctly', () => {
-    // 1. Arrange: Render the component with an initial count of 0.
-    render(Counter, { props: { count: 0 } });
-
-    // 2. Assert: Verify that an element with the text "Current count: 0" exists.
-    expect(screen.getByText('Current count: 0')).toBeTruthy();
-  });
-
-  it('should increment the count on button click', async () => {
-    // 1. Arrange: Render the component with an initial count of 0.
-    render(Counter, { props: { count: 0 } });
-    const button = screen.getByText('Increment');
-
-    // 2. Act: Click the button once.
-    await fireEvent.click(button);
-
-    // 3. Assert: Verify that the count is now 1.
-    expect(screen.getByText('Current count: 1')).toBeTruthy();
-
-    // 4. Act: Click the button again.
-    await fireEvent.click(button);
-
-    // 5. Assert: Verify that the count is now 2.
-    expect(screen.getByText('Current count: 2')).toBeTruthy();
-  });
-});
-```
-
-## How to Run Tests
-
-Define the following test scripts in your `package.json`. For efficiency, it is recommended to separate the commands for running main project tests and environment smoke tests.
-
-**`package.json`**
-```json
-{
-  "scripts": {
-    "vitest": "vitest",
-    "vitest:run": "vitest run",
-    "vitest:ui": "vitest --ui",
-    "vitest:coverage": "vitest run --coverage",
-    "vitest:smoke": "vitest run --config vitest.smoke.config.ts"
-  }
-}
-```
-
-**Why use `--config` for smoke tests?**
-The `tests/_vitest-check/**` directory is listed in the `exclude` of `vitest.config.ts`. Vitest's `--exclude` CLI option *appends to* (rather than replaces) the config's exclude list, so passing a filter path on the command line alone cannot override it. Using a dedicated `vitest.smoke.config.ts` — which defines `include: ['tests/_vitest-check/**']` with no conflicting `exclude` — is the clean solution.
-
-This allows you to run tests for various purposes with the following commands.
 
 ---
 
-### `npm run vitest:run`
+## Part 2: Project Standards (Recommended Construction)
 
-**Purpose:** Run all main project tests.
+To maintain a high-quality test suite, all tests in this project should adhere to these standards.
 
-**Behavior:** Executes all tests for the application, excluding the smoke tests in the `tests/_vitest-check/` directory. This is the primary command to use during regular development to verify the application's functionality.
+### 2.1 Data-Driven Testing with `TestRunner`
+We promote **Data-Driven Testing** where test data is separated from execution logic. We use a static `TestRunner` utility to handle the execution cycle.
+- **Benefit**: Reduces boilerplate and makes tests declarative. You only need to define "What" is being tested, not "How" the loop runs.
 
-```bash
-npm run vitest:run
+### 2.2 Directory Structure (`shared/`)
+Test support files are centralized in the `tests/shared/` directory:
+- **`support/TestRunner.ts`**: The core execution engine.
+- **`support/setup.ts`**: Global mocks (e.g., `wxt/browser`) that run automatically.
+- **`fixtures/`**: Static JSON data or factory functions for complex objects.
+
+### 2.3 Import Normalization
+To enhance readability, normalize Vitest imports into these 4 categories:
+1.  **Category 1: Structure**: `describe`, `it`, `test`, `suite`
+2.  **Category 2: Lifecycle**: `beforeAll`, `beforeEach`, `afterEach`, `afterAll`
+3.  **Category 3: Assertion**: `expect`, `assert`
+4.  **Category 4: Utility**: `vi`
+
+**Rule**: Sort by category number, then alphabetically within each category.
+*Example:* `import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";`
+
+### 2.4 Documentation Standards (JSDoc)
+Every test file must include a `@file` header. Use `@see` to link to the testing infrastructure to help new developers understand the setup.
+
+### 2.5 Master Test Template
+Use this template as your starting point for new tests.
+
+```typescript
+/**
+ * {{Module Name}} Tests
+ *
+ * {{Brief description of the test's purpose.}}
+ *
+ * @file
+ * @see {@link project/vitest.config.ts} - Global settings
+ * @see {@link project/tests/shared/support/setup.ts} - Shared mocks
+ * @see {@link project/tests/shared/support/TestRunner.ts} - Test execution engine
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests (Optional)
+ */
+
+import { describe, beforeEach, afterEach, expect, vi } from "vitest";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+
+// =============================================================================
+// 1. Test Data (Separation of Data and Logic)
+// =============================================================================
+
+const testData = {
+	successCases: [
+		{ name: "should handle case A", input: { val: 1 }, expected: 2 },
+		{ name: "should handle case B", input: { val: 2 }, expected: 4 }
+	],
+	errorCases: [
+		{ name: "should throw on invalid input", input: null, expected: "Invalid input" }
+	]
+} as const satisfies Record<string, readonly TestCase[]>;
+
+// =============================================================================
+// 2. Orchestration (Structure)
+// =============================================================================
+
+describe("{{Module Name}}", () => {
+	let context: any;
+
+	beforeEach(() => {
+		// Arrange: Standard preparation
+		vi.clearAllMocks();
+	});
+
+	afterEach(() => {
+		// Cleanup
+	});
+
+	describe("Success cases", () => {
+		TestRunner.success(testData.successCases, context, (input) => {
+			// return targetFunction(input);
+		});
+	});
+
+	describe("Error handling", () => {
+		TestRunner.error(testData.errorCases, context, (input) => {
+			// targetFunction(input);
+		});
+	});
+});
 ```
 
-### `npm run vitest:smoke`
+### 2.6 Handling Exceptions
+If a test is too complex for `TestRunner` (e.g., strict async sequencing), you may use standard `it` blocks.
+- **Requirement**: You **must** explain why the standard pattern was not used in the file's JSDoc.
 
-**Purpose:** Verify the test environment.
+### 2.7 Handling Invalid Types for Validation Tests
+When testing runtime validation (type checking), you must intentionally pass invalid values that TypeScript's static analysis would normally block. To do this while avoiding ESLint `no-explicit-any` warnings, use the project's semantic type.
+- **Rule**: Instead of `as any`, use `as IntentionalAnyForValidation`.
+- **Purpose**: This clarifies that the type bypassing is intentional for testing purposes and centralizes ESLint suppression.
+- **Import**: `import { type IntentionalAnyForValidation } from "../shared/types";`
+- **JSDoc**: Add `@see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests` to the file header.
 
-**Behavior:** Runs only the tests within the `tests/_vitest-check/` directory using the dedicated `vitest.smoke.config.ts` configuration. This is useful after installing or updating test-related packages to ensure that the Vitest environment is correctly configured.
+---
 
-> **Note:** This command uses `--config vitest.smoke.config.ts` instead of a path filter. This is because `tests/_vitest-check/**` is listed in the `exclude` of the main `vitest.config.ts`, and Vitest's `--exclude` CLI option cannot override it — it only appends. The dedicated config file sidesteps this limitation cleanly.
+## Part 3: Advanced Usage & Configuration
 
-```bash
-npm run vitest:smoke
-```
+### 3.1 Svelte Component Testing
+Requires `jsdom` and `@testing-library/svelte`.
+- **Cleanup**: Always call `cleanup()` in `afterEach` to prevent state leakage between tests.
 
-### `npm run vitest`
+### 3.2 Coverage Goals
+We aim for high reliability through measurable coverage:
+- **Immediate Goal**: >80% line coverage for the `lib/` directory.
+- **Project Goal**: >75% overall coverage across `lib/` and `utils/`.
 
-**Purpose:** Continuous test execution during development (watch mode).
+### 3.3 Running Tests (CLI Commands)
+- `npm run vitest:run`: Execute all main project tests once.
+- `npm run vitest`: Start watch mode for active development.
+- `npm run vitest:ui`: Visual UI for analyzing results.
+- `npm run vitest:coverage`: Generate coverage reports.
+- `npm run vitest:smoke`: Verify the test environment (using `tests/_vitest-check/`).
 
-**Behavior:** Starts Vitest in **watch mode**. It watches for file changes and automatically re-runs relevant tests, providing rapid feedback.
+---
 
-```bash
-npm run vitest
-```
-
-### `npm run vitest:ui`
-
-**Purpose:** Interactive analysis of test results.
-
-**Behavior:** Launches a graphical UI in the browser to visually inspect test results. (Requires `@vitest/ui`).
-
-```bash
-npm run vitest:ui
-```
-
-### `npm run vitest:coverage`
-
-**Purpose:** Generate a test coverage report.
-
-**Behavior:** Runs tests and measures code coverage, generating a detailed report in the `coverage/` directory. (Requires `@vitest/coverage-v8`).
-
-```bash
-npm run vitest:coverage
-```
-
-## Q&A
-
-### Q. Why use a testing framework like Vitest? What's the difference between checking with `console.log` or writing temporary test logic in the source code?
-
-**A.** While `console.log` is very useful for temporary debugging, using a testing framework, especially Vitest, offers many advantages beyond that.
-
-First is the **separation of test code and production code**. A major benefit of Vitest is that it allows you to verify behavior without adding test-specific code to the application's source. This keeps the production code clean while allowing for robust tests in separate files, preventing the risk of including unnecessary test code in the final product.
-
-Second is **test automation and structuring**.
-
--   **Automation:** With a single command like `npm run vitest:run`, you can run hundreds of test cases at once, automatically. This is incomparably more efficient than manual verification.
--   **Structuring:** Using syntax like `describe` and `it` clarifies "what" is being tested and under "what conditions." The test code itself serves as a form of living documentation, enhancing code maintainability.
--   **Clear Results:** Assertions like `expect(result).toBe(3)` provide a clear pass/fail judgment for tests. There's no need for a developer to visually interpret `console.log` output.
-
-For these reasons, a testing framework like Vitest is an indispensable tool for maintaining quality and safely evolving software over time.
-
-### Q. Do test files need to be placed in a specific directory?
-
-**A.** No, it is not mandatory. Placing them in a `__tests__` directory adjacent to source files or in a root `tests` directory is merely a **recommendation** to keep code organized.
-
-By default, Vitest automatically discovers files ending in `.test.ts` or `.spec.ts` from all directories within the project as test files.
-
-Note that Vitest, by default, excludes files and directories matching the following patterns from testing (for details, see the [`exclude` option in the Vitest official documentation](https://vitest.dev/config/#exclude)).
--   `**/node_modules/**`
--   `**/dist/**`
--   `**/cypress/**`
--   `**/.{idea,git,cache,output,temp}/**`
--   `**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*`
-
-This file discovery pattern can be freely changed using the `include` option in the configuration file (`vitest.config.ts`). For more details, please refer to the [Vitest Official Documentation on Configuration](https://vitest.dev/config/).
-
-### Q. What is a "coverage report"?
-
-**A.** It is a report that measures and visualizes the extent to which your created tests cover the source code.
-
-Viewing a coverage report offers the following benefits:
-
--   **Identifying Untested Areas**
-    The report highlights code lines and branches (like if-statements) that were not executed by tests. This makes it easy to find where tests are missing and provides guidance for writing more reliable code.
-
--   **Objective Evaluation of Code Quality**
-    You can objectively assess the quality of your tests with concrete numbers (coverage rate), such as "80% of the entire code is tested." Making this a development goal for the team can lead to maintaining and improving quality.
-
--   **Safe Refactoring**
-    By checking that the coverage rate has not unintentionally decreased after modifying code, you can reduce the risk of "degradations" that break existing functionality.
-
-The `npm run vitest:coverage` command mentioned in the document is used to generate this report using Vitest's functionality.
-
-**Last Updated:** April 6, 2026
-
-## Official Website and Documentation
-
-For more detailed information, please refer to the official Vitest website and documentation.
-
--   [Vitest Official Site](https://vitest.dev/)
--   [Vitest Documentation](https://vitest.dev/guide/)
+## Official Documentation
+- [Vitest Official Site](https://vitest.dev/)
+- [Vitest Documentation](https://vitest.dev/guide/)

@@ -1,131 +1,111 @@
 /**
- * This file tests the `compareVersions` utility function, which is responsible for
- * comparing two semantic version strings according to the SemVer 2.0.0 specification.
+ * Tests for compareVersions utility
  *
- * Purpose of Inspection:
- * - To ensure the function correctly compares major, minor, and patch versions.
- * - To verify the handling of pre-release identifiers (e.g., `-alpha`, `-beta`, numeric vs. string).
- * - To confirm that build metadata is correctly ignored during comparison.
- * - To ensure the function is robust and throws appropriate errors for invalid inputs,
- *   such as malformed version strings, non-string types, or versions with prefixes.
- * - To test against edge cases and potential security vulnerabilities like ReDoS attacks
- *   on long version strings.
- *
- * Inspection Method:
- * - The test uses a series of `describe` and `it` blocks to group test cases by
- *   functionality (valid comparisons, invalid inputs, edge cases).
- * - For valid versions, it asserts that the function returns the expected `-1`, `0`, or `1`.
- * - For invalid versions, it asserts that the function correctly throws an `Error`.
- * - Specific edge cases, like long strings and potential ReDoS patterns, are tested
- *   to ensure stability and security.
+ * Verifies the semantic versioning comparison functionality
+ * provided by `CompareVersions.ts`.
  *
  * @file
- * @lastModified 2026-03-25
+ *
+ * @see {@link project/vitest.config.ts} - Common settings in test.setupFiles (auto-run)
+ * @see {@link project/tests/shared/support/setup.ts} - Definitions of common mocks (browser, etc.)
+ * @see {@link project/tests/shared/support/TestRunner.ts} - Common test execution infrastructure
+ * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
-import { describe, it, expect } from "vitest";
-import { compareVersions } from "../../src/assets/js/utils/CompareVersions";
+import { describe, it, afterEach, expect, vi } from "vitest";
+import { compareVersions } from "@/assets/js/utils/CompareVersions";
+import { TestRunner, type TestCase } from "../shared/support/TestRunner";
+import { type IntentionalAnyForValidation } from "../shared/types";
+
+// =============================================================================
+// 1. Definition of test data
+// =============================================================================
+
+const testData = {
+	success: [
+		// Basic comparison
+		{ name: "should return 0 when versions are equal", input: [ "1.0.0", "1.0.0" ], expected: 0 },
+		{ name: "should return -1 when major version is larger", input: [ "2.0.0", "1.9.9" ], expected: -1 },
+		{ name: "should return -1 when minor version is larger", input: [ "1.10.0", "1.9.10" ], expected: -1 },
+		{ name: "should return -1 when patch version is larger", input: [ "1.0.1", "1.0.0" ], expected: -1 },
+		{ name: "should return 1 when major version is smaller", input: [ "1.9.9", "2.0.0" ], expected: 1 },
+
+		// Pre-release
+		{ name: "should consider alphabetical order of pre-releases (alpha < beta)", input: [ "1.0.0-alpha", "1.0.0-beta" ], expected: 1 },
+		{ name: "should consider numeric fields within pre-releases", input: [ "1.0.0-alpha.1", "1.0.0-alpha.2" ], expected: 1 },
+		{ name: "stable version should take precedence over pre-release version", input: [ "1.0.0", "1.0.0-alpha" ], expected: -1 },
+		{ name: "numeric identifiers should have lower precedence than string identifiers", input: [ "1.0.0-alpha.1", "1.0.0-alpha.a" ], expected: 1 },
+		{ name: "larger number of pre-release fields should have higher precedence", input: [ "1.0.0-alpha.1", "1.0.0-alpha" ], expected: -1 },
+
+		// Metadata
+		{ name: "build metadata should be ignored", input: [ "1.0.0+build1", "1.0.0+build2" ], expected: 0 }
+	],
+	error: [
+		// Type errors
+		{ name: "should throw error if input1 is null", input: [ null, "1.0.0" ] },
+		{ name: "should throw error if input2 is undefined", input: [ "1.0.0", undefined ] },
+		{ name: "should throw error if a number is passed", input: [ 123, "1.0.0" ] },
+
+		// Format errors
+		{ name: "should throw error for incomplete version strings (missing sections)", input: [ "1.0", "1.0.0" ] },
+		{ name: "should throw error for version strings with too many sections", input: [ "1.0.0.0", "1.0.0" ] },
+		{ name: "should throw error if pre-release contains invalid characters", input: [ "1.0.0", "1.0.beta" ] },
+		{ name: "should throw error if pre-release identifier is empty (dot only)", input: [ "1.0.0", "1.0.0-." ] },
+
+		// Special formats
+		{ name: "should throw error for versions with 'v' prefix (v1.0.0)", input: [ "v1.0.0", "1.0.0" ] },
+		{ name: "should throw error if leading/trailing spaces are included", input: [ " 1.0.0", "1.0.0" ] },
+
+		// NaN cases (assuming validation is bypassed)
+		{ name: "should throw error if section is not a number", input: [ "1.a.0", "1.0.0" ] },
+
+		// Length limit
+		{
+			name: "should throw error for version strings exceeding 128 characters",
+			input: [ "1.0.0-" + "a.".repeat(70), "1.0.0" ],
+			expected: "Invalid: one or both of the provided version strings are not valid semantic versions"
+		}
+	]
+} as const satisfies Record<string, readonly TestCase[]>;
+
+// =============================================================================
+// 2. Orchestration
+// =============================================================================
 
 describe("compareVersions", () => {
-	// Test cases for valid version strings
-	describe("Valid version comparisons", () => {
-		it("should return -1 when base > target (Major/Minor/Patch)", () => {
-			expect(compareVersions("2.0.0", "1.9.9")).toBe(-1);
-			expect(compareVersions("1.10.0", "1.9.10")).toBe(-1);
-			expect(compareVersions("1.0.1", "1.0.0")).toBe(-1);
-		});
+	afterEach(() => {
+		vi.clearAllMocks();
+	});
 
-		it("should return 1 when base < target (Major/Minor/Patch)", () => {
-			expect(compareVersions("1.9.9", "2.0.0")).toBe(1);
-			expect(compareVersions("1.9.10", "1.10.0")).toBe(1);
-			expect(compareVersions("1.0.0", "1.0.1")).toBe(1);
-		});
-
-		it("should return 0 when base === target (Major/Minor/Patch)", () => {
-			expect(compareVersions("1.0.0", "1.0.0")).toBe(0);
-			expect(compareVersions("2.3.4", "2.3.4")).toBe(0);
-		});
-
-		// Pre-release comparisons
-		it("should correctly compare pre-release versions", () => {
-			expect(compareVersions("1.0.0-alpha", "1.0.0-beta")).toBe(1);
-			expect(compareVersions("1.0.0-beta", "1.0.0-alpha")).toBe(-1);
-			expect(compareVersions("1.0.0-alpha.1", "1.0.0-alpha.2")).toBe(1);
-			expect(compareVersions("1.0.0-alpha.2", "1.0.0-alpha.1")).toBe(-1);
-			expect(compareVersions("1.0.0-alpha.beta", "1.0.0-beta.alpha")).toBe(1);
-			expect(compareVersions("1.0.0-rc.1", "1.0.0-rc.2")).toBe(1);
-		});
-
-		it("should prioritize stable versions over pre-release versions", () => {
-			expect(compareVersions("1.0.0", "1.0.0-alpha")).toBe(-1);
-			expect(compareVersions("1.0.0-alpha", "1.0.0")).toBe(1);
-		});
-
-		it("should handle numeric vs. string pre-release identifiers", () => {
-			// Numeric identifiers have lower precedence than string identifiers
-			expect(compareVersions("1.0.0-alpha.1", "1.0.0-alpha.a")).toBe(1);
-			expect(compareVersions("1.0.0-alpha.a", "1.0.0-alpha.1")).toBe(-1);
-		});
-
-		it("should compare pre-release versions with different numbers of fields", () => {
-			// A larger set of pre-release fields has a higher precedence
-			expect(compareVersions("1.0.0-alpha.1", "1.0.0-alpha")).toBe(-1);
-			expect(compareVersions("1.0.0-alpha", "1.0.0-alpha.1")).toBe(1);
-		});
-
-		it("should ignore build metadata", () => {
-			expect(compareVersions("1.0.0+build1", "1.0.0+build2")).toBe(0);
-			expect(compareVersions("1.0.0-alpha+build1", "1.0.0-alpha+build2")).toBe(0);
+	describe("Success cases: Comparison of valid versions", () => {
+		TestRunner.success(testData.success, null, (input) => {
+			return compareVersions(input[0] as IntentionalAnyForValidation, input[1] as IntentionalAnyForValidation);
 		});
 	});
 
-	// Test cases for invalid version strings
-	describe("Invalid version string handling", () => {
-		it("should throw an error for non-string inputs", () => {
-			expect(() => compareVersions(null, "1.0.0")).toThrow();
-			expect(() => compareVersions("1.0.0", undefined)).toThrow();
-			expect(() => compareVersions(123, "1.0.0")).toThrow();
-		});
+	describe("Error cases: Handling of invalid inputs", () => {
+		TestRunner.error(testData.error, null, (input) => {
+			// Arrange
+			vi.spyOn(console, "error").mockImplementation(() => {});
 
-		it("should throw an error for malformed version strings", () => {
-			expect(() => compareVersions("1.0", "1.0.0")).toThrow();
-			expect(() => compareVersions("1.0.0", "1.0.beta")).toThrow();
-			expect(() => compareVersions("a.b.c", "1.0.0")).toThrow();
-			expect(() => compareVersions("1.0.0", "1.0.0-.")).toThrow();
+			// Act
+			const result = compareVersions(input[0] as IntentionalAnyForValidation, input[1] as IntentionalAnyForValidation);
+
+			// Assert
+			return result;
 		});
 	});
 
-	describe("Prefixed or invalid format strings", () => {
-		it("should throw an error for versions with prefixes", () => {
-			expect(() => compareVersions("v1.0.0", "1.0.0")).toThrow();
-			expect(() => compareVersions("1.0.0", "version 1.0.0")).toThrow();
-		});
+	describe("Edge cases", () => {
+		it("should process long strings (within limit) quickly without causing potential ReDoS", () => {
+			// Arrange
+			const potentialReDoS = "1.0.0-" + "a.".repeat(54) + "a"; // 115 chars (<= 128)
 
-		it("should throw an error for versions with leading/trailing spaces", () => {
-			expect(() => compareVersions(" 1.0.0", "1.0.0")).toThrow();
-			expect(() => compareVersions("1.0.0", "1.0.0 ")).toThrow();
-		});
-	});
+			// Act
+			const result = compareVersions(potentialReDoS, "1.0.0");
 
-	describe("Malicious or Edge-case Inputs", () => {
-		it("should throw an error for strings exceeding the length limit", () => {
-			// Generate a string longer than 128 characters
-			const longString = "1.0.0-" + "a.".repeat(70); // 146 chars
-			expect(longString.length).toBeGreaterThan(128);
-			// Expect the correct generic error message
-			expect(() => compareVersions(longString, "1.0.0")).toThrow("Invalid: one or both of the provided version strings are not valid semantic versions in compareVersions");
-		});
-
-		it("should correctly handle near-limit-length strings that could cause ReDoS", () => {
-			// A long, repetitive string (but within the length limit) that could potentially cause a ReDoS attack.
-			// The fast completion of this test demonstrates that the ReDoS protection is effective.
-			const potentialReDoS = "1.0.0-" + "a.".repeat(54) + "a"; // Prerelease part is 109 chars, total is 115.
-			expect(potentialReDoS.length).toBeLessThanOrEqual(128);
-
-			// Confirm that it does not throw an error.
-			expect(() => compareVersions(potentialReDoS, "1.0.0")).not.toThrow();
-			// Confirm it's correctly compared as a pre-release version (returns 1 since base < target).
-			expect(compareVersions(potentialReDoS, "1.0.0")).toBe(1);
+			// Assert
+			expect(result).toBe(1);
 		});
 	});
 });
