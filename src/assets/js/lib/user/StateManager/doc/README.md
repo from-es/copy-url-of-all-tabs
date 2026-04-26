@@ -26,7 +26,7 @@ import { createStore, type UpdateState } from "./store.svelte";
 // Import project-specific type definitions
 import type { Status } from "@/assets/js/types";
 
-// Specify the type with generics like `createStore<Status>()` 
+// Specify the type with generics like `createStore<Status>()`
 // to generate an application-specific store instance.
 const { shareStatus, updateState }: {
     shareStatus: Status;
@@ -93,10 +93,10 @@ To use the `State Manager`, import `shareStatus` and `updateState` from `state.t
 
 ### Initializing and Updating State
 
-Typically, state initialization is performed at the application's entry points (e.g., `popup/main.ts` or `options/main.ts`).
+Typically, state initialization is performed at the application's entry points (e.g., `popup/entrypoint.ts` or `options/entrypoint.ts`).
 
 ```typescript
-// src/entrypoints/popup/js/main.ts
+// src/entrypoints/popup/js/entrypoint.ts
 
 import { updateState } from "@/assets/js/lib/user/StateManager/state";
 import { initializeConfig } from "@/assets/js/initializeConfig";
