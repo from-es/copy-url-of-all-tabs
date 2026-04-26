@@ -219,8 +219,9 @@ interface Define extends Define_Delta {
 			}
 		};
 		github: {
-			title: string;
-			url  : string;
+			title : string;
+			url   : string;
+			issues: string;
 		};
 		document: {
 			[key: string]: {

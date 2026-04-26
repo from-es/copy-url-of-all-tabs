@@ -50,11 +50,20 @@
 	 * @returns {void}
 	 */
 	function initialize(): void {
-		// Dynamic update of styles (popup.css >> :root element)
-		const fontSize = status.config.PopupMenu.fontsize;
-		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
+		setFontSizeForPage(status.config.PopupMenu.fontsize);
 
 		console.info("INFO(popup): Popup component initialized");
+	}
+
+	/**
+	 * Dynamically applies the base font size of the page based on settings.
+	 *
+	 * Dynamic update of styles (:root element)
+	 *
+	 * @returns {void}
+	 */
+	function setFontSizeForPage(fontSize: number): void {
+		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 	}
 
 	/**
@@ -440,6 +449,12 @@
 		{ attr.text }
 	</button>
 {/snippet}
+
+
+
+<svelte:head>
+	<title>Popup - { status.define.Information.name }</title>
+</svelte:head>
 
 
 

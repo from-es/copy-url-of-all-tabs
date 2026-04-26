@@ -64,9 +64,7 @@
 	 * @returns {Promise<void>}
 	 */
 	async function initialize(): Promise<void> {
-		document.title = `Options - ${status.define.Information.name}`;
-
-		setFontSizeForOptionsPage();
+		setFontSizeForPage(status.config.OptionsPage.fontsize);
 
 		selectTab();
 
@@ -83,18 +81,17 @@
 
 		logging(config, define);
 
-		setFontSizeForOptionsPage();
+		setFontSizeForPage(status.config.OptionsPage.fontsize);
 	}
 
 	/**
-	 * Dynamically applies the base font size of the options page based on settings.
+	 * Dynamically applies the base font size of the page based on settings.
+	 *
+	 * Dynamic update of styles (:root element)
 	 *
 	 * @returns {void}
 	 */
-	function setFontSizeForOptionsPage(): void {
-		// Dynamic update of styles (options.css >> :root element)
-		const fontSize = status.config.OptionsPage.fontsize;
-
+	function setFontSizeForPage(fontSize: number): void {
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 	}
 
@@ -522,7 +519,7 @@
 
 			<dl>
 				<dt>Update History</dt>
-				<dd id="update-history"><a href="{ status.define.Information.updatehistory.url }" title="{ status.define.Information.updatehistory.title }" target="_blank" rel="noopener noreferrer">{ status.define.Information.updatehistory.title }</a></dd>
+				<dd id="update-history"><a href={ status.define.Information.updatehistory.url } title={ status.define.Information.updatehistory.title } target="_blank" rel="noopener noreferrer">{ status.define.Information.updatehistory.title }</a></dd>
 			</dl>
 
 			<dl>
@@ -537,7 +534,7 @@
 
 			<dl>
 				<dt>Source Code</dt>
-				<dd id="sourcecode "><a href="{ status.define.Information.github.url }" title="{ status.define.Information.github.title }" target="_blank" rel="noopener noreferrer">{ status.define.Information.github.title }</a></dd>
+				<dd id="sourcecode"><a href={ status.define.Information.github.url } title={ status.define.Information.github.title } target="_blank" rel="noopener noreferrer">{ status.define.Information.github.title }</a></dd>
 			</dl>
 
 			<h2>Documents</h2>
@@ -556,7 +553,7 @@
 
 			<p>Please note that as this is a free extension we are unable to provide personalized support.</p>
 
-			<p>If you have issue or feature requests, please report them at issues (<a href="https://github.com/from-es/copy-url-of-all-tabs/issues" title="Support" target="_blank" rel="noopener noreferrer">https://github.com/from-es/copy-url-of-all-tabs/issues</a>).</p>
+			<p>If you have issue or feature requests, please report them at issues (<a href={ status.define.Information.github.issues } title="Support" target="_blank" rel="noopener noreferrer">{ status.define.Information.github.issues }</a>).</p>
 
 			{#if typeof dynamicContent.getCopyright() === "string"}
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->

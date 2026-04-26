@@ -94,10 +94,10 @@ export { shareStatus, updateState };
 
 ### 状態の初期化と更新
 
-通常、状態の初期化はアプリケーションのエントリーポイント（`popup/main.ts` や `options/main.ts` など）で行います。
+通常、状態の初期化はアプリケーションのエントリーポイント（`popup/entrypoint.ts` や `options/entrypoint.ts` など）で行います。
 
 ```typescript
-// src/entrypoints/popup/js/main.ts
+// src/entrypoints/popup/js/entrypoint.ts
 
 import { updateState } from "@/assets/js/lib/user/StateManager/state";
 import { initializeConfig } from "@/assets/js/initializeConfig";

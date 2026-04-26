@@ -30,8 +30,9 @@ const Information = {
 		}
 	},
 	github: {
-		title: `${ manifest.name } - GitHub`,
-		url  : "https://github.com/from-es/copy-url-of-all-tabs"
+		title : `${ manifest.name } - GitHub`,
+		url   : "https://github.com/from-es/copy-url-of-all-tabs",
+		issues: "https://github.com/from-es/copy-url-of-all-tabs/issues"
 	},
 	document: {
 		default: {  // Default is for English notation
