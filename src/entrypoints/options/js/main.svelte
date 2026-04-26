@@ -556,7 +556,7 @@
 
 			<p>Please note that as this is a free extension we are unable to provide personalized support.</p>
 
-			<p>If you have issue or feature requests, please report them at issues (<a href="https://github.com/from-es/copy-url-of-all-tabs/issues" title="Support" target="_blank" rel="noopener noreferrer">https://github.com/from-es/copy-url-of-all-tabs/issues</a>).</p>
+			<p>If you have issue or feature requests, please report them at issues (<a href={ status.define.Information.github.issues } title="Support" target="_blank" rel="noopener noreferrer">{ status.define.Information.github.issues }</a>).</p>
 
 			{#if typeof dynamicContent.getCopyright() === "string"}
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
