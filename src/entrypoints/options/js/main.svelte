@@ -522,7 +522,7 @@
 
 			<dl>
 				<dt>Update History</dt>
-				<dd id="update-history"><a href="{ status.define.Information.updatehistory.url }" title="{ status.define.Information.updatehistory.title }" target="_blank" rel="noopener noreferrer">{ status.define.Information.updatehistory.title }</a></dd>
+				<dd id="update-history"><a href={ status.define.Information.updatehistory.url } title={ status.define.Information.updatehistory.title } target="_blank" rel="noopener noreferrer">{ status.define.Information.updatehistory.title }</a></dd>
 			</dl>
 
 			<dl>
@@ -537,7 +537,7 @@
 
 			<dl>
 				<dt>Source Code</dt>
-				<dd id="sourcecode "><a href="{ status.define.Information.github.url }" title="{ status.define.Information.github.title }" target="_blank" rel="noopener noreferrer">{ status.define.Information.github.title }</a></dd>
+				<dd id="sourcecode"><a href={ status.define.Information.github.url } title={ status.define.Information.github.title } target="_blank" rel="noopener noreferrer">{ status.define.Information.github.title }</a></dd>
 			</dl>
 
 			<h2>Documents</h2>
