@@ -54,6 +54,12 @@
 
 
 
+<svelte:head>
+	<title>Options - { status.define.Information.name }</title>
+</svelte:head>
+
+
+
 <!-- Svelte Component Tag, Start -->
 <Header title={ status.define.Information.name } />
 

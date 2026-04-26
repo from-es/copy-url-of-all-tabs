@@ -443,6 +443,12 @@
 
 
 
+<svelte:head>
+	<title>Popup - { status.define.Information.name }</title>
+</svelte:head>
+
+
+
 <main>
 	<section id="action">
 		<ul>

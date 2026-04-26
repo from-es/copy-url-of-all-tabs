@@ -64,8 +64,6 @@
 	 * @returns {Promise<void>}
 	 */
 	async function initialize(): Promise<void> {
-		document.title = `Options - ${status.define.Information.name}`;
-
 		setFontSizeForOptionsPage();
 
 		selectTab();
