@@ -20,8 +20,9 @@ export const createMockDefine = (config: Config): Define => ({
 			firefox: { title: "", url: "", publish: 0 }
 		},
 		github: {
-			title: "",
-			url  : ""
+			title : "",
+			url   : "",
+			issues: ""
 		},
 		document: {
 			default: { title: "", url: "" }
