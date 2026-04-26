@@ -64,7 +64,7 @@
 	 * @returns {Promise<void>}
 	 */
 	async function initialize(): Promise<void> {
-		setFontSizeForOptionsPage();
+		setFontSizeForPage(status.config.OptionsPage.fontsize);
 
 		selectTab();
 
@@ -81,18 +81,17 @@
 
 		logging(config, define);
 
-		setFontSizeForOptionsPage();
+		setFontSizeForPage(status.config.OptionsPage.fontsize);
 	}
 
 	/**
-	 * Dynamically applies the base font size of the options page based on settings.
+	 * Dynamically applies the base font size of the page based on settings.
+	 *
+	 * Dynamic update of styles (:root element)
 	 *
 	 * @returns {void}
 	 */
-	function setFontSizeForOptionsPage(): void {
-		// Dynamic update of styles (options.css >> :root element)
-		const fontSize = status.config.OptionsPage.fontsize;
-
+	function setFontSizeForPage(fontSize: number): void {
 		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 	}
 
