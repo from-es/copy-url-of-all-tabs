@@ -33,6 +33,7 @@
 	import { initializeConfig }                              from "@/assets/js/initializeConfig";
 	import { logging }                                       from "@/assets/js/logging";
 	import { selectTab }                                     from "@/assets/js/select-tab";
+	import { setRootFontSize }                               from "@/assets/js/utils/setRootFontSize";
 	import { compareConfig }                                 from "./utils/configComparer";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
 	import { DynamicContent }                                from "./dynamicContent";
@@ -64,7 +65,7 @@
 	 * @returns {Promise<void>}
 	 */
 	async function initialize(): Promise<void> {
-		setFontSizeForPage(status.config.OptionsPage.fontsize);
+		setRootFontSize(status.config.OptionsPage.fontsize);
 
 		selectTab();
 
@@ -81,19 +82,10 @@
 
 		logging(config, define);
 
-		setFontSizeForPage(status.config.OptionsPage.fontsize);
+		setRootFontSize(status.config.OptionsPage.fontsize);
 	}
 
-	/**
-	 * Dynamically applies the base font size of the page based on settings.
-	 *
-	 * Dynamic update of styles (:root element)
-	 *
-	 * @returns {void}
-	 */
-	function setFontSizeForPage(fontSize: number): void {
-		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
-	}
+
 
 	/**
 	 * Generates meta-information (name, version, timestamp) about the current configuration.

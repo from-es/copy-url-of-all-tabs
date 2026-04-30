@@ -14,6 +14,7 @@ import { marked } from "marked";
 
 // Import Module
 import { initializeConfig }           from "@/assets/js/initializeConfig";
+import { setRootFontSize }            from "@/assets/js/utils/setRootFontSize";
 import { setSafeHTML, createSafeDOM } from "@/assets/js/utils/setSafeHTML";
 
 
@@ -93,9 +94,7 @@ async function main() {
 async function initialize() {
 	const { config } = await initializeConfig(null);
 
-	// Dynamically rewrite styles (:root elements in style.css).
-	const fontSize = config.OptionsPage.fontsize;
-	document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
+	setRootFontSize(config.OptionsPage.fontsize);
 }
 
 /**

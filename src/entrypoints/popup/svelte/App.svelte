@@ -23,6 +23,7 @@
 	import { cloneObject }                       from "@/assets/js/lib/user/CloneObject";
 	import { sanitizeForSendMessage }            from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
+	import { setRootFontSize }                   from "@/assets/js/utils/setRootFontSize";
 	import { eventActionCopy, eventActionPaste } from "./userActions";
 
 	// Import Types
@@ -50,20 +51,9 @@
 	 * @returns {void}
 	 */
 	function initialize(): void {
-		setFontSizeForPage(status.config.PopupMenu.fontsize);
+		setRootFontSize(status.config.PopupMenu.fontsize);
 
 		console.info("INFO(popup): Popup component initialized");
-	}
-
-	/**
-	 * Dynamically applies the base font size of the page based on settings.
-	 *
-	 * Dynamic update of styles (:root element)
-	 *
-	 * @returns {void}
-	 */
-	function setFontSizeForPage(fontSize: number): void {
-		document.documentElement.style.setProperty("--base-font-size", `${fontSize}px`);
 	}
 
 	/**
