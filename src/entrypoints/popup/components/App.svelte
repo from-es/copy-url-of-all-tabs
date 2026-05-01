@@ -13,7 +13,7 @@
 	import { onMount } from "svelte";
 
 	// Import Svelte Module
-	import { actionStore } from "./appState.svelte.ts";
+	import { actionStore } from "../lib/appState.svelte.ts";
 
 	// Import Svelte Object
 	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";  // Shared State Object
@@ -24,11 +24,11 @@
 	import { sanitizeForSendMessage }            from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
 	import { setRootFontSize }                   from "@/assets/js/utils/setRootFontSize";
-	import { eventActionCopy, eventActionPaste } from "./userActions";
+	import { eventActionCopy, eventActionPaste } from "../lib/userActions";
 
 	// Import Types
 	import type { Config, Define, ExtensionMessage, SetTimeoutHandle } from "@/assets/js/types";
-	import type { Action, EventOnClickActionResult }                   from "./types";
+	import type { Action, EventOnClickActionResult }                   from "../lib/types";
 
 
 
