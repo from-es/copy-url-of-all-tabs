@@ -1,5 +1,5 @@
 // Import Types
-import type { TabPosition, TaskMode, OpenMode } from "@/entrypoints/background/js/openUrlsHandler";
+import type { TabPosition, TaskMode, OpenMode } from "@/entrypoints/background/lib/openUrlsHandler";
 import type { BrowserEnvironmentResult }        from "@/assets/js/lib/user/BrowserEnvironment/types";
 import type { MessageType }                     from "@/assets/js/lib/user/MessageManager/PopoverMessage";
 import type { UrlDelayRule }                    from "@/assets/js/lib/user/UrlDelayCalculator";

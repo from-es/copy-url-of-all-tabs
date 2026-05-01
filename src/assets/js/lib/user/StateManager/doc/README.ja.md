@@ -97,7 +97,7 @@ export { shareStatus, updateState };
 通常、状態の初期化はアプリケーションのエントリーポイント（`popup/entrypoint.ts` や `options/entrypoint.ts` など）で行います。
 
 ```typescript
-// src/entrypoints/popup/js/entrypoint.ts
+// src/entrypoints/popup/lib/entrypoint.ts
 
 import { updateState } from "@/assets/js/lib/user/StateManager/state";
 import { initializeConfig } from "@/assets/js/initializeConfig";
@@ -121,7 +121,7 @@ async function boot() {
 Svelteコンポーネント内では、`shareStatus` を使ってリアクティブな状態にアクセスします。
 
 ```svelte
-<!-- src/entrypoints/popup/svelte/App.svelte -->
+<!-- src/entrypoints/popup/components/App.svelte -->
 
 <script lang="ts">
   import { shareStatus } from "@/assets/js/lib/user/StateManager/state";

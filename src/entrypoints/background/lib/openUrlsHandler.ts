@@ -13,7 +13,7 @@ import { define }             from "@/assets/js/define";
 import { UrlDelayCalculator } from "@/assets/js/lib/user/UrlDelayCalculator";
 import { sleep }              from "@/assets/js/utils/sleep";
 import { QueueManager }       from "@/assets/js/lib/user/QueueManager";
-import { countManager }       from "@/entrypoints/background/js/CountManager";
+import { countManager }       from "@/entrypoints/background/lib/CountManager";
 
 // Import Types
 import type { Config, ExtensionMessage }                from "@/assets/js/types";

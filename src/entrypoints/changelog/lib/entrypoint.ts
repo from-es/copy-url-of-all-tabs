@@ -1,21 +1,22 @@
 /**
- * Main entry point for the options page.
+ * Main entry point for the changelog page.
  *
  * @file
- * @lastModified 2026-04-04
  */
 
 // Import Svelte
 import { mount } from "svelte";
 
 // Import Svelte Component & Types
-import App          from "./App.svelte";
-import type AppType from "./App.svelte";
+import App          from "../components/App.svelte";
+import type AppType from "../components/App.svelte";
+
+// Import Svelte Module
+import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state.svelte.ts";
 
 // Import Module
-import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state.svelte.ts";
-import { initializeConfig }      from "@/assets/js/initializeConfig";
-import { logging }               from "@/assets/js/logging";
+import { initializeConfig } from "@/assets/js/initializeConfig";
+import { logging }          from "@/assets/js/logging";
 
 
 
@@ -39,11 +40,11 @@ async function main(): Promise<void> {
 	// Initialize settings
 	const { config, define } = await initializeConfig(null);
 
-	// Set logging console
-	logging(config, define);
-
 	// Initialize Share State Object
 	initializeSharedState(config, define);
+
+	// Set logging console
+	logging(config, define);
 
 	// Mounting the starting module
 	const target = document.body;

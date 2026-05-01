@@ -96,7 +96,7 @@ To use the `State Manager`, import `shareStatus` and `updateState` from `state.t
 Typically, state initialization is performed at the application's entry points (e.g., `popup/entrypoint.ts` or `options/entrypoint.ts`).
 
 ```typescript
-// src/entrypoints/popup/js/entrypoint.ts
+// src/entrypoints/popup/lib/entrypoint.ts
 
 import { updateState } from "@/assets/js/lib/user/StateManager/state";
 import { initializeConfig } from "@/assets/js/initializeConfig";
@@ -120,7 +120,7 @@ async function boot() {
 Inside Svelte components, you can access the reactive state using `shareStatus`.
 
 ```svelte
-<!-- src/entrypoints/popup/svelte/App.svelte -->
+<!-- src/entrypoints/popup/components/App.svelte -->
 
 <script lang="ts">
   import { shareStatus } from "@/assets/js/lib/user/StateManager/state";
