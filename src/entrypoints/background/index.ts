@@ -12,9 +12,9 @@ import { browser, type Browser } from "wxt/browser";
 import { define }           from "@/assets/js/define";  // Pre-import define to avoid messaging errors when it contains non-serializable types.
 import { logging }          from "@/assets/js/logging";
 import { initializeConfig } from "@/assets/js/initializeConfig";
-import { handleOpenURLs }   from "./js/openUrlsHandler";
-import { countManager }     from "./js/CountManager";
-import { badgeController }  from "./js/BadgeController";
+import { handleOpenURLs }   from "./lib/openUrlsHandler";
+import { countManager }     from "./lib/CountManager";
+import { badgeController }  from "./lib/BadgeController";
 
 // Import Types
 import type { Config }           from "@/assets/js/types";
