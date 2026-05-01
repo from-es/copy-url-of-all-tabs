@@ -34,9 +34,9 @@
 	import { logging }                                       from "@/assets/js/logging";
 	import { selectTab }                                     from "@/assets/js/select-tab";
 	import { setRootFontSize }                               from "@/assets/js/utils/setRootFontSize";
-	import { compareConfig }                                 from "./utils/configComparer";
-	import { addRowForCustomDelay, deleteRowForCustomDelay } from "./customDelay";
-	import { DynamicContent }                                from "./dynamicContent";
+	import { compareConfig }                                 from "../lib/utils/configComparer";
+	import { addRowForCustomDelay, deleteRowForCustomDelay } from "../lib/customDelay";
+	import { DynamicContent }                                from "../lib/dynamicContent";
 
 	// Import Object
 	import { LOG_LEVELS } from "@/assets/js/lib/user/ConsoleManager/types";

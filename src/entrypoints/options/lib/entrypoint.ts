@@ -9,8 +9,8 @@
 import { mount } from "svelte";
 
 // Import Svelte Component & Types
-import App          from "./App.svelte";
-import type AppType from "./App.svelte";
+import App          from "../components/App.svelte";
+import type AppType from "../components/App.svelte";
 
 // Import Module
 import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state.svelte.ts";
