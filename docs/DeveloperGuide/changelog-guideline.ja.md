@@ -6,13 +6,11 @@
 
 本プロジェクトでは、更新履歴を「蓄積されるデータ」と「表示されるUI」に分けて管理します。
 
-1.  **データとしての Markdown (`changelog.md`)**:
-	*   特定のHTML構造に依存せず、ドキュメントとして正しい階層構造（H2をバージョンとする）で記述します。
-	*   GitHubやエディタでの閲覧性を重視した、汎用的な [Keep a Changelog](https://keepachangelog.com/ "Keep a Changelog") 形式を採用します。
-2.  **UIとしてのレンダリング (JS/Svelte)**:
-	*   Markdownデータをパースし、配置されるページの階層（H1/H2など）に合わせて、見出しレベルを動的にマッピングします。
-
----
+1. **データとしての Markdown (`changelog.md`)**:
+	- 特定のHTML構造に依存せず、ドキュメントとして正しい階層構造（H2をバージョンとする）で記述します。
+	- GitHubやエディタでの閲覧性を重視した、汎用的な [Keep a Changelog](https://keepachangelog.com/ "Keep a Changelog") 形式を採用します。
+2. **UIとしてのレンダリング (JS/Svelte)**:
+	- Markdownデータをパースし、配置されるページの階層（H1/H2など）に合わせて、見出しレベルを動的にマッピングします。
 
 ## 2. データ記述基準 (Data Standard)
 
@@ -76,17 +74,12 @@
 - **パス・クラス名の禁止**: ソースコードのパス（`project/src/...`）やクラス名は含めないでください。
 - **生URLの禁止**: コミットへのリンク等をURL文字列のまま貼り付けないでください。
 
----
-
 ## 4. 表示ロジックへのマッピング
 
 MarkdownデータをHTMLに変換・描画する際のロジックは、**アプリケーション側（Svelteコンポーネント等）の責務**として以下のルールに基づき実装されます。
 
 - **見出しレベルの調整**: 表示箇所のセマンティクス（周囲のHTML構造）に合わせて、バージョン見出し (`##`) やカテゴリ見出し (`###`) を適切な階層にマッピングします。
 - **外部リンクの処理**: セキュリティと利便性のため、自動的に `target="_blank" rel="noopener noreferrer"` を付与します。
-
----
-
 
 ## 5. テンプレート
 
@@ -148,14 +141,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] カテゴリは標準の6種類に収まっているか
 - [ ] ユーザー視点の記述になっているか（実装詳細が含まれていないか）
 - [ ] コミット等の生URLが含まれていないか
-
----
-
-## 7. コミット (Commit Examples)
-
-更新履歴の修正やガイドラインの更新に関するコミットメッセージの例です。[プロジェクトのコミット規約](./commitlint.ja.md) に準拠してください。
-
-- **データの標準化**: `refactor(changelog): standardize update history to Keep a Changelog format`
-- **ガイドラインの作成**: `docs(changelog): create changelog creation guidelines`
-- **READMEの更新**: `docs(project): add link to changelog guideline in README`
-- **UIラベルの変更**: `feat(ui): update "Update History" labels to "Changelog" for brevity`

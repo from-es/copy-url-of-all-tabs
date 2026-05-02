@@ -6,13 +6,11 @@
 
 In this project, the changelog is managed by separating "accumulated data" from the "displayed UI."
 
-1.  **Markdown as Data (`changelog.md`)**:
-    *   Describes the content in a correct hierarchical structure (using H2 for versions) without depending on specific HTML structures.
-    *   Adopts the versatile [Keep a Changelog](https://keepachangelog.com/ "Keep a Changelog") format, prioritizing readability on GitHub and in editors.
+1. **Markdown as Data (`changelog.md`)**:
+	- Describes the content in a correct hierarchical structure (using H2 for versions) without depending on specific HTML structures.
+	- Adopts the versatile [Keep a Changelog](https://keepachangelog.com/ "Keep a Changelog") format, prioritizing readability on GitHub and in editors.
 2.  **Rendering as UI (JS/Svelte)**:
-    *   Parses the Markdown data and dynamically maps heading levels to match the hierarchy of the page (H1/H2, etc.) where it is placed.
-
----
+	- Parses the Markdown data and dynamically maps heading levels to match the hierarchy of the page (H1/H2, etc.) where it is placed.
 
 ## 2. Data Standard
 
@@ -76,16 +74,12 @@ The target audience is the end-user. Avoid internal implementation details and d
 - **No Paths or Class Names**: Do not include source code paths (`project/src/...`) or class names.
 - **No Raw URLs**: Do not paste raw URL strings for commit links or others.
 
----
-
 ## 4. Mapping to Display Logic
 
 The logic for converting and rendering Markdown data into HTML is the responsibility of the **application side (Svelte components, etc.)**, based on the following rules:
 
 - **Heading Level Adjustment**: Maps version headings (`##`) and category headings (`###`) to the appropriate hierarchy based on the surrounding HTML structure.
 - **External Link Handling**: Automatically adds `target="_blank" rel="noopener noreferrer"` for security and convenience.
-
----
 
 ## 5. Template
 
@@ -147,14 +141,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] Are categories restricted to the standard 6 types?
 - [ ] Is the description user-centric (no implementation details)?
 - [ ] Are there no raw URLs for commits or other links?
-
----
-
-## 7. Commits (Commit Examples)
-
-Examples of commit messages related to changelog and guideline updates. Please comply with the [Project's Commit Message Guidelines](./commitlint.md).
-
-- **Data Standardization**: `refactor(changelog): standardize update history to Keep a Changelog format`
-- **Creating Guidelines**: `docs(changelog): create changelog creation guidelines`
-- **Updating README**: `docs(project): add link to changelog guideline in README`
-- **UI Label Changes**: `feat(ui): update "Update History" labels to "Changelog" for brevity`
