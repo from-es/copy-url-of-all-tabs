@@ -10,7 +10,7 @@
 	import { debounce } from "lodash-es";
 
 	// Import Module & Types
-	import { PopoverMessage, type MessageType } from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+	import { PopoverMessage, type MessageType } from "@/assets/js/lib/MessageManager/PopoverMessage";
 
 
 

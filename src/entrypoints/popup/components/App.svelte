@@ -16,11 +16,11 @@
 	import { actionStore } from "../lib/appState.svelte.ts";
 
 	// Import Svelte Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";  // Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
 
 	// Import Module
 	import { initializeConfig }                  from "@/assets/js/initializeConfig";
-	import { cloneObject }                       from "@/assets/js/lib/user/CloneObject";
+	import { cloneObject }                       from "@/assets/js/lib/CloneObject";
 	import { sanitizeForSendMessage }            from "@/assets/js/utils/sanitizeForSendMessage";
 	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
 	import { setRootFontSize }                   from "@/assets/js/utils/setRootFontSize";

@@ -13,7 +13,7 @@
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
-import { createStore, type StateOption } from "@/assets/js/lib/user/StateManager/store.svelte.ts";
+import { createStore, type StateOption } from "@/assets/js/lib/StateManager/store.svelte.ts";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // =============================================================================

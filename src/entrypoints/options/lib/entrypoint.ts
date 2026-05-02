@@ -13,7 +13,7 @@ import App          from "../components/App.svelte";
 import type AppType from "../components/App.svelte";
 
 // Import Module
-import { initializeSharedState } from "@/assets/js/lib/user/StateManager/state.svelte.ts";
+import { initializeSharedState } from "@/assets/js/lib/StateManager/state.svelte.ts";
 import { initializeConfig }      from "@/assets/js/initializeConfig";
 import { logging }               from "@/assets/js/logging";
 

@@ -13,12 +13,12 @@
 	import { onMount } from "svelte";
 
 	// Import Svelte Component
-	import Header from "./header.svelte";
-	import Main   from "./main.svelte";
-	import Footer from "./footer.svelte";
+	import Header from "./Header.svelte";
+	import Main   from "./Main.svelte";
+	import Footer from "./Footer.svelte";
 
 	// Import Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";  // Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
 
 
 

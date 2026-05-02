@@ -593,7 +593,7 @@ function sortAndCombineRules<T>(validRules: MigrationRule<T>[], invalidRules: Mi
  *
  * @example
  * // rules/index.ts
- * import { loadRules } from '@/assets/js/lib/user/MigrationManager/loadRules';
+ * import { loadRules } from '@/assets/js/lib/MigrationManager/loadRules';
  *
  * const modules = import.meta.glob('./v1/*.rule.ts', { eager: true });
  * const migrationRules = loadRules(modules);

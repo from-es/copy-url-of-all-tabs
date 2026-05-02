@@ -12,7 +12,7 @@
 	import { changelogState, loadChangelog } from "../lib/changelogState.svelte";
 
 	// Import Svelte Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";
+	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";
 
 	// Import Module
 	import { createSafeHTML }  from "@/assets/js/utils/setSafeHTML";

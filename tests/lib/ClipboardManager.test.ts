@@ -13,7 +13,7 @@
  */
 
 import { describe, beforeEach, afterEach, vi } from "vitest";
-import { ClipboardManager } from "@/assets/js/lib/user/ClipboardManager";
+import { ClipboardManager } from "@/assets/js/lib/ClipboardManager";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // =============================================================================

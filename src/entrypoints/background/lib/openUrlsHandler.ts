@@ -10,14 +10,14 @@ import { browser, type Browser } from "wxt/browser";
 
 // Import Module
 import { define }             from "@/assets/js/define";
-import { UrlDelayCalculator } from "@/assets/js/lib/user/UrlDelayCalculator";
+import { UrlDelayCalculator } from "@/assets/js/lib/UrlDelayCalculator";
 import { sleep }              from "@/assets/js/utils/sleep";
-import { QueueManager }       from "@/assets/js/lib/user/QueueManager";
+import { QueueManager }       from "@/assets/js/lib/QueueManager";
 import { countManager }       from "@/entrypoints/background/lib/CountManager";
 
 // Import Types
 import type { Config, ExtensionMessage }                from "@/assets/js/types";
-import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/user/UrlDelayCalculator";
+import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/UrlDelayCalculator";
 
 
 

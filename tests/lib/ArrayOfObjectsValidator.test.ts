@@ -14,7 +14,7 @@
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
 import v8n from "v8n";
-import { ArrayOfObjectsValidator } from "@/assets/js/lib/user/ArrayOfObjectsValidator";
+import { ArrayOfObjectsValidator } from "@/assets/js/lib/ArrayOfObjectsValidator";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 import { type IntentionalAnyForValidation } from "../shared/types";
 

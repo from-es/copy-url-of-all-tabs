@@ -11,7 +11,7 @@
  * Can also be used to create a deep copy of an object.
  *
  * @deprecated This function is deprecated and will be removed in a future version.
- * Use the standard API `structuredClone()` or the project's internal library `src/assets/js/lib/user/CloneObject.ts` instead.
+ * Use the standard API `structuredClone()` or the project's internal library `src/assets/js/lib/CloneObject.ts` instead.
  *
  * @remarks
  * Note the following limitations:
