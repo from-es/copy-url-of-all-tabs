@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 - The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.21.0] - 2026-05-02
+
+### Changed
+
+- Internal code improvements to enhance extension stability and maintainability.
+- Refined the Changelog page implementation for improved reliability and readability.
+- Updated the "Update History" label to "Changelog" on the options page for better brevity.
+
 ## [1.20.9] - 2026-04-22
 
 ### Changed
