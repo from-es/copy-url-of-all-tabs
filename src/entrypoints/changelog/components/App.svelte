@@ -65,7 +65,7 @@
 
 <!-- Header metadata -->
 <svelte:head>
-	<title>Update History - {status.define.Information.name}</title>
+	<title>Changelog - {status.define.Information.name}</title>
 </svelte:head>
 
 
@@ -73,11 +73,11 @@
 <main id="contents">
 	<article>
 		<div class="entry">
-			<h1>Update History</h1>
+			<h1>Changelog</h1>
 
 			{#if changelogState.isLoading}
 				<div class="status-message">
-					<p>Loading update history...</p>
+					<p>Loading changelog...</p>
 				</div>
 			{:else if changelogState.error}
 				<div class="status-message error">

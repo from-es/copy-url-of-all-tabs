@@ -45,7 +45,7 @@ const Information = {
 		}
 	},
 	updatehistory: {
-		title: `Update History for ${ manifest.name }`,
+		title: "Changelog",
 		url  : "/changelog.html"
 	},
 
