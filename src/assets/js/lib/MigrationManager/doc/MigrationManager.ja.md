@@ -63,9 +63,9 @@
 
 ```typescript
 // --- 必要なモジュールをインポート ---
-import { MigrationManager } from '@/assets/js/lib/user/MigrationManager';
-import { loadRules } from '@/assets/js/lib/user/MigrationManager/loadRules'; // loadRules ユーティリティを使用する場合
-import type { MigrationRule } from '@/assets/js/lib/user/MigrationManager/types';
+import { MigrationManager } from '@/assets/js/lib/MigrationManager';
+import { loadRules } from '@/assets/js/lib/MigrationManager/loadRules'; // loadRules ユーティリティを使用する場合
+import type { MigrationRule } from '@/assets/js/lib/MigrationManager/types';
 import type { Config } from '@/assets/js/types';
 
 /**
@@ -90,7 +90,7 @@ async function applyMigration(data: Config, defaultValues: Partial<Config>): Pro
 
 	// 例1: 直接インポート (特定のルールファイルを個別にインポートする場合)
 	// この方法は、少数のルールを厳密に管理したい場合に適しています。
-	// import { migrationRules as rulesV1 } from '@/assets/js/lib/user/MigrationManager/rules/v1/someRule.rule.ts';
+	// import { migrationRules as rulesV1 } from '@/assets/js/lib/MigrationManager/rules/v1/someRule.rule.ts';
 	// combinedRules = rulesV1; // または combinedRules.concat(rulesV1);
 
 	// 例2: `import.meta.glob` と `loadRules` ユーティリティを使用したインポート (推奨)
@@ -98,16 +98,16 @@ async function applyMigration(data: Config, defaultValues: Partial<Config>): Pro
 	try {
 		// 例えば、データバージョンに応じて動的にルールを読み込む場合
 		if (dataVersion === 1) {
-			const ruleModulesV1 = import.meta.glob('@/assets/js/lib/user/MigrationManager/rules/v1/*.rule.ts', { eager: true });
+			const ruleModulesV1 = import.meta.glob('@/assets/js/lib/MigrationManager/rules/v1/*.rule.ts', { eager: true });
 			combinedRules = loadRules<Config>(ruleModulesV1);
 		}
 		// もし新しいバージョン(v2)が存在するなら、同様に追加
 		// else if (dataVersion === 2) {
-		//     const ruleModulesV2 = import.meta.glob('@/assets/js/lib/user/MigrationManager/rules/v2/*.rule.ts', { eager: true });
+		//     const ruleModulesV2 = import.meta.glob('@/assets/js/lib/MigrationManager/rules/v2/*.rule.ts', { eager: true });
 		//     combinedRules = loadRules<Config>(ruleModulesV2);
 		// }
 		// もしくは、全てのルールをまとめて読み込む場合 (上記「設計思想」のコード例に合わせる)
-		// const allRuleModules = import.meta.glob('@/assets/js/lib/user/MigrationManager/rules/**/*.rule.ts', { eager: true });
+		// const allRuleModules = import.meta.glob('@/assets/js/lib/MigrationManager/rules/**/*.rule.ts', { eager: true });
 		// combinedRules = loadRules<Config>(allRuleModules);
 
 	} catch (e) {

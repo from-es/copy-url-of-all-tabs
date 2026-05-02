@@ -11,7 +11,7 @@
  */
 
 import { describe, afterEach, vi } from "vitest";
-import { ColorManager } from "@/assets/js/lib/user/ColorManager";
+import { ColorManager } from "@/assets/js/lib/ColorManager";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // =============================================================================

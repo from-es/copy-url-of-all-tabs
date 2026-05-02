@@ -10,7 +10,7 @@
  */
 
 // Import Module & Types
-import { createStore, type UpdateState } from "@/assets/js/lib/user/StateManager/store.svelte.ts";
+import { createStore, type UpdateState } from "@/assets/js/lib/StateManager/store.svelte.ts";
 
 // ----------------------------------------------------------------------------------------------------------------------------
 // IMPORTANT: Project-specific configurations are defined here.

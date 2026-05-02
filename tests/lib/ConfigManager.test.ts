@@ -14,7 +14,7 @@
  */
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import { ConfigManager, MIME_TYPES } from "@/assets/js/lib/user/ConfigManager";
+import { ConfigManager, MIME_TYPES } from "@/assets/js/lib/ConfigManager";
 
 // =============================================================================
 // 2. Orchestration

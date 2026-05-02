@@ -9,7 +9,7 @@
 import { browser, type Browser } from "wxt/browser";
 
 // Import Module
-import { ClipboardManager }                            from "@/assets/js/lib/user/ClipboardManager";
+import { ClipboardManager }                            from "@/assets/js/lib/ClipboardManager";
 import { FormatManager }                               from "./FormatManager";
 import { prepareForActionCopy, prepareForActionPaste } from "./filtering";
 

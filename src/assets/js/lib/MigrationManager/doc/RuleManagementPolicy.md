@@ -86,7 +86,7 @@ For each major version, create an entry point file that aggregates the rules for
 
 -   **File Placement Example:**
 	```
-	src/assets/js/lib/user/MigrationManager/rules/
+	src/assets/js/lib/MigrationManager/rules/
 	 ├─ v1/
 	 │   ├─ v1.11.0-restructure-filtering.rule.ts
 	 │   └─ v1.12.0-add-badge-property.rule.ts
@@ -98,7 +98,7 @@ For each major version, create an entry point file that aggregates the rules for
 
 - **Implementation Example of an Aggregation File (`v1.rules.ts`):**
 	```typescript
-	import { loadRules } from "@/assets/js/lib/user/MigrationManager/loadRules";
+	import { loadRules } from "@/assets/js/lib/MigrationManager/loadRules";
 	import type { Config } from "@/assets/js/types";
 
 	const modules = import.meta.glob('./v1/**/*.rule.ts', { eager: true });
@@ -126,11 +126,11 @@ async function migrateExternalData(data: Config, defaultValues: Partial<Config>)
 	switch (dataVersion) {
 		case 1:
 			// Dynamic import will cause an error in Service Worker
-			const { migrationRules: rulesV1 } = await import('@/assets/js/lib/user/MigrationManager/rules/v1.rules.ts');
+			const { migrationRules: rulesV1 } = await import('@/assets/js/lib/MigrationManager/rules/v1.rules.ts');
 			combinedRules = combinedRules.concat(rulesV1);
 			// fall through
 		case 2:
-			const { migrationRules: rulesV2 } = await import('@/assets/js/lib/user/MigrationManager/rules/v2.rules.ts');
+			const { migrationRules: rulesV2 } = await import('@/assets/js/lib/MigrationManager/rules/v2.rules.ts');
 			combinedRules = combinedRules.concat(rulesV2);
 			// fall through
 		// When a new version (v3) is added, add case 3 here
@@ -144,14 +144,14 @@ async function migrateExternalData(data: Config, defaultValues: Partial<Config>)
 To operate safely in all environments, including Service Workers, all necessary rule aggregation files should be imported **statically**. By using the `fall-through` of a `switch-case` statement, the logic to guarantee all migration paths from old versions to the latest version can be similarly realized.
 
 ```typescript
-import { MigrationManager } from "@/assets/js/lib/user/MigrationManager";
-import type { MigrationRule } from "@/assets/js/lib/user/MigrationManager/types";
+import { MigrationManager } from "@/assets/js/lib/MigrationManager";
+import type { MigrationRule } from "@/assets/js/lib/MigrationManager/types";
 import type { Config } from "@/assets/js/types";
 
 // --- Statically import all necessary rule aggregation files ---
-import { migrationRules as rulesV1 } from "@/assets/js/lib/user/MigrationManager/rules/v1.rules.ts";
-import { migrationRules as rulesV2 } from "@/assets/js/lib/user/MigrationManager/rules/v2.rules.ts";
-// import { migrationRules as rulesV3 } from "@/assets/js/lib/user/MigrationManager/rules/v3.rules.ts";
+import { migrationRules as rulesV1 } from "@/assets/js/lib/MigrationManager/rules/v1.rules.ts";
+import { migrationRules as rulesV2 } from "@/assets/js/lib/MigrationManager/rules/v2.rules.ts";
+// import { migrationRules as rulesV3 } from "@/assets/js/lib/MigrationManager/rules/v3.rules.ts";
 
 const LATEST_VERSION = 2; // The latest major version supported by the application (change to 3 when v3 is ready)
 

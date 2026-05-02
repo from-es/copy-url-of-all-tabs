@@ -19,7 +19,7 @@ This approach allows for the reuse of the core store logic while ensuring type s
 Below is a code example of how types are applied in `state.ts`.
 
 ```typescript
-// src/assets/js/lib/user/StateManager/state.svelte.ts
+// src/assets/js/lib/StateManager/state.svelte.ts
 
 // Import Module & Types
 import { createStore, type UpdateState } from "./store.svelte";
@@ -98,7 +98,7 @@ Typically, state initialization is performed at the application's entry points (
 ```typescript
 // src/entrypoints/popup/lib/entrypoint.ts
 
-import { updateState } from "@/assets/js/lib/user/StateManager/state";
+import { updateState } from "@/assets/js/lib/StateManager/state";
 import { initializeConfig } from "@/assets/js/initializeConfig";
 
 // Load settings and update the shared state on application startup
@@ -123,7 +123,7 @@ Inside Svelte components, you can access the reactive state using `shareStatus`.
 <!-- src/entrypoints/popup/components/App.svelte -->
 
 <script lang="ts">
-  import { shareStatus } from "@/assets/js/lib/user/StateManager/state";
+  import { shareStatus } from "@/assets/js/lib/StateManager/state";
 
   // Changes to shareStatus.config are automatically reflected in the UI
   $: theme = $shareStatus.config?.theme || 'light';

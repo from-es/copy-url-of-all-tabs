@@ -14,7 +14,7 @@
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
-import { cloneObject } from "@/assets/js/lib/user/CloneObject";
+import { cloneObject } from "@/assets/js/lib/CloneObject";
 
 describe("cloneObject Utility", () => {
 	afterEach(() => {

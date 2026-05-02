@@ -66,7 +66,7 @@
 ```typescript
 // file: src/path/to/rules/v1.rules.ts
 
-import { loadRules } from '@/assets/js/lib/user/MigrationManager/loadRules';
+import { loadRules } from '@/assets/js/lib/MigrationManager/loadRules';
 import type { Config } from '@/assets/js/types';
 
 // v1系のルールファイルをすべて【同期的に】インポート

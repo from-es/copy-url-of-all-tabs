@@ -13,22 +13,22 @@
 	import { onMount } from "svelte";
 
 	// Import Svelte Module
-	import { sortable }          from "@/assets/js/lib/user/sortable.svelte.ts";
+	import { sortable }          from "@/assets/js/lib/sortable.svelte.ts";
 	import DebouncedNumericInput from "./DebouncedNumericInput.svelte";
 
 	// Import Svelte Object
-	import { shareStatus as status } from "@/assets/js/lib/user/StateManager/state.svelte.ts";  // Shared State Object
+	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
 
 	// Import NPM Package
 	import dayjs from "dayjs";
 
 	// Import Module
-	import { cloneObject }                                   from "@/assets/js/lib/user/CloneObject";
-	import { StorageManager }                                from "@/assets/js/lib/user/StorageManager";
-	import { PopoverMessage }                                from "@/assets/js/lib/user/MessageManager/PopoverMessage";
-	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/user/ConfigManager";
-	import { MigrationManager }                              from "@/assets/js/lib/user/MigrationManager";
-	import { rules as PreSaveCorrections }                   from "@/assets/js/lib/user/MigrationManager/rules/patch/preSaveCorrections";
+	import { cloneObject }                                   from "@/assets/js/lib/CloneObject";
+	import { StorageManager }                                from "@/assets/js/lib/StorageManager";
+	import { PopoverMessage }                                from "@/assets/js/lib/MessageManager/PopoverMessage";
+	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/ConfigManager";
+	import { MigrationManager }                              from "@/assets/js/lib/MigrationManager";
+	import { rules as PreSaveCorrections }                   from "@/assets/js/lib/MigrationManager/rules/patch/preSaveCorrections";
 	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
 	import { initializeConfig }                              from "@/assets/js/initializeConfig";
 	import { logging }                                       from "@/assets/js/logging";
@@ -39,13 +39,13 @@
 	import { DynamicContent }                                from "../lib/dynamicContent";
 
 	// Import Object
-	import { LOG_LEVELS } from "@/assets/js/lib/user/ConsoleManager/types";
+	import { LOG_LEVELS } from "@/assets/js/lib/ConsoleManager/types";
 
 	// Import Types
 	import type { Config, Define, Status } from "@/assets/js/types";
 	import type { CustomDelayInfo }        from "@/assets/js/define/types";
-	import type { MimeType, ExportResult } from "@/assets/js/lib/user/ConfigManager";
-	import type { MigrationRule }          from "@/assets/js/lib/user/MigrationManager/types";
+	import type { MimeType, ExportResult } from "@/assets/js/lib/ConfigManager";
+	import type { MigrationRule }          from "@/assets/js/lib/MigrationManager/types";
 
 
 

@@ -14,7 +14,7 @@
  */
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import { ConsoleManager } from "@/assets/js/lib/user/ConsoleManager";
+import { ConsoleManager } from "@/assets/js/lib/ConsoleManager";
 import { type IntentionalAnyForValidation } from "../shared/types";
 
 describe("ConsoleManager", () => {

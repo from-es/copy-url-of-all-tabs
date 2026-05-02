@@ -19,7 +19,7 @@
 以下に、`state.ts` での型適用のコード例を示します。
 
 ```typescript
-// src/assets/js/lib/user/StateManager/state.svelte.ts
+// src/assets/js/lib/StateManager/state.svelte.ts
 
 // Import Module & Types
 import { createStore, type UpdateState } from "./store.svelte";
@@ -99,7 +99,7 @@ export { shareStatus, updateState };
 ```typescript
 // src/entrypoints/popup/lib/entrypoint.ts
 
-import { updateState } from "@/assets/js/lib/user/StateManager/state";
+import { updateState } from "@/assets/js/lib/StateManager/state";
 import { initializeConfig } from "@/assets/js/initializeConfig";
 
 // アプリケーション起動時に設定を読み込み、共有状態を更新する
@@ -124,7 +124,7 @@ Svelteコンポーネント内では、`shareStatus` を使ってリアクティ
 <!-- src/entrypoints/popup/components/App.svelte -->
 
 <script lang="ts">
-  import { shareStatus } from "@/assets/js/lib/user/StateManager/state";
+  import { shareStatus } from "@/assets/js/lib/StateManager/state";
 
   // shareStatus.config の変更は自動的にUIに反映される
   $: theme = $shareStatus.config?.theme || 'light';

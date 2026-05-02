@@ -7,7 +7,7 @@
  */
 
 // Import Module
-import { cloneObject } from "@/assets/js/lib/user/CloneObject";
+import { cloneObject } from "@/assets/js/lib/CloneObject";
 
 // Import Types
 import type {

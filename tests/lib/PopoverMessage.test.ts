@@ -15,7 +15,7 @@
  */
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import { PopoverMessage } from "@/assets/js/lib/user/MessageManager/PopoverMessage";
+import { PopoverMessage } from "@/assets/js/lib/MessageManager/PopoverMessage";
 import { type IntentionalAnyForValidation } from "../shared/types";
 
 describe("PopoverMessage", () => {

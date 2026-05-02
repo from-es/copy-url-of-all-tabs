@@ -66,7 +66,7 @@ It strictly validates the structure of each extracted rule object. If even one i
 ```typescript
 // file: src/path/to/rules/v1.rules.ts
 
-import { loadRules } from '@/assets/js/lib/user/MigrationManager/loadRules';
+import { loadRules } from '@/assets/js/lib/MigrationManager/loadRules';
 import type { Config } from '@/assets/js/types';
 
 // Import all v1 series rule files [synchronously]

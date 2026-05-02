@@ -7,12 +7,12 @@
  */
 
 // Import Module
-import { cloneObject }     from "@/assets/js/lib/user/CloneObject";
+import { cloneObject }     from "@/assets/js/lib/CloneObject";
 import { compareVersions } from "@/assets/js/utils/CompareVersions";
 
 // Import Types
 import type { Config }        from "@/assets/js/types";
-import type { MigrationRule } from "@/assets/js/lib/user/MigrationManager/types";
+import type { MigrationRule } from "@/assets/js/lib/MigrationManager/types";
 
 
 

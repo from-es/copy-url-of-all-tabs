@@ -5,11 +5,11 @@ import { browser } from "wxt/browser";
 import v8n from "v8n";
 
 // Import Module
-import { ArrayOfObjectsValidator } from "@/assets/js/lib/user/ArrayOfObjectsValidator";
-import { ColorManager }            from "@/assets/js/lib/user/ColorManager";
+import { ArrayOfObjectsValidator } from "@/assets/js/lib/ArrayOfObjectsValidator";
+import { ColorManager }            from "@/assets/js/lib/ColorManager";
 
 // Import Object
-import { LOG_LEVELS }    from "@/assets/js/lib/user/ConsoleManager/types";
+import { LOG_LEVELS }    from "@/assets/js/lib/ConsoleManager/types";
 import { defaultConfig } from "./config";
 import * as Constants    from "./constants";
 

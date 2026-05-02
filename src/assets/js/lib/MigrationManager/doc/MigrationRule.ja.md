@@ -88,7 +88,7 @@ type MigrationArgument<T> = {
 v1.12.0で `config` オブジェクトに `Badge` プロパティが追加された際の移行ルールの例です。
 
 ```typescript
-import { cloneObject } from "@/assets/js/lib/user/CloneObject";
+import { cloneObject } from "@/assets/js/lib/CloneObject";
 import type { MigrationRule } from "./types";
 import type { Config } from "@/assets/js/types";
 

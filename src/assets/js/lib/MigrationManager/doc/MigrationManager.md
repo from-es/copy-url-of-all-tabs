@@ -63,9 +63,9 @@ The `MigrationManager` module is intended to be used during application startup 
 
 ```typescript
 // --- Import necessary modules ---
-import { MigrationManager } from '@/assets/js/lib/user/MigrationManager';
-import { loadRules } from '@/assets/js/lib/user/MigrationManager/loadRules'; // If using the loadRules utility
-import type { MigrationRule } from '@/assets/js/lib/user/MigrationManager/types';
+import { MigrationManager } from '@/assets/js/lib/MigrationManager';
+import { loadRules } from '@/assets/js/lib/MigrationManager/loadRules'; // If using the loadRules utility
+import type { MigrationRule } from '@/assets/js/lib/MigrationManager/types';
 import type { Config } from '@/assets/js/types';
 
 /**
@@ -90,7 +90,7 @@ async function applyMigration(data: Config, defaultValues: Partial<Config>): Pro
 
 	// Example 1: Direct Import (for importing specific rule files individually)
 	// This method is suitable for strictly managing a small number of rules.
-	// import { migrationRules as rulesV1 } from '@/assets/js/lib/user/MigrationManager/rules/v1/someRule.rule.ts';
+	// import { migrationRules as rulesV1 } from '@/assets/js/lib/MigrationManager/rules/v1/someRule.rule.ts';
 	// combinedRules = rulesV1; // or combinedRules.concat(rulesV1);
 
 	// Example 2: Import using `import.meta.glob` and the `loadRules` utility (Recommended)
@@ -98,16 +98,16 @@ async function applyMigration(data: Config, defaultValues: Partial<Config>): Pro
 	try {
 		// For example, dynamically loading rules based on the data version
 		if (dataVersion === 1) {
-			const ruleModulesV1 = import.meta.glob('@/assets/js/lib/user/MigrationManager/rules/v1/*.rule.ts', { eager: true });
+			const ruleModulesV1 = import.meta.glob('@/assets/js/lib/MigrationManager/rules/v1/*.rule.ts', { eager: true });
 			combinedRules = loadRules<Config>(ruleModulesV1);
 		}
 		// If a new version (v2) exists, add it similarly
 		// else if (dataVersion === 2) {
-		//     const ruleModulesV2 = import.meta.glob('@/assets/js/lib/user/MigrationManager/rules/v2/*.rule.ts', { eager: true });
+		//     const ruleModulesV2 = import.meta.glob('@/assets/js/lib/MigrationManager/rules/v2/*.rule.ts', { eager: true });
 		//     combinedRules = loadRules<Config>(ruleModulesV2);
 		// }
 		// Alternatively, load all rules together (matching the code example in "Design Philosophy" above)
-		// const allRuleModules = import.meta.glob('@/assets/js/lib/user/MigrationManager/rules/**/*.rule.ts', { eager: true });
+		// const allRuleModules = import.meta.glob('@/assets/js/lib/MigrationManager/rules/**/*.rule.ts', { eager: true });
 		// combinedRules = loadRules<Config>(allRuleModules);
 
 	} catch (e) {

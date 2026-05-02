@@ -16,9 +16,9 @@
  */
 
 import { describe, it, afterEach, beforeEach, expect, vi } from "vitest";
-import { BrowserEnvironment } from "@/assets/js/lib/user/BrowserEnvironment";
+import { BrowserEnvironment } from "@/assets/js/lib/BrowserEnvironment";
 
-vi.mock("@/assets/js/lib/user/BrowserEnvironment/plugins/bowser", () => ({
+vi.mock("@/assets/js/lib/BrowserEnvironment/plugins/bowser", () => ({
 	UserAgentParserPlugin: {
 		information: { useLibrary: "bowser-mock" },
 		execute: vi.fn(() => ({

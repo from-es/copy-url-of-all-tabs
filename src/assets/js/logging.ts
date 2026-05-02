@@ -8,7 +8,7 @@
  */
 
 // Import Module
-import { ConsoleManager } from "@/assets/js/lib/user/ConsoleManager";
+import { ConsoleManager } from "@/assets/js/lib/ConsoleManager";
 import { isEqual }        from "@/assets/js/utils/isEqual";
 
 // Import Types

@@ -12,7 +12,7 @@
 
 import { browser } from "wxt/browser";
 import { describe, it, beforeEach, expect, vi } from "vitest";
-import { StorageManager } from "@/assets/js/lib/user/StorageManager";
+import { StorageManager } from "@/assets/js/lib/StorageManager";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // Mock settings for browser.storage.local

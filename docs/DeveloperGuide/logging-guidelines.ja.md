@@ -12,7 +12,7 @@
 - **フォーマットの統一**: 機械的な判別と検索を容易にするためのプレフィックス（method/scope）およびメッセージ構造の標準化。
 - **追跡性の向上**: 発生箇所（コンテキスト）や処理状態（Status）を明示し、問題特定までの時間を短縮。
 
-本ガイドラインは、`ConsoleManager` クラス（[コード](../../src/assets/js/lib/user/ConsoleManager/index.ts)、[ドキュメント](../../src/assets/js/lib/user/ConsoleManager/doc/README.ja.md)）によるログレベル管理システムの設計思想に基づき、すべてのコンソール出力を適切に分類・正規化することを目的とします。
+本ガイドラインは、`ConsoleManager` クラス（[コード](../../src/assets/js/lib/ConsoleManager/index.ts)、[ドキュメント](../../src/assets/js/lib/ConsoleManager/doc/README.ja.md)）によるログレベル管理システムの設計思想に基づき、すべてのコンソール出力を適切に分類・正規化することを目的とします。
 
 
 ## ログレベルとメソッドの役割

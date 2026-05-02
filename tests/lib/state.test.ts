@@ -16,7 +16,7 @@
  */
 
 import { describe, it, beforeEach, expect, vi } from "vitest";
-import { shareStatus, updateState, initializeSharedState } from "@/assets/js/lib/user/StateManager/state.svelte";
+import { shareStatus, updateState, initializeSharedState } from "@/assets/js/lib/StateManager/state.svelte";
 import type { Config, Define } from "@/assets/js/types";
 
 describe("state (StateManager)", () => {

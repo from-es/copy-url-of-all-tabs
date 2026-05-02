@@ -88,7 +88,7 @@ type MigrationArgument<T> = {
 Here is an example of a migration rule for when the `Badge` property was added to the `config` object in v1.12.0.
 
 ```typescript
-import { cloneObject } from "@/assets/js/lib/user/CloneObject";
+import { cloneObject } from "@/assets/js/lib/CloneObject";
 import type { MigrationRule } from "./types";
 import type { Config } from "@/assets/js/types";
 

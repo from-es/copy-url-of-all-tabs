@@ -12,7 +12,7 @@
  */
 
 import { describe, beforeEach, afterEach, expect, vi } from "vitest";
-import { UserAgentParser } from "@/assets/js/lib/user/BrowserEnvironment/UserAgentParser";
+import { UserAgentParser } from "@/assets/js/lib/BrowserEnvironment/UserAgentParser";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // =============================================================================

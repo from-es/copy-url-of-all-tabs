@@ -86,7 +86,7 @@
 
 -   **ファイル配置例:**
 	```
-	src/assets/js/lib/user/MigrationManager/rules/
+	src/assets/js/lib/MigrationManager/rules/
 	 ├─ v1/
 	 │   ├─ v1.11.0-restructure-filtering.rule.ts
 	 │   └─ v1.12.0-add-badge-property.rule.ts
@@ -98,7 +98,7 @@
 
 - **集約ファイルの実装例 (`v1.rules.ts`):**
 	```typescript
-	import { loadRules } from "@/assets/js/lib/user/MigrationManager/loadRules";
+	import { loadRules } from "@/assets/js/lib/MigrationManager/loadRules";
 	import type { Config } from "@/assets/js/types";
 
 	const modules = import.meta.glob('./v1/**/*.rule.ts', { eager: true });
@@ -126,11 +126,11 @@ async function migrateExternalData(data: Config, defaultValues: Partial<Config>)
 	switch (dataVersion) {
 		case 1:
 			// 動的インポートは Service Worker でエラーになる
-			const { migrationRules: rulesV1 } = await import('@/assets/js/lib/user/MigrationManager/rules/v1.rules.ts');
+			const { migrationRules: rulesV1 } = await import('@/assets/js/lib/MigrationManager/rules/v1.rules.ts');
 			combinedRules = combinedRules.concat(rulesV1);
 			// fall through
 		case 2:
-			const { migrationRules: rulesV2 } = await import('@/assets/js/lib/user/MigrationManager/rules/v2.rules.ts');
+			const { migrationRules: rulesV2 } = await import('@/assets/js/lib/MigrationManager/rules/v2.rules.ts');
 			combinedRules = combinedRules.concat(rulesV2);
 			// fall through
 		// 新しいバージョン(v3)が追加されたら、ここに case 3 を追加
@@ -144,14 +144,14 @@ async function migrateExternalData(data: Config, defaultValues: Partial<Config>)
 Service Worker を含むすべての環境で安全に動作させるためには、必要なルール集約ファイルをすべて**静的に**インポートします。`switch-case` 文の `fall-through` を利用することで、古いバージョンから最新バージョンまでのすべての移行パスを保証するロジックは同様に実現できます。
 
 ```typescript
-import { MigrationManager } from "@/assets/js/lib/user/MigrationManager";
-import type { MigrationRule } from "@/assets/js/lib/user/MigrationManager/types";
+import { MigrationManager } from "@/assets/js/lib/MigrationManager";
+import type { MigrationRule } from "@/assets/js/lib/MigrationManager/types";
 import type { Config } from "@/assets/js/types";
 
 // --- 必要なルール集約ファイルをすべて静的にインポート ---
-import { migrationRules as rulesV1 } from "@/assets/js/lib/user/MigrationManager/rules/v1.rules.ts";
-import { migrationRules as rulesV2 } from "@/assets/js/lib/user/MigrationManager/rules/v2.rules.ts";
-// import { migrationRules as rulesV3 } from "@/assets/js/lib/user/MigrationManager/rules/v3.rules.ts";
+import { migrationRules as rulesV1 } from "@/assets/js/lib/MigrationManager/rules/v1.rules.ts";
+import { migrationRules as rulesV2 } from "@/assets/js/lib/MigrationManager/rules/v2.rules.ts";
+// import { migrationRules as rulesV3 } from "@/assets/js/lib/MigrationManager/rules/v3.rules.ts";
 
 const LATEST_VERSION = 2; // アプリケーションがサポートする最新のメジャーバージョン (v3 ができたら 3 に)
 

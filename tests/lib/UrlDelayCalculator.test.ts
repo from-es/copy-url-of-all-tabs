@@ -16,7 +16,7 @@
  */
 
 import { describe, it, afterEach, expect, vi } from "vitest";
-import { UrlDelayCalculator, type UrlDelayRule } from "@/assets/js/lib/user/UrlDelayCalculator";
+import { UrlDelayCalculator, type UrlDelayRule } from "@/assets/js/lib/UrlDelayCalculator";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 import { type IntentionalAnyForValidation } from "../shared/types";
 
