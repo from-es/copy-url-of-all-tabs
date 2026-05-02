@@ -510,7 +510,7 @@
 			</dl>
 
 			<dl>
-				<dt>Update History</dt>
+				<dt>Changelog</dt>
 				<dd id="update-history"><a href={ status.define.Information.updatehistory.url } title={ status.define.Information.updatehistory.title } target="_blank" rel="noopener noreferrer">{ status.define.Information.updatehistory.title }</a></dd>
 			</dl>
 

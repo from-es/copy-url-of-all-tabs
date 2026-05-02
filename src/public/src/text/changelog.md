@@ -1,4 +1,4 @@
-# Update History for "Copy URL of All Tabs"
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
