@@ -12,7 +12,7 @@
  */
 
 import { describe, beforeEach, afterEach, vi } from "vitest";
-import { VerifyConfigValue } from "@/assets/js/lib/user/VerifyConfigValue";
+import { VerifyConfigValue } from "@/assets/js/lib/VerifyConfigValue";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 import type { Config, Define } from "@/assets/js/types";
 

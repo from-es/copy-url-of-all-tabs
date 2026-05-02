@@ -14,17 +14,17 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
 import cloneDeep from "lodash-es/cloneDeep";
 import { type Config } from "@/assets/js/types";
-import { type MigrationRule } from "@/assets/js/lib/user/MigrationManager/types";
-import { cloneObject } from "@/assets/js/lib/user/CloneObject";
-import { MigrationManager } from "@/assets/js/lib/user/MigrationManager";
-import { migrationRules } from "@/assets/js/lib/user/MigrationManager/rules";
+import { type MigrationRule } from "@/assets/js/lib/MigrationManager/types";
+import { cloneObject } from "@/assets/js/lib/CloneObject";
+import { MigrationManager } from "@/assets/js/lib/MigrationManager";
+import { migrationRules } from "@/assets/js/lib/MigrationManager/rules";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // =============================================================================
 // 1. Mocks and Fixtures
 // =============================================================================
 
-vi.mock("@/assets/js/lib/user/CloneObject");
+vi.mock("@/assets/js/lib/CloneObject");
 vi.mock("@/assets/js/define", () => ({
 	define: {
 		Config: {},
@@ -32,7 +32,7 @@ vi.mock("@/assets/js/define", () => ({
 		Regex: { url: { standard: /a/, RFC3986: /b/ } }
 	}
 }));
-vi.mock("@/assets/js/lib/user/MigrationManager/rules", () => ({
+vi.mock("@/assets/js/lib/MigrationManager/rules", () => ({
 	migrationRules: [] // Export an empty, controllable array
 }));
 

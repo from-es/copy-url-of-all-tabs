@@ -13,7 +13,7 @@
  */
 
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import { sortable } from "@/assets/js/lib/user/sortable.svelte";
+import { sortable } from "@/assets/js/lib/sortable.svelte";
 import Sortable from "sortablejs";
 
 // Mock SortableJS

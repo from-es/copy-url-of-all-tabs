@@ -14,7 +14,7 @@
 
 import type { Browser } from "wxt/browser";
 import { describe, afterEach, vi } from "vitest";
-import { FormatManager } from "@/entrypoints/popup/js/FormatManager";
+import { FormatManager } from "@/entrypoints/popup/lib/FormatManager";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 import { type IntentionalAnyForValidation } from "../shared/types";
 

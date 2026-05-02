@@ -98,6 +98,8 @@ To ensure code quality, maintainability, and collaborative development, we use t
   - See the [Test Writing Guide](./docs/DeveloperGuide/vitest.md).
 - **commitlint**: For standardized commit messages.
   - See the [Commit Message Guidelines](./docs/DeveloperGuide/commitlint.md).
+- **Changelog**: For standardized update history.
+  - See the [Changelog Guideline](./docs/DeveloperGuide/changelog-guideline.md).
 
 
 ## Related Links

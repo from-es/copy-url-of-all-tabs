@@ -12,7 +12,7 @@ Ensuring searchability, consistency, and transparency of logs during development
 - **Uniformity of Format**: Standardization of prefixes (method/scope) and message structure to facilitate mechanical identification and searchability.
 - **Improved Traceability**: Explicit indication of occurrence location (context) and processing status (Status) to reduce time spent on problem identification.
 
-These guidelines are based on the design philosophy of the `ConsoleManager` class ([code](../../src/assets/js/lib/user/ConsoleManager/index.ts), [documentation](../../src/assets/js/lib/user/ConsoleManager/doc/README.md)) log level management system, aiming to appropriately classify and normalize all console outputs.
+These guidelines are based on the design philosophy of the `ConsoleManager` class ([code](../../src/assets/js/lib/ConsoleManager/index.ts), [documentation](../../src/assets/js/lib/ConsoleManager/doc/README.md)) log level management system, aiming to appropriately classify and normalize all console outputs.
 
 ## Log Levels and Method Roles
 

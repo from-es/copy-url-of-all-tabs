@@ -56,3 +56,9 @@ h2 {
 #latest, #past {
 	display: contents;
 }
+
+/* Markdown コンテンツ内のリストの余白調整 */
+.version-content > ul {
+	margin-left : 0.5rem;
+	margin-right: 0.5rem;
+}

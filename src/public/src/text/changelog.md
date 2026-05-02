@@ -1,395 +1,482 @@
-#### [1.20.9] - 2026/04/22
+# Changelog
 
-- improve
-	- Internal code improvements to enhance extension stability and maintainability.
+All notable changes to this project will be documented in this file.
 
-#### [1.20.8] - 2026/04/09
+- The format is based on [Keep a Changelog](https://keepachangelog.com/).
+- This project adheres to [Semantic Versioning](https://semver.org/).
 
-- improve
-	- Internal code improvements to enhance extension stability and maintainability.
+## [1.21.0] - 2026-05-02
 
-#### [1.20.7] - 2026/04/06
+### Changed
 
-- improve
-	- Internal code improvements to enhance extension stability and maintainability.
+- Internal code improvements to enhance extension stability and maintainability.
+- Refined the Changelog page implementation for improved reliability and readability.
+- Updated the "Update History" label to "Changelog" on the options page for better brevity.
 
-#### [1.20.6] - 2026/04/04
+## [1.20.9] - 2026-04-22
 
-- improve
-	- Internal code improvements to enhance extension stability and maintainability.
-	- Added explanatory notes for the "Custom Delay" setting on the options page.
+### Changed
 
-#### [1.20.5] - 2026/03/28
+- Internal code improvements to enhance extension stability and maintainability.
 
-- improve
-	- Improved extension descriptions on the options page for better clarity.
+## [1.20.8] - 2026-04-09
 
-#### [1.20.4] - 2026/03/26
+### Changed
 
-- improve
-	- Internal code improvements to enhance extension stability and maintainability.
-	- Improved extension description for better clarity in the browser extension store.
+- Internal code improvements to enhance extension stability and maintainability.
 
-#### [1.20.3] - 2026/03/13
+## [1.20.7] - 2026-04-06
 
-- improve
-	- Internal code improvements to enhance extension stability and maintainability.
+### Changed
 
-#### [1.20.2] - 2026/03/05
+- Internal code improvements to enhance extension stability and maintainability.
 
-- improve
-	- Internal code improvements to enhance extension stability and maintainability.
+## [1.20.6] - 2026-04-04
 
-#### [1.20.1] - 2026/02/28
+### Changed
 
-- improve
-	- Standardized internal logging processes to enhance extension stability and facilitate troubleshooting.
+- Internal code improvements to enhance extension stability and maintainability.
+- Added explanatory notes for the "Custom Delay" setting on the options page.
 
-#### [1.20.0] - 2026/02/06
+## [1.20.5] - 2026-03-28
 
-- feat
-	- Enhanced debug settings on the options page, including more granular control over log levels and timestamp configurations.
-- fix
-	- Addressed layout issues on the options page that occurred when resizing the window.
+### Changed
 
-#### [1.19.1] - 2026/01/24
+- Improved extension descriptions on the options page for better clarity.
 
-- fix
-	- Fixed a minor issue in the numeric input fields to improve stability.
-- improve
-	- Improved internal logic to prevent potential memory leaks, enhancing overall performance and stability.
+## [1.20.4] - 2026-03-26
 
-#### [1.19.0] - 2026/01/23
+### Changed
 
-- improve
-	- Improved the stability of the initial setup process after installation.
+- Internal code improvements to enhance extension stability and maintainability.
+- Improved extension description for better clarity in the browser extension store.
 
-#### [1.18.0] - 2026/01/16
+## [1.20.3] - 2026-03-13
 
-- feat
-	- Added a feature to enable or disable individual items in the custom delay list on the options page.
+### Changed
 
-#### [1.17.0] - 2026/01/03
+- Internal code improvements to enhance extension stability and maintainability.
 
-- improve
-	- The internal architecture has been significantly updated to improve performance and stability.
+## [1.20.2] - 2026-03-05
 
-#### [1.16.1] - 2025/12/26
+### Changed
 
-- improve
-	- Refactored and optimized components.
+- Internal code improvements to enhance extension stability and maintainability.
 
-#### [1.16.0] - 2025/12/21
+## [1.20.1] - 2026-02-28
 
-- feat
-	- Updated core dependencies, build tools (WXT, Svelte), and development tools (ESLint, TypeScript-ESLint, Vitest).
-- fix
-	- Removed redundant dependency of `@types/dompurify`.
+### Changed
 
-#### [1.15.3] - 2025/12/21
+- Standardized internal logging processes to enhance extension stability and facilitate troubleshooting.
 
-- fix
-	- Standardized all warning messages on the options page to English.
+## [1.20.0] - 2026-02-06
 
-#### [1.15.2] - 2025/12/19
+### Added
 
-- fix
-	- Fixed a bug that could cause a validation warning to be displayed on the options page after resetting and then saving the settings.
+- Enhanced debug settings on the options page, including more granular control over log levels and timestamp configurations.
 
-#### [1.15.1] - 2025/12/15
+### Fixed
 
-- fix
-	- Fixed a bug on the options page that could prevent URL pattern matching settings from being applied correctly.
-- fix
-	- In the user guide's section for the 'Custom Delay' feature, an error in the description of the URL pattern matching rules has been corrected.
+- Addressed layout issues on the options page that occurred when resizing the window.
 
-#### [1.15.0] - 2025/12/11
+## [1.19.1] - 2026-01-24
 
-- feat
-	- Enhanced URL filtering with pattern matching capabilities. This includes `prefix`, `substring`, and `exact` matches, as well as a `regex` mode for advanced filtering using regular expressions.
-- fix
-	- Improved URL parsing to correctly handle URLs from the clipboard that contain underscores in the hostname.
-- improve
-	- Refactored and optimized internal components for better performance and maintainability.
+### Fixed
 
-#### [1.14.0] - 2025/12/06
+- Fixed a minor issue in the numeric input fields to improve stability.
 
-- feat
-	- When saving, if invalid values are found in the settings, a notification will now specify which fields need correction.
-- improve
-	- Enhanced the validation process on the Options screen when saving settings.
+### Changed
 
-#### [1.13.0] - 2025/11/25
+- Improved internal logic to prevent potential memory leaks, enhancing overall performance and stability.
 
-- feat
-	- Added validation for badge color format to ensure valid CSS color values.
-	- Improved the clarity of explanatory texts on the options screen.
-- improve
-	- Internal code has been refactored for better performance and maintainability.
+## [1.19.0] - 2026-01-23
 
-#### [1.12.0] - 2025/11/10
+### Changed
 
-- feat
-	- Added a badge feature to display the number of URLs waiting to be opened on the extension icon.
-- fix
-	- Fixed an issue where importing a settings file would save the settings immediately, instead of waiting for the user to press the "Save" button.
+- Improved the stability of the initial setup process after installation.
 
-#### [1.11.0] - 2025/11/07
+## [1.18.0] - 2026-01-16
 
-- feat
-	- Added an option to exclude duplicate URLs from being copied.
-- fix
-	- Fixed an issue where tabs were not opened in the correct order when using the 'prepend' mode to open URLs.
+### Added
 
-#### [1.10.0] - 2025/10/28
+- Added a feature to enable or disable individual items in the custom delay list on the options page.
 
-- feat
-	- Improved the responsiveness and stability of numeric input fields on the options page.
-- fix
-	- Fixed an issue where the placeholder text for the custom delay setting on the options page was incorrect.
-- improve
-	- Refactored UI components on the options page for better performance and maintainability.
+## [1.17.0] - 2026-01-03
 
-#### [1.9.0] - 2025/10/24
+### Changed
 
-- improve
-	- Optimized the internal settings update process to improve extension efficiency and reliability.
+- The internal architecture has been significantly updated to improve performance and stability.
 
-#### [1.8.0] - 2025/10/20
+## [1.16.1] - 2025-12-26
 
-- feat
-	- Added "Task Control" options to the options page. You can now fine-tune how multiple tabs are processed, such as the processing unit (unitary, batch, monolithic) and the execution order (parallel, append, prepend).
-- improve
-	- Significantly improved the stability and performance when opening a large number of tabs by introducing a new queueing system.
+### Changed
 
-#### [1.7.0] - 2025/10/16
+- Refactored and optimized internal components.
 
-- improve
-	- Improved the stability and robustness of the extension.
+## [1.16.0] - 2025-12-21
 
-#### [1.6.0] - 2025/10/13
+### Added
 
-- feat
-	- Internal system improvements for enhanced stability.
-	- Improved input validation on the options page.
-- fix
-	- Fixed a minor spelling error.
+- Updated core dependencies, build tools, and development tools to the latest versions.
 
-#### [1.5.0] - 2025/10/08
+### Fixed
 
-- fix
-	- Fixed an issue where custom delay settings were not saved or applied correctly.
+- Removed redundant internal dependencies.
 
-#### [1.4.0] - 2025/10/04
+## [1.15.3] - 2025-12-21
 
-- feat
-	- The settings import/export functionality has been refactored and improved for better stability and maintainability.
+### Fixed
 
-#### [1.3.1] - 2025/09/26
+- Standardized all warning messages on the options page to English.
 
-- fix
-	- Fixed an issue where notification messages did not scale correctly with the browser's font size settings.
+## [1.15.2] - 2025-12-19
 
-#### [1.3.0] - 2025/09/22
+### Fixed
 
-- feat
-	- Improved the logic and reliability of pop-up messages.
-- change
-	- Changed the minimum required Firefox version to 127.
+- Fixed a bug that could cause a validation warning to be displayed on the options page after resetting and then saving the settings.
 
-#### [1.2.0] - 2025/09/20
+## [1.15.1] - 2025-12-15
 
-- feat
-	- Added support for Firefox Add-ons.
-	- Enhanced security by sanitizing HTML content to prevent potential XSS vulnerabilities.
+### Fixed
 
-#### [1.1.2] - 2025/09/13
+- Fixed a bug on the options page that could prevent URL pattern matching settings from being applied correctly.
+- Corrected an error in the user guide's description of the URL pattern matching rules.
 
-- clean
-	- Improved the layout of the `changelog page` for better readability.
+## [1.15.0] - 2025-12-11
 
-#### [1.1.1] - 2025/09/06
+### Added
 
-- fix
-	- Fixed various code style issues identified by ESLint.
-- clean
-	- Improved and refactored internal code for better stability and maintenance.
+- Enhanced URL filtering with pattern matching capabilities. This includes prefix, substring, and exact matches, as well as a regex mode for advanced filtering.
 
-#### [1.1.0] - 2025/09/04
+### Fixed
 
-- feat
-	- The font size setting from the options page is now applied to the `changelog page`.
-- clean
-	- Refactored the `changelog script` for better performance, including improved error handling and more efficient DOM manipulation.
-	- Refactored `StorageManager` to unify error handling, improving code stability and maintenance.
+- Improved URL parsing to correctly handle URLs from the clipboard that contain underscores in the hostname.
 
-#### [1.0.5] - 2025/08/30
+### Changed
 
-- clean
-	- Improved and refactored internal code for better stability and maintenance.
+- Refactored and optimized internal components for better performance and maintainability.
 
-#### [1.0.4] - 2025/08/26
+## [1.14.0] - 2025-12-06
 
-- fix
-	- Fixed various code style issues identified by ESLint.
-	- Corrected the tooltip text for the support link on the options page.
+### Added
 
-#### [1.0.3] - 2025/08/26
+- When saving, if invalid values are found in the settings, a notification will now specify which fields need correction.
 
-- fix
-	- Fixed various code style issues identified by ESLint.
+### Changed
 
-#### [1.0.2] - 2025/08/23
+- Enhanced the validation process on the Options screen when saving settings.
 
-- improve
-	- Improved the validation message display when entering numbers on the options page.
-- clean
-	- Improved internal processing for better performance and stability.
+## [1.13.0] - 2025-11-25
 
-#### [1.0.1] - 2025/08/19
+### Added
 
-- fix
-	- Fixed an issue where the extension incorrectly overrode the default Chrome history page (`chrome://history`)
+- Added validation for badge color format to ensure valid CSS color values.
+- Improved the clarity of explanatory texts on the options screen.
 
-#### [1.0.0] - 2025/08/16
+### Changed
 
-- release
-	- All initially planned core features have been implemented
-	- Future releases will follow [Semantic Versioning](https://semver.org/)
+- Internal code has been refactored for better performance and maintainability.
 
-#### [0.9.0] - 2025/08/05
+## [1.12.0] - 2025-11-10
 
-- add
-	- The interval between opening tabs can now be specified for each URL (when opening the URL for the second time or later), instead of being fixed to the delay value specified in the options
+### Added
 
-#### [0.8.3] - 2025/07/12
+- Added a badge feature to display the number of URLs waiting to be opened on the extension icon.
 
-- fix
-	- Improve URL extraction accuracy from clipboard
+### Fixed
 
-#### [0.8.2] - 2025/07/12
+- Fixed an issue where importing a settings file would save the settings immediately, instead of waiting for the user to press the "Save" button.
 
-- fix
-	- Corrected a typo in the `mimetype` property of the `config.Format` object
-	- Fixed "Migrate settings" process not passing when importing settings
+## [1.11.0] - 2025-11-07
 
-#### [0.8.1.10] - 2025/07/09
+### Added
 
-- clean
-	- Refactoring, Centralize "deep copy" processing, structuredClone & cloneDeep (lodash)
-- replace
-	- Replace "normalize.css" with "modern-normalize.css"
-- update
-	- Fixed a word warning in Visual Studio Code
-		- ``project/README.md``
-		- ``project/material/Chrome Web Store/doc/Overview.md``
+- Added an option to exclude duplicate URLs from being copied.
 
-#### [0.8.1.9] - 2025/07/07
+### Fixed
 
-- clean
-	- Improved accessibility in pop-up menus
-		- ``project/src/entrypoints/popup/svelte/App.svelte``
-		- ``project/src/entrypoints/popup/css/popup.css``
+- Fixed an issue where tabs were not opened in the correct order when using the 'prepend' mode to open URLs.
 
-#### [0.8.1.8] - 2025/07/04
+## [1.10.0] - 2025-10-28
 
-- clean
-	- Change button elements to display using snippet (``project/src/entrypoints/popup/svelte/App.svelte``)
-	- Refactoring, Split App.svelte  (``project/src/entrypoints/popup/svelte/App.svelte``)
-		- Create a store for state management
-		- Separate business logic from the component
-- update
-	- update documentation in options page (typo & improve wording)
+### Added
 
-#### [0.8.1.7] - 2025/06/30
+- Improved the responsiveness and stability of numeric input fields on the options page.
 
-- clean
-	- Refactor to centralize console output logic (``project/src/entrypoints/popup/js/FormatManager.mjs``)
-	- Refactoring App.svelte (``project/src/entrypoints/popup/svelte/App.svelte``)
-		- Migrate state management logic to store
-		- UI display logic managed in derived store
-			- Display loading status
-			- Disable buttons during processing
-		- Improved error handling
-- fix
-	- Fixed typos in messages (``project/src/entrypoints/popup/js/FormatManager.mjs``)
-- ESLint
-	- Disabled the "svelte/no-at-html-tags" error found in ESLint
+### Fixed
 
-#### [0.8.1.6] - 2025/06/22
+- Fixed an issue where the placeholder text for the custom delay setting on the options page was incorrect.
 
-- fix
-	- Fixed "quotes" of items found in ESLint
-	- Fixed "space-infix-ops" of items found in ESLint
-	- Fixed "comma-spacing" of items found in ESLint
+### Changed
 
-#### [0.8.1.5] - 2025/06/07
+- Refactored UI components on the options page for better performance and maintainability.
 
-- clean
-	- Optimizing array operations (https://github.com/from-es/copy-url-of-all-tabs/commit/c44c3bcb7145e1668c4650b1134ad19220bb25a2)
-	- Optimizing array operations (https://github.com/from-es/copy-url-of-all-tabs/commit/db3c365f9e033fa6980fe389e0cea97359b5d56b)
-	- Optimizing array operations (https://github.com/from-es/copy-url-of-all-tabs/commit/fccf39819b48924df631765eac0d4e6636738858)
-- fix
-	- Fixed "quotes" of items found in ESLint ``FormatManager.mjs``
+## [1.9.0] - 2025-10-24
 
-#### [0.8.1.4] - 2025/06/05
+### Changed
 
-- clean
-	- Optimizing the filtering process (https://github.com/from-es/copy-url-of-all-tabs/commit/08f3a6259a4f84fc45a2c56649a6ee1956398910)
-	- Optimizing array difference calculations (https://github.com/from-es/copy-url-of-all-tabs/commit/cc37ff3e34ea9b3252426819f92cf3bc0ebd7412)
+- Optimized the internal settings update process to improve extension efficiency and reliability.
 
-#### [0.8.1.3] - 2025/05/31
+## [1.8.0] - 2025-10-20
 
-- fix
-	- Fixed items found in ESLint
-- update
-	- Update **Marked** v15.0.8 to v15.0.12
+### Added
 
-#### [0.8.1.2] - 2025/04/18
+- Added "Task Control" options to the options page. You can now fine-tune how multiple tabs are processed, such as the processing unit and the execution order.
 
-- fix
-	- Fixed typo in source code
-	- Fixed items found in ESLint
+### Changed
 
-#### [0.8.1.1] - 2025/04/17
+- Significantly improved the stability and performance when opening a large number of tabs by introducing a new queueing system.
 
-- add
-	- Install ESLint for Svelte. eslint-plugin-svelte (https://sveltejs.github.io/eslint-plugin-svelte/)
+## [1.7.0] - 2025-10-16
 
-#### [0.8.1] - 2025/04/17
+### Changed
 
-- fix
-	- Open external links in the page of "Update History" in a new tab
-- update
-	- Update **Marked** v14.1.2 to v15.0.8
+- Improved the stability and robustness of the extension.
 
-#### [0.8.0] - 2025/04/14
+## [1.6.0] - 2025-10-13
 
-- change
-	- Changes to the directory structure
-		- Change the path from ``project/src/src`` to ``project/src/assets``
-	- Change import path specification to using aliases (https://wxt.dev/api/reference/wxt/interfaces/InlineConfig.html#alias).
-- upgrade
-	- Upgrade WXT v0.19.0 to v0.20.0
+### Added
 
-#### [0.7.0] - 2025/01/29
+- Internal system improvements for enhanced stability.
+- Improved input validation on the options page.
 
-- add
-	- URL filtering options can now be applied separately for Copy and Paste.
-- fix
-	- Fixed "Version Information" validation.
+### Fixed
 
-#### [0.6.1.1] - 2025/01/20
+- Fixed a minor spelling error.
 
-- upgrade
-	- Migrated the UI framework used in the options from Svelte 4 to 5.
+## [1.5.0] - 2025-10-08
 
-#### [0.6.1] - 2024/12/12
+### Fixed
 
-- clean
-	- The HTML structure of the pop-up menu has been changed.
+- Fixed an issue where custom delay settings were not saved or applied correctly.
 
-#### [0.6.0] - 2024/11/01
+## [1.4.0] - 2025-10-04
 
-- release
-	- Publish in the Chrome Web Store
+### Added
+
+- The settings import/export functionality has been refactored and improved for better stability and maintainability.
+
+## [1.3.1] - 2025-09-26
+
+### Fixed
+
+- Fixed an issue where notification messages did not scale correctly with the browser's font size settings.
+
+## [1.3.0] - 2025-09-22
+
+### Added
+
+- Improved the logic and reliability of pop-up messages.
+
+### Changed
+
+- Changed the minimum required Firefox version to 127.
+
+## [1.2.0] - 2025-09-20
+
+### Added
+
+- Added support for Firefox Add-ons.
+- Enhanced security by sanitizing HTML content to prevent potential XSS vulnerabilities.
+
+## [1.1.2] - 2025-09-13
+
+### Changed
+
+- Improved the layout of the update history page for better readability.
+
+## [1.1.1] - 2025-09-06
+
+### Fixed
+
+- Fixed various internal code style issues.
+
+### Changed
+
+- Improved and refactored internal code for better stability and maintenance.
+
+## [1.1.0] - 2025-09-04
+
+### Added
+
+- The font size setting from the options page is now applied to the update history page.
+
+### Changed
+
+- Refactored the update history page logic for better performance and error handling.
+- Improved internal data management to enhance code stability.
+
+## [1.0.5] - 2025-08-30
+
+### Changed
+
+- Improved and refactored internal code for better stability and maintenance.
+
+## [1.0.4] - 2025-08-26
+
+### Fixed
+
+- Fixed various internal code style issues.
+- Corrected the tooltip text for the support link on the options page.
+
+## [1.0.3] - 2025-08-26
+
+### Fixed
+
+- Fixed various internal code style issues.
+
+## [1.0.2] - 2025-08-23
+
+### Changed
+
+- Improved the validation message display when entering numbers on the options page.
+- Improved internal processing for better performance and stability.
+
+## [1.0.1] - 2025-08-19
+
+### Fixed
+
+- Fixed an issue where the extension incorrectly overrode the default browser history page.
+
+## [1.0.0] - 2025-08-16
+
+### Added
+
+- All initially planned core features have been implemented.
+- Future releases will follow Semantic Versioning.
+
+## [0.9.0] - 2025-08-05
+
+### Added
+
+- The interval between opening tabs can now be specified for each URL individually.
+
+## [0.8.3] - 2025-07-12
+
+### Fixed
+
+- Improved URL extraction accuracy from the clipboard.
+
+## [0.8.2] - 2025-07-12
+
+### Fixed
+
+- Corrected an internal configuration error related to file formats.
+- Fixed an issue during the settings migration process when importing settings.
+
+## [0.8.1.10] - 2025-07-09
+
+### Changed
+
+- Improved internal data cloning processes for better reliability.
+- Switched to a more modern CSS reset for improved cross-browser consistency.
+- Updated project documentation.
+
+## [0.8.1.9] - 2025-07-07
+
+### Changed
+
+- Improved accessibility in pop-up menus.
+
+## [0.8.1.8] - 2025-07-04
+
+### Changed
+
+- Improved internal UI component structure for better maintainability.
+- Refactored state management to separate business logic from the UI.
+- Updated documentation on the options page for better clarity.
+
+## [0.8.1.7] - 2025-06-30
+
+### Changed
+
+- Standardized internal logging and output logic.
+- Migrated state management logic to a more robust system.
+- Improved error handling during user interactions.
+
+### Fixed
+
+- Fixed typos in notification messages.
+
+## [0.8.1.6] - 2025-06-22
+
+### Fixed
+
+- Fixed various internal code formatting and style issues.
+
+## [0.8.1.5] - 2025-06-07
+
+### Changed
+
+- Optimized internal data operations for better performance ([commit c44c3bc](https://github.com/from-es/copy-url-of-all-tabs/commit/c44c3bcb7145e1668c4650b1134ad19220bb25a2)).
+- Optimized internal data operations ([commit db3c365](https://github.com/from-es/copy-url-of-all-tabs/commit/db3c365f9e033fa6980fe389e0cea97359b5d56b)).
+- Optimized internal data operations ([commit fccf398](https://github.com/from-es/copy-url-of-all-tabs/commit/fccf39819b48924df631765eac0d4e6636738858)).
+
+## [0.8.1.4] - 2025-06-05
+
+### Changed
+
+- Optimized internal filtering and data calculation processes.
+
+## [0.8.1.3] - 2025-05-31
+
+### Changed
+
+- Updated core parsing libraries to the latest version.
+
+## [0.8.1.2] - 2025-04-18
+
+### Fixed
+
+- Fixed minor typos and code style issues.
+
+## [0.8.1.1] - 2025-04-17
+
+### Added
+
+- Enhanced internal code quality checks.
+
+## [0.8.1] - 2025-04-17
+
+### Fixed
+
+- External links in the update history page now correctly open in a new tab.
+
+### Changed
+
+- Updated core parsing libraries.
+
+## [0.8.0] - 2025-04-14
+
+### Changed
+
+- Internal directory structure reorganization for better project management.
+- Modernized the internal build system.
+
+## [0.7.0] - 2025-01-29
+
+### Added
+
+- URL filtering options can now be applied separately for Copy and Paste actions.
+
+### Fixed
+
+- Fixed validation logic for version information.
+
+## [0.6.1.1] - 2025-01-20
+
+### Changed
+
+- Updated the internal UI framework for the options page.
+
+## [0.6.1] - 2024-12-12
+
+### Changed
+
+- Improved the internal layout of the pop-up menu.
+
+## [0.6.0] - 2024-11-01
+
+### Added
+
+- Initial release on the browser extension store.

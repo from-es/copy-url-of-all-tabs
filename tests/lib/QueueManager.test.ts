@@ -15,7 +15,7 @@
  */
 
 import { describe, it, beforeEach, expect } from "vitest";
-import { QueueManager } from "@/assets/js/lib/user/QueueManager";
+import { QueueManager } from "@/assets/js/lib/QueueManager";
 
 describe("QueueManager", () => {
 	beforeEach(async () => {
