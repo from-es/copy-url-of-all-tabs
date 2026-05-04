@@ -1,6 +1,6 @@
 # State Manager
 
-**Last updated:** April 4, 2026
+**Last updated:** May 4, 2026
 
 A reactive state management module that utilizes Svelte 5 runes to manage shared state within a Svelte project. It features dynamic property generation and per-property write protection (freezing).
 
@@ -8,33 +8,34 @@ A reactive state management module that utilizes Svelte 5 runes to manage shared
 
 This `State Manager` provides a centralized store to share a consistent state across different parts of the extension (e.g., background, options, popup). It is built on Svelte 5's `$state` rune, enabling intuitive and efficient state management.
 
-The core of the module is the `createStore` factory in `store.svelte.ts`. This factory is called by `state.ts` to generate a single store instance (singleton) that is used throughout the Svelte project. Each component and module in the application can access this shared state by simply importing `shareStatus` and `updateState` from `state.ts`.
+The core of the module is the `createStore` factory in `store.svelte.ts`. This factory is used to generate a single store instance (singleton) for your application. Each component and module can then access this shared state by importing the generated store and its methods.
 
 ### Applying Type Definitions
 
-`store.svelte.ts` is designed as a generic store factory and does not depend on the specific data structures of any project. Project-specific type definitions (e.g., the properties of `config` or `define` objects) are applied in `state.ts`, where the instance is created.
+`store.svelte.ts` is designed as a generic store factory and does not depend on any specific project data structures. You apply your project's type definitions when creating the instance.
 
-This approach allows for the reuse of the core store logic while ensuring type safety for the state in each application.
+This approach allows for the reuse of the core store logic while ensuring type safety for the state in any application.
 
-Below is a code example of how types are applied in `state.ts`.
+Below is a code example of how types are applied in an initialization file (e.g., `state.svelte.ts`).
 
 ```typescript
-// src/assets/js/lib/StateManager/state.svelte.ts
+// state.svelte.ts
 
-// Import Module & Types
-import { createStore, type UpdateState } from "./store.svelte";
-// Import project-specific type definitions
-import type { Status } from "@/assets/js/types";
+// Import the factory
+import { createStore } from "./store.svelte";
 
-// Specify the type with generics like `createStore<Status>()`
-// to generate an application-specific store instance.
-const { shareStatus, updateState }: {
-    shareStatus: Status;
-    updateState: UpdateState;
-} = createStore<Status>();
+// Define your application's state structure
+interface MyState {
+  user: { name: string; role: string };
+  settings: { theme: string };
+  [key: string]: any;
+}
 
-// Export the instance for other modules
-export { shareStatus, updateState };
+// Specify the type with generics to generate a type-safe store instance
+const { shareStatus, updateState, setSharedState } = createStore<MyState>();
+
+// Export for other modules
+export { shareStatus, updateState, setSharedState };
 ```
 
 ## Motivation
@@ -84,32 +85,28 @@ This library offers many advantages, but it also comes with some caveats.
 - **Dynamic Properties:** You can dynamically add and manage states with any name, not just fixed properties like `config` or `define`.
 - **Write Protection:** By setting `freeze: true` for each property, you can easily create immutable states to prevent unintentional changes.
 - **Intuitive Updates:** Properties that are writable can be updated simply by direct assignment, like `shareStatus.prop.value = ...`.
-- **Safe Bulk Updates:** The `updateState` function allows for atomic merging and updating of the store's **initialization** or existing state. Updates to frozen properties are safely blocked.
+- **Safe Bulk Updates:** The `updateState` and `setSharedState` functions allow for atomic merging and updating of the store's **initialization** or existing state. Updates to frozen properties are safely blocked.
 - **Type Safety:** Designed with TypeScript and generics to leverage the benefits of typing during development.
 
 ## Basic Usage
 
-To use the `State Manager`, import `shareStatus` and `updateState` from `state.ts`.
+To use the `State Manager`, import `shareStatus`, `updateState`, or `setSharedState` from your initialization module.
 
 ### Initializing and Updating State
 
 Typically, state initialization is performed at the application's entry points (e.g., `popup/entrypoint.ts` or `options/entrypoint.ts`).
 
 ```typescript
-// src/entrypoints/popup/lib/entrypoint.ts
+// entrypoint.ts
 
-import { updateState } from "@/assets/js/lib/StateManager/state";
-import { initializeConfig } from "@/assets/js/initializeConfig";
+import { shareStatus, setSharedState } from "./state.svelte";
 
-// Load settings and update the shared state on application startup
 async function boot() {
-  const { config, define } = await initializeConfig(null);
-
-  updateState([
-    // Initialize the store or update the existing state
-    { name: "config", value: config, freeze: false }, // config is mutable
-    { name: "define", value: define, freeze: true }  // define is immutable
-  ]);
+  // Initialize the store
+  setSharedState(
+    { name: "settings", value: { theme: "dark" }, freeze: false },
+    { name: "version",  value: { current: "1.0.0" }, freeze: true }
+  );
 
   // ... application mounting process
 }
@@ -120,18 +117,18 @@ async function boot() {
 Inside Svelte components, you can access the reactive state using `shareStatus`.
 
 ```svelte
-<!-- src/entrypoints/popup/components/App.svelte -->
+<!-- App.svelte -->
 
 <script lang="ts">
-  import { shareStatus } from "@/assets/js/lib/StateManager/state";
+  import { shareStatus as status } from "../lib/state.svelte";
 
-  // Changes to shareStatus.config are automatically reflected in the UI
-  $: theme = $shareStatus.config?.theme || 'light';
+  // Changes to status.settings are automatically reflected in the UI
+  $: theme = $status.settings?.theme || 'light';
 </script>
 
 <main class={theme}>
   <h1>Current Theme: {theme}</h1>
-  <p>Version: {$shareStatus.define?.version}</p>
+  <p>Version: {$status.version?.current}</p>
 </main>
 ```
 
@@ -145,9 +142,15 @@ A Proxy object that holds the reactive state. Inside Svelte components, subscrib
 
 ### `updateState(newStates)`
 
-Updates (merges) the store's state in bulk.
+Updates (merges) the store's state in bulk using an array.
 
 - **`newStates: StateOption[]`**: An array of `StateOption` objects containing the information of the state to be updated or added.
+
+### `setSharedState(...newStates)`
+
+Updates (merges) the store's state in bulk using rest parameters.
+
+- **`...newStates: StateOption[]`**: A variable number of `StateOption` objects.
 
 ### The `StateOption` Interface
 

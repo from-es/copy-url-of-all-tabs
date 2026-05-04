@@ -14,6 +14,8 @@ type EmptyObject = Record<string, never>;
 type Status = {
 	config: Config;
 	define: Define;
+
+	[key: string]: any;
 };
 
 type ExtensionMessage = {

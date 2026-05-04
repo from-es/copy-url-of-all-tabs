@@ -1,6 +1,6 @@
 # State Manager
 
-**最終更新日:** 2026年4月4日
+**最終更新日:** 2026年5月4日
 
 `Svelte 5` のルーンを活用し、Svelte プロジェクト内で共有される状態を管理するための、リアクティブな状態管理モジュールです。動的なプロパティ生成と、プロパティ単位での書き込み保護（freeze）機能を備えています。
 
@@ -8,34 +8,35 @@
 
 この `State Manager` は、拡張機能の異なる部分（background, options, popupなど）で一貫した状態を共有するための、中央集権的なストアを提供します。Svelte 5の `$state` をベースに構築されており、直感的かつ効率的な状態管理を実現します。
 
-モジュールの中心は `store.svelte.ts` にある `createStore` ファクトリです。このファクトリは、`state.ts` によって呼び出され、Svelte プロジェクト内で利用される単一のストアインスタンス（シングルトン）を生成します。アプリケーションの各コンポーネントやモジュールは、`state.ts` から `shareStatus` と `updateState` をインポートするだけで、この共有状態にアクセスできます。
+モジュールの中心は `store.svelte.ts` にある `createStore` ファクトリです。このファクトリを使用して、アプリケーションのための単一のストアインスタンス（シングルトン）を生成します。各コンポーネントやモジュールは、生成されたストアとそのメソッドをインポートするだけで、この共有状態にアクセスできます。
 
 ### 型定義の適用
 
-`store.svelte.ts` は汎用的なストアファクトリとして設計されており、特定のプロジェクトのデータ構造には依存しません。プロジェクト固有の型定義（例えば、`config` や `define` オブジェクトがどのようなプロパティを持つか）は、インスタンスを生成する `state.ts` 側で適用します。
+`store.svelte.ts` は汎用的なストアファクトリとして設計されており、特定のプロジェクトのデータ構造には依存しません。インスタンスを生成する際に、プロジェクト固有の型定義を適用します。
 
 これにより、ストアのコアロジックを再利用しつつ、アプリケーションごとの状態の型安全性を確保します。
 
-以下に、`state.ts` での型適用のコード例を示します。
+以下に、初期化ファイル（例: `state.svelte.ts`）での型適用のコード例を示します。
 
 ```typescript
-// src/assets/js/lib/StateManager/state.svelte.ts
+// state.svelte.ts
 
-// Import Module & Types
-import { createStore, type UpdateState } from "./store.svelte";
+// ファクトリをインポート
+import { createStore } from "./store.svelte";
 
-// プロジェクト固有の型定義をインポート
-import type { Status } from "@/assets/js/types";
+// アプリケーションの状態構造を定義
+interface MyState {
+  user: { name: string; role: string };
+  settings: { theme: string };
+  [key: string]: any;
+}
 
-// createStore<Status>() のようにジェネリクスで型を指定し、
-// アプリケーション固有のストアインスタンスを生成する。
-const { shareStatus, updateState }: {
-    shareStatus: Status;
-    updateState: UpdateState;
-} = createStore<Status>();
+// createStore<MyState>() のようにジェネリクスで型を指定し、
+// 型安全なストアインスタンスを生成する。
+const { shareStatus, updateState, setSharedState } = createStore<MyState>();
 
-// 他のモジュールへインスタンスをエクスポート
-export { shareStatus, updateState };
+// 他のモジュールへエクスポート
+export { shareStatus, updateState, setSharedState };
 ```
 
 ## 導入経緯
@@ -85,32 +86,28 @@ export { shareStatus, updateState };
 - **動的なプロパティ:** `config` や `define` のような固定のプロパティだけでなく、任意の名前を持つ状態を動的に追加・管理できます。
 - **書き込み保護:** プロパティごとに `freeze: true` を設定することで、意図しない変更を防ぐイミュータブルな状態を簡単に作成できます。
 - **直感的な更新:** 書き込みが許可されたプロパティは、`shareStatus.prop.value = ...` のように、オブジェクトに直接代入するだけで更新できます。
-- **安全な一括更新:** `updateState` 関数を通じて、ストアの**初期化**や、既存の状態をアトミックにマージ・更新できます。`freeze` されたプロパティの更新は安全にブロックされます。
+- **安全な一括更新:** `updateState` および `setSharedState` 関数を通じて、ストアの**初期化**や、既存の状態をアトミックにマージ・更新できます。`freeze` されたプロパティの更新は安全にブロックされます。
 - **型安全性:** TypeScriptとジェネリクスを活用し、開発時に型の恩恵を受けられるように設計されています。
 
 ## 基本的な使い方
 
-`State Manager` を利用するには、`state.ts` から `shareStatus` と `updateState` をインポートします。
+`State Manager` を利用するには、初期化モジュールから `shareStatus`、`updateState`、または `setSharedState` をインポートします。
 
 ### 状態の初期化と更新
 
 通常、状態の初期化はアプリケーションのエントリーポイント（`popup/entrypoint.ts` や `options/entrypoint.ts` など）で行います。
 
 ```typescript
-// src/entrypoints/popup/lib/entrypoint.ts
+// entrypoint.ts
 
-import { updateState } from "@/assets/js/lib/StateManager/state";
-import { initializeConfig } from "@/assets/js/initializeConfig";
+import { shareStatus, setSharedState } from "./state.svelte";
 
-// アプリケーション起動時に設定を読み込み、共有状態を更新する
 async function boot() {
-  const { config, define } = await initializeConfig(null);
-
-  updateState([
-    // ストアの初期化、または既存の状態を更新
-    { name: "config", value: config, freeze: false }, // configは書き換え可能
-    { name: "define", value: define, freeze: true }  // defineは書き換え不可
-  ]);
+  // ストアの初期化
+  setSharedState(
+    { name: "settings", value: { theme: "dark" }, freeze: false },
+    { name: "version",  value: { current: "1.0.0" }, freeze: true }
+  );
 
   // ... アプリケーションのマウント処理
 }
@@ -121,18 +118,18 @@ async function boot() {
 Svelteコンポーネント内では、`shareStatus` を使ってリアクティブな状態にアクセスします。
 
 ```svelte
-<!-- src/entrypoints/popup/components/App.svelte -->
+<!-- App.svelte -->
 
 <script lang="ts">
-  import { shareStatus } from "@/assets/js/lib/StateManager/state";
+  import { shareStatus as status } from "../lib/state.svelte";
 
-  // shareStatus.config の変更は自動的にUIに反映される
-  $: theme = $shareStatus.config?.theme || 'light';
+  // status.settings の変更は自動的にUIに反映される
+  $: theme = $status.settings?.theme || 'light';
 </script>
 
 <main class={theme}>
   <h1>現在のテーマ: {theme}</h1>
-  <p>バージョン: {$shareStatus.define?.version}</p>
+  <p>バージョン: {$status.version?.current}</p>
 </main>
 ```
 
@@ -146,9 +143,15 @@ Svelteコンポーネント内では、`shareStatus` を使ってリアクティ
 
 ### `updateState(newStates)`
 
-ストアの状態を一括で更新（マージ）します。
+ストアの状態を配列を使用して一括で更新（マージ）します。
 
 - **`newStates: StateOption[]`**: 更新または追加したい状態の情報を含んだ `StateOption` オブジェクトの配列。
+
+### `setSharedState(...newStates)`
+
+ストアの状態を可変長引数を使用して一括で更新（マージ）します。
+
+- **`...newStates: StateOption[]`**: 可変個の `StateOption` オブジェクト。
 
 ### `StateOption` インターフェース
 

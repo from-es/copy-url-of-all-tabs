@@ -16,7 +16,7 @@
 	import { actionStore } from "../lib/appState.svelte.ts";
 
 	// Import Svelte Object
-	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
+	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";  // Shared State Object
 
 	// Import Module
 	import { cloneObject }                       from "@/assets/js/lib/CloneObject";

@@ -55,9 +55,9 @@ type UpdateState = (newStates: StateOption[]) => void;
  *
  * @template T                                               - The type of the state object.
  * @param    {StateOption[]} [initialStates]                 - An optional array of state options to initialize the store.
- * @returns  {{ shareStatus: T; updateState: UpdateState; }} - A reactive `shareStatus` proxy object and an `updateState` function.
+ * @returns  {{ shareStatus: T; updateState: UpdateState; setSharedState: (...args: StateOption[]) => void; }} - A reactive `shareStatus` proxy object and update functions.
  */
-function createStore<T extends StateObject>(initialStates: StateOption[] = []): { shareStatus: T; updateState: UpdateState; } {
+function createStore<T extends StateObject>(initialStates: StateOption[] = []): { shareStatus: T; updateState: UpdateState; setSharedState: (...args: StateOption[]) => void; } {
 	// Internal reactive state managed by a single $state object.
 	const internalState = $state<StateObject>({});
 	const freezeMap     = new SvelteMap<string, boolean>();
@@ -139,9 +139,19 @@ function createStore<T extends StateObject>(initialStates: StateOption[] = []): 
 		upsertStates(newStates);
 	}
 
+	/**
+	 * Updates the reactive store by merging the new state using rest parameters.
+	 *
+	 * @param {...StateOption[]} args - A rest parameter of state options to update.
+	 */
+	function setSharedState(...args: StateOption[]): void {
+		updateState([ ...args ]);
+	}
+
 	return {
 		shareStatus: shareStatusProxy,
 		updateState,
+		setSharedState,
 	};
 }
 

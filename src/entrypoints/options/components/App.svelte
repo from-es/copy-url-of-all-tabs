@@ -17,8 +17,8 @@
 	import Main   from "./Main.svelte";
 	import Footer from "./Footer.svelte";
 
-	// Import Object
-	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
+	// Import Svelte Object
+	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";  // Shared State Object
 
 
 

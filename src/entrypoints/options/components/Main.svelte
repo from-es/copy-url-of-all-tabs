@@ -17,7 +17,7 @@
 	import DebouncedNumericInput from "./DebouncedNumericInput.svelte";
 
 	// Import Svelte Object
-	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
+	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";  // Shared State Object
 
 	// Import NPM Package
 	import dayjs from "dayjs";
@@ -40,6 +40,7 @@
 
 	// Import Object
 	import { LOG_LEVELS } from "@/assets/js/lib/ConsoleManager/types";
+
 
 	// Import Types
 	import type { Config, Define, Status } from "@/assets/js/types";
