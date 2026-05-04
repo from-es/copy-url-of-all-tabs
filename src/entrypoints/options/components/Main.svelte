@@ -3,7 +3,7 @@
 	 * Main Svelte component for the options page content.
 	 *
 	 * @file
-	 * @lastModified 2026-04-18
+	 * @lastModified 2026-05-04
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -24,16 +24,16 @@
 
 	// Import Module
 	import { cloneObject }                                   from "@/assets/js/lib/CloneObject";
-	import { StorageManager }                                from "@/assets/js/lib/StorageManager";
-	import { PopoverMessage }                                from "@/assets/js/lib/MessageManager/PopoverMessage";
 	import { ConfigManager, MIME_TO_EXT_MAP }                from "@/assets/js/lib/ConfigManager";
+	import { PopoverMessage }                                from "@/assets/js/lib/MessageManager/PopoverMessage";
 	import { MigrationManager }                              from "@/assets/js/lib/MigrationManager";
-	import { rules as PreSaveCorrections }                   from "@/assets/js/lib/MigrationManager/rules/patch/preSaveCorrections";
+	import { StorageManager }                                from "@/assets/js/lib/StorageManager";
 	import { createSafeHTML }                                from "@/assets/js/utils/setSafeHTML";
-	import { initializeConfig }                              from "@/assets/js/initializeConfig";
-	import { logging }                                       from "@/assets/js/logging";
-	import { selectTab }                                     from "@/assets/js/select-tab";
 	import { setRootFontSize }                               from "@/assets/js/utils/setRootFontSize";
+	import { initializeConfig }                              from "@/assets/js/app/initializeConfig";
+	import { rules as PreSaveCorrections }                   from "@/assets/js/app/MigrationManager/rules/patch/preSaveCorrections";
+	import { logging }                                       from "@/assets/js/app/logging";
+	import { selectTab }                                     from "@/assets/js/app/select-tab";
 	import { compareConfig }                                 from "../lib/utils/configComparer";
 	import { addRowForCustomDelay, deleteRowForCustomDelay } from "../lib/customDelay";
 	import { DynamicContent }                                from "../lib/dynamicContent";

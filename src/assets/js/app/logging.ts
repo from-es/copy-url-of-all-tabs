@@ -2,7 +2,7 @@
  * Utility for logging
  *
  * @file
- * @lastModified 2026-04-08
+ * @lastModified 2026-05-04
  *
  * @dependency isEqual
  */

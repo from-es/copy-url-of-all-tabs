@@ -13,12 +13,12 @@
 
 // Import Module
 import { define }             from "@/assets/js/define";
+import { BrowserEnvironment } from "@/assets/js/lib/BrowserEnvironment";
+import { cloneObject }        from "@/assets/js/lib/CloneObject";
 import { MigrationManager }   from "@/assets/js/lib/MigrationManager";
-import { migrationRules }     from "@/assets/js/lib/MigrationManager/rules";
-import { cloneObject }        from "./lib/CloneObject";
-import { StorageManager }     from "./lib/StorageManager";
-import { VerifyConfigValue  } from "./lib/VerifyConfigValue";
-import { BrowserEnvironment } from "./lib/BrowserEnvironment";
+import { StorageManager }     from "@/assets/js/lib/StorageManager";
+import { VerifyConfigValue }  from "@/assets/js/lib/VerifyConfigValue";
+import { migrationRules }     from "@/assets/js/app/MigrationManager/rules";
 
 // Import Types
 import type { Config, Define, Status, EmptyObject } from "@/assets/js/types";

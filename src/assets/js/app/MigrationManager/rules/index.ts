@@ -3,11 +3,11 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-05-04
  */
 
 // Import Module
-import { loadRules, type RuleModule } from "../loadRules";
+import { loadRules, type RuleModule } from "@/assets/js/lib/MigrationManager/loadRules";
 
 // Import Types
 import type { Config } from "@/assets/js/types";
@@ -24,7 +24,7 @@ import type { Config } from "@/assets/js/types";
  *
  * @returns {MigrationRule<Config>[]} An array of sorted and validated migration rules.
  *
- * @see {@link ../loadRules.ts}
+ * @see {@link ../../../lib/MigrationManager/loadRules.ts}
  */
 const modules = import.meta.glob<RuleModule<Config>>("./migrate/*.rules.ts", { eager: true });
 

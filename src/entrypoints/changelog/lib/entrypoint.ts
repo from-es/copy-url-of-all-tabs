@@ -15,8 +15,8 @@ import type AppType from "../components/App.svelte";
 import { initializeSharedState } from "@/assets/js/lib/StateManager/state.svelte.ts";
 
 // Import Module
-import { initializeConfig } from "@/assets/js/initializeConfig";
-import { logging }          from "@/assets/js/logging";
+import { initializeConfig } from "@/assets/js/app/initializeConfig";
+import { logging }          from "@/assets/js/app/logging";
 
 
 

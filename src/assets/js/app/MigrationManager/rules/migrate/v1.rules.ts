@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-04-18
+ * @lastModified 2026-05-04
  */
 
 // Import Module
@@ -21,7 +21,7 @@ import type { MigrationRule } from "@/assets/js/lib/MigrationManager/types";
  * Each rule encapsulates the conditions and execution logic for applying specific configuration changes.
  * For details on how to define rules, refer to MigrationRule.md.
  *
- * @see {@link ../../doc/MigrationRule.md}
+ * @see {@link ../../../../lib/MigrationManager/doc/MigrationRule.md}
  */
 export const rules: MigrationRule<Config>[] = [
 	{

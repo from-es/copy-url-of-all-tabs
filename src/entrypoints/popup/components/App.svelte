@@ -3,7 +3,7 @@
 	 * Main Svelte component for the popup menu.
 	 *
 	 * @file
-	 * @lastModified 2026-04-18
+	 * @lastModified 2026-05-04
 	 */
 
 	// WXT provided cross-browser compatible API.
@@ -19,11 +19,11 @@
 	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
 
 	// Import Module
-	import { initializeConfig }                  from "@/assets/js/initializeConfig";
 	import { cloneObject }                       from "@/assets/js/lib/CloneObject";
 	import { sanitizeForSendMessage }            from "@/assets/js/utils/sanitizeForSendMessage";
-	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
 	import { setRootFontSize }                   from "@/assets/js/utils/setRootFontSize";
+	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
+	import { initializeConfig }                  from "@/assets/js/app/initializeConfig";
 	import { eventActionCopy, eventActionPaste } from "../lib/userActions";
 
 	// Import Types
