@@ -16,8 +16,8 @@ import type AppType from "../components/App.svelte";
 import { initializeSharedState } from "@/assets/js/app/initializeSharedState.svelte.ts";
 
 // Import Module
-import { initializeConfig }      from "@/assets/js/app/initializeConfig";
-import { logging }               from "@/assets/js/app/logging";
+import { initializeConfig } from "@/assets/js/app/initializeConfig";
+import { logging }          from "@/assets/js/app/logging";
 
 
 
@@ -45,7 +45,12 @@ async function main(): Promise<void> {
 	logging(config, define);
 
 	// Initialize Share State Object
-	initializeSharedState(config, define);
+	const route = {
+		name  : "route",
+		value : { page: window.location.hash.replace("#", "") || define.OptionsPageDefaultRoute },
+		freeze: false
+	};
+	initializeSharedState(config, define, route);
 
 	// Mounting the starting module
 	const target = document.body;

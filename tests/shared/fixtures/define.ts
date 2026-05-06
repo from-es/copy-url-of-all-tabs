@@ -49,6 +49,8 @@ export const createMockDefine = (config: Config): Define => ({
 	MimeType            : [],
 	ChromiumBasedBrowser: [],
 
+	OptionsPageDefaultRoute: "setting",
+
 	OptionsPageFontSizeValueMin: 8,
 	OptionsPageFontSizeValueMax: 32,
 	OptionsPageFontSizeValueStep: 1,

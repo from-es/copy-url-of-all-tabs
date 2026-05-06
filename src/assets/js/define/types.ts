@@ -157,6 +157,7 @@ type Define_Delta = {
 	Messaging           : {
 		[key: string]: string
 	};
+	OptionsPageDefaultRoute              : string;
 	OptionsPageFontSizeValueMin          : number;
 	OptionsPageFontSizeValueMax          : number;
 	OptionsPageFontSizeValueStep         : number;

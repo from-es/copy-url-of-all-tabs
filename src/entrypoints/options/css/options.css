@@ -362,12 +362,6 @@ header h1:before {
 #tabnav li a.active       { border: solid 1px #346dfc; color: #ffffff; background: #346dfc; }
 #tabnav li a.active:hover { border: solid 1px #346dfc; color: #346dfc; background: #ffffff; }
 
-/* ページ読み込み時のチラツキ防止の為、先に非表示にしておく */
-#about, #setting, #config {
-	display: none;
-}
-
-
 #setting-action li button {
 	display: block;
 	user-select: none; /* テキストの選択不可 */

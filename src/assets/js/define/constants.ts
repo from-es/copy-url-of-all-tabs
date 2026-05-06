@@ -113,6 +113,7 @@ export const ChromiumBasedBrowser = [
 ];
 
 // OptionsPage
+export const OptionsPageDefaultRoute               = "setting";  // Default route of Options Page
 export const OptionsPageFontSizeValueMin           = 8;   // px
 export const OptionsPageFontSizeValueMax           = 32;  // px
 export const OptionsPageFontSizeValueStep          = 1;
