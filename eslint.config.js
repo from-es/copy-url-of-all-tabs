@@ -314,6 +314,7 @@ export default [
 			import: importPlugin
 		},
 		rules: {
+			"no-unused-vars": "off",                       // TypeScript では @typescript-eslint/no-unused-vars を使用するため無効化
 			"@typescript-eslint/no-unused-vars": "warn",   // 宣言されているがコード内で未使用の変数がある場合に警告
 			"@typescript-eslint/no-explicit-any": "warn",  // any 型の使用を許可しない (例外的に警告)
 

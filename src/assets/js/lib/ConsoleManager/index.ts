@@ -288,12 +288,12 @@ export class ConsoleManager {
 	 */
 	static #createConsoleMethodWrapper(
 		methodName: keyof Console,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, no-unused-vars
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		originalMethod: (..._args: any[]) => any,
 		originalConsole: Console,
 		isStylingAndTimestampTarget: boolean,
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, no-unused-vars
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	): (..._args: any[]) => any {
 		const { timestamp, methodLabel } = ConsoleManager.#options;
 

@@ -61,7 +61,6 @@ type ExtendedErrorOptions<D extends Record<string, unknown> = Record<string, unk
  *
  * @template T The type of the Error instance to be created
  */
-// eslint-disable-next-line no-unused-vars -- Exported as a public type; used only in type positions
 type ErrorConstructor<T extends Error> = new (message?: string, options?: ErrorOptions) => T;
 
 

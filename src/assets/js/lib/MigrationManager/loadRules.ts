@@ -181,14 +181,12 @@ function validateRule<T>(rule: MigrationRule<T>): { rule: MigrationRule<T>; repo
 		 * Evaluates if the passed object is in the expected state and returns a `ValidationStatus` value.
 		 * The returned value determines the success or failure of validation and whether to continue processing.
 		 */
-		// eslint-disable-next-line no-unused-vars
 		validate: (_obj: unknown) => ValidationStatus;
 
 		/**
 		 * Function that generates a human-readable message based on the validation flag, property path, and property information.
 		 * Primarily used to communicate details about errors and warnings.
 		 */
-		// eslint-disable-next-line no-unused-vars
 		message: (_flag: ValidationStatus, _target: string, _property: unknown) => string;
 
 		/**

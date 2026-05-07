@@ -154,7 +154,7 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number
 			try {
 				// sleep itself performs validation and throws an exception if the value is invalid.
 				await sleep(individual);
-			// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch (sleepError) {
 				// Skip waiting and proceed to create tab if sleep fails.
 			}

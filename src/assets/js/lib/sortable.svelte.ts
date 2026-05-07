@@ -29,7 +29,7 @@ type SortableOptions = Options & {
 	 *
 	 * @param {object[]} list - The sorted list.
 	 */
-	// eslint-disable-next-line no-unused-vars
+
 	onSort: (list: object[]) => void,
 	/**
 	 * The debounce time (in milliseconds) for the sort operation.
@@ -66,7 +66,7 @@ export function sortable(options: SortableOptions): Attachment {
 			options.debounceTime ?? 150
 		);
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { list, onSort, debounceTime, ...restOptions } = options;
 		const sortableInstance = new Sortable(node, {
 			// Default Sortable options

@@ -37,12 +37,10 @@ type MigrationArgument<T> = {
  * @template T - The type of the data being migrated.
  */
 type MigrationRule<T> = {
-	meta    ?: MigrationRuleMeta;
-	order   ?: number;  // Execution order of the rule.
-	// eslint-disable-next-line no-unused-vars
-	condition: (argument: MigrationArgument<T>) => Promise<boolean> | boolean;
-	// eslint-disable-next-line no-unused-vars
-	execute  : (argument: MigrationArgument<T>) => Promise<T> | T;
+	meta     ?: MigrationRuleMeta;
+	order    ?: number;  // Execution order of the rule.
+	condition : (argument: MigrationArgument<T>) => Promise<boolean> | boolean;
+	execute   : (argument: MigrationArgument<T>) => Promise<T> | T;
 };
 
 /**
