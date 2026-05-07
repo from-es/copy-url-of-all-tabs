@@ -142,7 +142,6 @@ type NavigatorUserAgentData = {
 	 * @param   {string[]}                     _hints - An array of strings specifying the high-entropy values to retrieve.
 	 * @returns {Promise<UserAgentDataValues>}          A promise that resolves with an object containing the requested values.
 	 */
-	// eslint-disable-next-line no-unused-vars
 	getHighEntropyValues(_hints: string[]): Promise<UserAgentDataValues>;
 }
 // ----------------------------------------------------------------------------------------------------------------------------

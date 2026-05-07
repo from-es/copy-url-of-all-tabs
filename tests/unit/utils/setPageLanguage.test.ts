@@ -10,7 +10,7 @@
  * @see {@link project/docs/DeveloperGuide/vitest.md} - Vitest project standards
  */
 
-import { describe, beforeEach, afterEach, expect, vi } from "vitest";
+import { describe, beforeEach, afterEach, vi } from "vitest";
 import { TestRunner, type TestCase } from "../../shared/support/TestRunner";
 
 // =============================================================================

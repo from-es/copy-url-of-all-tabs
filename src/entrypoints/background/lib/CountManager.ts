@@ -6,7 +6,6 @@
  */
 
 // Type definition for functions that receive notifications; accepts the new count as an argument.
-// eslint-disable-next-line no-unused-vars
 type Listener = (count: number) => void;
 
 
