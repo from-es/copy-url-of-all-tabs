@@ -214,3 +214,7 @@ async function migrateExternalData(data: Config, defaultValues: Partial<Config>)
     - ファイルは物理的に削除せず、Gitの管理下に置くことで、過去の変更履歴をいつでも追跡できるようにします。
 4.  **集約ファイルの更新:**
     - アーカイブに伴い、影響を受けるルール集約ファイル（例: `v2.rules.ts`）があれば、`import.meta.glob` のパスを見直すなど、適宜修正します。
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

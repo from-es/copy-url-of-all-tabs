@@ -210,4 +210,4 @@ console.log(shareStatus.config.theme); // "dark" (The UI is also updated automat
 
 ## License
 
-This project is licensed under the [MIT License](../../../../../../../LICENSE.md).
+This project is licensed under the [MIT License](../../../../../../LICENSE.md).

@@ -133,3 +133,8 @@ setupForDevelopment();
 disableTimestamp();
 disableMethodLabel();
 disableAllPrefixes();
+```
+
+## ライセンス
+
+このプロジェクトは [MIT License](../../../../../../LICENSE.md) の下で公開されています。

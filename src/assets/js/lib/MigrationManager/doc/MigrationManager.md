@@ -158,3 +158,7 @@ function detectDataVersion(data: Config): number {
 > Therefore, when loading rules, you must always specify the `{ eager: true }` option for `import.meta.glob` to process them synchronously. This also makes the `loadRules` utility a **synchronous function** that does not return a `Promise`.
 >
 > For more details, refer to the [`loadRules.md`](./loadRules.md) document.
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

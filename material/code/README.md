@@ -15,3 +15,7 @@
 
 - escapeHtml
 	- [escape と encodeURI と encodeURIComponent を正しく使い分ける - Feel and Code](https://aloerina01.github.io/blog/2017-04-28-1 "escape と encodeURI と encodeURIComponent を正しく使い分ける - Feel and Code")
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

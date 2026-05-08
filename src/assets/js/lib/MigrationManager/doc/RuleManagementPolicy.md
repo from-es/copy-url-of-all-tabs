@@ -214,3 +214,7 @@ A manual review and archiving process will be implemented based on a **version-b
     - Do not physically delete the files; keep them under Git control so that the history of changes can be tracked at any time.
 4.  **Update Aggregation Files:**
     - If there are any rule aggregation files (e.g., `v2.rules.ts`) affected by the archiving, modify them accordingly, such as by reviewing the path for `import.meta.glob`.
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

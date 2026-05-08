@@ -11,5 +11,9 @@ src/**/*.md     text eol=lf
 src/**/*.html   text eol=lf
 src/**/*.css    text eol=lf
 
+docs/**/*.md     text eol=lf
+tests/**/*.md    text eol=lf
+material/**/*.md text eol=lf
+
 # Image
 src/**/*.svg    text eol=lf

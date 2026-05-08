@@ -141,3 +141,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] Are categories restricted to the standard 6 types?
 - [ ] Is the description user-centric (no implementation details)?
 - [ ] Are there no raw URLs for commits or other links?
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

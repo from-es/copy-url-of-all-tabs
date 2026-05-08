@@ -216,4 +216,4 @@ This class performs DOM manipulation internally. Therefore, it is intended for u
 
 ## License
 
-This project is licensed under the [MIT License](../../../../../../../LICENSE.md).
+This project is licensed under the [MIT License](../../../../../../LICENSE.md).

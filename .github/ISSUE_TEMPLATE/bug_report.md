@@ -42,3 +42,7 @@ please complete the following information.
 ## Additional context
 
 Setting, Occurs on a specific page (URL), etc... Add any other context about the problem here.
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

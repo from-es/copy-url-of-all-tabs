@@ -158,3 +158,7 @@ function detectDataVersion(data: Config): number {
 > したがって、ルールを読み込む際は必ず `import.meta.glob` に `{ eager: true }` オプションを指定し、同期的に処理する必要があります。これにより、`loadRules` ユーティリティも `Promise` を返さない**同期関数**として動作します。
 >
 > 詳細は [`loadRules.ja.md`](./loadRules.ja.md) のドキュメントを参照してください。
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

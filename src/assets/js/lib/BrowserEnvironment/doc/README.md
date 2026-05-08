@@ -253,4 +253,4 @@ A JavaScript library for parsing User-Agent strings and extracting information s
 
 ## License
 
-This project is licensed under the [MIT License](../../../../../../../LICENSE.md).
+This project is licensed under the [MIT License](../../../../../../LICENSE.md).

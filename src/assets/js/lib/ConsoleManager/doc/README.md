@@ -132,3 +132,8 @@ setupForDevelopment();
 disableTimestamp();
 disableMethodLabel();
 disableAllPrefixes();
+```
+
+## License
+
+This project is licensed under the [MIT License](../../../../../../LICENSE.md).

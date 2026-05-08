@@ -39,3 +39,7 @@
 	- [loadRules.ja.md](./loadRules.ja.md): ルールローダーユーティリティ `loadRules` の仕様と、**Service Worker 環境における重要な制約**について。
 - **運用ポリシー**
 	- [RuleManagementPolicy.ja.md](./RuleManagementPolicy.ja.md): 移行ルールのライフサイクル管理方針について。
+
+## ライセンス
+
+このプロジェクトは [MIT License](../../../../../../LICENSE.md) の下で公開されています。

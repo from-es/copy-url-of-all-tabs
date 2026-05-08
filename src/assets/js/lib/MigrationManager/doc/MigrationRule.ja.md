@@ -126,3 +126,7 @@ export const rules: MigrationRule<Config>[] = [
 	}
 ];
 ```
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

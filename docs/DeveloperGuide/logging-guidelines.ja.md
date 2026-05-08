@@ -204,3 +204,7 @@
 
 - **表示制御**: デフォルト設定では `loglevel: 'warn'` のため、`info` 以下のログは本番環境では非表示となる。
 - **外観**: `ConsoleManager` により、メソッドに応じたカラーコーディングとタイムスタンプが自動付与される。
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.
