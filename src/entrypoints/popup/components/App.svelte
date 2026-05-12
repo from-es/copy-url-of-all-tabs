@@ -429,7 +429,6 @@
 		@param {boolean} attr.disabled - Whether the button is disabled.
 	-->
 	<button
-		class       = "text"
 		type        = "button"
 		aria-label  = { attr.label }
 		data-action = { attr.action }

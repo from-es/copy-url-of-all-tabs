@@ -1,0 +1,159 @@
+@charset "utf-8";
+
+/* Variable Definition */
+:root {
+	--base-font-size  : 16px;
+	--base-line-height: 1.5;
+
+	/*
+		for CJK String Page
+
+		日本語の文章とline-heightに対する考察 (https://qiita.com/NagayamaToshiaki/items/25d4969636d05bf48c41)
+	*/
+	--base-line-height-cjk: calc(var(--base-line-height) * 1.25);
+
+	/*
+		Font specification
+
+		system-ui         : Standard UI fonts for modern browsers
+		-apple-system     : San Francisco on macOS / iOS
+		BlinkMacSystemFont: Legacy Chrome / macOS compatibility
+		"Segoe UI"        : Windows
+		Roboto            : Android / ChromeOS
+		"Helvetica Neue"  : Old macOS
+		Arial             : Final fallback
+		sans-serif        : Generic fallback
+	*/
+	--base-font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		"Helvetica Neue",
+		Arial,
+		sans-serif;
+
+	/*
+		Monospaced font specification for code notation
+
+		"Monaco", "Consolas", "Courier New", Courier: Latin priority
+		"BIZ UD Gothic"                             : Modern Windows
+		"Noto Sans Mono CJK JP"                     : Linux
+		"IPAexGothic",                              : Traditional Linux
+		monospace                                   : System monospaced font
+		sans-serif                                  : Generic fallback
+	*/
+	--monospaced-font-family:
+		"Monaco", "Consolas", "Courier New", Courier,
+		"BIZ UD Gothic",
+		"Noto Sans Mono CJK JP",
+		"IPAexGothic",
+		monospace,
+		sans-serif;
+
+	/* Equivalent to 1px when 16rem is specified */
+	--base-unit-px: calc(1rem / 16);
+
+	/* Colors */
+	--color-black       : #000000;  /* black */
+	--color-white       : #ffffff;  /* white */
+	--color-gray-darker : #303030;  /* charcoal */
+	--color-gray-dark   : #333333;  /* darkgray */
+	--color-gray-medium : #666666;  /* dimgray */
+	--color-gray-light  : #999999;  /* gray */
+	--color-gray-border : #cccccc;  /* silver */
+	--color-gray-soft   : #dddddd;  /* gainsboro */
+	--color-gray-bg     : #f0f0f0;  /* whitesmoke */
+	--color-gray-muted  : #888888;  /* gray */
+	--color-blue-gray   : #c5cdd3;  /* lavender gray */
+	--color-primary     : #346dfc;  /* royalblue */
+	--color-success     : #009933;  /* green */
+	--color-error       : #cc0000;  /* red */
+	--color-warning     : #ff8c00;  /* darkorange */
+	--color-cream-orange: #ffddaa;  /* navajowhite */
+	--color-accent      : var(--color-primary);
+
+	/* Anchor */
+	--base-anchor-color-link   : #0068ff;  /* azure / electric blue */
+	--base-anchor-color-visited: var(--color-warning);
+	--base-anchor-color-hover  : #8000ff;  /* electric violet */
+	--base-anchor-color-active : var(--color-warning);
+	--base-anchor-outline-focus: none;
+
+	/* Ratio: ∛2 ≒ 1.25992104989 */
+	--heading-h1-size: calc(var(--base-font-size) * 2);
+	--heading-h2-size: calc(var(--base-font-size) * 1.587);
+	--heading-h3-size: calc(var(--base-font-size) * 1.259);
+	--heading-h4-size: calc(var(--base-font-size) * 1);
+	--heading-h5-size: calc(var(--base-font-size) * 1);
+	--heading-h6-size: calc(var(--base-font-size) * 1);
+
+	/* Border Radius */
+	--base-border-radius : 0.5rem;
+	--small-border-radius: 0.25rem;
+}
+
+/* Base Resets */
+* {
+	line-height: var(--base-line-height);
+}
+
+*:not(img) {
+	box-sizing: border-box;
+}
+
+html, body {
+	margin : 0;
+	padding: 0;
+
+	width : 100%;
+	height: 100%;
+
+	font-size  : var(--base-font-size);
+	font-family: var(--base-font-family);
+}
+
+/* Anchor */
+a {
+	text-decoration: none;
+
+	&:link    {	color  : var(--base-anchor-color-link); }
+	&:visited { color  : var(--base-anchor-color-visited); }
+	&:hover   { color  : var(--base-anchor-color-hover); }
+	&:active  { color  : var(--base-anchor-color-active); }
+	&:focus   { outline: var(--base-anchor-outline-focus); }
+
+	/* リンクにテキストが無い時はURLを表示 (http://coliss.com/articles/build-websites/operation/css/css-protips-v2.html#h212) */
+	&[href^="http"]:empty::before {
+		content: attr(href);
+	}
+}
+
+button, form, label, legend, summary {
+	user-select: none;
+}
+
+code, kbd, pre, samp, var, textarea {
+	font-family: var(--monospaced-font-family);
+}
+
+/* Heading */
+h1 { font-size: var(--heading-h1-size); }
+h2 { font-size: var(--heading-h2-size); }
+h3 { font-size: var(--heading-h3-size); }
+h4 { font-size: var(--heading-h4-size); }
+h5 { font-size: var(--heading-h5-size); }
+h6 { font-size: var(--heading-h6-size); }
+
+h1, h2, h3, h4, h5, h6 {
+	margin : 1.00rem 0;
+	padding: 0.25rem 0 0 0;
+
+	font-weight: bold;
+}
+
+ul, ol {
+	margin : 1rem 0;
+	padding: 0 0 0 2.5rem;
+}

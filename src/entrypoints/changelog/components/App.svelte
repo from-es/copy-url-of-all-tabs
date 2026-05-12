@@ -21,9 +21,6 @@
 	// Import Types
 	import type { ChangelogEntry } from "../lib/changelogParser";
 
-	// Import CSS
-	import "../css/style.css";
-
 
 
 	onMount(async () => {

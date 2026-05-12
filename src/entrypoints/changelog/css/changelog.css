@@ -1,0 +1,157 @@
+@charset "utf-8";
+
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                    Variable Definition                                     */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
+:root {
+	--layout-min-width: 840px;
+	--layout-max-width: 1280px;
+}
+
+
+
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                    Override common.css                                     */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
+body {
+	padding: 0 1rem;
+
+	min-width: calc(2rem + var(--layout-min-width));
+}
+
+a {
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&:focus {
+		outline: calc(var(--base-unit-px) * 1) dotted;
+	}
+}
+
+code {
+	margin-left : 0.05rem;
+	margin-right: 0.05rem;
+	padding     : 0.20rem 0.35rem;
+
+	border-radius: var(--small-border-radius);
+
+	color           : var(--color-white);
+	background-color: var(--color-gray-dark);
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: var(--color-gray-dark);
+}
+
+h1 {
+	padding-bottom: 0.25rem;
+}
+
+h2 {
+	padding-left: 0.5rem;
+
+	border     : calc(var(--base-unit-px) * 1) solid var(--color-gray-border);
+	border-left: 0.5rem solid var(--color-accent);
+}
+
+h3 {
+	padding-left: 1rem;
+
+	border-top   : calc(var(--base-unit-px) * 3) double var(--color-gray-muted);
+	border-bottom: calc(var(--base-unit-px) * 3) double var(--color-gray-muted);
+}
+
+h4, h5, h6 {
+	padding-left: 1rem;
+
+	border-bottom: calc(var(--base-unit-px) * 2) dotted var(--color-gray-muted);
+}
+
+
+
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                           Layout                                           */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
+#header {
+	margin-top: 0;
+	padding   : 0.5rem 0;
+
+	background-color: var(--color-accent);
+}
+
+#contents {
+	margin : 1rem auto;
+	padding: 1rem 0 2rem 0;
+
+	min-width: var(--layout-min-width);
+	max-width: var(--layout-max-width);
+}
+
+#footer {
+	margin-bottom: 0;
+	padding      : 0.5rem;
+}
+
+/* Used as a container for DOM structuring */
+#latest,
+#past {
+	display: contents;
+}
+
+
+
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                         Typography                                         */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
+.entry {
+	margin-bottom : 1rem;
+	padding       : 1rem 1rem 2rem;
+
+	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
+	border-radius: var(--base-border-radius);
+
+	font-style     : normal;
+	text-decoration: none;
+	font-weight    : normal;
+	color          : var(--color-gray-darker);
+
+	& > *:first-child {
+		margin-top: 0;
+	}
+
+	& > *:last-child {
+		margin-bottom: 0;
+	}
+
+	& ul > li {
+		font-size: 1rem;
+	}
+}
+
+details > summary {
+	font-size: 1rem;
+}
+
+/* Margin adjustment for lists in Markdown content */
+.version-content {
+	& > ul,
+	& > ol {
+		margin : 1rem 0.5rem;
+		padding: 0 0 0 2.5rem;
+
+		list-style: disc;
+	}
+}
