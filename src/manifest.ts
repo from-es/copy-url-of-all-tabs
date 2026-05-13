@@ -5,7 +5,14 @@ import type { UserManifest } from "wxt";
 import pkg from "../package.json";
 
 export const manifest: UserManifest = {
-	"manifest_version": 3,
+	/*
+		WXT manages the manifest version internally, so specifying it here has no effect
+		and causes a build-time warning. To change the manifest version, use the
+		`manifestVersion` option in wxt.config.ts or the `--mv2/--mv3` CLI flags instead.
+
+		See https://wxt.dev/guide/essentials/target-different-browsers.html#target-a-manifest-version
+	*/
+	// "manifest_version": 3,
 
 	// @ts-expect-error: Chrome no longer supports the "author" key, but we keep it for legacy reasons.
 	"author": "From E",

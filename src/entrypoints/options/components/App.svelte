@@ -3,52 +3,63 @@
 	 * Main Svelte component for the options page.
 	 *
 	 * @file
-	 * @lastModified 2026-04-04
 	 */
-
-	// WXT provided cross-browser compatible API.
-	import { browser } from "wxt/browser";
 
 	// Import Svelte
 	import { onMount } from "svelte";
 
 	// Import Svelte Component
-	import Header from "./Header.svelte";
-	import Main   from "./Main.svelte";
-	import Footer from "./Footer.svelte";
+	import CommonTemplate from "./CommonTemplate.svelte";
+	import About          from "./About.svelte";
+	import Settings       from "./Settings.svelte";
+	import ImportExport   from "./ImportExport.svelte";
 
-	// Import Object
-	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";  // Shared State Object
+	// Import Svelte Object
+	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";
+
+	// Import Module
+	import { cloneObject }     from "@/assets/js/lib/CloneObject";
+	import { setPageLanguage } from "@/assets/js/utils/setPageLanguage.ts";
+	import { setRootFontSize } from "@/assets/js/utils/setRootFontSize";
+
+	// Import Constants
+	import { define } from "@/assets/js/define";
 
 
 
-	onMount(() => {
-		setUILanguage();
+	// Reactive routing logic
+	$effect(() => {
+		const handleHashChange = () => {
+			if (status.route) {
+				status.route.page = window.location.hash.replace("#", "") || define.OptionsPageDefaultRoute;
+			}
+		};
+
+		window.addEventListener("hashchange", handleHashChange);
+
+		return () => window.removeEventListener("hashchange", handleHashChange);
+	});
+
+	const page = $derived(status.route?.page || define.OptionsPageDefaultRoute);
+
+	onMount(async () => {
+		console.info("INFO(options): Options page component mounted");
+		console.debug("DEBUG(options): initial status object", { status: cloneObject(status) });
+
+		await initialize();
+
+		console.info("INFO(options): Options page component initialized");
 	});
 
 	/**
-	 * Set the language attribute of the HTML element based on the browser's UI language.
+	 * Initializes the options page component.
 	 *
-	 * Supports "ja" and defaults to "en".
-	 *
-	 * @returns {void}
+	 * @returns {Promise<void>}
 	 */
-	function setUILanguage(): void {
-		const lang = browser.i18n.getUILanguage();
-		const elm  = document.querySelector("html");
+	async function initialize(): Promise<void> {
+		setPageLanguage();
 
-		if ( !elm ) {
-			return;
-		}
-
-		switch (lang) {
-			case "ja":
-				elm.setAttribute("lang", "ja");
-				break;
-			default:
-				elm.setAttribute("lang", "en");
-				break;
-		}
+		setRootFontSize(status.config.OptionsPage.fontsize);
 	}
 </script>
 
@@ -60,13 +71,17 @@
 
 
 
-<!-- Svelte Component Tag, Start -->
-<Header title={ status.define.Information.name } />
-
-<Main />
-
-<Footer />
-<!-- Svelte Component Tag, End -->
+<CommonTemplate currentPage={ page }>
+	{#if page === "about"}
+		<About />
+	{:else if page === "setting"}
+		<Settings />
+	{:else if page === "config"}
+		<ImportExport />
+	{:else}
+		<Settings />
+	{/if}
+</CommonTemplate>
 
 
 

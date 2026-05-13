@@ -168,3 +168,7 @@ We aim for high reliability through measurable coverage:
 ## Official Documentation
 - [Vitest Official Site](https://vitest.dev/)
 - [Vitest Documentation](https://vitest.dev/guide/)
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

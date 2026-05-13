@@ -297,3 +297,7 @@ For more detailed information, please refer to the official commitlint documenta
 
 - [commitlint Official Documentation](https://commitlint.js.org/#/)
 - [Conventional Commits Specification](https://www.conventionalcommits.org/)
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

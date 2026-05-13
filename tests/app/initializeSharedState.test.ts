@@ -1,8 +1,8 @@
 /**
- * Tests for state
+ * Tests for initializeSharedState
  *
  * Verifies the shared store initialization function (`initializeSharedState`) provided by
- * `StateManager/state.svelte.ts` and the retrieval of initialized content.
+ * `app/initializeSharedState.ts` and the retrieval of initialized content.
  *
  * This is a test for a shared store with state, and since it includes side-effect verification
  * through state similar to DOM operations (e.g., object property reassignment control via freeze),
@@ -16,10 +16,10 @@
  */
 
 import { describe, it, beforeEach, expect, vi } from "vitest";
-import { shareStatus, updateState, initializeSharedState } from "@/assets/js/lib/StateManager/state.svelte";
+import { shareStatus, updateState, setSharedState, initializeSharedState } from "@/assets/js/app/initializeSharedState.svelte.ts";
 import type { Config, Define } from "@/assets/js/types";
 
-describe("state (StateManager)", () => {
+describe("initializeSharedState (app)", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 
@@ -40,6 +40,18 @@ describe("state (StateManager)", () => {
 		// Assert
 		expect(shareStatus.config).toEqual(mockConfig);
 		expect(shareStatus.define).toEqual(mockDefine);
+	});
+
+	it("should be able to set multiple states via setSharedState (rest parameters)", () => {
+		const mockExtra = { key: "value" };
+
+		// Act
+		setSharedState(
+			{ name: "extra", value: mockExtra, freeze: false }
+		);
+
+		// Assert
+		expect(shareStatus.extra).toEqual(mockExtra);
 	});
 
 	it("should not allow external changes to the 'define' property as it is frozen", () => {

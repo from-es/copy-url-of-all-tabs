@@ -49,3 +49,7 @@ If you have issue or feature requests, please report them at issues (https://git
 	- https://addons.mozilla.org/firefox/addon/copy-url-of-all-tabs/
 - GitHub:
 	- https://github.com/from-es/copy-url-of-all-tabs
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../LICENSE.md "LICENSE file") for more information.

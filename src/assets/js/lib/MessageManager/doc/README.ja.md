@@ -216,4 +216,4 @@ interface PopoverMessageOptions {
 
 ## ライセンス
 
-このプロジェクトは [MIT License](../../../../../../../LICENSE.md) の下で公開されています。
+このプロジェクトは [MIT License](../../../../../../LICENSE.md) の下で公開されています。

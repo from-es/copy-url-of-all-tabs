@@ -46,18 +46,37 @@ type StateOption = {
  *
  * @param {StateOption[]} newStates - An array of {@link StateOption} objects used to update the store.
  */
-// eslint-disable-next-line no-unused-vars
 type UpdateState = (newStates: StateOption[]) => void;
+
+/**
+ * Defines the interface for the store created by {@link createStore}.
+ *
+ * @template T - The type of the state object.
+ */
+type StateManagerStore<T extends StateObject> = {
+	/**
+	 * A reactive proxy object representing the current state of the store.
+	 */
+	shareStatus: T;
+	/**
+	 * Updates the store's state using an array of {@link StateOption} objects.
+	 */
+	updateState: UpdateState;
+	/**
+	 * Updates the store's state using multiple {@link StateOption} objects as arguments.
+	 */
+	setSharedState: (...args: StateOption[]) => void;
+};
 
 /**
  * A factory function to create a type-safe, reactive store using Svelte 5 runes.
  * The store supports dynamic properties and property-level write protection.
  *
- * @template T                                               - The type of the state object.
- * @param    {StateOption[]} [initialStates]                 - An optional array of state options to initialize the store.
- * @returns  {{ shareStatus: T; updateState: UpdateState; }} - A reactive `shareStatus` proxy object and an `updateState` function.
+ * @template T                               - The type of the state object.
+ * @param    {StateOption[]} [initialStates] - An optional array of state options to initialize the store.
+ * @returns  {StateManagerStore<T>}          - A reactive `shareStatus` proxy object and update functions.
  */
-function createStore<T extends StateObject>(initialStates: StateOption[] = []): { shareStatus: T; updateState: UpdateState; } {
+function createStore<T extends StateObject>(initialStates: StateOption[] = []): StateManagerStore<T> {
 	// Internal reactive state managed by a single $state object.
 	const internalState = $state<StateObject>({});
 	const freezeMap     = new SvelteMap<string, boolean>();
@@ -139,9 +158,19 @@ function createStore<T extends StateObject>(initialStates: StateOption[] = []): 
 		upsertStates(newStates);
 	}
 
+	/**
+	 * Updates the reactive store by merging the new state using rest parameters.
+	 *
+	 * @param {...StateOption[]} args - A rest parameter of state options to update.
+	 */
+	function setSharedState(...args: StateOption[]): void {
+		updateState([ ...args ]);
+	}
+
 	return {
 		shareStatus: shareStatusProxy,
 		updateState,
+		setSharedState,
 	};
 }
 
@@ -152,5 +181,6 @@ export {
 };
 export type {
 	StateOption,
-	UpdateState
+	UpdateState,
+	StateManagerStore
 };

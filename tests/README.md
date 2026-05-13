@@ -6,7 +6,7 @@ This directory contains the automated test suite for the project. For detailed g
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 The test suite is organized logically according to the source code structure and shared infrastructure needs:
 
@@ -21,7 +21,7 @@ The test suite is organized logically according to the source code structure and
 
 ---
 
-## 🚀 Running Tests
+## Running Tests
 
 We provide scripts for both continuous development and one-off verification.
 
@@ -51,8 +51,12 @@ npm run vitest:smoke
 
 ---
 
-## 📝 Writing Standards
+## Writing Standards
 All new tests **must** follow the project standards:
 1.  **Pattern**: Use the **AAA (Arrange-Act-Assert)** pattern.
 2.  **Logic**: Prefer **Data-Driven Testing** using the common `TestRunner`.
 3.  **Template**: Start from the **Master Test Template** found in the [Developer Guide](../docs/DeveloperGuide/vitest.md).
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../LICENSE.md "LICENSE file") for more information.

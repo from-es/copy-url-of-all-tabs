@@ -69,3 +69,7 @@
 3. 「一時的なアドオンを読み込む...」ボタンをクリックします。
 4. ビルドディレクトリ内の `manifest.json` ファイル（例: `.output/firefox-mv3/manifest.json`）を選択します。
 5. マニフェストが有効であれば、アドオンが一時的に読み込まれます。
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

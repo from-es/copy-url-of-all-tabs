@@ -17,7 +17,7 @@ import { type Config } from "@/assets/js/types";
 import { type MigrationRule } from "@/assets/js/lib/MigrationManager/types";
 import { cloneObject } from "@/assets/js/lib/CloneObject";
 import { MigrationManager } from "@/assets/js/lib/MigrationManager";
-import { migrationRules } from "@/assets/js/lib/MigrationManager/rules";
+import { migrationRules } from "@/assets/js/app/MigrationManager/rules";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 
 // =============================================================================
@@ -32,7 +32,7 @@ vi.mock("@/assets/js/define", () => ({
 		Regex: { url: { standard: /a/, RFC3986: /b/ } }
 	}
 }));
-vi.mock("@/assets/js/lib/MigrationManager/rules", () => ({
+vi.mock("@/assets/js/app/MigrationManager/rules", () => ({
 	migrationRules: [] // Export an empty, controllable array
 }));
 

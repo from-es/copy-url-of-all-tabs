@@ -193,3 +193,7 @@ getOsVersionName();
 - [User-Agent Client Hints - WICG](https://wicg.github.io/ua-client-hints/#browser-os-experiments-use-case)
 - [Yauaa - User-Agent Client Hints](https://yauaa.basjes.nl/using/clienthints/)
 - [Releases, Windows NT - Wikipedia](https://en.wikipedia.org/wiki/Windows_NT#Releases "Releases, Windows NT - Wikipedia")
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

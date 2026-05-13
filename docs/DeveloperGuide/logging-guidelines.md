@@ -201,3 +201,7 @@ The `throw` method does not apply the message normalization format.
 
 - **Display Control**: Due to the default `loglevel: 'warn'` setting, logs at `info` level and below will not be displayed in production environments.
 - **Appearance**: `ConsoleManager` automatically applies color coding and timestamps according to the method.
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

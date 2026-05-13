@@ -39,3 +39,7 @@ For more detailed specifications and operational policies, please refer to the f
 	- [loadRules.md](./loadRules.md): About the specifications of the rule loader utility `loadRules` and **important constraints in the Service Worker environment**.
 - **Operational Policy**
 	- [RuleManagementPolicy.md](./RuleManagementPolicy.md): About the lifecycle management policy for migration rules.
+
+## License
+
+This project is licensed under the [MIT License](../../../../../../LICENSE.md).

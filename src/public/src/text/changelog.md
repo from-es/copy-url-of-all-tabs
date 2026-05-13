@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 - The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.22.0] - 2026-05-13
+
+### Changed
+
+- Overhauled internal architecture and centralized core logic for improved stability.
+- Migrated the options page to a reactive routing system.
+- Standardized CSS architecture and refined UI design.
+- General maintenance and documentation updates.
+
 ## [1.21.0] - 2026-05-02
 
 ### Changed

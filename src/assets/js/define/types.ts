@@ -157,6 +157,7 @@ type Define_Delta = {
 	Messaging           : {
 		[key: string]: string
 	};
+	OptionsPageDefaultRoute              : string;
 	OptionsPageFontSizeValueMin          : number;
 	OptionsPageFontSizeValueMax          : number;
 	OptionsPageFontSizeValueStep         : number;
@@ -198,7 +199,6 @@ type Define_Delta = {
 type VerificationRule = {
 	property: string;
 	fail    : () => unknown;
-	// eslint-disable-next-line no-unused-vars
 	rule    : (value: unknown) => boolean;
 };
 

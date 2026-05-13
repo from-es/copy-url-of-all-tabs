@@ -1,0 +1,10 @@
+@charset "utf-8";
+
+/* Normalize */
+@import "modern-normalize/modern-normalize.css";
+
+/* Project Common */
+@import url("@/assets/css/common.css");
+
+/* Page Specific */
+@import url("./popup.css");

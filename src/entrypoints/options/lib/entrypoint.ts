@@ -2,7 +2,7 @@
  * Main entry point for the options page.
  *
  * @file
- * @lastModified 2026-04-04
+ * @lastModified 2026-05-04
  */
 
 // Import Svelte
@@ -12,10 +12,15 @@ import { mount } from "svelte";
 import App          from "../components/App.svelte";
 import type AppType from "../components/App.svelte";
 
+// Import Svelte Module
+import { initializeSharedState } from "@/assets/js/app/initializeSharedState.svelte.ts";
+
 // Import Module
-import { initializeSharedState } from "@/assets/js/lib/StateManager/state.svelte.ts";
-import { initializeConfig }      from "@/assets/js/initializeConfig";
-import { logging }               from "@/assets/js/logging";
+import { initializeConfig } from "@/assets/js/app/initializeConfig";
+import { logging }          from "@/assets/js/app/logging";
+
+// Import CSS
+import "../css/style.css";
 
 
 
@@ -43,7 +48,12 @@ async function main(): Promise<void> {
 	logging(config, define);
 
 	// Initialize Share State Object
-	initializeSharedState(config, define);
+	const route = {
+		name  : "route",
+		value : { page: window.location.hash.replace("#", "") || define.OptionsPageDefaultRoute },
+		freeze: false
+	};
+	initializeSharedState(config, define, route);
 
 	// Mounting the starting module
 	const target = document.body;

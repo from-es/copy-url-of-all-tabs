@@ -168,3 +168,7 @@ describe("{{モジュール名}}", () => {
 ## 公式ドキュメント
 - [Vitest 公式サイト](https://vitest.dev/)
 - [Vitest ドキュメント](https://vitest.dev/guide/)
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

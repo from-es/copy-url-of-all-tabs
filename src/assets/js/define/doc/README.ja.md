@@ -111,3 +111,7 @@
 	- **設定オブジェクトのバリデーション**: `Config` オブジェクトを検証するルールの場合、`VerificationRules` 配列に追加します。
 	- **カスタム `v8n` ルール**: `v8n` をカスタムバリデーションメソッドで拡張する場合は、ファイルの先頭で `v8n.extend()` を呼び出します。
 3. **使用**: `VerificationRules` のルールは自動的に使用されます。カスタム `v8n` ルールはバリデーションロジック内で使用できます。
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../LICENSE.md "LICENSE file") for more information.

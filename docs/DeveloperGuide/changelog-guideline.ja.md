@@ -141,3 +141,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] カテゴリは標準の6種類に収まっているか
 - [ ] ユーザー視点の記述になっているか（実装詳細が含まれていないか）
 - [ ] コミット等の生URLが含まれていないか
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

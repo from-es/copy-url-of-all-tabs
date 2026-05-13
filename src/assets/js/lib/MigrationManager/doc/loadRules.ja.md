@@ -104,3 +104,7 @@ Chrome 拡張機能の Service Worker は、`window` グローバルオブジェ
 上記制約のため、本ライブラリ、特に `loadRules` ユーティリティを使用する際は、**必ず `import.meta.glob` に `{ eager: true }` オプションを付与し、すべてのルールモジュールをビルド時にバンドルし、同期的に読み込む必要があります。**
 
 このアーキテクチャ変更により、`loadRules` 関数自体も `async` ではない**同期関数**となっており、`Promise` ではなく直接ルール配列を返します。
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

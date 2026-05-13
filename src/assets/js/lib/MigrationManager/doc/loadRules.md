@@ -104,3 +104,7 @@ A Chrome extension's Service Worker is a special execution environment that does
 Due to the above constraints, when using this library, especially the `loadRules` utility, **you must always add the `{ eager: true }` option to `import.meta.glob` to bundle all rule modules at build time and load them synchronously.**
 
 This architectural change also makes the `loadRules` function itself a **synchronous function**, not `async`, and it returns the rule array directly instead of a `Promise`.
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../../LICENSE.md "LICENSE file") for more information.

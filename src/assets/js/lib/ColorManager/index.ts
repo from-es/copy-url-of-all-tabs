@@ -13,7 +13,6 @@ import ColorString from "color-string";
 
 // Defines the signature (name, arguments, return type) of fields and methods that a class should implement.
 interface ColorManager {
-	// eslint-disable-next-line no-unused-vars
 	isValidColor(color: string): boolean;
 }
 

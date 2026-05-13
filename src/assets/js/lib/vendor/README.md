@@ -54,3 +54,7 @@ When using a library in your code, import from its `dist/` directory:
 ```typescript
 import LibraryA from "@/assets/js/lib/vendor/library-name/dist/library-a.min.js";
 ```
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../LICENSE.md "LICENSE file") for more information.

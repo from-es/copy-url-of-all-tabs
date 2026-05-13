@@ -297,3 +297,7 @@ git commit --allow-empty -m "Version 1.0.0 has been released."
 
 - [commitlint 公式ドキュメント](https://commitlint.js.org/#/)
 - [Conventional Commits 仕様](https://www.conventionalcommits.org/)
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

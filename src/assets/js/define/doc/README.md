@@ -111,3 +111,7 @@ When implementing new features, if user-modifiable configuration values need to 
 	- **Validation of Configuration Objects**: For rules that validate the `Config` object, add them to the `VerificationRules` array.
 	- **Custom `v8n` Rules**: If you want to extend `v8n` with custom validation methods, call `v8n.extend()` at the beginning of the file.
 3. **Use**: Rules in `VerificationRules` are automatically used. Custom `v8n` rules can be used within your validation logic.
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../../../../LICENSE.md "LICENSE file") for more information.

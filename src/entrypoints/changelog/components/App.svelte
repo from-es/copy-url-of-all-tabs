@@ -12,17 +12,17 @@
 	import { changelogState, loadChangelog } from "../lib/changelogState.svelte";
 
 	// Import Svelte Object
-	import { shareStatus as status } from "@/assets/js/lib/StateManager/state.svelte.ts";
+	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";
+
+	// Import Svelte Component
+	import Header from "@/assets/components/Header.svelte";
 
 	// Import Module
 	import { createSafeHTML }  from "@/assets/js/utils/setSafeHTML";
 	import { setRootFontSize } from "@/assets/js/utils/setRootFontSize";
 
-	// Import
+	// Import Types
 	import type { ChangelogEntry } from "../lib/changelogParser";
-
-	// Import CSS
-	import "../css/style.css";
 
 
 
@@ -68,7 +68,7 @@
 	<title>Changelog - {status.define.Information.name}</title>
 </svelte:head>
 
-
+<Header />
 
 <main id="contents">
 	<article>

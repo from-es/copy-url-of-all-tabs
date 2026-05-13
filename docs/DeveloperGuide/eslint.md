@@ -194,3 +194,7 @@ By adding the following settings to the `.vscode/settings.json` file at the root
 
 - [ESLint Official Website](https://eslint.org/)
 - [ESLint Documentation](https://eslint.org/docs/latest/)
+
+---
+
+This project is licensed under the MIT license. Please read the [LICENSE file](../../LICENSE.md "LICENSE file") for more information.

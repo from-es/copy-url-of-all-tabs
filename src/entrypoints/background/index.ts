@@ -2,7 +2,7 @@
  * Main entry point for the background script.
  *
  * @file
- * @lastModified 2026-04-08
+ * @lastModified 2026-05-04
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -10,11 +10,11 @@ import { browser, type Browser } from "wxt/browser";
 
 // Import Module
 import { define }           from "@/assets/js/define";  // Pre-import define to avoid messaging errors when it contains non-serializable types.
-import { logging }          from "@/assets/js/logging";
-import { initializeConfig } from "@/assets/js/initializeConfig";
-import { handleOpenURLs }   from "./lib/openUrlsHandler";
+import { logging }          from "@/assets/js/app/logging";
+import { initializeConfig } from "@/assets/js/app/initializeConfig";
 import { countManager }     from "./lib/CountManager";
 import { badgeController }  from "./lib/BadgeController";
+import { handleOpenURLs }   from "./lib/openUrlsHandler";
 
 // Import Types
 import type { Config }           from "@/assets/js/types";
