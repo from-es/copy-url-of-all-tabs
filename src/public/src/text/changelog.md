@@ -480,7 +480,3 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Initial release on the browser extension store.
-
----
-
-This project is licensed under the MIT license. Please read the [LICENSE file](../../../../LICENSE.md "LICENSE file") for more information.
