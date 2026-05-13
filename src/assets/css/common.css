@@ -92,6 +92,10 @@
 	/* Border Radius */
 	--base-border-radius : 0.5rem;
 	--small-border-radius: 0.25rem;
+
+	/* Brand Logo */
+	--brand-logo-size: 3rem;
+	--brand-logo-path: url("/src/img/icon.svg");
 }
 
 /* Base Resets */
@@ -147,7 +151,7 @@ h5 { font-size: var(--heading-h5-size); }
 h6 { font-size: var(--heading-h6-size); }
 
 h1, h2, h3, h4, h5, h6 {
-	margin : 1.00rem 0;
+	margin : 1rem 0;
 	padding: 0.25rem 0 0 0;
 
 	font-weight: bold;
@@ -156,4 +160,38 @@ h1, h2, h3, h4, h5, h6 {
 ul, ol {
 	margin : 1rem 0;
 	padding: 0 0 0 2.5rem;
+}
+
+pre {
+	overflow-x: auto;
+}
+
+/* Brand Logo (Shared by Header component) */
+.brand-logo {
+	display: inline-block;
+
+	margin : 0;
+	padding: 0;
+
+	/* Specify the height of the image to display */
+	height: var(--brand-logo-size);
+
+	font-size  : var(--heading-h1-size);;
+	font-weight: bold;
+
+	&:before {
+		display: inline-block;
+
+		text-align    : center;
+		vertical-align: middle;
+
+		margin-right: 0.75rem;
+
+		width : var(--brand-logo-size);
+		height: var(--brand-logo-size);
+
+		content         : "";
+		background-size : contain;
+		background-image: var(--brand-logo-path);
+	}
 }

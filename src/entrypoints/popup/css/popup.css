@@ -7,7 +7,13 @@
 /* ------------------------------------------------------------------------------------------ */
 
 :root {
-	/* No page-specific variables currently */
+	/* Icons */
+	--icon-copy-path   : url("/src/img/copy.svg");
+	--icon-paste-path  : url("/src/img/paste.svg");
+	--icon-options-path: url("/src/img/gear.svg");
+
+	/* Button Text Color */
+	--color-popup-btn: #3d5d6a;
 }
 
 
@@ -128,9 +134,9 @@ li {
 		}
 	}
 
-	&:has(button[data-action="copy"])::before    { background-image: url("/src/img/copy.svg"); }
-	&:has(button[data-action="paste"])::before   { background-image: url("/src/img/paste.svg"); }
-	&:has(button[data-action="options"])::before { background-image: url("/src/img/gear.svg"); }
+	&:has(button[data-action="copy"])::before    { background-image: var(--icon-copy-path); }
+	&:has(button[data-action="paste"])::before   { background-image: var(--icon-paste-path); }
+	&:has(button[data-action="options"])::before { background-image: var(--icon-options-path); }
 	&:has(button[disabled])::before              { filter: grayscale(1); }
 }
 

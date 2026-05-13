@@ -36,22 +36,14 @@ a {
 }
 
 code {
-	margin-left : 0.05rem;
-	margin-right: 0.05rem;
-	padding     : 0.20rem 0.35rem;
+	margin-left : 0.1rem;
+	margin-right: 0.1rem;
+	padding     : 0.2rem;
 
 	border-radius: var(--small-border-radius);
 
 	color           : var(--color-white);
 	background-color: var(--color-gray-dark);
-}
-
-h1, h2, h3, h4, h5, h6 {
-	color: var(--color-gray-dark);
-}
-
-h1 {
-	padding-bottom: 0.25rem;
 }
 
 h2 {
@@ -82,16 +74,28 @@ h4, h5, h6 {
 /*                                                                                            */
 /* ------------------------------------------------------------------------------------------ */
 
-#header {
-	margin-top: 0;
-	padding   : 0.5rem 0;
+header {
+	margin: 1rem auto;
 
-	background-color: var(--color-accent);
+	min-width: var(--layout-min-width);
+	max-width: var(--layout-max-width);
+}
+
+main {
+	margin: 1rem auto;
+}
+
+#header #brand {
+	margin : 1rem 0 0;
+	padding: 1rem;
+
+	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
+	border-radius: var(--base-border-radius);
 }
 
 #contents {
-	margin : 1rem auto;
-	padding: 1rem 0 2rem 0;
+	margin : 0 auto;
+	padding: 0 0 2rem 0;
 
 	min-width: var(--layout-min-width);
 	max-width: var(--layout-max-width);
@@ -117,8 +121,8 @@ h4, h5, h6 {
 /* ------------------------------------------------------------------------------------------ */
 
 .entry {
-	margin-bottom : 1rem;
-	padding       : 1rem 1rem 2rem;
+	margin-bottom: 1rem;
+	padding      : 1rem 1rem 2rem;
 
 	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
 	border-radius: var(--base-border-radius);

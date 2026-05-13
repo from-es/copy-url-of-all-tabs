@@ -164,7 +164,7 @@ header, main, footer {
 	max-width: 100rem;
 }
 
-#header > article {
+#header #brand {
 	margin: 1rem 0 0; padding: 1rem;
 
 	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
@@ -294,25 +294,7 @@ main {
 /*                                                                                            */
 /* ------------------------------------------------------------------------------------------ */
 
-header h1 {
-	height: 3rem; /* Specify the height of the image to display */
-}
 
-header h1:before {
-	text-align    : center;
-	vertical-align: middle;
-
-	margin-right: 0.75rem;
-
-	width : 3rem;
-	height: 3rem;
-
-	content        : '';
-	display        : inline-block;
-	background-size: contain;
-
-	background-image: url("/src/img/icon.svg");
-}
 
 
 

@@ -14,6 +14,9 @@
 	// Import Svelte Object
 	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";
 
+	// Import Svelte Component
+	import Header from "@/assets/components/Header.svelte";
+
 	// Import Module
 	import { createSafeHTML }  from "@/assets/js/utils/setSafeHTML";
 	import { setRootFontSize } from "@/assets/js/utils/setRootFontSize";
@@ -65,7 +68,7 @@
 	<title>Changelog - {status.define.Information.name}</title>
 </svelte:head>
 
-
+<Header />
 
 <main id="contents">
 	<article>
