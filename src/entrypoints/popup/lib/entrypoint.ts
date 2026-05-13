@@ -20,7 +20,7 @@ import { initializeConfig } from "@/assets/js/app/initializeConfig";
 import { logging }          from "@/assets/js/app/logging";
 
 // Import CSS
-import "../css/popup.css";
+import "../css/style.css";
 
 
 

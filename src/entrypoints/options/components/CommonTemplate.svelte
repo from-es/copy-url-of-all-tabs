@@ -7,9 +7,7 @@
 
 	// Import Svelte Component
 	import Navigation from "./Navigation.svelte";
-
-	// Import Svelte Object
-	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";
+	import Header     from "@/assets/components/Header.svelte";
 
 	// Import Object: props for Svelte
 	const { children, currentPage } = $props();
@@ -17,11 +15,7 @@
 
 
 
-<header id="header">
-	<article>
-		<h1>{ status.define.Information.name }</h1>
-	</article>
-</header>
+<Header />
 
 <main>
 	<Navigation current={ currentPage } />

@@ -19,6 +19,9 @@ import { initializeSharedState } from "@/assets/js/app/initializeSharedState.sve
 import { initializeConfig } from "@/assets/js/app/initializeConfig";
 import { logging }          from "@/assets/js/app/logging";
 
+// Import CSS
+import "../css/style.css";
+
 
 
 /**
