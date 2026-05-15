@@ -1,6 +1,7 @@
 @charset "utf-8";
 
 /* ------------------------------------------------------------------------------------------ */
+
 /*                                                                                            */
 /*                                    Variable Definition                                     */
 /*                                                                                            */
@@ -9,7 +10,10 @@
 :root {
 	--layout-min-width     : 1280px;
 	--sidebar-sticky-height: 480px;
+	--sidebar-size-width   : 14rem;
+	--flex-side-width      : calc(var(--sidebar-size-width) - 1rem);
 	--debug-range-width    : 384px;
+
 }
 
 
@@ -82,6 +86,7 @@ input {
 
 	font-size: 0.85rem;
 }
+
 input[type="checkbox"],
 input[type="radio"] {
 	width : 1rem;
@@ -89,19 +94,16 @@ input[type="radio"] {
 
 	vertical-align: middle;
 }
-input[type="number"] {
-	margin-top    : 0.25rem;
-	margin-right  : 0.25rem;
-	margin-bottom : 0.25rem;
 
-	padding-top   : 0.25rem;
-	padding-right : 0.25rem;
-	padding-bottom: 0.25rem;
+input[type="number"] {
+	margin : 0.25rem 0.25rem 0.25rem 0;
+	padding: 0.25rem;
 
 	text-align: right;
 
 	width: 6rem;
 }
+
 input[type="number"] + label {
 	vertical-align: text-top;
 }
@@ -144,10 +146,6 @@ button {
 	}
 }
 
-#setting h2 {
-	font-weight: lighter;
-}
-
 
 
 /* ------------------------------------------------------------------------------------------ */
@@ -164,72 +162,58 @@ header, main, footer {
 	max-width: 100rem;
 }
 
-#header #brand {
-	margin: 1rem 0 0; padding: 1rem;
-
-	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
-	border-radius: var(--base-border-radius);
-}
-
-#sidebar {
-	flex: 0 0 14rem;
-}
-
-#sidebar > article,
-#contents > article,
-#setting-copy,
-#setting-paste,
-#setting-system {
-	margin : 1rem 0.5rem;
-	padding: 1rem;
-
-	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
-	border-radius: var(--base-border-radius);
-}
-
-#setting-copy,
-#setting-paste {
-	margin-bottom: 2rem;
-}
-#setting-copy,
-#setting-paste,
-#setting-system {
-	padding-top   : 0;
-	padding-bottom: 0;
-}
-#setting-copy,
-#setting-paste,
-#setting-filtering,
-#setting-system {
-	& > legend {
-		font-size: 1.5rem;
-		font-weight: normal;
-	}
-}
-
-article > *:first-child {
-	margin-top: 0;
-}
-article > *:last-child {
-	margin-bottom: 0;
-}
-
-section {
-	margin-top   : 1rem;
-	margin-bottom: 1rem;
-}
-
-
-
 #header {
 	padding-left : 0.5rem;
 	padding-right: 0.5rem;
+
+	& #brand {
+		margin : 1rem 0 0;
+		padding: 1rem;
+
+		border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
+		border-radius: var(--base-border-radius);
+	}
+}
+
+/*
+	Layout using Flexbox.
+
+	<main>
+		<div id="sidebar">         : Fixed width and size
+		<div id="contents">        : Remaining width
+			<div class="flex-side"> : Fixed width and size
+			<div class="flex-main"> : Remaining width
+*/
+main {
+	display: flex;
 }
 
 #sidebar {
+	flex: 0 0 var(--sidebar-size-width);
+
 	position: sticky;
 	top     : 0;
 	height  : var(--sidebar-sticky-height);
+
+	& > article {
+		margin : 1rem 0.5rem;
+		padding: 1rem;
+
+		border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
+		border-radius: var(--base-border-radius);
+	}
+}
+
+#contents {
+	flex: 1;
+
+	& > article {
+		margin : 1rem 0.5rem;
+		padding: 1rem;
+
+		border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
+		border-radius: var(--base-border-radius);
+	}
 }
 
 #warning-message-for-supported-browser {
@@ -248,84 +232,136 @@ section {
 
 
 
-/*
-	Layout using Flexbox.
-
-	<main>
-		<div id="sidebar">         : Fixed width and size
-		<div id="contents">        : Remaining width
-			<div class="flex-side"> : Fixed width and size
-			<div class="flex-main"> : Remaining width
-*/
-
-main {
-	display: flex;
-}
-
-#contents {
-	flex: 1;
-}
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                         Components                                         */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
 
 .container {
 	display: flex;
-}
-.container:not(:last-child) {
-	border-bottom: calc(var(--base-unit-px) * 2) dotted var(--color-gray-medium);
+
+	&:not(:last-child) {
+		border-bottom: calc(var(--base-unit-px) * 2) dotted var(--color-gray-medium);
+	}
 }
 
-.flex-side { width: 13rem; }
-.flex-main { flex: 1; }
+.flex-side {
+	width: var(--flex-side-width);
 
-.flex-side > h3 {
-	font-size: 1.5rem;
-	font-weight: lighter;
+	& > h3 {
+		font-size     : 1.5rem;
+		font-weight   : lighter;
+		letter-spacing: calc(var(--base-unit-px) * -1);  /* Adjust the character width to fit within the parent element */
 
-	user-select: none;
+		user-select: none;
+	}
+
+	& > p {
+		font-size: 85%;
+	}
 }
-.flex-side > p {
-	font-size: 85%;
+
+.flex-main {
+	flex: 1;
+}
+
+article > *:first-child {
+	margin-top: 0;
+}
+
+article > *:last-child {
+	margin-bottom: 0;
+}
+
+section {
+	margin-top   : 1rem;
+	margin-bottom: 1rem;
 }
 
 
 
 /* ------------------------------------------------------------------------------------------ */
 /*                                                                                            */
-/*                                         Typography                                         */
+/*                                        Setting Page                                        */
 /*                                                                                            */
 /* ------------------------------------------------------------------------------------------ */
 
+#setting-copy,
+#setting-paste,
+#setting-filtering,
+#setting-system {
+	/* Variables in fieldset-legend.css */
+	--fl-left: 1rem;
+
+	margin : 2rem 0.5rem;
+	padding: 1rem;
+
+	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
+	border-radius: var(--base-border-radius);
+
+	& > h2 {
+		padding: 0 0.5rem;
+
+		font-size  : 1.5rem;
+		font-weight: normal;
+		font-weight: lighter;
+	}
+}
+
+/* Margin and Padding Adjustments */
+#setting > section:last-child {
+	margin-bottom : 1rem;
+	padding-bottom: 0;
+}
 
 
 
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                     Navigation / TabNav                                    */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
 
 #tabnav li {
 	display: block;
+
+	& a {
+		display    : block;
+		user-select: none; /* Disable text selection */
+
+		margin : 0.5rem 0;
+		padding: 0.5rem 1.0rem;
+
+		border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-soft);
+		border-radius: var(--base-border-radius);
+
+		color     : var(--color-gray-dark);
+		background: var(--color-gray-soft);
+
+		text-decoration: none;
+
+		cursor: pointer;
+
+		&:hover {
+			border    : calc(var(--base-unit-px) * 1) solid var(--color-primary);
+			color     : var(--color-primary);
+			background: var(--color-white);
+		}
+
+		&.active {
+			border    : calc(var(--base-unit-px) * 1) solid var(--color-primary);
+			color     : var(--color-white);
+			background: var(--color-primary);
+
+			&:hover {
+				border    : calc(var(--base-unit-px) * 1) solid var(--color-primary);
+				color     : var(--color-primary);
+				background: var(--color-white);
+			}
+		}
+	}
 }
-#tabnav li a {
-	display    : block;
-	user-select: none; /* Disable text selection */
-
-	margin : 0.5rem 0;
-	padding: 0.5rem 1.0rem;
-
-	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-soft);
-	border-radius: var(--base-border-radius);
-
-	color     : var(--color-gray-dark);
-	background: var(--color-gray-soft);
-
-	text-decoration: none;
-
-	cursor: pointer;
-}
-
-/*
-	#tabnav li a:link    { }
-	#tabnav li a:visited { }
-*/
-#tabnav li a:hover        { border: calc(var(--base-unit-px) * 1) solid var(--color-primary); color: var(--color-primary); background: var(--color-white); }
-#tabnav li a.active       { border: calc(var(--base-unit-px) * 1) solid var(--color-primary); color: var(--color-white); background: var(--color-primary); }
-#tabnav li a.active:hover { border: calc(var(--base-unit-px) * 1) solid var(--color-primary); color: var(--color-primary); background: var(--color-white); }
 
 #setting-action li button {
 	display    : block;
@@ -343,18 +379,23 @@ main {
 
 
 
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                       Format Settings                                      */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
 #Format-type > label {
 	display: block;
 }
 
 #Format fieldset:has(#Format-template),
-#Format fieldset:has(#Format-mimetype)
-{
+#Format fieldset:has(#Format-mimetype) {
 	display: none;
 }
+
 #Format:has(input[value="custom"]:checked) > fieldset:has(#Format-template),
-#Format:has(input[value="custom"]:checked) > fieldset:has(#Format-mimetype)
-{
+#Format:has(input[value="custom"]:checked) > fieldset:has(#Format-mimetype) {
 	display: block;
 }
 
@@ -365,7 +406,7 @@ main {
 #Tab-TaskControl-openMode,
 #Badge-theme-type {
 	& > label {
-		display: block;
+		display : block;
 		position: relative;
 
 		&[data-description]:hover::after {
@@ -389,37 +430,17 @@ main {
 
 
 
-#Debug-timecoordinate > label
-{
-	display: block;
-	width  : 7rem;
-}
-
-#Debug-timecoordinate > input[type=radio]
-{
-	display    : block;
-	margin     : 0.5rem 0.75rem 0.5rem 0;
-	line-height: 1;
-}
-#Debug-timecoordinate > input[type=radio]:after
-{
-	position      : relative;
-	right         : -1rem;
-	content       : attr(text);
-	vertical-align: middle;
-}
-
-#Debug-timecoordinate > input[type=range]
-{
-	width: var(--debug-range-width);
-}
-
-
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                    Custom Delay Settings                                   */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
 
 #Tab-custom-delay-table,
 #custom-delay-add-button {
 	display: none;
 }
+
 #Tab-custom-delay:has(#Tab-custom-delay-enable:checked) #Tab-custom-delay-table,
 #Tab-custom-delay:has(#Tab-custom-delay-enable:checked) #custom-delay-add-button {
 	display: block;
@@ -433,71 +454,119 @@ main {
 
 	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-light);
 	border-radius: var(--small-border-radius);
+
+	& thead > tr > th[data-cell-type="enable"] {
+		padding: 0 0.25rem;
+	}
 }
 
-#Tab-custom-delay-list input:invalid {
-	background-color:#ff8c00;
-}
-#Tab-custom-delay-list input:invalid::placeholder {
-	color: #fff;
-}
+#Tab-custom-delay-list {
+	& input:invalid {
+		background-color: #ff8c00;
 
-#Tab-custom-delay-list > tr > td {
-	text-align: center;
-}
+		&::placeholder {
+			color: #fff;
+		}
+	}
 
-#Tab-custom-delay-list > tr > td > input {
-		padding: 0.25rem 0.5rem;
+	& > tr > td {
+		text-align: center;
 
-		border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-light);
-		border-radius: var(--small-border-radius);
+		&[data-cell-type="enable"] {
+			padding: 0 0.25rem;
+		}
 
-		font-size    : smaller;
-		overflow     : hidden;
-		text-overflow: ellipsis;
-}
-#Tab-custom-delay-table > thead > tr > th[data-cell-type="enable"],
-#Tab-custom-delay-list  >         tr > td[data-cell-type="enable"] {
-	padding: 0 0.25rem;
-}
-#Tab-custom-delay-list > tr > td[data-cell-type="url"] > input {
-	 width: 100%;
-}
-#Tab-custom-delay-list > tr > td[data-cell-type="delay"] > input {
-	 width: 5rem;
-}
+		&[data-cell-type="url"] {
+			width: 100%;
 
-#Tab-custom-delay-list > tr > td[data-cell-type="url"] {
-	width: 100%;
-}
-#Tab-custom-delay-list > tr > td:is([data-cell-type="sort"], [data-cell-type="delete"]) {
-	width: 2rem;
-}
-#Tab-custom-delay-list > tr > td[data-cell-type="empty"] > p {
-	margin : 0.5rem;
-	padding: 0.5rem;
+			& > input {
+				width: 100%;
+			}
+		}
 
-	border: calc(var(--base-unit-px) * 2) dotted var(--color-error);
+		&[data-cell-type="delay"] > input {
+			width: 5rem;
+		}
 
-	text-align : center;
-	font-weight: 700;
-	font-size  : 1rem;
-	color      : var(--color-error);
+		&:is([data-cell-type="sort"], [data-cell-type="delete"]) {
+			width: 2rem;
+		}
+
+		&[data-cell-type="empty"] > p {
+			margin : 0.5rem;
+			padding: 0.5rem;
+
+			border: calc(var(--base-unit-px) * 2) dotted var(--color-error);
+
+			text-align : center;
+			font-size  : 1rem;
+			font-weight: 700;
+			color      : var(--color-error);
+		}
+
+		& > input {
+			padding: 0.25rem 0.5rem;
+
+			border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-light);
+			border-radius: var(--small-border-radius);
+
+			font-size    : smaller;
+			overflow     : hidden;
+			text-overflow: ellipsis;
+		}
+	}
 }
 
 #custom-delay-add-button {
 	text-align: center;
 }
 
+
+
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                       System Settings                                      */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
+#Tab-TaskControl-chunkSize-form {
+	margin-top: 0.5rem;
+}
+
 .notice-paste {
 	margin-bottom: 0;
 }
+
 .notice-highlight {
 	color: var(--color-error);
 }
 
 
 
-#Tab-TaskControl-chunkSize-form {
-	margin-top: 0.5rem;
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                       Debug Settings                                       */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
+#Debug-timecoordinate > label {
+	display: block;
+	width  : 7rem;
+}
+
+#Debug-timecoordinate > input[type=radio] {
+	display    : block;
+	margin     : 0.5rem 0.75rem 0.5rem 0;
+	line-height: 1;
+
+	&:after {
+		position      : relative;
+		right         : -1rem;
+		content       : attr(text);
+		vertical-align: middle;
+	}
+}
+
+#Debug-timecoordinate > input[type=range] {
+	width: var(--debug-range-width);
 }

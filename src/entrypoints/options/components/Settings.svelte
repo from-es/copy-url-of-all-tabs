@@ -31,8 +31,8 @@
 	<h1>Setting</h1>
 
 	<!-- Copy -->
-	<fieldset id="setting-copy">
-		<legend>Copy</legend>
+	<section id="setting-copy" class="fieldset-legend">
+		<h2>Copy</h2>
 
 		<!-- Format -->
 		<section class="container">
@@ -81,11 +81,11 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 
 	<!-- Paste -->
-	<fieldset id="setting-paste">
-		<legend>Paste</legend>
+	<section id="setting-paste" class="fieldset-legend">
+		<h2>Paste</h2>
 
 		<!-- Search -->
 		<section class="container">
@@ -318,11 +318,11 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 
 	<!-- Filtering -->
-	<fieldset id="setting-filtering">
-		<legend>Filtering</legend>
+	<section id="setting-filtering" class="fieldset-legend">
+		<h2>Filtering</h2>
 
 		<!-- Deduplicate URLs -->
 		<section class="container">
@@ -470,11 +470,11 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 
 	<!-- System -->
-	<fieldset id="setting-system">
-		<legend>System</legend>
+	<section id="setting-system" class="fieldset-legend">
+		<h2>System</h2>
 
 		<!-- Options Page -->
 		<section class="container">
@@ -679,5 +679,5 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 </article>

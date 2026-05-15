@@ -3,6 +3,9 @@
 /* Normalize */
 @import "modern-normalize/modern-normalize.css";
 
+/* fieldset-legend */
+@import "fieldset-legend/fieldset-legend.css";
+
 /* Project Common */
 @import url("@/assets/css/common.css");
 
