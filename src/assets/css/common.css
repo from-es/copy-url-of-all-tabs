@@ -58,6 +58,7 @@
 	/* Colors */
 	--color-black       : #000000;  /* black */
 	--color-white       : #ffffff;  /* white */
+	--color-red         : #ff0000;  /* red */
 	--color-gray-darker : #303030;  /* charcoal */
 	--color-gray-dark   : #333333;  /* darkgray */
 	--color-gray-medium : #666666;  /* dimgray */

@@ -99,6 +99,12 @@ interface UrlDelayRule {
   matchType?: 'prefix' | 'substring' | 'exact';
 
   /**
+   * このルールの遅延を何回目のマッチから適用するかを指定する固有の適用開始回数。
+   * 未指定の場合は、グローバルな `applyFrom` 引数にフォールバックします。
+   */
+  count?: number;
+
+  /**
    * パターンが一致した場合に適用する遅延時間（ミリ秒）。
    */
   delay: number;
@@ -139,7 +145,7 @@ interface UrlDelayCalculationResult {
 
 ### 2回目以降のマッチから遅延を適用する
 
-`applyFrom`引数を設定することで、ルールが特定の回数マッチした後にのみ遅延を適用できます。これは、同じドメインのURLが2回目以降に出現した場合にのみ遅延させたい、といったシナリオで役立ちます。
+グローバルな `applyFrom` 引数を設定するか、個別のルールに `count` プロパティを設定することで、特定の回数マッチした後にのみ遅延を適用できます。ルール固有の `count` が設定されている場合は、グローバルな `applyFrom` より優先されます。
 
 ```typescript
 const urls = [
@@ -154,20 +160,21 @@ const rules: UrlDelayRule[] = [
   {
     pattern: 'https://x.com',
     matchType: 'prefix',
+    count: 2,    // このルール専用に2回目から適用
     delay: 5000, // 5秒の遅延
   }
 ];
 
-// 第4引数に `2` を渡し、2回目の一致から遅延を適用する
-const results = UrlDelayCalculator.calculateDelays(urls, 250, rules, 2);
+// applyFrom を省略しても（デフォルト1）、rule.count = 2 が優先されます。
+const results = UrlDelayCalculator.calculateDelays(urls, 250, rules);
 
 /*
 期待される個別遅延 (individual delay):
 - https://x.com/user/1: 0 (リストの最初のURL)
 - https://example.com/a: 250
-- https://x.com/user/2: 5000 (2回目のマッチ、applyFrom: 2 を満たす)
+- https://x.com/user/2: 5000 (2回目のマッチ、rule.count: 2 を満たす)
 - https://example.com/b: 250
-- https://x.com/user/3: 5000 (3回目のマッチ、applyFrom: 2 を満たす)
+- https://x.com/user/3: 5000 (3回目のマッチ、rule.count: 2 を満たす)
 */
 ```
 

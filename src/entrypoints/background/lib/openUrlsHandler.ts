@@ -112,6 +112,7 @@ function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDela
 			.filter(item => item.enable)
 			.map(item => ({
 				pattern  : item.pattern,
+				count    : item.count,
 				delay    : item.delay,
 				matchType: define.TabOpenCustomDelayMatchType  // Match type used for regex evaluation in UrlDelayCalculator (default: "prefix").
 			}));

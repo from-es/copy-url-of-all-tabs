@@ -24,6 +24,7 @@ function addRowForCustomDelay(list: CustomDelayInfo[]): void {
 		id     : crypto.randomUUID(), // Always assign a unique ID to the new row.
 		enable : true,                // Enabled by default when newly created.
 		pattern: "",
+		count  : define.TabOpenCustomDelayApplyFrom,
 		delay  : define.TabOpenCustomDelayValue,
 	});
 }

@@ -28,6 +28,11 @@ interface UrlDelayRule {
 	 */
 	matchType?: "prefix" | "substring" | "exact";
 	/**
+	 * Match count from which the delay is applied.
+	 * If not specified, the global applyFrom value is used as a fallback.
+	 */
+	count?: number;
+	/**
 	 * Delay (in milliseconds) to apply when the pattern matches.
 	 */
 	delay: number;
@@ -151,8 +156,9 @@ class UrlDelayCalculator {
 			for (const rule of compiledRules) {
 				if (rule.compiledPattern.test(url)) {
 					const matchCount = ruleMatchCount.get(rule.compiledPattern) || 0;
+					const threshold  = (rule.count !== undefined) ? rule.count : applyFrom;
 
-					if (matchCount + 1 >= applyFrom) {
+					if (matchCount + 1 >= threshold) {
 						individualDelay = rule.delay;
 					}
 
