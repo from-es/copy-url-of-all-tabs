@@ -455,8 +455,11 @@ section {
 	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-light);
 	border-radius: var(--small-border-radius);
 
-	& thead > tr > th[data-cell-type="enable"] {
+	& thead > tr > th {
 		padding: 0 0.25rem;
+
+		text-align : center;
+		white-space: nowrap;
 	}
 }
 
@@ -473,7 +476,7 @@ section {
 		text-align: center;
 
 		&[data-cell-type="enable"] {
-			padding: 0 0.25rem;
+			width: 1rem;
 		}
 
 		&[data-cell-type="url"] {
@@ -484,12 +487,31 @@ section {
 			}
 		}
 
+		&[data-cell-type="count"] > input {
+			width: 4rem;
+		}
+
 		&[data-cell-type="delay"] > input {
 			width: 5rem;
 		}
 
 		&:is([data-cell-type="sort"], [data-cell-type="delete"]) {
 			width: 2rem;
+		}
+
+		&:is([data-cell-type="url"], [data-cell-type="count"], [data-cell-type="delay"]) {
+			& > input:hover {
+				border: calc(var(--base-unit-px) * 1) solid var(--color-accent);
+			}
+		}
+
+		&[data-cell-type="delete"] > input {
+			&:hover {
+				border: calc(var(--base-unit-px) * 1) solid var(--color-red);
+
+				color           : var(--color-white);
+				background-color: var(--color-red);
+			}
 		}
 
 		&[data-cell-type="empty"] > p {
