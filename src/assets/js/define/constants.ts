@@ -138,7 +138,10 @@ export const TabOpenDelayValueStep                 = 1;
 export const TabOpenCustomDelayValue               = 1000;   // millisecond
 
 export const TabOpenCustomDelayMatchType           = "prefix";
-export const TabOpenCustomDelayApplyFrom           = 2;
+export const TabOpenCustomDelayApplyFrom           = 2;   // Delay application starts from the second rule match (default: 2;
+export const TabOpenCustomDelayApplyCountValueMin  = 1;   // 1 = apply from every match
+export const TabOpenCustomDelayApplyCountValueMax  = 5;
+export const TabOpenCustomDelayApplyCountValueStep = 1;
 
 // Options >> Reset Button: Anti-repeat click measure for button elements
 export const DisabledTimeoutValue                  = 1000;  // millisecond

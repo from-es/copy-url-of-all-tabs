@@ -95,18 +95,21 @@ export const defaultConfig: Config = {
 					id     : "07db6a58-413e-47de-957d-afd1c8a64f85",
 					enable : true,
 					pattern: "https://x.com/",
+					count  : 2,
 					delay  : 1000
 				},
 				{
 					id     : "8f6a9cd0-d62e-4b70-a007-74de6299a50f",
 					enable : true,
 					pattern: "https://www.reddit.com",
+					count  : 2,
 					delay  : 1000
 				},
 				{
 					id     : "05fe2b9b-a60c-4707-9a47-a4ccc6e44a73",
 					enable : true,
 					pattern: "https://www.pixiv.net/",
+					count  : 2,
 					delay  : 1000
 				}
 			]
