@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 - The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.23.0] - 2026-05-18
+
+### Added
+
+- Added an "Apply from" setting to the Custom Delay configuration. You can now specify the match count threshold for each URL pattern individually, determining when the delay should begin to apply.
+- Updated the User Guide with instructions and advanced configuration examples for the new "Apply from" Custom Delay setting.
+
+### Changed
+
+- Refined the visual structure and layout organization of the options page to improve readability and ease of navigation.
+
+### Security
+
+- Updated various internal dependencies to resolve known security vulnerabilities and improve overall extension stability.
+
 ## [1.22.0] - 2026-05-13
 
 ### Changed
