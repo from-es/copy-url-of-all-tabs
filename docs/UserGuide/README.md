@@ -63,7 +63,8 @@ Manages the behavior when opening URLs from the clipboard in new tabs.
 	- **Custom Delay**: Allows you to set individual delay times for specific domains or URL patterns.
 		- `Enable (Overall Feature)`: Enables this entire custom delay feature.
 		- `Enable (Individual Rule)`: Individually enables/disables each custom delay rule.
-		- Add rules with the `Add` button, setting the URL (forward match) and delay time. The list can be reordered by drag and drop.
+		- Add rules with the `Add` button, setting the URL (forward match), Apply from, and Delay time. The list can be reordered by drag and drop.
+		- `Apply from`: Specifies from which match count the custom delay should start applying. For example, '1' applies it to every match, while '2' applies it from the second match onwards.
 - **Task Control**: Provides fine-grained control over how multiple URLs are processed and executed when opening many URLs.
 
 > [!NOTE]

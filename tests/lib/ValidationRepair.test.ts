@@ -24,6 +24,7 @@ const validItem1 = {
 	id: "07db6a58-413e-47de-957d-afd1c8a64f85",
 	enable: true,
 	pattern: "https://example.com/",
+	count: 2,
 	delay: 500,
 };
 
@@ -31,6 +32,7 @@ const validItem2 = {
 	id: "8f6a9cd0-d62e-4b70-a007-74de6299a50f",
 	enable: false,
 	pattern: "https://another.com/",
+	count: 2,
 	delay: 250,
 };
 
@@ -39,6 +41,7 @@ const invalidItemBadPattern = {
 	id: "00000000-0000-0000-0000-000000000001",
 	enable: true,
 	pattern: "NOT_A_URL",
+	count: 2,
 	delay: 100,
 };
 
@@ -47,6 +50,7 @@ const invalidItemBadDelay = {
 	id: "00000000-0000-0000-0000-000000000002",
 	enable: true,
 	pattern: "https://example.org/",
+	count: 2,
 	delay: 99999,  // exceeds TabOpenDelayValueMax
 };
 

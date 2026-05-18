@@ -68,6 +68,46 @@ const testData = {
 				{ url: "http://example.com/a", delay: { individual: 0, cumulative: 0 } },
 				{ url: "http://example.com/b", delay: { individual: 100, cumulative: 100 } }
 			]
+		},
+		{
+			name: "should use rule.count over applyFrom when both are specified",
+			input: {
+				urls: [ "http://x.com/a", "http://x.com/b", "http://x.com/c" ],
+				defaultDelay: 100,
+				applyFrom: 3,
+				customRules: [ { pattern: "http://x.com", delay: 500, count: 2 } ]
+			},
+			expected: [
+				{ url: "http://x.com/a", delay: { individual: 0, cumulative: 0 } },
+				{ url: "http://x.com/b", delay: { individual: 500, cumulative: 500 } },
+				{ url: "http://x.com/c", delay: { individual: 500, cumulative: 1000 } }
+			]
+		},
+		{
+			name: "should apply custom delay from the first match when count=1",
+			input: {
+				urls: [ "http://x.com/a", "http://x.com/b" ],
+				defaultDelay: 100,
+				applyFrom: 2,
+				customRules: [ { pattern: "http://x.com", delay: 500, count: 1 } ]
+			},
+			expected: [
+				{ url: "http://x.com/a", delay: { individual: 500, cumulative: 500 } },
+				{ url: "http://x.com/b", delay: { individual: 500, cumulative: 1000 } }
+			]
+		},
+		{
+			name: "should fall back to applyFrom when rule.count is undefined",
+			input: {
+				urls: [ "http://x.com/a", "http://x.com/b" ],
+				defaultDelay: 100,
+				applyFrom: 2,
+				customRules: [ { pattern: "http://x.com", delay: 500 } ]
+			},
+			expected: [
+				{ url: "http://x.com/a", delay: { individual: 0, cumulative: 0 } },
+				{ url: "http://x.com/b", delay: { individual: 500, cumulative: 500 } }
+			]
 		}
 	],
 	error: [

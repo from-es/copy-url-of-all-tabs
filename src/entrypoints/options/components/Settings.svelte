@@ -31,8 +31,8 @@
 	<h1>Setting</h1>
 
 	<!-- Copy -->
-	<fieldset id="setting-copy">
-		<legend>Copy</legend>
+	<section id="setting-copy" class="fieldset-legend">
+		<h2>Copy</h2>
 
 		<!-- Format -->
 		<section class="container">
@@ -81,11 +81,11 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 
 	<!-- Paste -->
-	<fieldset id="setting-paste">
-		<legend>Paste</legend>
+	<section id="setting-paste" class="fieldset-legend">
+		<h2>Paste</h2>
 
 		<!-- Search -->
 		<section class="container">
@@ -180,7 +180,11 @@
 					</form>
 
 					{#if status.config.Tab.customDelay.enable}
-						<p id="custom-delay-note"><span class="notice-highlight">Notice</span>: Custom delays are applied from the second match of the pattern onwards.</p>
+						<p id="custom-delay-note">
+							<span class="notice-highlight">Notice</span>:
+							Custom delays are applied starting from the Nth match of the pattern.
+							"Apply from" sets the match count (1 = every match, 2 = from the 2nd match, etc.).
+						</p>
 					{/if}
 
 					<div>
@@ -190,6 +194,7 @@
 									<th data-cell-type="sort">Sort</th>
 									<th data-cell-type="enable">Enable</th>
 									<th data-cell-type="url">URL</th>
+									<th data-cell-type="count">Apply from</th>
 									<th data-cell-type="delay">Delay</th>
 									<th data-cell-type="delete">Delete</th>
 								</tr>
@@ -210,7 +215,16 @@
 									<tr>
 										<td data-cell-type="sort" class="sortable" title="Drag to sort">✠</td>
 										<td data-cell-type="enable"><input type="checkbox" bind:checked={ item.enable }></td>
-										<td data-cell-type="url"><input class="blank-field-warning" type="url" bind:value={ item.pattern } placeholder="Only URL strings are supported. Regular expressions and wildcards are not. (e.g., https://example.com/)" required></td>
+										<td data-cell-type="url"><input class="blank-field-warning" type="url" bind:value={ item.pattern } placeholder="Only URL strings are supported. Regular expressions & wildcards are not. (e.g. https://example.com/)" required></td>
+										<td data-cell-type="count">
+											<DebouncedNumericInput
+												bind:value   = { item.count }
+												min          = { status.define.TabOpenCustomDelayApplyCountValueMin }
+												max          = { status.define.TabOpenCustomDelayApplyCountValueMax }
+												step         = { status.define.TabOpenCustomDelayApplyCountValueStep }
+												debounceTime = { status.define.OptionsPageInputDebounceTime }
+											/>
+										</td>
 										<td data-cell-type="delay">
 											<DebouncedNumericInput
 												bind:value   = { item.delay }
@@ -230,7 +244,7 @@
 									{@render customDelayList(item)}
 								{:else}
 									<tr>
-										<td data-cell-type="empty" colspan="5">
+										<td data-cell-type="empty" colspan="6">
 											<p>No custom delays are set. Click the "Add" button to create one.</p>
 										</td>
 									</tr>
@@ -318,11 +332,11 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 
 	<!-- Filtering -->
-	<fieldset id="setting-filtering">
-		<legend>Filtering</legend>
+	<section id="setting-filtering" class="fieldset-legend">
+		<h2>Filtering</h2>
 
 		<!-- Deduplicate URLs -->
 		<section class="container">
@@ -470,11 +484,11 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 
 	<!-- System -->
-	<fieldset id="setting-system">
-		<legend>System</legend>
+	<section id="setting-system" class="fieldset-legend">
+		<h2>System</h2>
 
 		<!-- Options Page -->
 		<section class="container">
@@ -679,5 +693,5 @@
 				</fieldset>
 			</div>
 		</section>
-	</fieldset>
+	</section>
 </article>

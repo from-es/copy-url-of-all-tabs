@@ -3,12 +3,15 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-05-04
+ * @lastModified 2026-05-16
  */
 
 // Import Module
 import { cloneObject }     from "@/assets/js/lib/CloneObject";
 import { compareVersions } from "@/assets/js/utils/CompareVersions";
+
+// Import Object
+import { define } from "@/assets/js/define";
 
 // Import Types
 import type { Config }        from "@/assets/js/types";
@@ -454,6 +457,45 @@ export const rules: MigrationRule<Config>[] = [
 			}
 
 			console.info("INFO(migration): add data.debug.methodlabel", newData);
+
+			return newData;
+		}
+	},
+	{
+		meta: {
+			author  : "From E",
+			reason  : "To add the `count` property to each item in CustomDelay.list for the apply-count feature added in v1.21.0.",
+			target  : "config.Tab.customDelay.list[].count",
+			action  : "Add `count: TabOpenCustomDelayApplyFrom` (= 2) to each item if the property is missing.",
+			authored: "2026-05-16",
+			version : {
+				introduced: "1.21.0",
+				obsoleted : null
+			}
+		},
+		order: 12,
+		condition: (argument) => {
+			const { data } = argument;
+
+			return data.Tab?.customDelay?.list?.some(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(item: any) => !Object.hasOwn(item, "count")
+			) ?? false;
+		},
+		execute: (argument) => {
+			const { data } = argument;
+			const newData  = cloneObject(data);
+
+			if (newData.Tab?.customDelay?.list) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				newData.Tab.customDelay.list.forEach((item: any) => {
+					if (!Object.hasOwn(item, "count")) {
+						item.count = define.TabOpenCustomDelayApplyFrom;
+					}
+				});
+			}
+
+			console.info("INFO(migration): add count property to data.tab.customdelay.list items", newData);
 
 			return newData;
 		}

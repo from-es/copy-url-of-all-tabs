@@ -16,6 +16,7 @@ type CustomDelayInfo  = {
 	id     : string;  // create by crypto.randomUUID()
 	enable : boolean;
 	pattern: string;
+	count  : number;  // Apply custom delay starting from the Nth match (1 = every match, 2 = from 2nd match, etc.)
 	delay  : number;
 };
 
@@ -176,6 +177,9 @@ type Define_Delta = {
 	TabOpenCustomDelayValue              : number;
 	TabOpenCustomDelayMatchType          : UrlDelayRule["matchType"]
 	TabOpenCustomDelayApplyFrom          : number;
+	TabOpenCustomDelayApplyCountValueMin : number;
+	TabOpenCustomDelayApplyCountValueMax : number;
+	TabOpenCustomDelayApplyCountValueStep: number;
 	DisabledTimeoutValue                 : number;
 	OptionsPageInputDebounceTime         : number;
 	OptionsPageSortListDebounceTime      : number;

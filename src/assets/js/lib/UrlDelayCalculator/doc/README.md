@@ -99,6 +99,12 @@ interface UrlDelayRule {
   matchType?: 'prefix' | 'substring' | 'exact';
 
   /**
+   * The occurrence number from which to start applying this specific rule's delay.
+   * If undefined, falls back to the global `applyFrom` argument.
+   */
+  count?: number;
+
+  /**
    * The delay in milliseconds to apply if the pattern matches.
    */
   delay: number;
@@ -139,7 +145,7 @@ interface UrlDelayCalculationResult {
 
 ### Applying Delays from the Second Match Onwards
 
-By setting the `applyFrom` argument, you can configure rules to apply their delay only from the Nth match. This is useful for scenarios like applying a delay only to the second, third, or subsequent occurrences of URLs from the same domain.
+By setting the global `applyFrom` argument or configuring the `count` property on individual rules, you can apply delays only from the Nth match. The rule-specific `count` takes precedence over the global `applyFrom`.
 
 ```typescript
 const urls = [
@@ -154,20 +160,21 @@ const rules: UrlDelayRule[] = [
   {
     pattern: 'https://x.com',
     matchType: 'prefix',
+    count: 2,    // Apply from the 2nd match for this specific rule
     delay: 5000, // A 5-second delay
   }
 ];
 
-// Pass `2` to applyFrom, so delays are applied from the 2nd match.
-const results = UrlDelayCalculator.calculateDelays(urls, 250, rules, 2);
+// Even if applyFrom is omitted (defaults to 1), rule.count = 2 takes effect.
+const results = UrlDelayCalculator.calculateDelays(urls, 250, rules);
 
 /*
 Expected individual delays:
 - https://x.com/user/1: 0 (first URL in list)
 - https://example.com/a: 250
-- https://x.com/user/2: 5000 (2nd match, applyFrom: 2 is met)
+- https://x.com/user/2: 5000 (2nd match, rule.count: 2 is met)
 - https://example.com/b: 250
-- https://x.com/user/3: 5000 (3rd match, applyFrom: 2 is met)
+- https://x.com/user/3: 5000 (3rd match, rule.count: 2 is met)
 */
 ```
 

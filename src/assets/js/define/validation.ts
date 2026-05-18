@@ -473,6 +473,7 @@ const VerificationRules: VerificationRule[] = [
 				id     : v8n().string().pattern(Constants.Regex.UUID.v4),
 				enable : v8n().boolean(),
 				pattern: v8n().string().canParseURL(),
+				count  : v8n().integer().range(Constants.TabOpenCustomDelayApplyCountValueMin, Constants.TabOpenCustomDelayApplyCountValueMax),
 				delay  : v8n().integer().range(Constants.TabOpenDelayValueMin, Constants.TabOpenDelayValueMax),
 			};
 			const option = {
