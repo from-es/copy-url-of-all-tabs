@@ -1,6 +1,6 @@
 # State Manager
 
-**Last updated:** May 4, 2026
+**Last updated:** May 22, 2026
 
 A reactive state management module that utilizes Svelte 5 runes to manage shared state within a Svelte project. It features dynamic property generation and per-property write protection (freezing).
 
@@ -180,7 +180,10 @@ interface StateOption {
 
 ### Write Protection (Freeze)
 
-When you call `updateState` with `freeze: true`, the property becomes immutable. Thereafter, all attempts to change that property will be denied, and a warning will be logged to the console.
+When you call `updateState` with `freeze: true`, the property and all its nested objects become absolutely immutable (deep freeze). Thereafter, all attempts to change that property or its nested properties will be denied, and a warning or a `TypeError` (in strict mode) will be triggered.
+
+> **Best Practice:**
+> If you need to edit the value of an object created with `freeze: true`, explicitly use `cloneDeep(status.xxx)` to create a mutable copy before modification.
 
 ```typescript
 // Assuming 'define' was initialized with freeze: true
