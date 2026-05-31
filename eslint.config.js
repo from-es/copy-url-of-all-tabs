@@ -14,7 +14,6 @@ const customRules = [
 			"**/*.js",
 			"**/*.mjs",
 			"**/*.ts",
-			"**/*.json",
 			"**/*.svelte",
 			"**/*.svelte.js"
 		],
@@ -241,6 +240,31 @@ const customRules = [
 	}
 ];
 
+/** @type {FlatConfig} */
+const customRulesForJSON = [
+	{
+		files: [
+			"**/*.json"
+		],
+		rules: {
+			// File Rules
+			"linebreak-style": [ "error", "unix" ],
+
+			// Stylistic Issues
+			"comma-style": [ "error", "last" ],
+			// "indent"     : [ "error", "tab" ],  // npm-check-updates 等のツールによる package.json 更新時のスペースインデント維持のため無効化
+
+			// Spacing
+			"array-bracket-spacing": [ "error", "always" ],
+			"no-trailing-spaces"   : "error",
+			"comma-spacing"        : [ "error", { "before": false, "after": true } ],
+
+			// 誤検知回避用
+			"@typescript-eslint/no-unused-expressions": "off"
+		}
+	}
+];
+
 /** @type {import('eslint').Linter.Config[]} */
 export default [
 	// Ignore certain files and directories
@@ -302,6 +326,7 @@ export default [
 
 	// Add, Custom Rules
 	...customRules,
+	...customRulesForJSON,
 
 	// Override or add specific rules for TypeScript after recommended configs
 	{
