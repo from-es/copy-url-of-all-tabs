@@ -300,11 +300,8 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 	const { active, position, windowId } = tabOption;
 
 	try {
-		const tabs       = await browser.tabs.query({ windowId : windowId });  // Specify "windowId" to avoid race conditions when switching windows during delay.
-		const currentTab = (tabs).find((tab) => tab.active === true);
-		const tabIndex   = createTabPosition(position, tabs, currentTab);
-
 		const property         = { url, active, windowId };
+		const tabIndex         = await getActiveTabIndex(position, windowId);
 		const createProperties = (typeof tabIndex === "number") ? Object.assign(property, { index : tabIndex }) : property;
 
 		console.debug("DEBUG(tab): open urls: create tab", { position : position, ...createProperties });
@@ -317,9 +314,31 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 }
 
 /**
+ * Calculates the target index for tab insertion based on the specified position setting.
+ *
+ * If the position is "default", it returns null immediately to bypass the `browser.tabs.query`
+ * API call and allow the browser to handle the placement according to its default behavior.
+ *
+ * @param   {TabPosition}            position - Identifier for the tab insertion position ("default", "first", "left", "right", "last").
+ * @param   {number | undefined}     windowId - The ID of the window where the tabs are being opened.
+ * @returns {Promise<number | null>}            The calculated index number for tab insertion, or null for default placement.
+ */
+async function getActiveTabIndex(position: TabPosition, windowId: number | undefined): Promise<number | null> {
+	if (position === "default") {
+		return null;
+	}
+
+	const tabs       = await browser.tabs.query({ windowId: windowId }); // Specify "windowId" to avoid race conditions when switching windows during delay.
+	const currentTab = (tabs).find((tab) => tab.active === true);
+	const tabIndex   = createTabPosition(position, tabs, currentTab);
+
+	return tabIndex;
+};
+
+/**
  * Calculate the index at which a new tab should be inserted based on the position setting.
  *
- * @param   {TabPosition}                  position   - Identifier for the tab insertion position.
+ * @param   {TabPosition}                  position   - Identifier for the tab insertion position ("default", "first", "left", "right", "last").
  * @param   {Browser.tabs.Tab[]}           tabs       - Array of tabs in the current window.
  * @param   {Browser.tabs.Tab | undefined} currentTab - Currently active tab.
  * @returns {number | null}                             Calculated tab index, or null to allow default behavior.
