@@ -2,7 +2,7 @@
  * Handler for opening multiple URLs in new tabs.
  *
  * @file
- * @lastModified 2026-04-18
+ * @lastModified 2026-06-01
  */
 
 // WXT provided cross-browser compatible API and Types.
@@ -10,10 +10,10 @@ import { browser, type Browser } from "wxt/browser";
 
 // Import Module
 import { define }             from "@/assets/js/define";
+import { QueueManager }       from "@/assets/js/lib/QueueManager";
 import { UrlDelayCalculator } from "@/assets/js/lib/UrlDelayCalculator";
 import { sleep }              from "@/assets/js/utils/sleep";
-import { QueueManager }       from "@/assets/js/lib/QueueManager";
-import { countManager }       from "@/entrypoints/background/lib/CountManager";
+import { countManager }       from "../lib/CountManager";
 
 // Import Types
 import type { Config, ExtensionMessage }                from "@/assets/js/types";
@@ -21,11 +21,26 @@ import type { UrlDelayRule, UrlDelayCalculationResult } from "@/assets/js/lib/Ur
 
 
 
-type TabPosition     = "default" | "first" | "left" | "right" | "last";
-type TaskMode        = "unitary" | "batch" | "monolithic";
-type OpenMode        = "parallel" | "append" | "prepend" | "insertNext";
+type TabPosition = "default" | "first" | "left" | "right" | "last";
+type TaskMode    = "unitary" | "batch" | "monolithic";
+type OpenMode    = "parallel" | "append" | "prepend" | "insertNext";
+
+/**
+ * Unified window ID type compatible with window retrieval, tab creation, and tab searching APIs.
+ * This intersection type ensures that the ID is compatible across all relevant browser API properties.
+ */
+type TabOperationWindowId =
+	Browser.windows.Window["id"] &
+	Browser.tabs.CreateProperties["windowId"] &
+	Browser.tabs.QueryInfo["windowId"];
+
+/**
+ * Index type expected by the tab creation (create) API.
+ */
+type TabOperationIndex = Browser.tabs.CreateProperties["index"];
+
 type TabOption       = Config["Tab"];
-type CreateTabOption = TabOption & { windowId: number | undefined };
+type CreateTabOption = TabOption & { windowId: TabOperationWindowId };
 
 
 
@@ -42,7 +57,7 @@ async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
 	const urlList      = argument?.urlList;
 	const config       = argument?.option;
 
-	if ( urlList && config ) {
+	if (urlList && config) {
 		openURLs(urlList, config);
 	} else {
 		console.error("ERROR(tab): Invalid: cannot open url list, urlList or option are missing", argument);
@@ -59,19 +74,19 @@ async function handleOpenURLs(message: ExtensionMessage): Promise<void> {
  * @returns {Promise<void>}           Promise that resolves when tasks have been dispatched.
  */
 async function openURLs(urlList: string[], config: Config): Promise<void> {
-	if ( !urlList || !Array.isArray(urlList) || urlList.length === 0 ) {
+	if (!urlList || !Array.isArray(urlList) || urlList.length === 0) {
 		console.warn("WARN(tab): Invalid: url list is missing or empty, no tabs will be opened", { received: urlList });
 		return;
 	}
 
 	// Tab: is reverse ?
-	if ( config.Tab.reverse ) {
+	if (config.Tab.reverse) {
 		urlList = urlList.toReversed();
 	}
 
 	const tabOption       = config.Tab;
 	const filteringOption = config.Filtering;
-	const windowId        = await getCurrentWindowID();
+	const windowId        = await getCurrentWindowId();
 	const delayResults    = buildUrlListWithDelay(urlList, tabOption);
 
 	console.debug(
@@ -107,7 +122,7 @@ function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDela
 	const applyFrom                         = define.TabOpenCustomDelayApplyFrom;  // Delay application starts from the second rule match (default: 2).
 	let   rules: UrlDelayRule[]             = [];
 
-	if ( enable && customDelayList ) {
+	if (enable && customDelayList) {
 		rules = customDelayList
 			.filter(item => item.enable)
 			.map(item => ({
@@ -125,10 +140,10 @@ function buildUrlListWithDelay(urlList: string[], tabOption: TabOption): UrlDela
  * Oversee the generation and dispatching of tasks to the queue.
  *
  * @param {UrlDelayCalculationResult[]} delayResults - URL information including delay times.
- * @param {number | undefined}          windowId     - ID of the window in which to open the tabs.
+ * @param {TabOperationWindowId}        windowId     - ID of the window in which to open the tabs.
  * @param {TabOption}                   tabOption    - Configuration for how to open tabs.
  */
-function taskController(delayResults: UrlDelayCalculationResult[], windowId: number | undefined, tabOption: TabOption): void {
+function taskController(delayResults: UrlDelayCalculationResult[], windowId: TabOperationWindowId, tabOption: TabOption): void {
 	// Generate an array of task objects (functions).
 	const tasks = createTasks(delayResults, windowId, tabOption);
 
@@ -140,11 +155,11 @@ function taskController(delayResults: UrlDelayCalculationResult[], windowId: num
  * Generate an array of executable tasks (functions) from an array of delay results.
  *
  * @param   {UrlDelayCalculationResult[]} delayResults - URL information including delay times.
- * @param   {number | undefined}          windowId     - ID of the window in which to open the tabs.
+ * @param   {TabOperationWindowId}        windowId     - ID of the window in which to open the tabs.
  * @param   {TabOption}                   tabOption    - Configuration for how to open tabs.
  * @returns {(() => Promise<void>)[]}                    Array of generated task functions.
  */
-function createTasks(delayResults: UrlDelayCalculationResult[], windowId: number | undefined, tabOption: TabOption): (() => Promise<void>)[] {
+function createTasks(delayResults: UrlDelayCalculationResult[], windowId: TabOperationWindowId, tabOption: TabOption): (() => Promise<void>)[] {
 	// Add the total number of URLs to be processed to the counter at once.
 	countManager.increment(delayResults.length);
 
@@ -277,9 +292,9 @@ function dispatchTasks(tasks: (() => Promise<void>)[], mode: OpenMode): void {
 /**
  * Get the ID of the currently active window.
  *
- * @returns {Promise<number | undefined>} Window ID, or undefined on failure.
+ * @returns {Promise<TabOperationWindowId>} Window ID, or undefined on failure.
  */
-async function getCurrentWindowID(): Promise<number | undefined> {
+async function getCurrentWindowId(): Promise<TabOperationWindowId> {
 	try {
 		const window = await browser.windows.getCurrent({ windowTypes: [ "normal" ] });
 		return window?.id;
@@ -300,11 +315,10 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 	const { active, position, windowId } = tabOption;
 
 	try {
-		const property         = { url, active, windowId };
-		const tabIndex         = await getActiveTabIndex(position, windowId);
-		const createProperties = (typeof tabIndex === "number") ? Object.assign(property, { index : tabIndex }) : property;
+		const tabIndex                                        = await getActiveTabIndex(position, windowId);
+		const createProperties: Browser.tabs.CreateProperties = { url, active, windowId, index: tabIndex };
 
-		console.debug("DEBUG(tab): open urls: create tab", { position : position, ...createProperties });
+		console.debug("DEBUG(tab): open urls: create tab", { position, ...createProperties });
 
 		// Await to ensure stable execution order across multiple tab creations.
 		await browser.tabs.create(createProperties);
@@ -316,19 +330,24 @@ async function createTab(url: string, tabOption: CreateTabOption): Promise<void>
 /**
  * Calculates the target index for tab insertion based on the specified position setting.
  *
- * If the position is "default", it returns null immediately to bypass the `browser.tabs.query`
+ * If the position is "default", it returns undefined immediately to bypass the `browser.tabs.query`
  * API call and allow the browser to handle the placement according to its default behavior.
  *
- * @param   {TabPosition}            position - Identifier for the tab insertion position ("default", "first", "left", "right", "last").
- * @param   {number | undefined}     windowId - The ID of the window where the tabs are being opened.
- * @returns {Promise<number | null>}            The calculated index number for tab insertion, or null for default placement.
+ * @param   {TabPosition}                position - Identifier for the tab insertion position ("default", "first", "left", "right", "last").
+ * @param   {TabOperationWindowId}       windowId - The ID of the window where the tabs are being opened.
+ * @returns {Promise<TabOperationIndex>}            The calculated index number for tab insertion, or undefined for default placement.
  */
-async function getActiveTabIndex(position: TabPosition, windowId: number | undefined): Promise<number | null> {
+async function getActiveTabIndex(position: TabPosition, windowId: TabOperationWindowId): Promise<TabOperationIndex> {
 	if (position === "default") {
-		return null;
+		return undefined;
 	}
 
-	const tabs       = await browser.tabs.query({ windowId: windowId }); // Specify "windowId" to avoid race conditions when switching windows during delay.
+	// If windowId is undefined, limit the query to the current window.
+	const queryInfo: Browser.tabs.QueryInfo = {
+		windowId: windowId ?? browser.windows.WINDOW_ID_CURRENT
+	};
+
+	const tabs       = await browser.tabs.query(queryInfo);
 	const currentTab = (tabs).find((tab) => tab.active === true);
 	const tabIndex   = createTabPosition(position, tabs, currentTab);
 
@@ -341,26 +360,26 @@ async function getActiveTabIndex(position: TabPosition, windowId: number | undef
  * @param   {TabPosition}                  position   - Identifier for the tab insertion position ("default", "first", "left", "right", "last").
  * @param   {Browser.tabs.Tab[]}           tabs       - Array of tabs in the current window.
  * @param   {Browser.tabs.Tab | undefined} currentTab - Currently active tab.
- * @returns {number | null}                             Calculated tab index, or null to allow default behavior.
+ * @returns {TabOperationIndex}                         Calculated tab index, or undefined to allow default behavior.
  */
-function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], currentTab: Browser.tabs.Tab | undefined): number | null {
-	let number: number | null = null;
+function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], currentTab: Browser.tabs.Tab | undefined): TabOperationIndex {
+	let index: TabOperationIndex = undefined;
 
 	switch (position) {
 		case "default":
-			number = null;
+			index = undefined;
 			break;
 		case "first":
-			number = 0;
+			index = 0;
 			break;
 		case "left":
-			number = currentTab ? currentTab.index : null;
+			index = currentTab?.index;
 			break;
 		case "right":
-			number = currentTab ? currentTab.index + 1 : null;
+			index = (currentTab !== undefined) ? currentTab.index + 1 : undefined;
 			break;
 		case "last":
-			number = tabs.length;
+			index = tabs.length;
 			break;
 		default:
 			// If position is "unspecified, undefined, or null", the tab's position follows the default behavior of browser.tabs.create(options) for index.
@@ -370,11 +389,11 @@ function createTabPosition(position: TabPosition, tabs: Browser.tabs.Tab[], curr
 			break;
 	}
 
-	if ( (typeof number === "number") && number < 0 ) {
-		number = 0;
+	if ((typeof index === "number") && index < 0) {
+		index = 0;
 	}
 
-	return number;
+	return index;
 }
 
 
