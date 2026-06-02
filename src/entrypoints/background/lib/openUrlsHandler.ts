@@ -175,7 +175,7 @@ function createTasks(delayResults: UrlDelayCalculationResult[], windowId: TabOpe
 				// Skip waiting and proceed to create tab if sleep fails.
 			}
 
-			createTab(result.url, { ...tabOption, windowId }); // tabOption and windowId are captured via closure.
+			await createTab(result.url, { ...tabOption, windowId }); // tabOption and windowId are captured via closure.
 		} finally {
 			// Decrement the counter after processing each URL, regardless of success or failure.
 			countManager.decrement();
