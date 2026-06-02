@@ -347,11 +347,17 @@ async function getActiveTabIndex(position: TabPosition, windowId: TabOperationWi
 		windowId: windowId ?? browser.windows.WINDOW_ID_CURRENT
 	};
 
-	const tabs       = await browser.tabs.query(queryInfo);
-	const currentTab = (tabs).find((tab) => tab.active === true);
-	const tabIndex   = createTabPosition(position, tabs, currentTab);
+	try {
+		const tabs       = await browser.tabs.query(queryInfo);
+		const currentTab = (tabs).find((tab) => tab.active === true);
+		const tabIndex   = createTabPosition(position, tabs, currentTab);
 
-	return tabIndex;
+		return tabIndex;
+	} catch (error) {
+		console.warn("WARN(tab): failed to query tabs, fallback to default index", { error });
+
+		return undefined;
+	}
 };
 
 /**
