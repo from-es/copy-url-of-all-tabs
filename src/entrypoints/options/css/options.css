@@ -60,7 +60,10 @@ legend {
 }
 
 select {
+	margin : 0.25rem 0.25rem 0.25rem 0;
 	padding: 0.25rem 0.5rem;
+
+	font-size: 0.85rem;
 }
 
 textarea {
