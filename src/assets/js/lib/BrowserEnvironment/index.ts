@@ -4,7 +4,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-23
+ * @lastModified 2026-06-05
  */
 
 // Import Module
@@ -14,6 +14,7 @@ import { UserAgentParserPlugin } from "./plugins/bowser";
 // Import Types
 import type {
 	NavigatorUserAgentData,
+	OSPlatform,
 	BrowserEnvironmentResult,
 	CheckerInfo,
 	UserAgentClientHintsInfo,
@@ -181,7 +182,8 @@ export class BrowserEnvironment {
 				os: {
 					name       : undefined,
 					version    : undefined,
-					versionName: undefined
+					versionName: undefined,
+					platform   : "other"
 				},
 				// end: Data from User-Agent Client Hints ---------
 
@@ -222,7 +224,38 @@ export class BrowserEnvironment {
 			...information
 		};
 
+		// Set standardized OS platform type after merging all sources
+		result.information.os.platform = this.#mapToOSPlatform(result.information.os.name);
+
 		return result;
+	}
+
+	/**
+	 * Maps an OS name to a standardized OSPlatform identifier.
+	 *
+	 * @param   {string | undefined} name - The OS name to map.
+	 * @returns {OSPlatform}                The standardized OS platform identifier.
+	 */
+	#mapToOSPlatform(name: string | undefined): OSPlatform {
+		if (!name) {
+			return "other";
+		}
+
+		const lowerName = name.toLowerCase();
+		switch (true) {
+			case lowerName.includes("windows"):   return "windows";
+			case lowerName.includes("linux"):     return "linux";
+			case lowerName.includes("android"):   return "android";
+			case lowerName.includes("cros"):
+			case lowerName.includes("chrome os"): return "chromeos";
+			case lowerName.includes("mac"):
+			case lowerName.includes("os x"):      return "mac";
+			case lowerName.includes("ios"):
+			case lowerName.includes("iphone"):
+			case lowerName.includes("ipad"):      return "ios";
+			case lowerName.includes("bsd"):       return "bsd";
+			default:                              return "other";
+		}
 	}
 
 	/**
