@@ -22,13 +22,14 @@ import type { Action, EventActionCopyResult, EventActionPasteResult } from "./ty
 /**
  * Gets URLs of all tabs, filters and formats them based on settings, and then sends them to the clipboard.
  *
- * @param   {Action}                         action - Action string to execute (e.g., "copy").
- * @param   {Config}                         config - User configuration object.
- * @param   {Define}                         define - Predefined constant object.
- * @returns {Promise<EventActionCopyResult>}          Object containing the copy result and status.
+ * @param   {Action}                         action    - Action string to execute (e.g., "copy").
+ * @param   {Config}                         config    - User configuration object.
+ * @param   {Define}                         define    - Predefined constant object.
+ * @param   {Browser.tabs.QueryInfo}         queryInfo - The query configuration for fetching tabs.
+ * @returns {Promise<EventActionCopyResult>}             Object containing the copy result and status.
  */
-async function eventActionCopy(action: Action, config: Config, define: Define): Promise<EventActionCopyResult> {
-	const rawTabs  = await getAllTabs();
+async function eventActionCopy(action: Action, config: Config, define: Define, queryInfo: Browser.tabs.QueryInfo): Promise<EventActionCopyResult> {
+	const rawTabs  = await getAllTabs(queryInfo);
 	const tabs     = prepareForActionCopy(rawTabs, action, config, define);
 	const type     = config.Format.type;
 	const template = config.Format.template;
@@ -70,6 +71,7 @@ async function eventActionPaste(action: Action, config: Config, define: Define):
 	const status   = await ClipboardManager.readText();
 	const text     = (typeof status === "string") ? status : "";
 	const rawList  = getUrlList(text, regexSearch, regexUrlPattern);
+
 	const urlList  = prepareForActionPaste(rawList, action, config, define);
 	const urlCount = (urlList && Array.isArray(urlList) && urlList?.length) ? urlList.length : null;
 
@@ -89,14 +91,14 @@ async function eventActionPaste(action: Action, config: Config, define: Define):
 }
 
 /**
- * Gets all tab information from the current window.
+ * Gets all tab information based on the provided query information.
  *
- * @returns {Promise<Browser.tabs.Tab[]>} - An array of tab objects.
+ * @param   {Parameters<typeof browser.tabs.query>[0]} queryInfo - Query information to filter tabs.
+ * @returns {Promise<Browser.tabs.Tab[]>}                        - An array of tab objects.
  */
-async function getAllTabs(): Promise<Browser.tabs.Tab[]> {
+async function getAllTabs(queryInfo: Parameters<typeof browser.tabs.query>[0]): Promise<Browser.tabs.Tab[]> {
 	try {
-		const queryInfo = { currentWindow : true };             // Limit acquisition target to tabs in the current window.
-		const tabs      = await browser.tabs.query(queryInfo);  // tabs.query() (https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query)
+		const tabs = await browser.tabs.query(queryInfo);  // tabs.query() (https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/query)
 
 		return tabs;
 	} catch (error) {
