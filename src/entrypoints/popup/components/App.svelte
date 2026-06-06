@@ -13,7 +13,8 @@
 	import { onMount } from "svelte";
 
 	// Import Svelte Module
-	import { actionStore } from "../lib/appState.svelte.ts";
+	import { actionStore }                        from "../lib/appState.svelte.ts";
+	import { initTriggerKeys, getTriggerContext } from "../lib/triggerKey.svelte.ts";
 
 	// Import Svelte Object
 	import { shareStatus as status } from "@/assets/js/app/initializeSharedState.svelte.ts";  // Shared State Object
@@ -24,6 +25,7 @@
 	import { setRootFontSize }                   from "@/assets/js/utils/setRootFontSize";
 	import { createSafeHTML }                    from "@/assets/js/utils/setSafeHTML";
 	import { initializeConfig }                  from "@/assets/js/app/initializeConfig";
+	import { uiEvent }                           from "../lib/uiEvent";
 	import { eventActionCopy, eventActionPaste } from "../lib/userActions";
 
 	// Import Types
@@ -31,6 +33,18 @@
 	import type { Action, EventOnClickActionResult }                   from "../lib/types";
 
 
+
+	/**
+	 * Represents the arguments resolved based on the current trigger context.
+	 */
+	type ActionArguments = {
+		/** Query information for tab selection (used for copy action). */
+		queryInfo: globalThis.Browser.tabs.QueryInfo;
+		/** Overridden configuration for the paste action. */
+		pasteConfig: Config;
+	};
+
+	const context = $derived(getTriggerContext());
 
 	/**
 	 * Variable for managing the timer ID to control the display duration
@@ -43,6 +57,10 @@
 		console.debug("DEBUG(popup): initial status object", { status: cloneObject(status) });  // Deep copy the status object to avoid Svelte errors caused by non-cloneable types (functions) within the status structure
 
 		initialize();
+
+		focusDocument();
+
+		initTriggerKeys();
 	});
 
 	/**
@@ -54,6 +72,17 @@
 		setRootFontSize(status.config.PopupMenu.fontsize);
 
 		console.info("INFO(popup): Popup component initialized");
+	}
+
+	/**
+	 * Removes focus from document elements to ensure clean interaction and proper popup resizing.
+	 * Note: This should be performed after UI adjustments (like font size changes) to ensure correct resizing.
+	 *
+	 * @returns {void}
+	 */
+	function focusDocument(): void {
+		document.body.tabIndex = -1;  // document.body をユーザー操作によるフォーカス対象から外す（コードからは指定可能）
+		document.body.focus();
 	}
 
 	/**
@@ -159,11 +188,12 @@
 	 * @returns {Promise<EventOnClickActionResult | null>}          Execution result of the action. Returns null for the 'options' action.
 	 */
 	async function handleAction(action: Action | null, config: Config, define: Define): Promise<EventOnClickActionResult | null> {
-		let result: EventOnClickActionResult | null = null;
+		const { queryInfo }                           = resolveActionArguments(action, config);
+		let   result: EventOnClickActionResult | null = null;
 
 		switch (action) {
 			case "copy":
-				result = await eventActionCopy(action, config, define);
+				result = await eventActionCopy(action, config, define, queryInfo);
 				break;
 			case "paste":
 				result = await eventActionPaste(action, config, define);
@@ -176,6 +206,37 @@
 		}
 
 		return result;
+	}
+
+	/**
+	 * Resolves the arguments for the specified action by merging the current trigger context
+	 * (e.g., modifier key states) with the extension's configuration.
+	 *
+	 * @param   {Action | null}    action - The action to execute (copy, paste, or options).
+	 * @param   {Config}           config - The base extension configuration object.
+	 * @returns {ActionArguments}           An object containing the resolved query info and paste configuration.
+	 */
+	function resolveActionArguments(action: Action | null, config: Config): ActionArguments {
+		const { buttonLabel, queryInfo, pasteOverrides } = getTriggerContext();
+
+		// Apply paste overrides directly to the configuration.
+		// (config is already a cloned object in onClick, so mutating it here is safe)
+		config.Tab.reverse = pasteOverrides.reverse;
+		config.Tab.active  = pasteOverrides.active;
+
+		// Log the resolved context for debugging.
+		switch (action) {
+			case "copy":
+				console.debug("DEBUG(ui): Action Context Resolved (Copy):", { buttonLabel, queryInfo });
+				break;
+			case "paste":
+				console.debug("DEBUG(ui): Action Context Resolved (Paste):", { buttonLabel, config });
+				break;
+			default:
+				// No specific debug logging for other actions.
+		}
+
+		return { queryInfo, pasteConfig: config };
 	}
 
 	/**
@@ -386,7 +447,7 @@
 
 		return window.setTimeout(
 			() => {
-				actionStore.setMessage("");
+				actionStore.setMessage(null);
 				messageTimerId = undefined;  // Reset the ID after execution is complete.
 			},
 			delay * 1000
@@ -447,6 +508,16 @@
 
 
 
+<svelte:window
+	onmouseenter = { focusDocument }
+	onfocus      = { uiEvent.onFocus }
+	onblur       = { uiEvent.onBlur }
+	onkeydown    = { uiEvent.onKeyDown }
+	onkeyup      = { uiEvent.onKeyUp }
+/>
+
+
+
 <main>
 	<section id="action">
 		<ul>
@@ -455,7 +526,7 @@
 					{
 						action  : "copy",
 						label   : "Copy URLs of all tabs to clipboard",
-						text    : (actionStore.isActionInProgress && actionStore.currentAction === "copy") ? "Copying..." : "Copy",
+						text    : (actionStore.isActionInProgress && actionStore.currentAction === "copy") ? "Copying..." : (context.buttonLabel.Copy ? `Copy - ${context.buttonLabel.Copy}` : "Copy"),
 						disabled: actionStore.isActionInProgress
 					}
 				)}
@@ -464,8 +535,8 @@
 				{@render button(
 					{
 						action  : "paste",
-						label   : "Open URLs from clipboard in new tabs",
-						text    : (actionStore.isActionInProgress && actionStore.currentAction === "paste") ? "Pasting..." : "Paste",
+						label   : "Open URLs from clipboard as new tabs",
+						text    : (actionStore.isActionInProgress && actionStore.currentAction === "paste") ? "Opening..." : (context.buttonLabel.Paste ? `Paste - ${context.buttonLabel.Paste}` : "Paste"),
 						disabled: actionStore.isActionInProgress
 					}
 				)}
@@ -488,12 +559,12 @@
 		</ul>
 	</section>
 
-	<section id="message" aria-live="polite">
-		{#if actionStore.shouldShowMessage && typeof actionStore.message === "string"}
+	{#if actionStore.shouldShowMessage && typeof actionStore.message === "string"}
+		<section id="message" aria-live="polite">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html createSafeHTML(actionStore.message)}
-		{/if}
-	</section>
+		</section>
+	{/if}
 </main>
 
 

@@ -84,6 +84,9 @@ describe("BrowserEnvironment", () => {
 
 		// Info supplemented by plugin
 		expect(result.information.os.versionName).toBe("MockOSX"); // Info from mock plugin
+
+		// Confirm standardized OS platform mapping
+		expect(result.information.os.platform).toBe("other");
 	});
 
 	it("should retrieve via fallback (plugin) if navigator.userAgentData is missing but userAgent exists", async () => {
@@ -107,6 +110,7 @@ describe("BrowserEnvironment", () => {
 		// Confirm that values from plugin (bowser-mock) are directly in result.information
 		expect(result.information.browser.name).toBe("MockBrowser");
 		expect(result.information.os.name).toBe("MockOS");
+		expect(result.information.os.platform).toBe("other");
 	});
 
 	it("should return an error result if neither are supported", async () => {

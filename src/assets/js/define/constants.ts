@@ -143,6 +143,8 @@ export const TabOpenCustomDelayApplyCountValueMin  = 1;   // 1 = apply from ever
 export const TabOpenCustomDelayApplyCountValueMax  = 5;
 export const TabOpenCustomDelayApplyCountValueStep = 1;
 
+export const TabOpenQueryInfo                      = { currentWindow: true };
+
 // Options >> Reset Button: Anti-repeat click measure for button elements
 export const DisabledTimeoutValue                  = 1000;  // millisecond
 
@@ -166,5 +168,6 @@ export const ConfigPropertyDisplayNames = {
 	Filtering  : "Filtering Settings",
 	Format     : "Format Settings",
 	Tab        : "Tab Settings",
-	Badge      : "Badge Settings"
+	Badge      : "Badge Settings",
+	KeyBindings: "Key Bindings Settings"
 } as const;

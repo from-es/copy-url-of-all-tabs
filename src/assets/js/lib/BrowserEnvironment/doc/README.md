@@ -1,7 +1,7 @@
 # BrowserEnvironment Library Technical Specification & Operation Specification
 
 *   Created Date: July 19, 2025
-*   Last Updated: April 8, 2026
+*   Last Updated: June 5, 2026
 
 ## Overview
 
@@ -32,8 +32,11 @@ The main class for obtaining browser environment information.
         *   Creates a `CheckerInfo` object indicating the success/failure of the process, a message, and the source of information.
     *   `static #createInformationTemplate(): BrowserEnvironmentResult` (private, static):
         *   Creates an initial template for `BrowserEnvironmentResult`.
-    *   `#createBrowserEnvironmentResult(information: BrowserEnvironmentResult, pluginInfo: PluginValue, checker: CheckerInfo): BrowserEnvironmentResult` (private):
-        *   Merges the template, plugin information, and checker information to create the final `BrowserEnvironmentResult`.
+    *   `#createBrowserEnvironmentResult(clientHintsInfo: UserAgentClientHintsInfo | null, pluginInfo: UserAgentParserPluginParseData | null, checker: { checker: CheckerInfo } | null): BrowserEnvironmentResult` (private):
+        *   Merges the template, Client Hints information, and plugin information to create the final `BrowserEnvironmentResult`.
+        *   Standardizes the OS platform type using `#mapToOSPlatform` after merging.
+    *   `#mapToOSPlatform(name: string | undefined): OSPlatform` (private):
+        *   Maps an OS name to a standardized `OSPlatform` identifier (e.g., "windows", "mac", "linux").
     *   `async #getUserAgentClientHints(): Promise<BrowserEnvironmentResult>` (private):
         *   Obtains browser environment information using `navigator.userAgentData`.
         *   Calls `getHighEntropyValues` to obtain [High-Entropy Values](#high-entropy-values).
@@ -74,15 +77,16 @@ A plugin that uses the [bowser](#bowser) library to parse User-Agent strings.
 
 ### Type Definitions (`types.ts`)
 
-*   `CheckerInfo`: An object containing success/failure status, a message, and information sources (`main`, `sub`).
-*   `BrowserEnvironmentInfo`: An object containing environment information such as browser, engine, device, CPU, OS, and language.
-*   `BrowserEnvironmentResult`: The final result object, combining `CheckerInfo` and `BrowserEnvironmentInfo`.
+*   `CheckerInfo`: An object containing success/failure status, a message, and information sources (`primary`, `secondary`).
+*   `OSPlatform`: Supported OS platform identifiers (`"windows" | "mac" | "linux" | "chromeos" | "android" | "ios" | "bsd" | "other"`).
+*   `UserAgentClientHintsInfo`: An object containing environment information obtained from Client Hints. The `os` property includes `platform`.
+*   `BrowserEnvironmentResult`: The final result object, combining `CheckerInfo` and the consolidated information.
 *   `UserAgentDataBrand`: Brand information for [User-Agent Client Hints](#user-agent-client-hints) (`brand`, `version`).
 *   `UserAgentDataValues`: Detailed [User-Agent Client Hints](#user-agent-client-hints) values returned by `navigator.userAgentData.getHighEntropyValues()`.
 *   `NavigatorUserAgentData`: Extends the `Navigator` interface to define the `userAgentData` property and `getHighEntropyValues` method.
 *   `UserAgentParserPluginInformation`: Plugin metadata (`name`, `useLibrary`, `version`, `lastModified`).
-*   `PluginValue`: Browser, engine, and OS information returned by the plugin.
-*   `UserAgentParserInformation`: An object containing plugin information and an execution function.
+*   `UserAgentParserPluginParseData`: Browser, engine, and OS information returned by the plugin.
+*   `UserAgentParserPlugin`: An object containing plugin information and an execution function.
 
 ### Dependencies
 
@@ -121,13 +125,13 @@ The `BrowserEnvironmentResult` object returned by the `get()` method has the fol
 *   `checker`:
     *   `isSuccess`: A boolean value indicating whether information acquisition was successful.
     *   `message`: A message regarding information acquisition (success/failure, API used, etc.).
-    *   `worker`: The primary API used for information acquisition (`main`) and auxiliary information sources (`sub`).
+    *   `dataSources`: The primary API used for information acquisition (`primary`) and auxiliary information sources (`secondary`).
 *   `ua`: The value of `navigator.userAgent` (if present).
 *   `browser`: Browser name and version.
 *   `engine`: Rendering engine name and version.
 *   `device`: Whether it's a mobile device, and the model name.
 *   `cpu`: CPU architecture and bitness.
-*   `os`: OS name, version, and version name.
+*   `os`: OS name, version, version name, and standardized platform type (`platform`).
 *   `language`: Browser language setting.
 
 ### 3. Error Handling
@@ -196,34 +200,37 @@ This is based on the `BrowserEnvironmentResult` type defined in `types.ts`.
   "checker": {
     "isSuccess": true,
     "message": "This Browser can get User-Agent Client Hints. 'navigator.userAgentData' is supported. Obtain information from navigator.userAgentData and supplement it with bowser.",
-    "worker": {
-      "main": "navigator.userAgentData",
-      "sub": "bowser"
+    "dataSources": {
+      "primary": "navigator.userAgentData",
+      "secondary": "bowser"
     }
   },
-  "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-  "browser": {
-    "name": "Chrome",
-    "version": "126.0.0.0"
-  },
-  "engine": {
-    "name": "Blink",
-    "version": "126.0.0.0"
-  },
-  "device": {
-    "mobile": false,
-    "model": ""
-  },
-  "cpu": {
-    "architecture": "x86",
-    "bitness": "64"
-  },
-  "os": {
-    "name": "Windows",
-    "version": "10",
-    "versionName": "" // If not obtainable by the library or Client Hints
-  },
-  "language": "ja"
+  "information": {
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "browser": {
+      "name": "Chrome",
+      "version": "126.0.0.0"
+    },
+    "engine": {
+      "name": "Blink",
+      "version": "126.0.0.0"
+    },
+    "device": {
+      "mobile": false,
+      "model": ""
+    },
+    "cpu": {
+      "architecture": "x86",
+      "bitness": "64"
+    },
+    "os": {
+      "name": "Windows",
+      "version": "10",
+      "versionName": "", // If not obtainable by the library or Client Hints
+      "platform": "windows"
+    },
+    "language": "ja"
+  }
 }
 ```
 

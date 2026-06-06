@@ -23,6 +23,26 @@
 	// Import Types
 	import type { Config }          from "@/assets/js/types";
 	import type { CustomDelayInfo } from "@/assets/js/define/types";
+
+	/**
+	 * Derived labels for trigger keys based on the detected OS.
+	 */
+	const triggerLabels = $derived.by(() => {
+		const osPlatform = status.define.Environment.Browser.information?.os?.platform;
+		const isMac      = osPlatform === "mac";
+
+		return {
+			alt  : isMac ? "Option (⌥)" : "Alt",
+			ctrl : "Ctrl",
+			shift: "Shift",
+			none : "None"
+		};
+	});
+
+	/**
+	 * List of alphabet keys for trigger assignments.
+	 */
+	const alphaKeys = "abcdefghijklmnopqrstuvwxyz".split("");
 </script>
 
 
@@ -578,6 +598,93 @@
 						/>
 						<label for="PopupMenu-OnClickClose-timeout">timeout ({ status.define.PopupMenuOnClickCloseTimeoutValueMin } ~ { status.define.PopupMenuOnClickCloseTimeoutValueMax } seconds)</label>
 					</form>
+				</fieldset>
+			</div>
+		</section>
+
+		<!-- Key Bindings -->
+		<section class="container">
+			<div class="flex-side">
+				<h3>Key Bindings</h3>
+
+				<p>Configure trigger keys to temporarily change behavior when the popup menu is open.</p>
+			</div>
+
+			<div class="flex-main">
+				<fieldset>
+					<legend>Copy Actions</legend>
+
+					<div class="trigger-key-binding">
+						<select id="KeyBindings-copy-allWindows" bind:value={ status.config.KeyBindings.PopupMenu.copy.allWindows }>
+							<option value="none">{ triggerLabels.none }</option>
+							<optgroup label="Modifier Keys">
+								<option value="alt">{ triggerLabels.alt }</option>
+								<option value="ctrl">{ triggerLabels.ctrl }</option>
+								<option value="shift">{ triggerLabels.shift }</option>
+							</optgroup>
+							<optgroup label="Alphabet Keys">
+								{#each alphaKeys as key (key)}
+									<option value={ key }>{ key.toUpperCase() }</option>
+								{/each}
+							</optgroup>
+						</select>
+						<label for="KeyBindings-copy-allWindows">All Windows</label>
+					</div>
+
+					<div class="trigger-key-binding">
+						<select id="KeyBindings-copy-highlighted" bind:value={ status.config.KeyBindings.PopupMenu.copy.highlighted }>
+							<option value="none">{ triggerLabels.none }</option>
+							<optgroup label="Modifier Keys">
+								<option value="alt">{ triggerLabels.alt }</option>
+								<option value="ctrl">{ triggerLabels.ctrl }</option>
+								<option value="shift">{ triggerLabels.shift }</option>
+							</optgroup>
+							<optgroup label="Alphabet Keys">
+								{#each alphaKeys as key (key)}
+									<option value={ key }>{ key.toUpperCase() }</option>
+								{/each}
+							</optgroup>
+						</select>
+						<label for="KeyBindings-copy-highlighted">Highlighted Tabs</label>
+					</div>
+				</fieldset>
+
+				<fieldset>
+					<legend>Paste Actions</legend>
+
+					<div class="trigger-key-binding">
+						<select id="KeyBindings-paste-reverse" bind:value={ status.config.KeyBindings.PopupMenu.paste.reverse }>
+							<option value="none">{ triggerLabels.none }</option>
+							<optgroup label="Modifier Keys">
+								<option value="alt">{ triggerLabels.alt }</option>
+								<option value="ctrl">{ triggerLabels.ctrl }</option>
+								<option value="shift">{ triggerLabels.shift }</option>
+							</optgroup>
+							<optgroup label="Alphabet Keys">
+								{#each alphaKeys as key (key)}
+									<option value={ key }>{ key.toUpperCase() }</option>
+								{/each}
+							</optgroup>
+						</select>
+						<label for="KeyBindings-paste-reverse">Toggle Order (Reverse)</label>
+					</div>
+
+					<div class="trigger-key-binding">
+						<select id="KeyBindings-paste-active" bind:value={ status.config.KeyBindings.PopupMenu.paste.active }>
+							<option value="none">{ triggerLabels.none }</option>
+							<optgroup label="Modifier Keys">
+								<option value="alt">{ triggerLabels.alt }</option>
+								<option value="ctrl">{ triggerLabels.ctrl }</option>
+								<option value="shift">{ triggerLabels.shift }</option>
+							</optgroup>
+							<optgroup label="Alphabet Keys">
+								{#each alphaKeys as key (key)}
+									<option value={ key }>{ key.toUpperCase() }</option>
+								{/each}
+							</optgroup>
+						</select>
+						<label for="KeyBindings-paste-active">Toggle Active state</label>
+					</div>
 				</fieldset>
 			</div>
 		</section>

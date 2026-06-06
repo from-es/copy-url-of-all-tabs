@@ -78,6 +78,12 @@ export const createMockConfig = (overrides: Partial<Config> = {}): Config => {
 				type : "light",
 				color: { text: "#ffffff", background: "#767676" }
 			}
+		},
+		KeyBindings: {
+			PopupMenu: {
+				copy : { allWindows: "alt", highlighted: "shift" },
+				paste: { reverse: "r", active: "a" }
+			}
 		}
 	};
 
