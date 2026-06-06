@@ -499,5 +499,38 @@ export const rules: MigrationRule<Config>[] = [
 
 			return newData;
 		}
+	},
+	{
+		meta: {
+			author  : "From E",
+			reason  : "To centralize keyboard shortcuts and trigger key assignments in the new KeyBindings section introduced in v1.24.0.",
+			target  : "config.KeyBindings",
+			action  : "Initialize KeyBindings with default values for PopupMenu actions.",
+			authored: "2026-05-27",
+			version : {
+				introduced: "1.24.0",
+				obsoleted : null
+			}
+		},
+		order: 13,
+		condition: (argument) => {
+			const { data } = argument;
+
+			return !Object.hasOwn(data, "KeyBindings");
+		},
+		execute: (argument) => {
+			const { data, defaultValues } = argument;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const newData = cloneObject(data) as any;
+
+			// Add property & apply default value
+			if (defaultValues.KeyBindings) {
+				newData.KeyBindings = defaultValues.KeyBindings;
+			}
+
+			console.info("INFO(migration): add data.keybindings", newData);
+
+			return newData;
+		}
 	}
 ];

@@ -696,6 +696,54 @@ const VerificationRules: VerificationRule[] = [
 				.pattern(/^(UTC|GMT)$/i)
 				.test(value);
 		}
+	},
+
+	// KeyBindings
+	{
+		property: "KeyBindings.PopupMenu.copy.allWindows",
+		fail    : () => defaultConfig.KeyBindings.PopupMenu.copy.allWindows,
+		rule    : (value) => v8n().string().pattern(/^(alt|shift|ctrl|none|[a-z])$/).test(value)
+	},
+	{
+		property: "KeyBindings.PopupMenu.copy.highlighted",
+		fail    : () => defaultConfig.KeyBindings.PopupMenu.copy.highlighted,
+		rule    : (value) => v8n().string().pattern(/^(alt|shift|ctrl|none|[a-z])$/).test(value)
+	},
+	{
+		property: "KeyBindings.PopupMenu.copy",
+		fail    : () => defaultConfig.KeyBindings.PopupMenu.copy,
+		rule    : (value) => {
+			if (!(typeof value === "object" && value !== null)) {
+				return false;
+			}
+
+			const v    = value as Record<string, string>;
+			const keys = [ v.allWindows, v.highlighted ].filter(k => k !== "none");
+			return new Set(keys).size === keys.length;
+		}
+	},
+	{
+		property: "KeyBindings.PopupMenu.paste.reverse",
+		fail    : () => defaultConfig.KeyBindings.PopupMenu.paste.reverse,
+		rule    : (value) => v8n().string().pattern(/^(alt|shift|ctrl|none|[a-z])$/).test(value)
+	},
+	{
+		property: "KeyBindings.PopupMenu.paste.active",
+		fail    : () => defaultConfig.KeyBindings.PopupMenu.paste.active,
+		rule    : (value) => v8n().string().pattern(/^(alt|shift|ctrl|none|[a-z])$/).test(value)
+	},
+	{
+		property: "KeyBindings.PopupMenu.paste",
+		fail    : () => defaultConfig.KeyBindings.PopupMenu.paste,
+		rule    : (value) => {
+			if (!(typeof value === "object" && value !== null)) {
+				return false;
+			}
+
+			const v    = value as Record<string, string>;
+			const keys = [ v.reverse, v.active ].filter(k => k !== "none");
+			return new Set(keys).size === keys.length;
+		}
 	}
 ];
 

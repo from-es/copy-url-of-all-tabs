@@ -20,6 +20,31 @@ type CustomDelayInfo  = {
 	delay  : number;
 };
 
+type SingleAlphabet = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" |
+                      "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" |
+                      "u" | "v" | "w" | "x" | "y" | "z";
+
+/**
+ * Supported trigger keys for various actions.
+ */
+type TriggerKey = "alt" | "shift" | "ctrl" | SingleAlphabet | "none";
+
+/**
+ * Key bindings configuration for popup menu actions.
+ */
+type KeyBindings = {
+	PopupMenu: {
+		copy: {
+			allWindows : TriggerKey;
+			highlighted: TriggerKey;
+		};
+		paste: {
+			reverse: TriggerKey;
+			active : TriggerKey;
+		};
+	};
+};
+
 type Config_Common = {
 	Information: {
 		name   : string | null;
@@ -125,6 +150,7 @@ type Config_Delta = {
 			};
 		};
 	};
+	KeyBindings: KeyBindings;
 };
 type Config = Config_Common & Config_Delta;
 
@@ -188,6 +214,8 @@ type Define_Delta = {
 	TaskControlChunkSizeValueMax         : number;
 	TaskControlChunkSizeValueStep        : number;
 
+	TabOpenQueryInfo: { currentWindow: boolean };
+
 	ConfigPropertyDisplayNames: {
 		readonly Information: "Extension Information";
 		readonly Debug      : "Debug Settings";
@@ -198,6 +226,7 @@ type Define_Delta = {
 		readonly Format     : "Format Settings";
 		readonly Tab        : "Tab Settings";
 		readonly Badge      : "Badge Settings";
+		readonly KeyBindings: "Key Bindings Settings";
 	};
 }
 type VerificationRule = {
@@ -253,6 +282,8 @@ interface Define extends Define_Delta {
 
 export type {
 	CustomDelayInfo,
+	TriggerKey,
+	KeyBindings,
 	Config_Delta,
 
 	Define_Delta,

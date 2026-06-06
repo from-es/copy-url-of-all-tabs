@@ -131,5 +131,17 @@ export const defaultConfig: Config = {
 				background: "#767676"
 			}
 		}
+	},
+	KeyBindings: {
+		PopupMenu: {
+			copy: {
+				allWindows : "alt",
+				highlighted: "shift"
+			},
+			paste: {
+				reverse: "r",
+				active : "a"
+			}
+		}
 	}
 };
