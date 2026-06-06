@@ -104,6 +104,15 @@ Settings related to the extension's UI and behavior.
 	- `Clear Message`: Automatically clears completion messages displayed in the popup after a specified number of seconds.
 	- `OnClick Close`: Automatically closes the popup menu after a specified number of seconds after clicking a button (Copy/Paste) in the popup menu.
 
+- **Key Bindings (Keyboard Shortcuts)**
+	- Configures trigger keys to temporarily change behavior when the popup menu is open.
+	- **Copy Actions**
+		- `All Windows`: When the specified key is pressed, URLs from all open windows will be copied instead of just the current window.
+		- `Highlighted Tabs`: When the specified key is pressed, only the currently highlighted (selected) tabs will be copied.
+	- **Paste Actions**
+		- `Toggle Order (Reverse)`: When the specified key is pressed, it temporarily toggles the "Open tabs in reverse order" setting.
+		- `Toggle Active state`: When the specified key is pressed, it temporarily toggles the "Open in active tab" setting.
+
 - **Badge (Icon Badge)**
 	- `Enable`: Displays the number of URLs waiting to be opened as tabs by the "Paste" function on the extension icon as a badge.
 	- `Theme`: Selects the color scheme theme for the badge.
