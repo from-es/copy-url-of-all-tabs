@@ -118,8 +118,8 @@
 					<legend>Search for URLs in the clipboard text</legend>
 
 					<form id="Search-regex">
-						<input id="Search-regex" type="checkbox" bind:checked={ status.config.Search.regex }>
-						<label for="Search-regex">Search for URLs in the clipboard text using a regular expression. This option only applies to "<b>http://</b> & <b>https://</b>".</label>
+						<input id="Search-regex-form" type="checkbox" bind:checked={ status.config.Search.regex }>
+						<label for="Search-regex-form">Search for URLs in the clipboard text using a regular expression. This option only applies to "<b>http://</b> & <b>https://</b>".</label>
 					</form>
 				</fieldset>
 			</div>
@@ -280,6 +280,7 @@
 			</div>
 		</section>
 
+		<!-- Task Control -->
 		<section class="container">
 			<div class="flex-side">
 				<h3>Task Control</h3>
@@ -506,9 +507,9 @@
 		</section>
 	</section>
 
-	<!-- System -->
-	<section id="setting-system" class="fieldset-legend">
-		<h2>System</h2>
+	<!-- User Interface -->
+	<section id="setting-user-interface" class="fieldset-legend">
+		<h2>User Interface</h2>
 
 		<!-- Options Page -->
 		<section class="container">
@@ -582,7 +583,7 @@
 				<fieldset>
 					<legend>OnClick Close</legend>
 
-					<form id="PopupMenu-ClearMessage">
+					<form id="PopupMenu-OnClickClose">
 						<input id="PopupMenu-OnClickClose-enable-input" type="checkbox" bind:checked={ status.config.PopupMenu.OnClickClose.enable }>
 						<label for="PopupMenu-OnClickClose-enable-input">enable</label>
 					</form>
@@ -601,6 +602,65 @@
 				</fieldset>
 			</div>
 		</section>
+
+		<!-- Badge -->
+		<section class="container">
+			<div class="flex-side">
+				<h3>Badge</h3>
+			</div>
+
+			<div class="flex-main">
+				<fieldset>
+					<legend>Badge Display</legend>
+
+					<form>
+						<input id="Badge-enable-input" type="checkbox" bind:checked={ status.config.Badge.enable }>
+						<label for="Badge-enable-input">Display the number of waiting URLs in a badge on the extension icon.</label>
+					</form>
+				</fieldset>
+
+				{#if status.config.Badge.enable}
+					<fieldset>
+						<legend>Theme</legend>
+
+						<form id="Badge-theme-type">
+							<label>
+								<input type="radio" name="Badge-theme-type" value="light" bind:group={ status.config.Badge.theme.type }>
+								Light
+							</label>
+							<label>
+								<input type="radio" name="Badge-theme-type" value="dark" bind:group={ status.config.Badge.theme.type }>
+								Dark
+							</label>
+							<label>
+								<input type="radio" name="Badge-theme-type" value="custom" bind:group={ status.config.Badge.theme.type }>
+								Custom
+							</label>
+						</form>
+					</fieldset>
+
+					{#if status.config.Badge.theme.type === "custom"}
+						<fieldset>
+							<legend>Custom Colors</legend>
+
+							<form class="custom-color-picker">
+								<input id="Badge-theme-color-text" type="color" bind:value={ status.config.Badge.theme.color.text }>
+								<label for="Badge-theme-color-text">Text</label>
+							</form>
+							<form class="custom-color-picker">
+								<input id="Badge-theme-color-background" type="color" bind:value={ status.config.Badge.theme.color.background }>
+								<label for="Badge-theme-color-background">Background</label>
+							</form>
+						</fieldset>
+					{/if}
+				{/if}
+			</div>
+		</section>
+	</section>
+
+	<!-- Interaction / Shortcuts -->
+	<section id="setting-interaction" class="fieldset-legend">
+		<h2>Interaction / Shortcuts</h2>
 
 		<!-- Key Bindings -->
 		<section class="container">
@@ -688,58 +748,11 @@
 				</fieldset>
 			</div>
 		</section>
+	</section>
 
-		<!-- Badge -->
-		<section class="container">
-			<div class="flex-side">
-				<h3>Badge</h3>
-			</div>
-
-			<div class="flex-main">
-				<fieldset>
-					<legend>Badge Display</legend>
-
-					<form>
-						<input id="Badge-enable-input" type="checkbox" bind:checked={ status.config.Badge.enable }>
-						<label for="Badge-enable-input">Display the number of waiting URLs in a badge on the extension icon.</label>
-					</form>
-				</fieldset>
-
-				<fieldset>
-					<legend>Theme</legend>
-
-					<form id="Badge-theme-type">
-						<label>
-							<input type="radio" name="Badge-theme-type" value="light" bind:group={ status.config.Badge.theme.type }>
-							Light
-						</label>
-						<label>
-							<input type="radio" name="Badge-theme-type" value="dark" bind:group={ status.config.Badge.theme.type }>
-							Dark
-						</label>
-						<label>
-							<input type="radio" name="Badge-theme-type" value="custom" bind:group={ status.config.Badge.theme.type }>
-							Custom
-						</label>
-					</form>
-				</fieldset>
-
-				{#if status.config.Badge.theme.type === "custom"}
-					<fieldset>
-						<legend>Custom Colors</legend>
-
-						<form class="custom-color-picker">
-							<input id="Badge-theme-color-text" type="color" bind:value={ status.config.Badge.theme.color.text }>
-							<label for="Badge-theme-color-text">: Text</label>
-						</form>
-						<form class="custom-color-picker">
-							<input id="Badge-theme-color-background" type="color" bind:value={ status.config.Badge.theme.color.background }>
-							<label for="Badge-theme-color-background">: Background</label>
-						</form>
-					</fieldset>
-				{/if}
-			</div>
-		</section>
+	<!-- System -->
+	<section id="setting-system" class="fieldset-legend">
+		<h2>System</h2>
 
 		<!-- Debug -->
 		<section class="container">
