@@ -2,20 +2,15 @@
  * Controller class for managing the extension's badge display.
  *
  * @file
- * @lastModified 2026-04-18
+ * @lastModified 2026-06-09
  */
 
 // WXT provided cross-browser compatible API.
 import { browser } from "wxt/browser";
 
-// Import NPM Package
-import PQueue from "p-queue";
-
-// Import Module
-import { sleep } from "@/assets/js/utils/sleep";
-
 // Import Types
-import type { Config } from "@/assets/js/types";
+import type { Config }           from "@/assets/js/types";
+import type { SetTimeoutHandle } from "@/assets/js/types";
 
 
 
@@ -29,15 +24,24 @@ type BadgeThemeTemplate = {
 	dark   : BadgeColor;
 };
 
+type NullableTimeoutHandle = SetTimeoutHandle | null;
+
 
 
 /**
  * Class that controls the badge display of the extension.
  *
- * Manages updates to badge text and colors, using a queue to avoid conflicts between asynchronous operations.
+ * Manages updates to badge text and colors synchronously, relying on
+ * browser IPC ordering to prevent race conditions without a JS queue.
  */
 class BadgeController {
-	#isEnabled: boolean = false;  // Keeps track of whether the badge is enabled.
+	/**
+	 * Whether the badge display is currently enabled.
+	 */
+	#isEnabled: boolean = false;
+	/**
+	 * The current badge color settings applied to the browser API.
+	 */
 	#color: BadgeColor = {
 		text      : "",
 		background: ""
@@ -60,42 +64,39 @@ class BadgeController {
 			background: "#000000"
 		}
 	};
+
 	/**
 	 * Waiting time (in milliseconds) before clearing the badge when the count becomes 0.
 	 */
 	#waitingTime: number = 3000;  // millisecond
+
 	/**
-	 * Queue for serializing badge UI operations (text, color updates).
-	 * Avoids race conditions between asynchronous API calls.
+	 * The latest text that should be displayed on the badge.
 	 */
-	readonly #queue: PQueue;
+	#pendingText: string | null = null;
+
+	/**
+	 * Timer ID for the delayed clear operation.
+	 */
+	#clearTimer: NullableTimeoutHandle = null;
+
+	/**
+	 * Timer ID for debouncing rapid synchronous updates.
+	 */
+	#debounceTimer: NullableTimeoutHandle = null;
 
 	/**
 	 * Constructor for BadgeController.
-	 *
-	 * Sets default badge colors and initializes the UI operation queue.
-	 * Initialization is performed via the queue.
 	 */
 	constructor() {
-		// Initialize the badge theme.
 		this.#color = structuredClone(this.#template.default);
-
-		// Queue for serializing UI operations.
-		this.#queue = new PQueue({ concurrency: 1 });
-
-		// PQueue error handling.
-		this.#queue.on("error", (error) => {
-			console.error("ERROR(badge): pqueue error in BadgeController", error);
-		});
-
-		// Perform initialization via the queue.
-		this.#queue.add(() => this.initializeColor());
+		this.initializeColor();
 	}
 
 	/**
 	 * Load settings from storage and initialize badge colors.
 	 *
-	 * @returns {Promise<void>} Promise that resolves when the color has been initialized.
+	 * @returns {Promise<void>} Resolves when initialization is complete.
 	 */
 	private async initializeColor(): Promise<void> {
 		try {
@@ -106,8 +107,6 @@ class BadgeController {
 			}
 		} catch (error) {
 			console.error("ERROR(badge): Exception: failed to initialize badge color from storage", { error });
-
-			// Continue with the default color even if retrieval from storage fails.
 			await this.applyColor(this.#color);
 		}
 	}
@@ -118,53 +117,56 @@ class BadgeController {
 	 * @param {Config["Badge"]} badgeConfig - Badge configuration object.
 	 */
 	public updateColor(badgeConfig: Config["Badge"]): void {
-		this.#queue.add(async () => {
-			if (!badgeConfig || typeof badgeConfig !== "object") {
-				console.error("ERROR(badge): Invalid: invalid badge config provided to updateColor", badgeConfig);
+		if (!badgeConfig || typeof badgeConfig !== "object") {
+			console.error("ERROR(badge): Invalid: invalid badge config provided to updateColor", badgeConfig);
+			return;
+		}
+
+		this.#isEnabled = badgeConfig.enable;
+
+		if (!this.#isEnabled) {
+			this.clearClearTimer();
+			// Fire and forget: rely on browser IPC ordering to update UI without blocking the event loop.
+			browser.action.setBadgeText({ text: "" }).catch(error => console.error("ERROR(badge): Exception: failed to clear badge text", { error }));
+			return;
+		}
+
+		let newColor: BadgeColor;
+
+		switch (badgeConfig.theme.type) {
+			case "light":
+				newColor = structuredClone(this.#template.light);
+				break;
+			case "dark":
+				newColor = structuredClone(this.#template.dark);
+				break;
+			case "custom":
+				newColor = badgeConfig.theme.color;
+				break;
+			default:
+				console.error("ERROR(badge): Error: unknown badge theme type", badgeConfig.theme.type);
 				return;
-			}
+		}
 
-			this.#isEnabled = badgeConfig.enable;  // Update the "enabled/disabled" state of the badge counter display.
+		if (!newColor || typeof newColor.text !== "string" || typeof newColor.background !== "string") {
+			console.error("ERROR(badge): Invalid: invalid color object derived from config", newColor);
+			return;
+		}
 
-			if (!this.#isEnabled) {
-				// If disabled, clear the badge and exit.
-				await browser.action.setBadgeText({ text: "" });
-				return;
-			}
+		this.#color = newColor;
+		this.applyColor(this.#color);
 
-			let newColor: BadgeColor;
-
-			switch (badgeConfig.theme.type) {
-				case "light":
-					newColor = structuredClone(this.#template.light);
-					break;
-				case "dark":
-					newColor = structuredClone(this.#template.dark);
-					break;
-				case "custom":
-					newColor = badgeConfig.theme.color;
-					break;
-				default:
-					console.error("ERROR(badge): Error: unknown badge theme type", badgeConfig.theme.type);
-					return;
-			}
-
-			// Do nothing if the color settings are invalid.
-			if (!newColor || typeof newColor.text !== "string" || typeof newColor.background !== "string") {
-				console.error("ERROR(badge): Invalid: invalid color object derived from config", newColor);
-				return;
-			}
-
-			this.#color = newColor;
-			await this.applyColor(this.#color);
-		});
+		// If the badge is enabled and there is a pending text, re-apply it.
+		if (this.#pendingText !== null) {
+			this.updateText(this.#pendingText);
+		}
 	}
 
 	/**
 	 * Apply colors by calling the browser API.
 	 *
 	 * @param   {BadgeColor}    color - The color settings to apply.
-	 * @returns {Promise<void>}         Promise that resolves when the color has been applied.
+	 * @returns {Promise<void>}         Resolves when the colors have been applied.
 	 */
 	private async applyColor(color: BadgeColor): Promise<void> {
 		try {
@@ -176,64 +178,86 @@ class BadgeController {
 	}
 
 	/**
+	 * Clear the delayed badge clear timer if it exists.
+	 */
+	private clearClearTimer(): void {
+		if (this.#clearTimer) {
+			clearTimeout(this.#clearTimer);
+			this.#clearTimer = null;
+		}
+	}
+
+	/**
 	 * Update badge text.
 	 *
 	 * If the count is 0, "0" is displayed temporarily before the badge is cleared.
+	 * Coalesces rapid synchronous updates.
 	 *
 	 * @param {string} text - The display text (numeric string).
 	 */
 	public updateText(text: string): void {
+		this.#pendingText = text;
+		this.clearClearTimer();
+
 		if (!this.#isEnabled) {
-			// Do nothing if it's already disabled.
+			return;
+		}
+
+		if (this.#debounceTimer === null) {
+			this.#debounceTimer = setTimeout(() => {
+				this.#debounceTimer = null;
+				this.flushTextUpdate();
+			}, 0);
+		}
+	}
+
+	/**
+	 * Dispatch the badge text update to the browser API.
+	 *
+	 * Called by the debounce timer to apply the latest `#pendingText`,
+	 * ensuring that rapid consecutive calls to `updateText` result in
+	 * only a single API invocation.
+	 */
+	private flushTextUpdate(): void {
+		const text = this.#pendingText;
+		if (text === null || !this.#isEnabled) {
 			return;
 		}
 
 		const count = parseInt(text, 10);
 
-		// Clear the badge if the value is invalid.
 		if (typeof count !== "number" || isNaN(count) || count < 0) {
-			this.#queue.add(() => browser.action.setBadgeText({ text: "" }));
+			// Fire and forget: rely on browser IPC ordering to update UI without blocking the event loop.
+			browser.action.setBadgeText({ text: "" }).catch(error => console.error("ERROR(badge): Exception: failed to clear badge text", { error }));
 			return;
 		}
 
-		// If the count is greater than 0, display the number.
 		if (count > 0) {
-			this.#queue.add(async () => {
-				try {
-					await browser.action.setBadgeText({ text: String(count) });
-				} catch (error) {
-					console.error("ERROR(badge): failed to set badge text", { error, text: String(count) });
-				}
-			});
+			// Fire and forget: rely on browser IPC ordering to update UI without blocking the event loop.
+			browser.action.setBadgeText({ text: String(count) }).catch(error => console.error("ERROR(badge): Exception: failed to set badge text", { error }));
 			return;
 		}
 
-		// If the count is 0, display "0" for a specified time (#waitingTime) and then clear it.
-		this.#queue.add(async () => {
-			try {
-				await browser.action.setBadgeText({ text: "0" });
+		// Display "0" and set a timer to clear it after #waitingTime
+		// Fire and forget: rely on browser IPC ordering to update UI without blocking the event loop.
+		browser.action.setBadgeText({ text: "0" }).catch(error => console.error("ERROR(badge): Exception: failed to set temporary badge text '0'", { error }));
 
-				try {
-					// sleep itself performs validation and throws an exception if the value is invalid.
-					await sleep(this.#waitingTime);
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				} catch (sleepError) {
-					// Skip waiting and proceed to clear if sleep fails.
-				}
-			} catch (error) {
-				console.error("ERROR(badge): Exception: failed to display temporary '0' on badge", { error });
-			} finally {
-				try {
-					await browser.action.setBadgeText({ text: "" });
-				} catch (error) {
-					console.error("ERROR(badge): Exception: failed to clear badge text in finally", { error });
-				}
+		this.#clearTimer = setTimeout(() => {
+			if (this.#pendingText === "0" && this.#isEnabled) { // Check #isEnabled again in case it changed during the timeout
+				// Fire and forget: rely on browser IPC ordering to update UI without blocking the event loop.
+				browser.action.setBadgeText({ text: "" }).catch(error => console.error("ERROR(badge): Exception: failed to clear badge text after delay", { error }));
 			}
-		});
+			this.#clearTimer = null;
+		}, this.#waitingTime);
 	}
 }
 
 
 
 // Export as a singleton instance.
-export const badgeController = new BadgeController();
+const badgeController = new BadgeController();
+
+export {
+	badgeController,
+	BadgeController
+};
