@@ -81,7 +81,7 @@ export const createMockConfig = (overrides: Partial<Config> = {}): Config => {
 		},
 		KeyBindings: {
 			PopupMenu: {
-				copy : { allWindows: "alt", highlighted: "shift" },
+				copy : { allWindows: "w", highlighted: "h" },
 				paste: { reverse: "r", active: "a" }
 			}
 		}

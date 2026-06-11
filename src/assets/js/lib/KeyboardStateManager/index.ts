@@ -39,7 +39,7 @@ export class KeyboardStateManager {
 	/**
 	 * Sets the scope of tracked keys.
 	 *
-	 * @param   {string[]} keys - An array of key identifiers to track (e.g., "alt", "shift", "a").
+	 * @param   {string[]} keys - An array of key identifiers to track (e.g., "w", "h", "a").
 	 * @returns {void}
 	 */
 	setup(keys: string[]): void {

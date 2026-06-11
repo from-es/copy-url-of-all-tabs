@@ -27,15 +27,15 @@ import { KeyboardStateManager } from './KeyboardStateManager';
 const kbd = new KeyboardStateManager();
 
 // 1. 追跡したいキーを定義する
-kbd.setup(['alt', 'shift', 's']);
+kbd.setup(['w', 'h', 's']);
 
 // 2. イベントに応じて状態を同期する（例：グローバルな window リスナー内）
 window.addEventListener('keydown', () => kbd.sync());
 window.addEventListener('keyup', () => kbd.sync());
 
 // 3. 状態を確認する
-if (kbd.status.has('alt')) {
-    console.log('Altキーが現在押されています');
+if (kbd.status.has('w')) {
+    console.log('Wキーが現在押されています');
 }
 
 // 4. 終了時にクリーンアップする

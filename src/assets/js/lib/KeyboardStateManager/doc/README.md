@@ -27,15 +27,15 @@ import { KeyboardStateManager } from './KeyboardStateManager';
 const kbd = new KeyboardStateManager();
 
 // 1. Define the keys you want to track
-kbd.setup(['alt', 'shift', 's']);
+kbd.setup(['w', 'h', 's']);
 
 // 2. Synchronize state in response to events (e.g., in a global window listener)
 window.addEventListener('keydown', () => kbd.sync());
 window.addEventListener('keyup', () => kbd.sync());
 
 // 3. Check the status
-if (kbd.status.has('alt')) {
-    console.log('Alt key is currently pressed');
+if (kbd.status.has('w')) {
+    console.log('W key is currently pressed');
 }
 
 // 4. Cleanup when done

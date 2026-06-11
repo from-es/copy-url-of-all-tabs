@@ -45,7 +45,7 @@ describe("triggerKey domain logic", () => {
 		const config = createMockConfig({
 			KeyBindings: {
 				PopupMenu: {
-					copy: { allWindows: "alt", highlighted: "shift" },
+					copy: { allWindows: "w", highlighted: "h" },
 					paste: { reverse: "r", active: "a" }
 				}
 			},
@@ -65,7 +65,7 @@ describe("triggerKey domain logic", () => {
 			{ name: "define", value: define, freeze: false }
 		);
 		keyboard.reset();
-		keyboard.setup([ "alt", "shift", "r", "a" ]);
+		keyboard.setup([ "w", "h", "r", "a" ]);
 		// @ts-expect-error - The 'hotkeys' mock includes custom simulation methods not present in the original library's type definitions.
 		hotkeys.__clearAll();
 	});
@@ -80,19 +80,19 @@ describe("triggerKey domain logic", () => {
 		expect(getTriggerContext().buttonLabel).toEqual({ Copy: null, Paste: null });
 
 		// @ts-expect-error - The 'hotkeys' mock includes custom simulation methods not present in the original library's type definitions.
-		hotkeys.__simulatePress("alt");
+		hotkeys.__simulatePress("w");
 		keyboard.sync();
 		expect(getTriggerContext().queryInfo).toEqual({});
 		expect(getTriggerContext().buttonLabel).toEqual({ Copy: "All Windows", Paste: null });
 
 		// @ts-expect-error - The 'hotkeys' mock includes custom simulation methods not present in the original library's type definitions.
-		hotkeys.__simulatePress("shift");
+		hotkeys.__simulatePress("h");
 		keyboard.sync();
 		expect(getTriggerContext().queryInfo).toEqual({ highlighted: true });
 		expect(getTriggerContext().buttonLabel).toEqual({ Copy: "All Window,Highlighte", Paste: null });
 
 		// @ts-expect-error - The 'hotkeys' mock includes custom simulation methods not present in the original library's type definitions.
-		hotkeys.__simulateRelease("alt");
+		hotkeys.__simulateRelease("w");
 		keyboard.sync();
 		expect(getTriggerContext().queryInfo).toEqual({ currentWindow: true, highlighted: true });
 		expect(getTriggerContext().buttonLabel).toEqual({ Copy: "Highlighted", Paste: null });

@@ -135,8 +135,8 @@ export const defaultConfig: Config = {
 	KeyBindings: {
 		PopupMenu: {
 			copy: {
-				allWindows : "alt",
-				highlighted: "shift"
+				allWindows : "w",
+				highlighted: "h"
 			},
 			paste: {
 				reverse: "r",

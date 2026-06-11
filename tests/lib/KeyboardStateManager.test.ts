@@ -55,7 +55,7 @@ describe("KeyboardStateManager", () => {
 
 	it("should initialize status as an empty set", () => {
 		// Act
-		manager.setup([ "alt", "shift", "none" ]);
+		manager.setup([ "w", "h", "none" ]);
 
 		// Assert
 		expect(manager.status).toBeInstanceOf(Set);
@@ -64,13 +64,13 @@ describe("KeyboardStateManager", () => {
 
 	it("should sync states correctly from hotkeys-js", () => {
 		// Arrange
-		manager.setup([ "alt", "a" ]);
+		manager.setup([ "w", "a" ]);
 
-		// Act & Assert 1: Press 'alt'
+		// Act & Assert 1: Press 'w'
 		// @ts-expect-error - simulating press
-		hotkeys.__simulatePress("alt");
+		hotkeys.__simulatePress("w");
 		manager.sync();
-		expect(manager.status.has("alt")).toBe(true);
+		expect(manager.status.has("w")).toBe(true);
 		expect(manager.status.has("a")).toBe(false);
 
 		// Act & Assert 2: Press 'a'
@@ -79,20 +79,20 @@ describe("KeyboardStateManager", () => {
 		manager.sync();
 		expect(manager.status.has("a")).toBe(true);
 
-		// Act & Assert 3: Release 'alt'
+		// Act & Assert 3: Release 'w'
 		// @ts-expect-error - simulating release
-		hotkeys.__simulateRelease("alt");
+		hotkeys.__simulateRelease("w");
 		manager.sync();
-		expect(manager.status.has("alt")).toBe(false);
+		expect(manager.status.has("w")).toBe(false);
 		expect(manager.status.has("a")).toBe(true);
 	});
 
 	it("should reset all states to be empty", () => {
 		// Arrange
-		manager.setup([ "alt", "shift" ]);
+		manager.setup([ "w", "h" ]);
 		// Force set states manually
-		manager.status.add("alt");
-		manager.status.add("shift");
+		manager.status.add("w");
+		manager.status.add("h");
 
 		// Act
 		manager.reset();
@@ -103,7 +103,7 @@ describe("KeyboardStateManager", () => {
 
 	it("should unbind handlers and clear status on teardown", () => {
 		// Arrange
-		manager.setup([ "alt" ]);
+		manager.setup([ "w" ]);
 
 		// Act
 		manager.teardown();
