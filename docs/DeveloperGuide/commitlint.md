@@ -1,6 +1,6 @@
 # commitlint: Commit Message Guidelines
 
-**Last Updated:** March 5, 2026
+**Last Updated:** June 11, 2026
 
 To ensure that our commit history is readable, consistent, and easy to navigate, we adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification.
 
@@ -10,7 +10,7 @@ The Conventional Commits specification is a lightweight convention on top of com
 
 ## Commit Message Format
 
-Each commit message consists of a **header**, a **body**, and a **footer**.
+Each commit message consists of a **header**, a **body**, and a **footer**, with each section separated by a single blank line.
 
 ```
 <type>[optional scope]: <description>
@@ -20,16 +20,20 @@ Each commit message consists of a **header**, a **body**, and a **footer**.
 [optional footer]
 ```
 
-1.  **Header (Required):** The first line of the commit message, including the **type**, an optional **scope**, and the **description**.
-    - **type**: Describes the kind of change you are committing.
-    - **scope**: Refers to the section of the codebase affected by the commit.
-    - **description**: A short, imperative-tense summary of the code change.
+1.  **Header (Required):** The first line of the commit message.
+    - **Composition:** `<type>[optional scope]: <description>`
+    - **Character Limit:** Keep within **72 characters** per line (ideally around 50 characters).
+    - See [Type](#type) and [Scope](#scope) below for details.
 
-2.  **Body (Optional):** Provides a more detailed explanation. It offers additional context to explain the "what" and "why" of the change. It should be separated from the Header by a single blank line.
+2.  **Body (Optional):** Detailed description of the changes. Separated from the Header by one blank line.
+    - **Character Limit:** Wrap lines at **72 characters**.
+    - See [Body](#body) below for details.
 
-3.  **Footer (Optional):** Used to reference issue tracking system IDs (e.g., `Fixes #123`) or to indicate a breaking change. It should be separated from the Body by a single blank line.
-    - **Breaking Change:** Start with `BREAKING CHANGE:` and describe the changes and migration methods.
-    - **Closing Issues:** Write as `Closes #123`, `Fixes #456`, etc.
+3.  **Footer (Optional):** Used for referencing issues or indicating breaking changes. Separated from the Body (or Header) by one blank line.
+    - **Character Limit:** Wrap lines at **72 characters**.
+    - See [Footer](#footer) below for details.
+
+## Component Details
 
 ### Type
 
@@ -43,9 +47,9 @@ Each commit message consists of a **header**, a **body**, and a **footer**.
 | `refactor` | A code change that neither fixes a bug nor adds a feature                                                  |
 | `perf`     | A code change that improves performance                                                                    |
 | `test`     | Adding or correcting tests                                                                                 |
-| `build`    | Changes that concern the build system or external dependencies (e.g., npm, webpack)                        |
-| `ci`       | Changes to CI (Continuous Integration) configuration or scripts (e.g., GitHub Actions)                     |
-| `chore`    | Miscellaneous changes that do not fit into any of the above categories (e.g., updating build tasks, package management) |
+| `build`    | Changes that concern the build system or external dependencies (npm, webpack, etc.)                        |
+| `ci`       | Changes to CI (Continuous Integration) configuration or scripts (GitHub Actions, etc.)                     |
+| `chore`    | Miscellaneous changes that do not fit into any of the above categories (updating build tasks, package management, etc.) |
 | `revert`   | Changes that revert a previous commit                                                                      |
 
 ### Scope
@@ -58,13 +62,13 @@ Use the `project` scope for broad changes that affect the entire project or span
 
 Below are examples of commonly used scopes. Please use appropriate ones according to the project's structure.
 
-- **Page or screen names**
+- **Page or Screen Names**
   - `login`, `profile`, `settings`, `home`
-- **Features or concerns**
+- **Features or Concerns**
   - `api`, `auth`, `ui`, `db`, `routes`, `search`
-- **Library or package names**
+- **Library or Package Names**
   - `core`, `utils`, `components`, `shared`, `design-system`
-- **Configuration files, etc.**
+- **Configuration Files, etc.**
   - `config`, `ci`, `build`, `deps`
 - **Project-wide / Common**
   - `project`
@@ -74,6 +78,23 @@ Below are examples of commonly used scopes. Please use appropriate ones accordin
 - `fix(api): enhance null checks on user retrieval endpoint`
 - `docs(readme): update setup instructions`
 
+### Body
+
+In the body, explain "what," "why," and "for what purpose" the changes were made, followed by the specific details of the changes.
+
+- Describe the summary (what/why/purpose) in the first line.
+- Leave one blank line below it and then describe the detailed additions or fixes.
+- If multiple changes are included, use a bulleted list. This clarifies the modified areas and improves readability.
+- If there is only one change, describe it in sentence form without using a list.
+- To ensure readability, insert appropriate line breaks within **72 characters** per line.
+
+### Footer
+
+If the commit relates to a specific issue or task, reference them in the footer. This keeps the status of issues up to date and provides important context for anyone reading the history later.
+
+- **Issue Reference:** Reference IDs from your project management system (e.g., GitHub Issues) like `Fixes #123` or `Closes #456`.
+- **Breaking Changes:** Start with `BREAKING CHANGE:` followed by a description of the change and migration instructions.
+
 ## Commit Message Examples
 
 ### Example 1: Adding a New Feature (feat)
@@ -82,33 +103,45 @@ Including a scope and a detailed body makes the change clearer.
 ```
 feat(options): add custom delay rules for pasting URLs
 
-This allows users to configure specific delays for different URL
-patterns, providing more granular control over tab opening behavior.
+Configured site-specific delay settings for URL pasting operations.
+This avoids issues where tabs fail to open correctly on certain sites.
+
+- Added domain-specific delay input fields to the options screen.
+- Implemented a utility function to retrieve delay times matching URL patterns.
+- Added dynamic wait processing during the pasting process.
 ```
 
 ```
-feat(auth): add biometric authentication to login feature
+feat(ui): add toast notification for copy completion (#42)
 
-Allows users to log in with fingerprints or facial recognition instead of passwords.
-This improves security and convenience.
+To improve user feedback, a notification is now displayed when a copy
+operation is successful.
 
-Closes #42
+Implemented a component that displays a toast message at the bottom of
+the screen upon success.
 ```
 
 ### Example 2: Bug Fix (fix)
 From simple fixes to fixes that close issues.
 
 ```
-fix: fix profile image display corruption
+fix(parser): fix issue where extra symbols were appended to URLs (#105)
 
-Fixed an issue where image corners were not rounded under certain conditions,
-causing them to appear square.
+Fixed a bug where double quotes were included at the end of URLs when
+retrieving titles and URLs from specific sites.
+
+Improved the URL extraction logic using regular expressions to properly
+trim trailing symbols.
 ```
 
 ```
 fix(popup): prevent crash when clipboard is empty
 
-Closes #42
+Fixed a crash occurring during parsing when the popup was opened while
+the clipboard was empty.
+
+Added a guard condition to check the clipboard content and skip
+processing if it is empty.
 ```
 
 ### Example 3: Breaking Change
