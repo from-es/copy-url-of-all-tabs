@@ -36,7 +36,7 @@ export function cloneObject<T>(obj: T): T {
 		return structuredClone(obj);
 	} catch (error: unknown) {
 		// Check if the error is a `DataCloneError` when `structuredClone()` fails.
-		if (error instanceof DOMException && error.name === "DataCloneError") {
+		if (error && typeof error === "object" && "name" in error && error.name === "DataCloneError") {
 			// console.debug("DEBUG(util): structuredClone failed, falling back to cloneDeep", { obj });
 			return cloneDeep(obj);
 		}

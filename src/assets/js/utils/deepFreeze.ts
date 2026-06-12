@@ -2,7 +2,7 @@
  * Recursively freezes an object and all its nested properties, making it immutable.
  *
  * @file
- * @lastModified 2026-04-18
+ * @lastModified 2026-06-12
  */
 
 /**
@@ -25,8 +25,7 @@ export function deepFreeze<T extends object>(obj: T): Readonly<T> {
 
 	// Freeze properties before freezing the object itself
 	for (const name of propNames) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const value = (obj as any)[name];
+		const value = (obj as Record<string | symbol, unknown>)[name];
 
 		if (value && typeof value === "object") {
 			deepFreeze(value);

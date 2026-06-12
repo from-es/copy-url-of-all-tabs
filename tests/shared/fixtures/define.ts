@@ -86,6 +86,8 @@ export const createMockDefine = (config: Config): Define => ({
 	TaskControlChunkSizeValueMax : 16,
 	TaskControlChunkSizeValueStep: 1,
 
+	TabOpenQueryInfo: { currentWindow: true },
+
 	ConfigPropertyDisplayNames: {
 		Information: "Extension Information",
 		Debug      : "Debug Settings",
@@ -95,6 +97,7 @@ export const createMockDefine = (config: Config): Define => ({
 		Filtering  : "Filtering Settings",
 		Format     : "Format Settings",
 		Tab        : "Tab Settings",
-		Badge      : "Badge Settings"
+		Badge      : "Badge Settings",
+		KeyBindings: "Key Bindings Settings"
 	} as const
 });

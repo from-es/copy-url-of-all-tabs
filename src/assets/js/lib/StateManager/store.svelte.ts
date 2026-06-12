@@ -5,7 +5,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-03-31
+ * @lastModified 2026-06-12
  *
  * @dependency lodash-es (https://www.npmjs.com/package/lodash-es)
  */
@@ -14,12 +14,41 @@
 import { SvelteMap } from "svelte/reactivity";
 
 // Import NPM Package
-import { mergeWith } from "lodash-es";
+import { mergeWith, cloneDeep } from "lodash-es";
 
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type StateObject = Record<string, any>;
+
+/**
+ * Recursively freezes an object or array to ensure absolute immutability.
+ *
+ * @template U
+ * @param    {U} obj - The object or array to freeze.
+ * @returns  {U}     - The frozen object or array.
+ *
+ * @see {@link https://github.com/lodash/lodash/issues/4295}
+ */
+function deepFreeze<U>(obj: U): U {
+	if (obj === null || typeof obj !== "object") {
+		return obj;
+	}
+
+	if (Object.isFrozen(obj)) {
+		return obj;
+	}
+
+	const propNames = Reflect.ownKeys(obj);
+	for (const name of propNames) {
+		const value = (obj as Record<string | symbol, unknown>)[name];
+		if (value && typeof value === "object") {
+			deepFreeze(value);
+		}
+	}
+
+	return Object.freeze(obj);
+}
 
 /**
  * Defines the structure for initializing or updating a state property within the store.
@@ -115,7 +144,8 @@ function createStore<T extends StateObject>(initialStates: StateOption[] = []): 
 					});
 				}
 			} else {
-				internalState[name] = value;
+				internalState[name] = freeze ? deepFreeze(cloneDeep(value)) : value;
+
 				// If freeze status is not set, default to the provided value (or false).
 				if (freezeMap.get(name) === undefined) {
 					freezeMap.set(name, freeze);

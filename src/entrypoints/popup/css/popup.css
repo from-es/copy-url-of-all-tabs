@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+
 /* ------------------------------------------------------------------------------------------ */
 /*                                                                                            */
 /*                                    Variable Definition                                     */
@@ -23,6 +24,17 @@
 /*                                    Override common.css                                     */
 /*                                                                                            */
 /* ------------------------------------------------------------------------------------------ */
+
+html {
+	/* Allow the height to shrink or grow based on the content (important for message clearing) */
+	height: auto;
+
+	/* Reset min-height to ensure the height can shrink to 0 if the content is empty */
+	min-height: 0;
+
+	/* Prevent content overflow and scrollbars during size transitions */
+	overflow: hidden;
+}
 
 body {
 	/* Disable styles specified in common.css ("height: 100%;") */
@@ -68,6 +80,10 @@ button {
 
 	font-size  : 1rem;
 	text-align : left;
+
+    white-space  : nowrap;   /* 折り返し無し */
+    overflow     : hidden;   /* はみ出た部分を非表示 */
+    text-overflow: ellipsis; /* 語尾を3点リーダーに */
 
 	&:hover {
 		background: linear-gradient(

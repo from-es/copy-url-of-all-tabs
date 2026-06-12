@@ -60,7 +60,10 @@ legend {
 }
 
 select {
+	margin : 0.25rem 0.25rem 0.25rem 0;
 	padding: 0.25rem 0.5rem;
+
+	font-size: 0.85rem;
 }
 
 textarea {
@@ -290,11 +293,13 @@ section {
 #setting-copy,
 #setting-paste,
 #setting-filtering,
+#setting-user-interface,
+#setting-interaction,
 #setting-system {
 	/* Variables in fieldset-legend.css */
 	--fl-left: 1rem;
 
-	margin : 2rem 0.5rem;
+	margin : 3rem 0.5rem;
 	padding: 1rem;
 
 	border       : calc(var(--base-unit-px) * 1) solid var(--color-gray-dark);
@@ -307,12 +312,16 @@ section {
 		font-weight: normal;
 		font-weight: lighter;
 	}
+
+	/* Margin Adjustments */
+	& > section.container:last-child {
+		margin-bottom: 0;
+	}
 }
 
-/* Margin and Padding Adjustments */
+/* Margin Adjustments */
 #setting > section:last-child {
-	margin-bottom : 1rem;
-	padding-bottom: 0;
+	margin-bottom: 1rem;
 }
 
 
@@ -547,7 +556,7 @@ section {
 
 /* ------------------------------------------------------------------------------------------ */
 /*                                                                                            */
-/*                                       System Settings                                      */
+/*                                   Task Control Settings                                    */
 /*                                                                                            */
 /* ------------------------------------------------------------------------------------------ */
 
@@ -561,6 +570,45 @@ section {
 
 .notice-highlight {
 	color: var(--color-error);
+}
+
+
+
+/* ------------------------------------------------------------------------------------------ */
+/*                                                                                            */
+/*                                   User Interface Settings                                  */
+/*                                                                                            */
+/* ------------------------------------------------------------------------------------------ */
+
+/* Key Bindings Layout */
+.trigger-key-binding {
+	display    : flex;
+	align-items: center;
+	gap        : 0.5rem;
+
+	margin-bottom: 0.5rem;
+}
+
+.trigger-key-binding select {
+	width: 10rem;
+}
+
+/* Badge Color Picker Layout */
+.custom-color-picker {
+	display    : flex;
+	align-items: center;
+	gap        : 0.5rem;
+
+	margin-bottom: 0.5rem;
+}
+
+.custom-color-picker input[type="color"] {
+	width     : 3rem;
+	height    : 2rem;
+	padding   : 0;
+	border    : none;
+	background: none;
+	cursor    : pointer;
 }
 
 

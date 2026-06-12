@@ -1,7 +1,7 @@
 # BrowserEnvironment ライブラリ 技術仕様 & 動作仕様
 
 *   作成日: 2025年7月19日
-*   最終更新日: 2026年4月8日
+*   最終更新日: 2026年6月5日
 
 ## 概要
 
@@ -74,15 +74,16 @@ User-Agent文字列を解析するためのラッパークラス。
 
 ### 型定義 (`types.ts`)
 
-*   `CheckerInfo`: 処理の成功/失敗、メッセージ、情報源 (`main`, `sub`) を含むオブジェクト。
-*   `BrowserEnvironmentInfo`: ブラウザ、エンジン、デバイス、CPU、OS、言語などの環境情報を含むオブジェクト。
-*   `BrowserEnvironmentResult`: `CheckerInfo` と `BrowserEnvironmentInfo` を組み合わせた最終的な結果オブジェクト。
+*   `CheckerInfo`: 処理の成功/失敗、メッセージ、情報源 (`primary`, `secondary`) を含むオブジェクト。
+*   `OSPlatform`: サポートされているOSプラットフォーム識別子 (`"windows" | "mac" | "linux" | "chromeos" | "android" | "ios" | "bsd" | "other"`)。
+*   `UserAgentClientHintsInfo`: Client Hintsから取得した環境情報を含むオブジェクト。`os` プロパティに `platform` が含まれます。
+*   `BrowserEnvironmentResult`: `CheckerInfo` と集約された環境情報を組み合わせた最終的な結果オブジェクト。
 *   `UserAgentDataBrand`: [User-Agent Client Hints](#user-agent-client-hints) のブランド情報 (`brand`, `version`)。
 *   `UserAgentDataValues`: `navigator.userAgentData.getHighEntropyValues()` から返される詳細な [User-Agent Client Hints](#user-agent-client-hints) の値。
 *   `NavigatorUserAgentData`: `Navigator` インターフェースを拡張し、`userAgentData` プロパティと `getHighEntropyValues` メソッドを定義。
 *   `UserAgentParserPluginInformation`: プラグインのメタ情報 (`name`, `useLibrary`, `version`, `lastModified`)。
-*   `PluginValue`: プラグインが返すブラウザ、エンジン、OSの情報。
-*   `UserAgentParserInformation`: プラグイン情報と実行関数を含むオブジェクト。
+*   `UserAgentParserPluginParseData`: プラグインが返すブラウザ、エンジン、OSの情報。
+*   `UserAgentParserPlugin`: プラグイン情報と実行関数を含むオブジェクト。
 
 ### 依存関係
 
@@ -121,13 +122,13 @@ User-Agent文字列を解析するためのラッパークラス。
 *   `checker`:
     *   `isSuccess`: 情報取得が成功したかどうかを示す真偽値。
     *   `message`: 情報取得に関するメッセージ (成功/失敗、使用されたAPIなど)。
-    *   `worker`: 情報取得に使用された主要なAPI (`main`) と補助的な情報源 (`sub`)。
+    *   `dataSources`: 情報取得に使用された主要なAPI (`primary`) と補助的な情報源 (`secondary`)。
 *   `ua`: `navigator.userAgent` の値 (存在する場合)。
 *   `browser`: ブラウザ名とバージョン。
 *   `engine`: レンダリングエンジン名とバージョン。
 *   `device`: モバイルデバイスかどうか、およびモデル名。
 *   `cpu`: CPUアーキテクチャとビット数。
-*   `os`: OS名、バージョン、バージョン名。
+*   `os`: OS名、バージョン、バージョン名、および標準化されたプラットフォームの種類 (`platform`)。
 *   `language`: ブラウザの言語設定。
 
 ### 3. エラーハンドリング
@@ -196,34 +197,37 @@ getBrowserInfo();
   "checker": {
     "isSuccess": true,
     "message": "This Browser can get User-Agent Client Hints. 'navigator.userAgentData' is supported. Obtain information from navigator.userAgentData and supplement it with bowser.",
-    "worker": {
-      "main": "navigator.userAgentData",
-      "sub": "bowser"
+    "dataSources": {
+      "primary": "navigator.userAgentData",
+      "secondary": "bowser"
     }
   },
-  "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-  "browser": {
-    "name": "Chrome",
-    "version": "126.0.0.0"
-  },
-  "engine": {
-    "name": "Blink",
-    "version": "126.0.0.0"
-  },
-  "device": {
-    "mobile": false,
-    "model": ""
-  },
-  "cpu": {
-    "architecture": "x86",
-    "bitness": "64"
-  },
-  "os": {
-    "name": "Windows",
-    "version": "10",
-    "versionName": "" // ライブラリで取得出来ない場合や、Client Hintsで取得できない場合
-  },
-  "language": "ja"
+  "information": {
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "browser": {
+      "name": "Chrome",
+      "version": "126.0.0.0"
+    },
+    "engine": {
+      "name": "Blink",
+      "version": "126.0.0.0"
+    },
+    "device": {
+      "mobile": false,
+      "model": ""
+    },
+    "cpu": {
+      "architecture": "x86",
+      "bitness": "64"
+    },
+    "os": {
+      "name": "Windows",
+      "version": "10",
+      "versionName": "", // ライブラリで取得出来ない場合や、Client Hintsで取得できない場合
+      "platform": "windows"
+    },
+    "language": "ja"
+  }
 }
 ```
 

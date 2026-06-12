@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-04-08
+ * @lastModified 2026-06-05
  */
 
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -35,6 +35,11 @@ type CheckerInfo = {
 		secondary: string | undefined
 	}
 };
+
+/**
+ * Supported OS platform identifiers.
+ */
+type OSPlatform = "windows" | "mac" | "linux" | "chromeos" | "android" | "ios" | "bsd" | "other";
 
 /**
  * Defines the structure for information obtained from the User-Agent Client Hints API.
@@ -75,6 +80,10 @@ type UserAgentClientHintsInfo = {
 		name       : string | undefined;
 		version    : string | undefined;
 		versionName: string | undefined;
+		/**
+		 * The standardized OS platform type.
+		 */
+		platform?  : OSPlatform;
 	};
 };
 
@@ -190,6 +199,7 @@ type UserAgentParserPlugin = {
 
 export type {
 	CheckerInfo,
+	OSPlatform,
 	UserAgentClientHintsInfo,
 	BrowserEnvironmentResult,
 	UserAgentDataBrand,

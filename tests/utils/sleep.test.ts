@@ -11,7 +11,7 @@
  * @see {@link project/tests/shared/types/validation.ts} - Standard type for validation tests
  */
 
-import { describe, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { sleep } from "@/assets/js/utils/sleep";
 import { TestRunner, type TestCase } from "../shared/support/TestRunner";
 import { type IntentionalAnyForValidation } from "../shared/types/validation";
@@ -22,9 +22,9 @@ import { type IntentionalAnyForValidation } from "../shared/types/validation";
 
 const testData = {
 	success: [
-		{ name: "should be resolved after the specified time has elapsed", input: 1000, expected: undefined },
-		{ name: "should correctly handle zero millisecond wait", input: 0, expected: undefined },
-		{ name: "should handle maximum wait time (2^31-1)", input: 2147483647, expected: undefined }
+		{ name: "should be resolved after the specified time has elapsed", input: 1000, expected: true },
+		{ name: "should correctly handle zero millisecond wait", input: 0, expected: true },
+		{ name: "should handle maximum wait time (2^31-1)", input: 2147483647, expected: true }
 	],
 	error: [
 		{ name: "should throw RangeError when a negative value is passed", input: -1, expected: RangeError },
@@ -52,13 +52,50 @@ describe("sleep Utility", () => {
 		TestRunner.success(testData.success, null, async (input) => {
 			const promise = sleep(input);
 			vi.runAllTimers();
-			await promise;
+			return await promise;
 		});
 	});
 
 	describe("Error cases", () => {
 		TestRunner.error(testData.error, null, (input) => {
 			return sleep(input);
+		});
+
+		it("should throw TypeError when an invalid signal is passed", () => {
+			// @ts-expect-error - testing invalid input
+			expect(() => sleep(100, { signal: "not a signal" })).toThrow(TypeError);
+		});
+	});
+
+	describe("AbortSignal Support", () => {
+		it("should support AbortSignal for immediate abortion", async () => {
+			const controller = new AbortController();
+			controller.abort();
+
+			const result = await sleep(1000, { signal: controller.signal });
+			expect(result).toBe(false);
+		});
+
+		it("should support AbortSignal for abortion during sleep", async () => {
+			const controller = new AbortController();
+
+			const promise = sleep(5000, { signal: controller.signal });
+
+			// Advance time a bit then abort
+			await vi.advanceTimersByTimeAsync(1000);
+			controller.abort();
+
+			const result = await promise;
+			expect(result).toBe(false);
+		});
+
+		it("should correctly clean up and resolve if not aborted", async () => {
+			const controller = new AbortController();
+			const promise = sleep(1000, { signal: controller.signal });
+
+			vi.runAllTimers();
+			const result = await promise;
+			expect(result).toBe(true);
 		});
 	});
 });

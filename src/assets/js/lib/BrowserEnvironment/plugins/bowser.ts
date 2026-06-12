@@ -3,7 +3,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-04-08
+ * @lastModified 2026-06-05
  *
  * @dependency bowser (https://github.com/bowser-js/bowser)
  */
@@ -27,7 +27,7 @@ const UserAgentParserPlugin: UserAgentParserPlugin = {
 		name        : "UserAgent parser plugin using bowser",
 		useLibrary  : "bowser",
 		version     : "1.0.1",
-		lastModified: "2026-04-08",
+		lastModified: "2026-06-05",
 		author      : "From E"
 	},
 
