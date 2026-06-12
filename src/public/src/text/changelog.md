@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 - The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.24.0] - 2026-06-12
+
+### Added
+
+- Added support for custom keyboard shortcuts. You can now configure personalized trigger keys for Copy and Paste actions directly from the options page.
+
+### Changed
+
+- Refined the visual structure and layout organization of the options page to improve readability and ease of navigation.
+- Refactored internal state management and background processing to significantly improve extension performance and stability.
+
+### Security
+
+- Updated internal dependencies to resolve known security vulnerabilities and improve overall extension stability.
+
 ## [1.23.0] - 2026-05-18
 
 ### Added
