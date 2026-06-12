@@ -5,7 +5,7 @@
  *
  * @file
  * @author       From E
- * @lastModified 2026-05-22
+ * @lastModified 2026-06-12
  *
  * @dependency lodash-es (https://www.npmjs.com/package/lodash-es)
  */
@@ -41,7 +41,7 @@ function deepFreeze<U>(obj: U): U {
 
 	const propNames = Reflect.ownKeys(obj);
 	for (const name of propNames) {
-		const value = (obj as any)[name];
+		const value = (obj as Record<string | symbol, unknown>)[name];
 		if (value && typeof value === "object") {
 			deepFreeze(value);
 		}

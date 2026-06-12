@@ -22,7 +22,16 @@ const testData = {
 	success: [
 		{ name: "should freeze a simple object", input: { a: 1, b: "test" }, expected: true },
 		{ name: "should recursively freeze nested objects", input: { a: { b: 1 } }, expected: true },
-		{ name: "should recursively freeze nested arrays", input: { a: [ 1, 2, { b: 3 } ] }, expected: true }
+		{ name: "should recursively freeze nested arrays", input: { a: [ 1, 2, { b: 3 } ] }, expected: true },
+		{
+			name: "should freeze objects with Symbol keys",
+			input: (() => {
+				const sym = Symbol("test");
+				const obj = { [sym]: { a: 1 } };
+				return obj;
+			})(),
+			expected: true
+		}
 	],
 	error: [
 		{ name: "should throw TypeError when null is passed", input: [ null ], expected: TypeError },
