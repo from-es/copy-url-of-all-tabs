@@ -1,6 +1,6 @@
 # "Copy URL of All Tabs" User Guide
 
-**Last Updated:** February 6, 2026
+**Last Updated:** June 6, 2026
 
 ## Overview
 
