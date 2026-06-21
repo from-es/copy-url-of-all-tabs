@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 - The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.25.0] - 2026-06-21
+
+### Changed
+
+- Improved settings processing stability by modernizing the configuration migration and correction system.
+
 ## [1.24.0] - 2026-06-12
 
 ### Added
