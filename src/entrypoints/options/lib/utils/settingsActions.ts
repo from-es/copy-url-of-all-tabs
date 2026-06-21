@@ -5,13 +5,18 @@
  */
 
 // Import Module
-import { cloneObject }                 from "@/assets/js/lib/CloneObject";
-import { StorageManager }              from "@/assets/js/lib/StorageManager";
-import { PopoverMessage }              from "@/assets/js/lib/MessageManager/PopoverMessage";
-import { initializeConfig }            from "@/assets/js/app/initializeConfig";
-import { rules as PreSaveCorrections } from "@/assets/js/app/MigrationManager/rules/patch/preSaveCorrections";
-import { compareConfig }               from "./configComparer";
-import { applyPreSaveCorrections, getInformationOfConfig, reInitialize, disableElementTemporarily } from "./settingsHelper";
+import { cloneObject }                      from "@/assets/js/lib/CloneObject";
+import { PopoverMessage }                   from "@/assets/js/lib/MessageManager/PopoverMessage";
+import { StorageManager }                   from "@/assets/js/lib/StorageManager";
+import { initializeConfig }                 from "@/assets/js/app/initializeConfig";
+import { patchRules as PreSaveCorrections } from "@/assets/js/app/SequenceProcessor/rules";
+import { compareConfig }                    from "./configComparer";
+import {
+	applyPreSaveCorrections,
+	getInformationOfConfig,
+	reInitialize,
+	disableElementTemporarily
+} from "./settingsHelper";
 
 // Import Types
 import type { Status } from "@/assets/js/types";
