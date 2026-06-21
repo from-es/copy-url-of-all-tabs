@@ -8,14 +8,17 @@
 import { browser } from "wxt/browser";
 
 // Import Module
-import { cloneObject }      from "@/assets/js/lib/CloneObject";
-import { MigrationManager } from "@/assets/js/lib/MigrationManager";
-import { setRootFontSize }  from "@/assets/js/utils/setRootFontSize";
-import { logging }          from "@/assets/js/app/logging";
+import { cloneObject }            from "@/assets/js/lib/CloneObject";
+import { SequenceProcessor }      from "@/assets/js/lib/SequenceProcessor";
+import { setRootFontSize }        from "@/assets/js/utils/setRootFontSize";
+import { logging }                from "@/assets/js/app/logging";
+import { patchRules }             from "@/assets/js/app/SequenceProcessor/rules";
+import { createMigrationContext } from "@/assets/js/app/SequenceProcessor/context";
 
 // Import Types
 import type { Config, Define, Status } from "@/assets/js/types";
-import type { MigrationRule }          from "@/assets/js/lib/MigrationManager/types";
+import type { SequenceRule }           from "@/assets/js/lib/SequenceProcessor/types";
+import type { MigrationContext }       from "@/assets/js/app/SequenceProcessor/types";
 
 
 
@@ -35,31 +38,30 @@ function reInitialize(status: Status): void {
 
 /**
  * Applies corrections to the config before saving.
- * This function applies a series of migration rules to ensure data integrity and completeness before settings are saved.
+ * This function applies a series of sequence rules to ensure data integrity and completeness before settings are saved.
  *
- * @param   {Config}                  config - Current configuration object to be corrected.
- * @param   {Define}                  define - Definition object containing default settings.
- * @param   {MigrationRule<Config>[]} rule   - Array of migration rules to apply.
- * @returns {Promise<Config>}                  A Promise that resolves to the corrected configuration object.
+ * @param   {Config}                                   config - Current configuration object to be corrected.
+ * @param   {Define}                                   define - Definition object containing default settings.
+ * @param   {SequenceRule<Config, MigrationContext>[]} rule   - Array of sequence rules to apply.
+ * @returns {Promise<Config>}                                   A Promise that resolves to the corrected configuration object.
  */
-async function applyPreSaveCorrections(config: Config, define: Define, rule: MigrationRule<Config>[]): Promise<Config> {
-	const data             = cloneObject(config);
-	const defaultValues    = cloneObject(define.Config);
-	const migrationManager = new MigrationManager(rule);
-	const migrationResult  = await migrationManager.migrate(data, defaultValues, { failFast: false });
-	const result           = migrationResult.isSucceeded ? migrationResult.data : cloneObject(config);
+async function applyPreSaveCorrections(config: Config, define: Define, rule: SequenceRule<Config, MigrationContext>[] = patchRules): Promise<Config> {
+	const data      = cloneObject(config);
+	const context   = await createMigrationContext(define);
+	const processor = new SequenceProcessor(rule);
+	const result    = await processor.process(data, context, { failFast: false, cloneFn: cloneObject });
 
-	console.debug("DEBUG(migration): apply pre save corrections", { migrationResult });
+	console.debug("DEBUG(sequence): apply pre save corrections", { result });
 
-	return result;
+	return result.data;
 }
 
 /**
  * Generates meta-information (name, version, timestamp) about the current configuration.
  *
- * @returns {{ name: string | null; version: string | null; date: { timestamp: number | null; iso8601: string | null; } }} Meta-information object.
+ * @returns {Config["Information"]} Meta-information object.
  */
-function getInformationOfConfig(): { name: string | null; version: string | null; date: { timestamp: number | null; iso8601: string | null; } } {
+function getInformationOfConfig(): Config["Information"] {
 	const manifest = browser.runtime.getManifest();
 	const now      = Date.now();
 

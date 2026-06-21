@@ -12,17 +12,19 @@
  */
 
 // Import Module
-import { define }             from "@/assets/js/define";
-import { BrowserEnvironment } from "@/assets/js/lib/BrowserEnvironment";
-import { cloneObject }        from "@/assets/js/lib/CloneObject";
-import { MigrationManager }   from "@/assets/js/lib/MigrationManager";
-import { StorageManager }     from "@/assets/js/lib/StorageManager";
-import { VerifyConfigValue }  from "@/assets/js/lib/VerifyConfigValue";
-import { migrationRules }     from "@/assets/js/app/MigrationManager/rules";
+import { define }                 from "@/assets/js/define";
+import { BrowserEnvironment }     from "@/assets/js/lib/BrowserEnvironment";
+import { cloneObject }            from "@/assets/js/lib/CloneObject";
+import { SequenceProcessor }      from "@/assets/js/lib/SequenceProcessor";
+import { StorageManager }         from "@/assets/js/lib/StorageManager";
+import { VerifyConfigValue }      from "@/assets/js/lib/VerifyConfigValue";
+import { createMigrationContext } from "@/assets/js/app/SequenceProcessor/context";
+import { migrationRules }         from "@/assets/js/app/SequenceProcessor/rules";
 
 // Import Types
 import type { Config, Define, Status, EmptyObject } from "@/assets/js/types";
-import type { MigrationResult }                     from "@/assets/js/lib/MigrationManager/types";
+import type { SequenceResult }                      from "@/assets/js/lib/SequenceProcessor/types";
+import type { MigrationContext }                    from "@/assets/js/app/SequenceProcessor/types";
 
 
 
@@ -30,7 +32,7 @@ import type { MigrationResult }                     from "@/assets/js/lib/Migrat
  * Class responsible for initializing, migrating, and validating settings
  */
 class ConfigInitializer {
-	#migrationStatus: MigrationResult<Config> | EmptyObject;
+	#migrationStatus: SequenceResult<Config, MigrationContext> | EmptyObject;
 
 	constructor() {
 		this.#migrationStatus = {};
@@ -49,9 +51,9 @@ class ConfigInitializer {
 		const migrationResult = await this.#migrate(initialConfig, define);
 		this.#migrationStatus = migrationResult;
 
-		// If isSucceeded is false, migrationResult.data is the old data.
+		// If status is "failed", migrationResult.data is the old data (rolled back).
 		// Therefore, pass the original initialConfig for validation.
-		const configToVerify = migrationResult.isSucceeded ? migrationResult.data : initialConfig;
+		const configToVerify = migrationResult.status !== "failed" ? migrationResult.data : initialConfig;
 		const verifiedConfig = this.#verify(configToVerify, define);
 
 		return verifiedConfig;
@@ -60,10 +62,10 @@ class ConfigInitializer {
 	/**
 	 * Returns the migration status obtained during the configuration initialization process
 	 *
-	 * @returns {MigrationResult<Config>} The migration status
+	 * @returns {SequenceResult<Config, Partial<Config>>} The migration status
 	 */
-	getMigrationStatus(): MigrationResult<Config> {
-		return this.#migrationStatus as MigrationResult<Config>;
+	getMigrationStatus(): SequenceResult<Config, MigrationContext> {
+		return this.#migrationStatus as SequenceResult<Config, MigrationContext>;
 	}
 
 	/**
@@ -81,16 +83,21 @@ class ConfigInitializer {
 	 * Updates the configuration to the latest state by applying defined migration rules
 	 * based on the existing configuration object and definition object.
 	 *
-	 * @param   {Config}                           config - The configuration object to undergo migration
-	 * @param   {Define}                           define - The configuration definition object
-	 * @returns {Promise<MigrationResult<Config>>}          An object containing the results of the migration process
+	 * @param   {Config}                                             config - The configuration object to undergo migration
+	 * @param   {Define}                                             define - The configuration definition object
+	 * @returns {Promise<SequenceResult<Config, MigrationContext>>}           An object containing the results of the migration process
 	 */
-	async #migrate(config: Config, define: Define): Promise<MigrationResult<Config>> {
-		const manager         = new MigrationManager<Config>(migrationRules);
-		const migrationResult = await manager.migrate(
+	async #migrate(config: Config, define: Define): Promise<SequenceResult<Config, MigrationContext>> {
+		const processor = new SequenceProcessor<Config, MigrationContext>(migrationRules);
+		const context   = await createMigrationContext(define);
+
+		const migrationResult = await processor.process(
 			config,
-			define.Config, // Pass define.Config as defaultValues
-			{ failFast: false }
+			context,
+			{
+				failFast: false,
+				cloneFn : cloneObject
+			}
 		);
 
 		return migrationResult;
@@ -108,6 +115,7 @@ class ConfigInitializer {
 	 */
 	#verify(config: Config, define: Define): Config {
 		const verify = new VerifyConfigValue();
+
 		return verify.verify(config, define);
 	}
 }
@@ -149,9 +157,9 @@ async function saveConfig(config: Config, keyname: string): Promise<void> {
  *
  * @param   {Config} config - The configuration object to migrate and validate
  * @param   {Define} define - The configuration definition object
- * @returns {Promise<{ processedConfig: Config, migrationStatus: MigrationResult<Config> }>} An object containing the processed configuration and migration status
+ * @returns {Promise<{ processedConfig: Config, migrationStatus: SequenceResult<Config, MigrationContext> }>} An object containing the processed configuration and migration status
  */
-async function processConfig(config: Config, define: Define): Promise<{ processedConfig: Config, migrationStatus: MigrationResult<Config> }> {
+async function processConfig(config: Config, define: Define): Promise<{ processedConfig: Config, migrationStatus: SequenceResult<Config, MigrationContext> }> {
 	const configInitializer = new ConfigInitializer();
 	const processedConfig   = await configInitializer.initialize(config, define);
 	const migrationStatus   = configInitializer.getMigrationStatus();
@@ -164,16 +172,16 @@ async function processConfig(config: Config, define: Define): Promise<{ processe
 /**
  * Saves the processed configuration based on conditions
  *
- * @param   {Config}                  config          - The processed configuration object to save
- * @param   {MigrationResult<Config>} migrationStatus - Status of the migration process
- * @param   {string}                  keyname         - The key name used for saving to storage
- * @param   {boolean}                 save            - Whether to save the configuration to storage
- * @param   {boolean}                 isFirstInit     - Whether this is the first startup
+ * @param   {Config}                                  config          - The processed configuration object to save
+ * @param   {SequenceResult<Config, Partial<Config>>} migrationStatus - Status of the migration process
+ * @param   {string}                                  keyname         - The key name used for saving to storage
+ * @param   {boolean}                                 save            - Whether to save the configuration to storage
+ * @param   {boolean}                                 isFirstInit     - Whether this is the first startup
  * @returns {Promise<void>}
  */
 async function saveProcessedConfig(
 	config         : Config,
-	migrationStatus: MigrationResult<Config>,
+	migrationStatus: SequenceResult<Config, MigrationContext>,
 	keyname        : string,
 	save           : boolean,
 	isFirstInit    : boolean
@@ -183,7 +191,8 @@ async function saveProcessedConfig(
 	}
 
 	// Save if "migration succeeded" or "first startup"
-	if (migrationStatus.isSucceeded || isFirstInit) {
+	// Status "success" or "partial_success" means the process was completed without fatal errors.
+	if (migrationStatus.status !== "failed" || isFirstInit) {
 		await saveConfig(config, keyname);
 	}
 }
